@@ -9,9 +9,10 @@ import {
 } from '@angular/core';
 import { finalize } from 'rxjs';
 import { Chart, ChartConfiguration, registerables } from 'chart.js';
+import { MatIconModule } from '@angular/material/icon';
 import { DashboardDto } from '../../models/dashboard.model';
 import { ApiService } from '../../services/api.service';
-import { ScoreRingCardComponent, ScoreRingState } from '../score-ring-card/score-ring-card.component';
+import { ScoreRingState } from '../score-ring-card/score-ring-card.component';
 import { TranslatePipe } from '../../i18n/translate.pipe';
 import { I18nService } from '../../services/i18n.service';
 
@@ -20,7 +21,7 @@ Chart.register(...registerables);
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, ScoreRingCardComponent, TranslatePipe],
+  imports: [CommonModule, MatIconModule, TranslatePipe],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss'
 })
@@ -134,6 +135,33 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       default:
         return this.i18nService.translateLiteral(recommendation);
     }
+  }
+
+  get recentWeek(): Array<{ label: string; shortLabel: string; heightPct: number }> {
+    const trend = this.dashboard?.loadTrend ?? [];
+    const last7 = trend.slice(-7);
+    const maxVal = Math.max(...last7.map(p => p.strain21), 1);
+    return last7.map(p => ({
+      label: `${this.compactDate(p.date)}: ${p.strain21.toFixed(1)}`,
+      shortLabel: new Date(p.date).toLocaleDateString(this.getDateLocale(), { weekday: 'narrow' }),
+      heightPct: Math.max(5, (p.strain21 / maxVal) * 100)
+    }));
+  }
+
+  get acwrDashOffset(): number {
+    const acwr = this.dashboard?.loadStatus.acwr ?? 0;
+    return 502 - Math.min(acwr / 2, 1) * 502;
+  }
+
+  get readinessCtaLabel(): string {
+    const score = this.dashboard?.readinessScore ?? 0;
+    if (score >= 70) return 'GO';
+    if (score >= 45) return 'EASY';
+    return 'REST';
+  }
+
+  get acwrFlagLabel(): string {
+    return this.dashboard ? this.flagLabel(this.dashboard.loadStatus.flag) : '';
   }
 
   localizeBullet(bullet: string): string {

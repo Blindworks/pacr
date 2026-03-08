@@ -1,0 +1,75 @@
+<aside class="sidebar">
+  <!-- Brand -->
+  <div class="sidebar-top">
+    <div class="brand">
+      <div class="brand-icon">
+        <span class="material-symbols-outlined">bolt</span>
+      </div>
+      <div class="brand-text">
+        <h1>PACR</h1>
+        <p>Premium Running</p>
+      </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="nav">
+      <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}" class="nav-item">
+        <span class="material-symbols-outlined">dashboard</span>
+        <span>Dashboard</span>
+      </a>
+      <a routerLink="/activities" routerLinkActive="active" class="nav-item">
+        <span class="material-symbols-outlined">directions_run</span>
+        <span>Activities</span>
+      </a>
+      <a routerLink="/training-plans" routerLinkActive="active" class="nav-item">
+        <span class="material-symbols-outlined">calendar_today</span>
+        <span>Training Plans</span>
+      </a>
+      <a routerLink="/workouts" routerLinkActive="active" class="nav-item">
+        <span class="material-symbols-outlined">fitness_center</span>
+        <span>Workouts</span>
+      </a>
+      <a routerLink="/statistics" routerLinkActive="active" class="nav-item">
+        <span class="material-symbols-outlined">leaderboard</span>
+        <span>Statistics</span>
+      </a>
+      <a routerLink="/body-data" routerLinkActive="active" class="nav-item">
+        <span class="material-symbols-outlined">monitoring</span>
+        <span>Body Data</span>
+      </a>
+      <a routerLink="/insights" routerLinkActive="active" class="nav-item">
+        <span class="material-symbols-outlined">lightbulb</span>
+        <span>Insights</span>
+      </a>
+    </nav>
+  </div>
+
+  <!-- Bottom Section -->
+  <div class="sidebar-bottom">
+    <!-- Upgrade Card -->
+    <div class="upgrade-card">
+      <h3>Upgrade to Pro</h3>
+      <p>Unlock advanced analytics and personal coaching.</p>
+      <button class="upgrade-btn">Get Started</button>
+    </div>
+
+    <!-- User Profile -->
+    <div class="user-section">
+      <div class="user-profile">
+        <div class="user-avatar"></div>
+        <div class="user-info">
+          <span class="user-name">Alex Runner</span>
+          <span class="user-role">Pro Member</span>
+        </div>
+      </div>
+      <a href="#" class="nav-item nav-item--sm">
+        <span class="material-symbols-outlined">settings</span>
+        <span>Settings</span>
+      </a>
+      <a href="#" class="nav-item nav-item--sm nav-item--danger">
+        <span class="material-symbols-outlined">logout</span>
+        <span>Log out</span>
+      </a>
+    </div>
+  </div>
+</aside>

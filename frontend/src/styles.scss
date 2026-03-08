@@ -1,1 +1,14 @@
-/* You can add global styles to this file, and also import other style files */
+* { box-sizing: border-box; }
+
+html, body, app-root {
+  height: 100%;
+  margin: 0;
+  background: #0d1117;
+  color: #e6edf3;
+  font-family: 'Lexend', 'Inter', 'Segoe UI', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}

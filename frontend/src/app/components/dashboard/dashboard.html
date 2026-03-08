@@ -1,0 +1,105 @@
+<div class="pulse-dashboard">
+
+  <!-- ── Hero: Readiness Score ── -->
+  <section class="readiness-hero">
+    <div class="hero-blob"></div>
+    <div class="hero-left">
+      <h3 class="hero-eyebrow">Readiness Score</h3>
+      <div class="hero-score-row">
+        <span class="hero-number">85</span>
+        <span class="hero-denom">/100</span>
+      </div>
+      <p class="hero-sub">Your body is <strong>primed</strong> for a high-intensity run today.</p>
+    </div>
+    <div class="hero-right">
+      <div class="go-btn">GO</div>
+    </div>
+  </section>
+
+  <!-- ── Main 3-column Grid ── -->
+  <div class="main-grid">
+
+    <!-- Weekly Mileage Bar Chart -->
+    <div class="metric-card">
+      <div class="card-head">
+        <h4>Recent Training</h4>
+        <span class="card-tag">WEEKLY MILEAGE</span>
+      </div>
+      <div class="bar-chart-wrap">
+        <div class="bar" style="height:60%" title="Mon: 6.2 mi"></div>
+        <div class="bar" style="height:45%" title="Tue: 4.1 mi"></div>
+        <div class="bar" style="height:85%" title="Wed: 8.5 mi"></div>
+        <div class="bar" style="height:30%" title="Thu: 3.0 mi"></div>
+        <div class="bar" style="height:95%" title="Fri: 10.2 mi"></div>
+        <div class="bar" style="height:10%" title="Sat: Rest"></div>
+        <div class="bar bar--active" style="height:70%" title="Sun: Today"></div>
+      </div>
+      <div class="bar-labels">
+        <span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span>
+      </div>
+    </div>
+
+    <!-- Body Battery -->
+    <div class="metric-card">
+      <div class="card-head">
+        <h4>Body Battery</h4>
+        <div class="metric-badge">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M7 2v11h3v9l7-12h-4l4-8z"/></svg>
+          <span>72%</span>
+        </div>
+      </div>
+      <div class="strain-wave-wrap">
+        <div class="strain-wave" style="width:72%"></div>
+      </div>
+      <div class="strain-axis-labels">
+        <span>12 AM</span><span>8 AM</span><span>4 PM</span><span>NOW</span>
+      </div>
+    </div>
+
+    <!-- VO2 Max Gauge -->
+    <div class="metric-card metric-card--gauge">
+      <div class="card-head">
+        <h4>VO2 Max</h4>
+      </div>
+      <div class="gauge-container">
+        <svg class="gauge-svg" viewBox="0 0 192 192">
+          <circle class="gauge-track" cx="96" cy="96" r="80" fill="transparent" stroke-width="12"/>
+          <circle class="gauge-fill gauge-fill--good" cx="96" cy="96" r="80" fill="transparent"
+                  stroke-width="12" stroke-dasharray="502" stroke-dashoffset="125"/>
+        </svg>
+        <div class="gauge-center">
+          <span class="gauge-value">54</span>
+          <span class="gauge-sublabel gauge-sublabel--good">Excellent</span>
+        </div>
+      </div>
+      <p class="gauge-footer">Top 5% for your age group</p>
+    </div>
+
+  </div>
+
+  <!-- ── Secondary Stats Row ── -->
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-icon stat-icon--orange">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg>
+      </div>
+      <div class="stat-body">
+        <p class="stat-label">Resting Heart Rate</p>
+        <p class="stat-value">48 <span class="stat-unit">bpm</span></p>
+      </div>
+      <svg class="stat-chevron" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon stat-icon--blue">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg>
+      </div>
+      <div class="stat-body">
+        <p class="stat-label">Sleep Performance</p>
+        <p class="stat-value">8h 12m <span class="stat-unit">Deep</span></p>
+      </div>
+      <svg class="stat-chevron" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+    </div>
+  </div>
+
+</div>

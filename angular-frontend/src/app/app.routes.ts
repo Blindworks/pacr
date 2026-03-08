@@ -14,13 +14,17 @@ import { authGuard } from './guards/auth.guard';
 import { adminGuard } from './guards/admin.guard';
 
 export const routes: Routes = [
-  { path: '', component: LandingPageComponent },
+  {
+    path: '',
+    pathMatch: 'full',
+    loadComponent: () =>
+      import('./components/dashboard/dashboard.component').then(m => m.DashboardComponent)
+  },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
   { path: 'strava/callback', component: StravaCallbackComponent },
   {
     path: 'dashboard',
-    canActivate: [authGuard],
     loadComponent: () =>
       import('./components/dashboard/dashboard.component').then(m => m.DashboardComponent)
   },
