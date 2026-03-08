@@ -1,0 +1,130 @@
+<div class="tp-page">
+
+  <!-- Header -->
+  <header class="tp-header">
+    <div class="tp-header__left">
+      <span class="tp-eyebrow">Active Program</span>
+      <h2 class="tp-title">{{ planName }}</h2>
+      <p class="tp-subtitle">{{ weekLabel }}</p>
+    </div>
+    <div class="tp-header__right">
+      <div class="tp-progress">
+        <div class="tp-progress__labels">
+          <span>Plan Progress</span>
+          <span class="tp-progress__pct">{{ progressPercent }}%</span>
+        </div>
+        <div class="tp-progress__bar">
+          <div class="tp-progress__fill" [style.width.%]="progressPercent"></div>
+        </div>
+        <p class="tp-progress__sub">{{ completedSessions }} of {{ totalSessions }} sessions completed</p>
+      </div>
+    </div>
+  </header>
+
+  <!-- Body Grid -->
+  <div class="tp-grid">
+
+    <!-- Left: Weekly Schedule -->
+    <section class="tp-schedule">
+      <div class="tp-schedule__head">
+        <h3>{{ currentWeekLabel }}</h3>
+        <div class="tp-week-nav">
+          <button class="tp-week-nav__btn" (click)="prevWeek()" aria-label="Previous week">
+            <span class="material-symbols-outlined">chevron_left</span>
+          </button>
+          <button class="tp-week-nav__btn" (click)="nextWeek()" aria-label="Next week">
+            <span class="material-symbols-outlined">chevron_right</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="tp-days">
+        @for (day of days; track day.dayNum) {
+          <div class="tp-day" [class]="'tp-day--' + day.status">
+            <!-- Day Label -->
+            <div class="tp-day__date">
+              <span class="tp-day__name">{{ day.dayShort }}</span>
+              <span class="tp-day__num">{{ day.dayNum }}</span>
+            </div>
+
+            <!-- Content -->
+            <div class="tp-day__body">
+              <div class="tp-day__info">
+                <div class="tp-day__title-row">
+                  <h4>{{ day.title }}</h4>
+                  @if (day.status === 'today') {
+                    <span class="tp-today-badge">Today</span>
+                  }
+                </div>
+                <p class="tp-day__sub">{{ day.subtitle }}</p>
+              </div>
+
+              @if (day.status === 'today') {
+                <button class="tp-start-btn" (click)="startWorkout()">
+                  <span class="material-symbols-outlined">play_arrow</span>
+                  Start Workout
+                </button>
+              } @else if (day.status === 'completed') {
+                <span class="material-symbols-outlined tp-icon--done">check_circle</span>
+              } @else if (day.icon) {
+                <span class="material-symbols-outlined tp-icon--muted">{{ day.icon }}</span>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    </section>
+
+    <!-- Right: Insights + Stats + Recovery -->
+    <aside class="tp-sidebar">
+
+      <!-- Smart Insights -->
+      <section class="tp-insights">
+        <div class="tp-insights__head">
+          <span class="material-symbols-outlined">psychology</span>
+          <h3>Smart Insights</h3>
+        </div>
+        <div class="tp-insights__cards">
+          @for (insight of insights; track insight.title) {
+            <div class="tp-insight-card">
+              <p class="tp-insight-card__title">{{ insight.title }}</p>
+              <p class="tp-insight-card__text">{{ insight.text }}</p>
+            </div>
+          }
+        </div>
+        <button class="tp-insights__cta">View Full Analysis</button>
+      </section>
+
+      <!-- Current Stats -->
+      <section class="tp-stats-card">
+        <h3>Current Stats</h3>
+        <div class="tp-stats-grid">
+          @for (stat of stats; track stat.label) {
+            <div class="tp-stat">
+              <span class="tp-stat__label">{{ stat.label }}</span>
+              <span class="tp-stat__value">{{ stat.value }} <span class="tp-stat__unit">{{ stat.unit }}</span></span>
+            </div>
+          }
+        </div>
+      </section>
+
+      <!-- Recovery Score -->
+      <section class="tp-recovery">
+        <div class="tp-recovery__left">
+          <p class="tp-recovery__title">Recovery Score</p>
+          <p class="tp-recovery__sub">Based on sleep &amp; HRV</p>
+        </div>
+        <div class="tp-recovery__ring">
+          <svg viewBox="0 0 48 48" class="tp-recovery__svg">
+            <circle cx="24" cy="24" r="20" class="tp-recovery__track"/>
+            <circle cx="24" cy="24" r="20" class="tp-recovery__fill"
+              [style.stroke-dasharray]="'125.7'"
+              [style.stroke-dashoffset]="125.7 - (125.7 * recoveryScore / 100)"/>
+          </svg>
+          <span class="tp-recovery__score">{{ recoveryScore }}</span>
+        </div>
+      </section>
+
+    </aside>
+  </div>
+</div>
