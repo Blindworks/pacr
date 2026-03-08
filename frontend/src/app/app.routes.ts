@@ -17,5 +17,9 @@ export const routes: Routes = [
   {
     path: 'training-plans',
     loadComponent: () => import('./components/training-plan/training-plan').then(m => m.TrainingPlan)
+  },
+  {
+    path: 'training-plans/:id',
+    loadComponent: () => import('./components/training-detail/training-detail').then(m => m.TrainingDetail)
   }
 ];

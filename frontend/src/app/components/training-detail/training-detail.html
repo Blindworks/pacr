@@ -1,0 +1,130 @@
+@if (training) {
+<div class="td-page">
+
+  <!-- Header -->
+  <header class="td-header">
+    <div class="td-header__left">
+      <button (click)="goBack()" class="td-back-btn">
+        <span class="material-symbols-outlined">arrow_back</span>
+      </button>
+      <div class="td-header__title">
+        <h2>Workout</h2>
+        <span class="td-session">Session #{{ training.sessionNumber }}</span>
+      </div>
+    </div>
+    <div class="td-header__actions">
+      <button class="td-icon-btn"><span class="material-symbols-outlined">share</span></button>
+      <button class="td-icon-btn"><span class="material-symbols-outlined">more_vert</span></button>
+    </div>
+  </header>
+
+  <!-- Main -->
+  <main class="td-main">
+
+    <!-- Hero -->
+    <div class="td-hero">
+      <div class="td-hero__overlay"></div>
+      <img [src]="training.heroImage" [alt]="training.title" class="td-hero__img" />
+      <div class="td-hero__content">
+        <span class="td-difficulty-badge">{{ training.difficulty }}</span>
+        <h1 class="td-hero__title">{{ training.title }}</h1>
+      </div>
+    </div>
+
+    <!-- Stats Grid -->
+    <div class="td-stats-grid">
+      <div class="td-stat-card">
+        <span class="td-stat-card__label">Duration</span>
+        <div class="td-stat-card__value">
+          <span class="material-symbols-outlined">timer</span>
+          {{ training.duration }}
+        </div>
+      </div>
+      <div class="td-stat-card">
+        <span class="td-stat-card__label">Intensity</span>
+        <div class="td-stat-card__value">
+          <span class="material-symbols-outlined">bolt</span>
+          {{ training.intensity }}
+        </div>
+      </div>
+      <div class="td-stat-card">
+        <span class="td-stat-card__label">Est. Calories</span>
+        <div class="td-stat-card__value">
+          <span class="material-symbols-outlined">local_fire_department</span>
+          {{ training.calories }}
+        </div>
+      </div>
+      <div class="td-stat-card">
+        <span class="td-stat-card__label">Benefit</span>
+        <div class="td-stat-card__value">
+          <span class="material-symbols-outlined">trending_up</span>
+          {{ training.benefit }}
+        </div>
+      </div>
+    </div>
+
+    <!-- Workout Structure -->
+    <section class="td-section">
+      <div class="td-section__head">
+        <h2>Workout Structure</h2>
+        <span class="td-section__sub">{{ training.estimatedDistance }} Estimated</span>
+      </div>
+      <div class="td-steps">
+        @for (step of training.steps; track step.title) {
+          <div class="td-step"
+               [class.td-step--highlight]="step.highlight"
+               [class.td-step--muted]="step.muted">
+            <div class="td-step__icon">
+              <span class="material-symbols-outlined">{{ step.icon }}</span>
+            </div>
+            <div class="td-step__body">
+              <p class="td-step__title">{{ step.title }}</p>
+              <p class="td-step__sub">{{ step.subtitle }}</p>
+            </div>
+            <span class="td-step__pace">{{ step.pace }}</span>
+          </div>
+        }
+      </div>
+    </section>
+
+    <!-- Smart Prep Tips -->
+    <section class="td-tips">
+      <div class="td-tips__head">
+        <span class="material-symbols-outlined">lightbulb</span>
+        <h3>Smart Prep Tips</h3>
+      </div>
+      <div class="td-tips__grid">
+        @for (tip of training.prepTips; track tip.title) {
+          <div class="td-tip">
+            <span class="material-symbols-outlined td-tip__icon">{{ tip.icon }}</span>
+            <div>
+              <p class="td-tip__title">{{ tip.title }}</p>
+              <p class="td-tip__text">{{ tip.text }}</p>
+            </div>
+          </div>
+        }
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Fixed Bottom CTA -->
+  <div class="td-cta-bar">
+    <button class="td-cta-bar__secondary">
+      <span class="material-symbols-outlined">watch</span>
+      Sync to Watch
+    </button>
+    <button class="td-cta-bar__primary">
+      <span class="material-symbols-outlined">play_arrow</span>
+      Start Workout
+    </button>
+  </div>
+
+</div>
+}
+@if (!training) {
+<div class="td-not-found">
+  <span class="material-symbols-outlined">search_off</span>
+  <p>Training not found.</p>
+</div>
+}

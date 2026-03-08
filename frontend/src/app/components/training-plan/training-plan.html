@@ -40,7 +40,9 @@
 
       <div class="tp-days">
         @for (day of days; track day.dayNum) {
-          <div class="tp-day" [class]="'tp-day--' + day.status">
+          <div class="tp-day" [class]="'tp-day--' + day.status"
+               [class.cursor-pointer]="day.status !== 'rest'"
+               (click)="day.status !== 'rest' && viewDetail(day.id)">
             <!-- Day Label -->
             <div class="tp-day__date">
               <span class="tp-day__name">{{ day.dayShort }}</span>
