@@ -1,0 +1,131 @@
+<div class="activities-page">
+
+  <!-- Header -->
+  <header class="page-header">
+    <div class="header-left">
+      <span class="material-symbols-outlined header-icon">database</span>
+      <h2 class="page-title">All Activities</h2>
+    </div>
+    <div class="header-right">
+      <div class="search-wrap">
+        <span class="material-symbols-outlined search-icon">search</span>
+        <input class="search-input" type="text" placeholder="Search activities..." />
+      </div>
+      <button class="icon-btn">
+        <span class="material-symbols-outlined">tune</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Filter Bar -->
+  <div class="filter-bar">
+    <div class="filter-pills">
+      @for (f of filters; track f.id) {
+        <button
+          class="pill"
+          [class.pill--active]="selectedFilter === f.id"
+          (click)="setFilter(f.id)"
+        >{{ f.label }}</button>
+      }
+    </div>
+    <div class="sort-wrap">
+      <span class="sort-label">Sort by:</span>
+      <select class="sort-select">
+        <option>Recent First</option>
+        <option>Longest Distance</option>
+        <option>Fastest Pace</option>
+        <option>Oldest First</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Activities Grid -->
+  <div class="activities-grid">
+
+    <!-- Featured Card -->
+    @if (showFeatured()) {
+      <div class="featured-card">
+        <div class="featured-map">
+          <img [src]="featuredActivity.mapImage" alt="Route map" />
+          <span class="featured-badge">Latest Activity</span>
+        </div>
+        <div class="featured-body">
+          <div class="featured-top">
+            <div>
+              <h3 class="featured-title">{{ featuredActivity.name }}</h3>
+              <p class="featured-date">{{ featuredActivity.date }}</p>
+            </div>
+            <button class="icon-btn-ghost">
+              <span class="material-symbols-outlined">more_vert</span>
+            </button>
+          </div>
+          <div class="featured-stats">
+            <div class="stat-cell">
+              <span class="stat-label">Distance</span>
+              <span class="stat-value">{{ featuredActivity.distance }}</span>
+            </div>
+            <div class="stat-cell">
+              <span class="stat-label">Time</span>
+              <span class="stat-value">{{ featuredActivity.time }}</span>
+            </div>
+            <div class="stat-cell">
+              <span class="stat-label">Avg Pace</span>
+              <span class="stat-value">{{ featuredActivity.pace }}</span>
+            </div>
+            <div class="stat-cell">
+              <span class="stat-label">Elev Gain</span>
+              <span class="stat-value">{{ featuredActivity.elevGain }}</span>
+            </div>
+          </div>
+          <div class="featured-actions">
+            <button class="btn-primary">
+              <span class="material-symbols-outlined">visibility</span>
+              View Details
+            </button>
+            <button class="btn-ghost-icon">
+              <span class="material-symbols-outlined">share</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- List Cards -->
+    @for (activity of filteredListActivities; track activity.id) {
+      <div class="activity-card">
+        <div class="activity-thumb">
+          <img [src]="activity.mapImage" alt="Route map" />
+        </div>
+        <div class="activity-info">
+          <div class="activity-info-top">
+            <div>
+              <h4 class="activity-name">{{ activity.name }}</h4>
+              <p class="activity-date">{{ activity.date }}</p>
+            </div>
+            <span class="material-symbols-outlined chevron">chevron_right</span>
+          </div>
+          <div class="activity-stats">
+            <div>
+              <p class="mini-label">Distance</p>
+              <p class="mini-value">{{ activity.distance }}</p>
+            </div>
+            <div>
+              <p class="mini-label">Time</p>
+              <p class="mini-value">{{ activity.time }}</p>
+            </div>
+            <div>
+              <p class="mini-label">Pace</p>
+              <p class="mini-value">{{ activity.pace }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+
+  <!-- Load More -->
+  <div class="load-more-wrap">
+    <button class="load-more-btn">Load More Activities</button>
+  </div>
+
+</div>
