@@ -9,5 +9,9 @@ export const routes: Routes = [
   {
     path: 'activities',
     loadComponent: () => import('./components/activities/activities').then(m => m.Activities)
+  },
+  {
+    path: 'activities/:id',
+    loadComponent: () => import('./components/activity-detail/activity-detail').then(m => m.ActivityDetail)
   }
 ];

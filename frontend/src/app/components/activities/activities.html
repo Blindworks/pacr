@@ -78,7 +78,7 @@
             </div>
           </div>
           <div class="featured-actions">
-            <button class="btn-primary">
+            <button class="btn-primary" [routerLink]="['/activities', featuredActivity.id]">
               <span class="material-symbols-outlined">visibility</span>
               View Details
             </button>
@@ -92,7 +92,7 @@
 
     <!-- List Cards -->
     @for (activity of filteredListActivities; track activity.id) {
-      <div class="activity-card">
+      <div class="activity-card" [routerLink]="['/activities', activity.id]">
         <div class="activity-thumb">
           <img [src]="activity.mapImage" alt="Route map" />
         </div>
