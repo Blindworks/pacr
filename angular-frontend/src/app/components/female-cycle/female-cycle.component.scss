@@ -1,0 +1,102 @@
+﻿.cycle-page {
+  display: grid;
+  gap: 16px;
+  padding: 20px;
+}
+
+.state-card,
+.status-card,
+.form-card,
+.entries-card {
+  padding: 16px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.status-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.phase-pill {
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(45, 123, 255, 0.2);
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.status-grid {
+  margin-top: 12px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+}
+
+.label {
+  display: block;
+  color: var(--text-secondary);
+  font-size: 12px;
+  margin-bottom: 4px;
+}
+
+.hint {
+  color: var(--text-secondary);
+}
+
+.config-row,
+.row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+}
+
+.entry-form {
+  display: grid;
+  gap: 12px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.actions {
+  display: flex;
+  gap: 10px;
+}
+
+.entry-list {
+  display: grid;
+  gap: 10px;
+}
+
+.entry-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px;
+}
+
+.entry-main {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.badge {
+  width: fit-content;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: rgba(229, 57, 53, 0.2);
+  font-size: 12px;
+}
+
+.entry-actions {
+  display: flex;
+  align-items: flex-start;
+}

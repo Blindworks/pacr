@@ -5,34 +5,18 @@
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
 
     <changeSet id="046-drop-training-description-fk" author="system">
-        <validCheckSum>9:669c2c0101066948d70512ea6b46c686</validCheckSum>
-        <validCheckSum>9:5801c3ef3ddf97d0af678aa2b7c5e4e6</validCheckSum>
+        <validCheckSum>ANY</validCheckSum>
         <preConditions onFail="MARK_RAN">
             <and>
                 <tableExists tableName="trainings"/>
                 <columnExists tableName="trainings" columnName="training_description_id"/>
+                <foreignKeyConstraintExists foreignKeyName="fk_trainings_training_description"/>
             </and>
         </preConditions>
 
-        <sql splitStatements="false">
-            SET @fk_name := (
-                SELECT kcu.CONSTRAINT_NAME
-                FROM information_schema.KEY_COLUMN_USAGE kcu
-                WHERE kcu.TABLE_SCHEMA = DATABASE()
-                  AND kcu.TABLE_NAME = 'trainings'
-                  AND kcu.COLUMN_NAME = 'training_description_id'
-                  AND kcu.REFERENCED_TABLE_NAME = 'training_descriptions'
-                LIMIT 1
-            );
-            SET @drop_fk_sql := IF(
-                @fk_name IS NULL,
-                'SELECT 1',
-                CONCAT('ALTER TABLE trainings DROP FOREIGN KEY `', @fk_name, '`')
-            );
-            PREPARE stmt FROM @drop_fk_sql;
-            EXECUTE stmt;
-            DEALLOCATE PREPARE stmt;
-        </sql>
+        <dropForeignKeyConstraint
+            baseTableName="trainings"
+            constraintName="fk_trainings_training_description"/>
     </changeSet>
 
     <changeSet id="046-drop-training-description-fk-fallback" author="system">

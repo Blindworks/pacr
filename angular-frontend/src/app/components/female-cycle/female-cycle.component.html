@@ -1,0 +1,136 @@
+﻿<div class="cycle-page">
+  @if (loading) {
+    <div class="state-card">{{ 'common.loading' | t }}</div>
+  } @else if (!isFemaleUser) {
+    <div class="state-card">
+      <h2>{{ 'cycle.notAvailableTitle' | t }}</h2>
+      <p>{{ 'cycle.notAvailableText' | t }}</p>
+    </div>
+  } @else {
+    <mat-card class="status-card">
+      <div class="status-header">
+        <h2>{{ 'cycle.currentStatus' | t }}</h2>
+        <div class="phase-pill">{{ getPhaseLabel(status?.phase ?? null) }}</div>
+      </div>
+
+      @if (status) {
+        <div class="status-grid">
+          <div>
+            <span class="label">{{ 'cycle.day' | t }}</span>
+            <strong>{{ status.cycleDay }}</strong>
+          </div>
+          <div>
+            <span class="label">{{ 'cycle.lastPeriodStart' | t }}</span>
+            <strong>{{ formatDate(status.lastPeriodStart) }}</strong>
+          </div>
+          <div>
+            <span class="label">{{ 'cycle.nextExpected' | t }}</span>
+            <strong>{{ formatDate(status.nextExpectedPeriod) }}</strong>
+          </div>
+          <div>
+            <span class="label">{{ 'cycle.daysToNext' | t }}</span>
+            <strong>{{ status.daysToNextPeriod }}</strong>
+          </div>
+        </div>
+      } @else {
+        <p class="hint">{{ 'cycle.noStatusYet' | t }}</p>
+      }
+    </mat-card>
+
+    <mat-card class="form-card">
+      <h3>{{ editId ? ('cycle.editEntry' | t) : ('cycle.newEntry' | t) }}</h3>
+
+      <div class="config-row">
+        <mat-form-field appearance="outline">
+          <mat-label>{{ 'cycle.cycleLength' | t }}</mat-label>
+          <input matInput type="number" min="21" max="40" [(ngModel)]="cycleLength" (ngModelChange)="onCycleConfigChange()" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>{{ 'cycle.periodLength' | t }}</mat-label>
+          <input matInput type="number" min="2" max="10" [(ngModel)]="periodLength" (ngModelChange)="onCycleConfigChange()" />
+        </mat-form-field>
+      </div>
+
+      <form [formGroup]="form" (ngSubmit)="saveEntry()" class="entry-form">
+        <div class="row">
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'cycle.date' | t }}</mat-label>
+            <input matInput type="date" formControlName="date" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'cycle.flow' | t }}</mat-label>
+            <mat-select formControlName="flow">
+              <mat-option value="NONE">{{ 'cycle.flowNone' | t }}</mat-option>
+              <mat-option value="LIGHT">{{ 'cycle.flowLight' | t }}</mat-option>
+              <mat-option value="MEDIUM">{{ 'cycle.flowMedium' | t }}</mat-option>
+              <mat-option value="HEAVY">{{ 'cycle.flowHeavy' | t }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'cycle.mood' | t }}</mat-label>
+            <mat-select formControlName="mood">
+              <mat-option value="VERY_BAD">{{ 'cycle.moodVeryBad' | t }}</mat-option>
+              <mat-option value="BAD">{{ 'cycle.moodBad' | t }}</mat-option>
+              <mat-option value="OK">{{ 'cycle.moodOk' | t }}</mat-option>
+              <mat-option value="GOOD">{{ 'cycle.moodGood' | t }}</mat-option>
+              <mat-option value="VERY_GOOD">{{ 'cycle.moodVeryGood' | t }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <mat-checkbox formControlName="periodStarted">{{ 'cycle.periodStarted' | t }}</mat-checkbox>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>{{ 'cycle.notes' | t }}</mat-label>
+          <textarea matInput rows="3" formControlName="notes"></textarea>
+        </mat-form-field>
+
+        <div class="actions">
+          <button mat-flat-button color="primary" type="submit">
+            {{ editId ? ('cycle.update' | t) : ('cycle.save' | t) }}
+          </button>
+          @if (editId) {
+            <button mat-stroked-button type="button" (click)="cancelEdit()">{{ 'common.cancel' | t }}</button>
+          }
+        </div>
+      </form>
+    </mat-card>
+
+    <mat-card class="entries-card">
+      <h3>{{ 'cycle.history' | t }}</h3>
+
+      @if (!entries.length) {
+        <p class="hint">{{ 'cycle.noEntries' | t }}</p>
+      } @else {
+        <div class="entry-list">
+          @for (entry of entries; track entry.id) {
+            <div class="entry-row">
+              <div class="entry-main">
+                <strong>{{ formatDate(entry.date) }}</strong>
+                <span>{{ 'cycle.flow' | t }}: {{ getFlowLabel(entry.flow) }}</span>
+                <span>{{ 'cycle.mood' | t }}: {{ getMoodLabel(entry.mood) }}</span>
+                @if (entry.periodStarted) {
+                  <span class="badge">{{ 'cycle.periodStarted' | t }}</span>
+                }
+                @if (entry.notes) {
+                  <small>{{ entry.notes }}</small>
+                }
+              </div>
+              <div class="entry-actions">
+                <button mat-icon-button type="button" (click)="editEntry(entry)">
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button mat-icon-button type="button" (click)="deleteEntry(entry)">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
+            </div>
+          }
+        </div>
+      }
+    </mat-card>
+  }
+</div>

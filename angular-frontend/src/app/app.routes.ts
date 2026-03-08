@@ -91,6 +91,13 @@ export const routes: Routes = [
       import('./components/body-measurement/body-measurement.component')
         .then(m => m.BodyMeasurementComponent)
   },
+  {
+    path: 'female-cycle',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./components/female-cycle/female-cycle.component')
+        .then(m => m.FemaleCycleComponent)
+  },
   { path: 'blood-pressure', redirectTo: 'body-measurements', pathMatch: 'full' },
   { path: 'profile', component: ProfileComponent, canActivate: [authGuard] },
   { path: '**', redirectTo: '' }
