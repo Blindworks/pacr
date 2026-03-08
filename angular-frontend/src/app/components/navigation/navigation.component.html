@@ -82,6 +82,12 @@
             <mat-icon>scale</mat-icon>
             <span>{{ 'nav.bodyData' | t }}</span>
           </a>
+          @if (isFemale) {
+            <a class="nav-link nav-sub-link" routerLink="/female-cycle" routerLinkActive="active">
+              <mat-icon>female</mat-icon>
+              <span>{{ 'nav.cycle' | t }}</span>
+            </a>
+          }
           <button class="nav-link nav-sub-link" (click)="openPaceConverterDialog()">
             <mat-icon>speed</mat-icon>
             <span>{{ 'nav.converter' | t }}</span>
@@ -167,6 +173,12 @@
       </a>
 
       @if (isLoggedIn()) {
+        @if (isFemale) {
+          <a class="nav-link nav-sub-link" routerLink="/female-cycle" routerLinkActive="active" (click)="closeMobileMenu()">
+            <mat-icon>female</mat-icon>
+            <span>{{ 'nav.cycle' | t }}</span>
+          </a>
+        }
         <button class="nav-link nav-sub-link" (click)="openPaceConverterDialog()">
           <mat-icon>speed</mat-icon>
           <span>{{ 'nav.converter' | t }}</span>

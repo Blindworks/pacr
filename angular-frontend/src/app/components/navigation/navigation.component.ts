@@ -1,9 +1,12 @@
-import { Component, HostListener } from '@angular/core';
+import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { AuthService } from '../../services/auth.service';
+import { ApiService } from '../../services/api.service';
 import { TranslatePipe } from '../../i18n/translate.pipe';
 import { I18nService } from '../../services/i18n.service';
 import { Language } from '../../i18n/translations';
@@ -20,16 +23,31 @@ import { PaceConverterDialogComponent } from '../pace-converter-dialog/pace-conv
   templateUrl: './navigation.component.html',
   styleUrl: './navigation.component.scss'
 })
-export class NavigationComponent {
+export class NavigationComponent implements OnInit, OnDestroy {
   mobileMenuOpen = false;
   readonly languages: readonly Language[];
+  isFemale = false;
+  private readonly destroy$ = new Subject<void>();
 
   constructor(
     private authService: AuthService,
+    private apiService: ApiService,
     private i18nService: I18nService,
     private dialog: MatDialog
   ) {
     this.languages = this.i18nService.getSupportedLanguages();
+    this.authService.authState$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => this.loadCurrentUserGender());
+  }
+
+  ngOnInit(): void {
+    this.loadCurrentUserGender();
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   @HostListener('window:resize')
@@ -90,5 +108,23 @@ export class NavigationComponent {
       maxWidth: '95vw',
       maxHeight: '92vh'
     });
+  }
+
+  private loadCurrentUserGender(): void {
+    if (!this.isLoggedIn()) {
+      this.isFemale = false;
+      return;
+    }
+
+    this.apiService.getMe()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: user => {
+          this.isFemale = user.gender === 'FEMALE';
+        },
+        error: () => {
+          this.isFemale = false;
+        }
+      });
   }
 }
