@@ -1,7 +1,7 @@
 # Repository Guidelines
 
 ## Project Structure & Module Organization
-- `angular-frontend/`: Angular 19 client (Standalone Components + Material). Core app code is in `angular-frontend/src/app/{components,services,models}`; global styles in `angular-frontend/src/styles.scss`.
+- `angular/`: Angular 21 client (Standalone Components + Material). Core app code is in `angular/src/app/{components,services,models}`; global styles in `angular/src/styles.scss`.
 - `backend/`: Spring Boot API (`com.trainingsplan`). Follow the layered layout: `controller/`, `service/`, `repository/`, `entity/`, `dto/` under `backend/src/main/java/com/trainingsplan`.
 - Database migrations live in `backend/src/main/resources/db/changelog/changes` and are wired via `db.changelog-master.xml`.
 - Example plan payloads are stored at repository root as `*_training.json`.
@@ -9,7 +9,7 @@
 ## Build, Test, and Development Commands
 - Frontend setup/run:
 ```bash
-cd angular-frontend
+cd angular
 npm install
 npm start
 ```

@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>PACR Elite Analytics</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#b9f20d",
+                        "background-light": "#f8f8f5",
+                        "background-dark": "#1e2210",
+                    },
+                    fontFamily: {
+                        "display": ["Lexend", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Lexend', sans-serif;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #3f4922;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 antialiased">
+<div class="flex h-screen overflow-hidden">
+<!-- Sidebar Navigation -->
+<aside class="w-72 flex-shrink-0 bg-background-light dark:bg-background-dark border-r border-slate-200 dark:border-white/10 flex flex-col justify-between p-6">
+<div class="space-y-8">
+<!-- Brand -->
+<div class="flex items-center gap-3">
+<div class="size-10 bg-primary flex items-center justify-center rounded-lg">
+<span class="material-symbols-outlined text-background-dark font-bold">query_stats</span>
+</div>
+<h2 class="text-xl font-bold tracking-tight">PACR <span class="text-primary">ELITE</span></h2>
+</div>
+<!-- Profile Snippet -->
+<div class="flex items-center gap-3 p-3 rounded-xl bg-slate-100 dark:bg-white/5">
+<div class="size-12 rounded-full bg-cover bg-center border-2 border-primary/20" data-alt="User profile picture of a pro runner" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDHlW55Uvxsadr3uQ9vH4gF0dZtoPv1OquRImo0FF7sxW5hBvu1aw42PLfP_mOs1N9_d-TQQ783Q6KqS5mQxlImk-QhbuckLFZ6wAxdoyHwbybokxjyFekqnT7NgEmjjCH3vdQJUq_BIkd1vj1WWEFZIEj9f4PsLXRDvuWbqNiv0tpmmVyCKwl5S30P02tsdusmQGukzBDuO5l2bXQXKkaqM6CtDez7uTF9HZ02WzSUSI3sNr7fqlbnIqJlLEn_HJZ64NUhUIrdQ9A')"></div>
+<div>
+<p class="text-sm font-bold">Alex Rivera</p>
+<p class="text-xs text-slate-500 dark:text-slate-400">Pro Runner • Level 42</p>
+</div>
+</div>
+<!-- Nav Links -->
+<nav class="space-y-1">
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-primary/10 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="text-sm font-medium">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-primary/10 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined">exercise</span>
+<span class="text-sm font-medium">Activities</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-primary/20 text-primary border border-primary/20" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="text-sm font-medium">Analytics</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-primary/10 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined">calendar_today</span>
+<span class="text-sm font-medium">Training Plans</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-primary/10 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="text-sm font-medium">Settings</span>
+</a>
+</nav>
+</div>
+<!-- Upgrade Card -->
+<div class="p-4 rounded-xl bg-gradient-to-br from-primary to-[#8fb80a] text-background-dark">
+<p class="text-xs font-bold uppercase tracking-wider mb-1">PRO Membership</p>
+<p class="text-sm mb-3">Get advanced metabolic insights and race predictions.</p>
+<button class="w-full py-2 bg-background-dark text-primary rounded-lg text-xs font-bold hover:bg-black transition-colors">Upgrade Now</button>
+</div>
+</aside>
+<!-- Main Content -->
+<main class="flex-1 overflow-y-auto custom-scrollbar p-8">
+<!-- Header -->
+<header class="flex justify-between items-end mb-10">
+<div>
+<h1 class="text-4xl font-black tracking-tight mb-2">Analytics &amp; Performance</h1>
+<p class="text-slate-500 dark:text-slate-400">Deep dive into your physiological data and training progression.</p>
+</div>
+<div class="flex gap-3">
+<button class="flex items-center gap-2 px-4 py-2 border border-slate-200 dark:border-white/10 rounded-lg text-sm font-medium hover:bg-white dark:hover:bg-white/5 transition-colors">
+<span class="material-symbols-outlined text-[20px]">file_download</span>
+                    Export PDF
+                </button>
+<div class="h-10 w-40 flex items-center gap-2 bg-slate-100 dark:bg-white/5 rounded-lg px-3">
+<span class="material-symbols-outlined text-slate-400">calendar_month</span>
+<span class="text-sm font-medium">Last 6 Months</span>
+</div>
+</div>
+</header>
+<!-- Top Grid: Key Stats -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+<div class="p-6 rounded-2xl bg-white dark:bg-white/5 border border-slate-100 dark:border-white/5">
+<div class="flex justify-between items-start mb-4">
+<span class="text-xs font-bold text-slate-400 uppercase">Monthly Volume</span>
+<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-green-500/10 text-green-500">+12%</span>
+</div>
+<div class="flex items-baseline gap-2">
+<span class="text-3xl font-bold">428.5</span>
+<span class="text-sm font-medium text-slate-400">KM</span>
+</div>
+<div class="mt-4 w-full h-1 bg-slate-100 dark:bg-white/10 rounded-full overflow-hidden">
+<div class="h-full bg-primary" style="width: 78%"></div>
+</div>
+</div>
+<div class="p-6 rounded-2xl bg-white dark:bg-white/5 border border-slate-100 dark:border-white/5">
+<div class="flex justify-between items-start mb-4">
+<span class="text-xs font-bold text-slate-400 uppercase">Current VO2 Max</span>
+<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-green-500/10 text-green-500">+1.2</span>
+</div>
+<div class="flex items-baseline gap-2">
+<span class="text-3xl font-bold">62</span>
+<span class="text-sm font-medium text-slate-400">Elite</span>
+</div>
+<div class="mt-4 flex gap-1 items-center">
+<span class="material-symbols-outlined text-primary text-sm">trending_up</span>
+<span class="text-[11px] text-slate-500">Peak performance zone</span>
+</div>
+</div>
+<div class="p-6 rounded-2xl bg-white dark:bg-white/5 border border-slate-100 dark:border-white/5">
+<div class="flex justify-between items-start mb-4">
+<span class="text-xs font-bold text-slate-400 uppercase">Avg. Pace</span>
+<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-primary/10 text-primary">-5s/km</span>
+</div>
+<div class="flex items-baseline gap-2">
+<span class="text-3xl font-bold">4:42</span>
+<span class="text-sm font-medium text-slate-400">MIN/KM</span>
+</div>
+<div class="mt-4 flex gap-1 items-center">
+<span class="material-symbols-outlined text-slate-400 text-sm">speed</span>
+<span class="text-[11px] text-slate-500">Improving consistency</span>
+</div>
+</div>
+<div class="p-6 rounded-2xl bg-white dark:bg-white/5 border border-slate-100 dark:border-white/5">
+<div class="flex justify-between items-start mb-4">
+<span class="text-xs font-bold text-slate-400 uppercase">Training Load</span>
+<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-orange-500/10 text-orange-500">Productive</span>
+</div>
+<div class="flex items-baseline gap-2">
+<span class="text-3xl font-bold">754</span>
+<span class="text-sm font-medium text-slate-400">Score</span>
+</div>
+<div class="mt-4 flex gap-1 items-center">
+<span class="material-symbols-outlined text-orange-500 text-sm">bolt</span>
+<span class="text-[11px] text-slate-500">Recovery recommended in 12h</span>
+</div>
+</div>
+</div>
+<!-- Middle Grid: Charts -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+<!-- Monthly Volume Bar Chart -->
+<div class="bg-white dark:bg-white/5 border border-slate-100 dark:border-white/5 p-8 rounded-2xl">
+<div class="flex justify-between items-center mb-8">
+<h3 class="text-lg font-bold">Monthly Volume</h3>
+<div class="flex gap-4">
+<div class="flex items-center gap-1.5">
+<span class="size-2.5 rounded-full bg-primary"></span>
+<span class="text-xs text-slate-400">2024</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="size-2.5 rounded-full bg-slate-300 dark:bg-white/20"></span>
+<span class="text-xs text-slate-400">2023</span>
+</div>
+</div>
+</div>
+<div class="flex items-end justify-between h-56 px-2">
+<div class="flex flex-col items-center gap-2 w-full max-w-[40px]">
+<div class="w-full bg-primary/20 rounded-t-lg h-[40%] relative group">
+<div class="absolute bottom-0 w-full bg-primary rounded-t-lg h-[65%]"></div>
+</div>
+<span class="text-xs font-bold text-slate-400">Jan</span>
+</div>
+<div class="flex flex-col items-center gap-2 w-full max-w-[40px]">
+<div class="w-full bg-primary/20 rounded-t-lg h-[55%] relative group">
+<div class="absolute bottom-0 w-full bg-primary rounded-t-lg h-[70%]"></div>
+</div>
+<span class="text-xs font-bold text-slate-400">Feb</span>
+</div>
+<div class="flex flex-col items-center gap-2 w-full max-w-[40px]">
+<div class="w-full bg-primary/20 rounded-t-lg h-[45%] relative group">
+<div class="absolute bottom-0 w-full bg-primary rounded-t-lg h-[50%]"></div>
+</div>
+<span class="text-xs font-bold text-slate-400">Mar</span>
+</div>
+<div class="flex flex-col items-center gap-2 w-full max-w-[40px]">
+<div class="w-full bg-primary/20 rounded-t-lg h-[30%] relative group">
+<div class="absolute bottom-0 w-full bg-primary rounded-t-lg h-[40%]"></div>
+</div>
+<span class="text-xs font-bold text-slate-400">Apr</span>
+</div>
+<div class="flex flex-col items-center gap-2 w-full max-w-[40px]">
+<div class="w-full bg-primary/20 rounded-t-lg h-[80%] relative group">
+<div class="absolute bottom-0 w-full bg-primary rounded-t-lg h-[90%]"></div>
+</div>
+<span class="text-xs font-bold text-slate-400">May</span>
+</div>
+<div class="flex flex-col items-center gap-2 w-full max-w-[40px]">
+<div class="w-full bg-primary/20 rounded-t-lg h-[70%] relative group">
+<div class="absolute bottom-0 w-full bg-primary rounded-t-lg h-[85%]"></div>
+</div>
+<span class="text-xs font-bold text-slate-400">Jun</span>
+</div>
+</div>
+</div>
+<!-- Performance Trends Line Chart -->
+<div class="bg-white dark:bg-white/5 border border-slate-100 dark:border-white/5 p-8 rounded-2xl">
+<div class="flex justify-between items-center mb-8">
+<h3 class="text-lg font-bold">Fitness Trends</h3>
+<select class="bg-transparent border-none text-xs font-bold text-slate-400 focus:ring-0">
+<option>VO2 Max</option>
+<option>Resting HR</option>
+<option>Threshold</option>
+</select>
+</div>
+<div class="h-56 w-full relative">
+<svg class="w-full h-full" preserveaspectratio="none" viewbox="0 0 400 150">
+<defs>
+<lineargradient id="grad" x1="0%" x2="0%" y1="0%" y2="100%">
+<stop offset="0%" style="stop-color:#b9f20d;stop-opacity:0.2"></stop>
+<stop offset="100%" style="stop-color:#b9f20d;stop-opacity:0"></stop>
+</lineargradient>
+</defs>
+<path d="M0,120 Q50,110 80,90 T160,70 T240,80 T320,40 T400,20 L400,150 L0,150 Z" fill="url(#grad)"></path>
+<path d="M0,120 Q50,110 80,90 T160,70 T240,80 T320,40 T400,20" fill="none" stroke="#b9f20d" stroke-linecap="round" stroke-width="4"></path>
+</svg>
+<div class="flex justify-between mt-4">
+<span class="text-xs font-bold text-slate-400">Jan</span>
+<span class="text-xs font-bold text-slate-400">Feb</span>
+<span class="text-xs font-bold text-slate-400">Mar</span>
+<span class="text-xs font-bold text-slate-400">Apr</span>
+<span class="text-xs font-bold text-slate-400">May</span>
+<span class="text-xs font-bold text-slate-400">Jun</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Bottom Grid: Load Distribution & Personal Bests -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+<!-- Training Load Distribution -->
+<div class="lg:col-span-2 bg-white dark:bg-white/5 border border-slate-100 dark:border-white/5 p-8 rounded-2xl">
+<h3 class="text-lg font-bold mb-6">Training Intensity Distribution</h3>
+<div class="space-y-6">
+<div>
+<div class="flex justify-between text-sm mb-2">
+<span class="font-medium text-slate-400">Easy (Zone 1-2)</span>
+<span class="font-bold">65%</span>
+</div>
+<div class="w-full h-3 bg-slate-100 dark:bg-white/10 rounded-full">
+<div class="h-full bg-green-400 rounded-full" style="width: 65%"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between text-sm mb-2">
+<span class="font-medium text-slate-400">Tempo (Zone 3)</span>
+<span class="font-bold">20%</span>
+</div>
+<div class="w-full h-3 bg-slate-100 dark:bg-white/10 rounded-full">
+<div class="h-full bg-primary rounded-full" style="width: 20%"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between text-sm mb-2">
+<span class="font-medium text-slate-400">Threshold (Zone 4)</span>
+<span class="font-bold">10%</span>
+</div>
+<div class="w-full h-3 bg-slate-100 dark:bg-white/10 rounded-full">
+<div class="h-full bg-orange-400 rounded-full" style="width: 10%"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between text-sm mb-2">
+<span class="font-medium text-slate-400">Anaerobic (Zone 5)</span>
+<span class="font-bold">5%</span>
+</div>
+<div class="w-full h-3 bg-slate-100 dark:bg-white/10 rounded-full">
+<div class="h-full bg-red-400 rounded-full" style="width: 5%"></div>
+</div>
+</div>
+</div>
+<div class="mt-8 p-4 bg-primary/10 rounded-xl border border-primary/20">
+<p class="text-xs text-slate-400 font-medium">Coach's Insight</p>
+<p class="text-sm font-medium mt-1">Your 80/20 balance is slightly off. Consider reducing Tempo sessions to maximize aerobic efficiency.</p>
+</div>
+</div>
+<!-- Personal Bests -->
+<div class="bg-white dark:bg-white/5 border border-slate-100 dark:border-white/5 p-8 rounded-2xl">
+<div class="flex items-center gap-2 mb-6">
+<span class="material-symbols-outlined text-primary">emoji_events</span>
+<h3 class="text-lg font-bold">Personal Bests</h3>
+</div>
+<div class="space-y-4">
+<div class="flex items-center justify-between p-4 rounded-xl bg-slate-50 dark:bg-white/5 hover:bg-slate-100 dark:hover:bg-white/10 transition-colors cursor-pointer group">
+<div>
+<p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">5 Kilometers</p>
+<p class="text-xl font-black">18:42</p>
+</div>
+<span class="material-symbols-outlined text-slate-300 group-hover:text-primary">arrow_forward_ios</span>
+</div>
+<div class="flex items-center justify-between p-4 rounded-xl bg-slate-50 dark:bg-white/5 hover:bg-slate-100 dark:hover:bg-white/10 transition-colors cursor-pointer group">
+<div>
+<p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">10 Kilometers</p>
+<p class="text-xl font-black">39:15</p>
+</div>
+<span class="material-symbols-outlined text-slate-300 group-hover:text-primary">arrow_forward_ios</span>
+</div>
+<div class="flex items-center justify-between p-4 rounded-xl bg-slate-50 dark:bg-white/5 hover:bg-slate-100 dark:hover:bg-white/10 transition-colors cursor-pointer group">
+<div>
+<p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Half Marathon</p>
+<p class="text-xl font-black">1:24:08</p>
+</div>
+<span class="material-symbols-outlined text-slate-300 group-hover:text-primary">arrow_forward_ios</span>
+</div>
+<div class="flex items-center justify-between p-4 rounded-xl bg-slate-50 dark:bg-white/5 hover:bg-slate-100 dark:hover:bg-white/10 transition-colors cursor-pointer group">
+<div>
+<p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Full Marathon</p>
+<p class="text-xl font-black">2:58:33</p>
+</div>
+<span class="material-symbols-outlined text-slate-300 group-hover:text-primary">arrow_forward_ios</span>
+</div>
+</div>
+<button class="w-full mt-6 py-3 border-2 border-dashed border-slate-200 dark:border-white/10 rounded-xl text-xs font-bold text-slate-400 hover:border-primary hover:text-primary transition-all">
+                    Add New Goal
+                </button>
+</div>
+</div>
+</main>
+</div>
+</body></html>
