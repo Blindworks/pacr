@@ -7,6 +7,11 @@ export const routes: Routes = [
     data: { fullPage: true }
   },
   {
+    path: 'signup',
+    loadComponent: () => import('./components/signup/signup').then(m => m.Signup),
+    data: { fullPage: true }
+  },
+  {
     path: '',
     pathMatch: 'full',
     loadComponent: () => import('./components/dashboard/dashboard').then(m => m.Dashboard)

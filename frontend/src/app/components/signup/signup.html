@@ -1,0 +1,109 @@
+<div class="signup-page">
+  <div class="bg-overlay"></div>
+
+  <div class="signup-wrapper">
+    <header class="page-header">
+      <div class="brand">
+        <div class="brand-icon">
+          <svg fill="currentColor" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+            <path clip-rule="evenodd" d="M24 4H42V17.3333V30.6667H24V44H6V30.6667V17.3333H24V4Z" fill-rule="evenodd"></path>
+          </svg>
+        </div>
+        <span class="brand-name">PACR</span>
+      </div>
+      <div class="header-actions">
+        <span class="already-text">Already have an account?</span>
+        <a routerLink="/login" class="btn-login-link">Log In</a>
+      </div>
+    </header>
+
+    <main class="signup-main">
+      <div class="signup-container">
+        <div class="signup-heading">
+          <h1>Level Up Your Run</h1>
+          <p>Join the community and start tracking with PACR.</p>
+        </div>
+
+        <form (ngSubmit)="onSubmit()" class="signup-form">
+          <div class="field-group">
+            <label>Full Name</label>
+            <input
+              type="text"
+              [(ngModel)]="fullName"
+              name="fullName"
+              placeholder="Eliud Kipchoge"
+            />
+          </div>
+
+          <div class="field-group">
+            <label>Username</label>
+            <input
+              type="text"
+              [(ngModel)]="username"
+              name="username"
+              placeholder="@kipchoge_runs"
+            />
+          </div>
+
+          <div class="field-group">
+            <label>Email Address</label>
+            <input
+              type="email"
+              [(ngModel)]="email"
+              name="email"
+              placeholder="runner@example.com"
+              autocomplete="email"
+            />
+          </div>
+
+          <div class="field-group">
+            <label>Password</label>
+            <div class="password-wrapper">
+              <input
+                [type]="showPassword ? 'text' : 'password'"
+                [(ngModel)]="password"
+                name="password"
+                placeholder="At least 8 characters"
+                autocomplete="new-password"
+              />
+              <button type="button" class="toggle-password" (click)="showPassword = !showPassword">
+                <span class="material-symbols-outlined">{{ showPassword ? 'visibility_off' : 'visibility' }}</span>
+              </button>
+            </div>
+          </div>
+
+          <button type="submit" class="btn-join">JOIN PACR</button>
+        </form>
+
+        <div class="divider">
+          <span>Or sync with</span>
+        </div>
+
+        <div class="social-grid">
+          <button type="button" class="social-btn">
+            <span class="material-symbols-outlined">watch</span>
+            <span class="social-label">Garmin</span>
+          </button>
+          <button type="button" class="social-btn">
+            <span class="material-symbols-outlined">directions_run</span>
+            <span class="social-label">Strava</span>
+          </button>
+          <button type="button" class="social-btn">
+            <span class="material-symbols-outlined">google</span>
+            <span class="social-label">Google</span>
+          </button>
+        </div>
+
+        <p class="terms-text">
+          By signing up, you agree to our
+          <a href="#">Terms of Service</a> and
+          <a href="#">Privacy Policy</a>.
+        </p>
+      </div>
+    </main>
+
+    <footer class="page-footer">
+      <div class="footer-bar"></div>
+    </footer>
+  </div>
+</div>
