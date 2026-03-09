@@ -1,705 +1,512 @@
-<!doctype html>
-<html lang="de">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Pacr | Performance Training Reimagined</title>
-  <meta name="description" content="Pacr bringt Wettkampfziel, Wochenplan und Fortschritt in eine klare, moderne Plattform." data-i18n-content-de="Pacr bringt Wettkampfziel, Wochenplan und Fortschritt in eine klare, moderne Plattform." data-i18n-content-en="Pacr combines race goals, weekly planning, and progress tracking in one clear, modern platform.">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --bg-base: #0b0f1a;
-      --bg-elevated: #161d2e;
-      --bg-panel: #1a2235;
-      --accent-cyan: #00e5ff;
-      --accent-blue: #2d7bff;
-      --accent-purple: #7a5cff;
-      --text-primary: #eaf0ff;
-      --text-secondary: #9aa3b2;
-      --border: #1c2233;
-      --gradient-accent: linear-gradient(135deg, #00e5ff 0%, #2d7bff 50%, #7a5cff 100%);
-      --gradient-btn: linear-gradient(135deg, #2d7bff 0%, #7a5cff 100%);
-    }
-
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      margin: 0;
-      min-height: 100vh;
-      background: var(--bg-base);
-      color: var(--text-primary);
-      font-family: "Inter", "Helvetica Neue", sans-serif;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-    }
-
-    .page {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 56px 24px 80px;
-    }
-
-    .lang-switch {
-      position: absolute;
-      top: 16px;
-      right: 16px;
-      display: inline-flex;
-      border: 1px solid var(--border);
-      border-radius: 999px;
-      background: rgba(11, 15, 26, 0.55);
-      overflow: hidden;
-    }
-
-    .lang-btn {
-      border: 0;
-      background: transparent;
-      color: var(--text-secondary);
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 0.08em;
-      padding: 7px 12px;
-      cursor: pointer;
-    }
-
-    .lang-btn.active {
-      color: #ffffff;
-      background: rgba(45, 123, 255, 0.55);
-    }
-
-    .hero {
-      position: relative;
-      overflow: hidden;
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 72px 24px;
-      text-align: center;
-      background:
-        radial-gradient(circle at 20% 30%, rgba(0, 229, 255, 0.14), transparent 42%),
-        radial-gradient(circle at 82% 15%, rgba(122, 92, 255, 0.12), transparent 46%),
-        linear-gradient(160deg, #161d2e 0%, #101624 70%, #0d1320 100%);
-      animation: reveal 0.7s ease-out both;
-    }
-
-    .hero-glow {
-      position: absolute;
-      pointer-events: none;
-      width: 240px;
-      height: 240px;
-      border-radius: 50%;
-      filter: blur(56px);
-      opacity: 0.4;
-    }
-
-    .hero-glow-left {
-      top: -60px;
-      left: -80px;
-      background: rgba(0, 229, 255, 0.45);
-    }
-
-    .hero-glow-right {
-      top: -70px;
-      right: -60px;
-      background: rgba(122, 92, 255, 0.42);
-    }
-
-    .hero-kicker {
-      margin: 0 0 16px;
-      text-transform: uppercase;
-      letter-spacing: 0.14em;
-      font-size: 12px;
-      font-weight: 700;
-      color: var(--accent-cyan);
-    }
-
-    .hero-logo {
-      width: min(320px, 70vw);
-      height: auto;
-      margin: 0 auto 24px;
-      display: block;
-      filter: drop-shadow(0 10px 28px rgba(0, 0, 0, 0.38));
-      animation: reveal 0.7s ease-out both;
-    }
-
-    h1 {
-      margin: 0;
-      font-size: clamp(2rem, 4vw, 3.6rem);
-      line-height: 1.08;
-      letter-spacing: -0.02em;
-    }
-
-    .gradient-text {
-      background: var(--gradient-accent);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    .hero-subtitle {
-      margin: 18px auto 0;
-      max-width: 700px;
-      color: var(--text-secondary);
-      font-size: clamp(1rem, 2vw, 1.15rem);
-      line-height: 1.65;
-    }
-
-    .hero-actions {
-      margin-top: 34px;
-      display: flex;
-      justify-content: center;
-      gap: 14px;
-      flex-wrap: wrap;
-    }
-
-    .hero-legal-note {
-      margin: 14px 0 0;
-      font-size: 0.9rem;
-      color: var(--text-secondary);
-      text-align: center;
-    }
-
-    .hero-legal-note a {
-      color: var(--accent-cyan);
-      text-decoration: underline;
-      text-underline-offset: 3px;
-    }
-
-    .hero-legal-note a:hover {
-      color: #7ff3ff;
-    }
-
-    .cta {
-      text-decoration: none;
-      font-size: 14px;
-      font-weight: 700;
-      border-radius: 10px;
-      padding: 12px 20px;
-      border: 1px solid transparent;
-      transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
-    }
-
-    .cta-primary {
-      color: #ffffff;
-      background: var(--gradient-btn);
-      box-shadow: 0 8px 24px rgba(45, 123, 255, 0.35);
-    }
-
-    .cta-secondary {
-      color: var(--text-primary);
-      background: rgba(255, 255, 255, 0.04);
-      border-color: var(--border);
-    }
-
-    .cta:hover {
-      transform: translateY(-2px);
-    }
-
-    .cta-primary:hover {
-      box-shadow: 0 12px 30px rgba(45, 123, 255, 0.48);
-    }
-
-    .cta-secondary:hover {
-      border-color: var(--accent-blue);
-    }
-
-    .features-section {
-      margin-top: 28px;
-    }
-
-    .features-container {
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 32px 20px;
-      background:
-        radial-gradient(circle at 18% 18%, rgba(0, 229, 255, 0.08), transparent 38%),
-        radial-gradient(circle at 82% 10%, rgba(122, 92, 255, 0.07), transparent 42%),
-        linear-gradient(160deg, #151c2c 0%, #0f1522 72%, #0c1220 100%);
-    }
-
-    .features-grid {
-      margin-top: 22px;
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 14px;
-    }
-
-    .features-section .feature-card {
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      background: linear-gradient(165deg, rgba(22, 29, 46, 0.9) 0%, rgba(15, 21, 34, 0.95) 100%);
-      padding: 18px;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.22);
-      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
-    }
-
-    .features-section .feature-card.is-hidden {
-      opacity: 0;
-      transform: translateY(12px);
-    }
-
-    .features-section .feature-card.is-visible {
-      opacity: 1;
-      transform: translateY(0);
-      transition: opacity 0.42s ease-out, transform 0.42s ease-out;
-    }
-
-    .features-section .feature-card:hover {
-      transform: translateY(-3px);
-      border-color: rgba(45, 123, 255, 0.45);
-      box-shadow: 0 12px 26px rgba(0, 0, 0, 0.28);
-    }
-
-    .feature-icon {
-      width: 32px;
-      height: 32px;
-      border-radius: 10px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--accent-cyan);
-      border: 1px solid rgba(45, 123, 255, 0.38);
-      background: rgba(45, 123, 255, 0.09);
-    }
-
-    .feature-best-for {
-      margin: 12px 0 0;
-      color: var(--text-secondary);
-      font-size: 0.9rem;
-      line-height: 1.5;
-    }
-
-    .features-section .section-kicker {
-      margin: 0;
-      text-transform: uppercase;
-      letter-spacing: 0.14em;
-      font-size: 12px;
-      font-weight: 700;
-      color: var(--accent-cyan);
-      text-align: center;
-    }
-
-    .features-section h2 {
-      margin: 10px 0 0;
-      text-align: center;
-      font-size: clamp(1.5rem, 3vw, 2.2rem);
-      line-height: 1.22;
-      letter-spacing: -0.01em;
-    }
-
-    .features-section .section-subtitle {
-      margin: 14px auto 0;
-      max-width: 760px;
-      text-align: center;
-      color: var(--text-secondary);
-      line-height: 1.6;
-    }
-
-    .features-section h3 {
-      margin: 12px 0 10px;
-      font-size: 1rem;
-      line-height: 1.35;
-    }
-
-    .features-section .feature-description {
-      margin: 0;
-      color: var(--text-secondary);
-      line-height: 1.58;
-      font-size: 0.94rem;
-    }
-
-    .features-section .section-cta {
-      margin-top: 24px;
-      text-align: center;
-    }
-
-    .features-section .section-cta h3 {
-      margin: 0 0 12px;
-      font-size: 1.3rem;
-      line-height: 1.3;
-    }
-
-    .coming-soon-section {
-      margin-top: 24px;
-    }
-
-    .coming-container {
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      border-radius: 20px;
-      padding: 30px 20px;
-      background:
-        radial-gradient(circle at 78% 8%, rgba(45, 123, 255, 0.08), transparent 36%),
-        linear-gradient(165deg, rgba(16, 22, 36, 0.9) 0%, rgba(12, 18, 30, 0.94) 100%);
-      backdrop-filter: blur(2px);
-    }
-
-    .coming-header h2 {
-      margin: 0;
-      font-size: clamp(1.45rem, 2.9vw, 2rem);
-      line-height: 1.25;
-      letter-spacing: -0.01em;
-      text-align: center;
-    }
-
-    .coming-header p {
-      margin: 12px auto 0;
-      max-width: 760px;
-      text-align: center;
-      color: var(--text-secondary);
-      line-height: 1.6;
-    }
-
-    .coming-grid {
-      margin-top: 20px;
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 14px;
-    }
-
-    .coming-card {
-      position: relative;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 14px;
-      padding: 18px;
-      background: rgba(21, 28, 44, 0.74);
-      transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
-    }
-
-    .coming-card.is-hidden {
-      opacity: 0;
-      transform: translateY(12px);
-    }
-
-    .coming-card.is-visible {
-      opacity: 1;
-      transform: translateY(0);
-      transition: opacity 0.42s ease-out, transform 0.42s ease-out;
-    }
-
-    .coming-card:hover {
-      transform: translateY(-3px);
-      border-color: rgba(45, 123, 255, 0.45);
-      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.24);
-    }
-
-    .coming-badge {
-      position: absolute;
-      top: 12px;
-      right: 12px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      padding: 4px 8px;
-      border-radius: 999px;
-      border: 1px solid rgba(45, 123, 255, 0.55);
-      background: rgba(45, 123, 255, 0.11);
-      color: var(--text-primary);
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-    }
-
-    .coming-card h3 {
-      margin: 0 0 10px;
-      font-size: 1rem;
-      line-height: 1.35;
-      padding-right: 90px;
-    }
-
-    .coming-description {
-      margin: 0;
-      color: var(--text-secondary);
-      font-size: 0.94rem;
-      line-height: 1.55;
-    }
-
-    .coming-value {
-      margin: 10px 0 0;
-      color: var(--text-secondary);
-      font-size: 0.9rem;
-      line-height: 1.5;
-    }
-
-    .coming-mini-cta {
-      margin-top: 22px;
-      text-align: center;
-    }
-
-    .coming-mini-cta h3 {
-      margin: 0 0 12px;
-      font-size: 1.2rem;
-      line-height: 1.3;
-    }
-
-    .features {
-      margin-top: 28px;
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 14px;
-    }
-
-    .feature-card {
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      background: linear-gradient(165deg, rgba(22, 29, 46, 0.9) 0%, rgba(15, 21, 34, 0.95) 100%);
-      padding: 22px;
-      animation: reveal 0.8s ease-out both;
-    }
-
-    .feature-card h2 {
-      margin: 0 0 12px;
-      font-size: 1.05rem;
-      font-weight: 700;
-    }
-
-    .feature-card p {
-      margin: 0;
-      color: var(--text-secondary);
-      line-height: 1.6;
-    }
-
-    .legal-footer {
-      margin-top: 16px;
-      display: flex;
-      justify-content: center;
-      gap: 14px;
-      flex-wrap: wrap;
-      font-size: 12px;
-      color: var(--text-secondary);
-    }
-
-    .legal-footer a {
-      color: var(--text-secondary);
-      text-decoration: none;
-      border-bottom: 1px solid transparent;
-      transition: border-color 0.18s ease, color 0.18s ease;
-    }
-
-    .legal-footer a:hover {
-      color: var(--text-primary);
-      border-color: var(--accent-blue);
-    }
-
-    @keyframes reveal {
-      from {
-        opacity: 0;
-        transform: translateY(16px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
+<!DOCTYPE html>
+
+<html class="scroll-smooth" lang="de"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>PACR | Die adaptive Lauf-App aus Europa</title>
+<meta content="PACR ist die erste Lauf-App, die sich in Echtzeit an dein Tagesgefühl anpasst. DSGVO-konform und Made in Germany." name="description"/>
+<!-- Fonts: Lexend -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS v3 -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            charcoal: '#121212',
+            'electric-lime': '#b9f20d',
+            'deep-gray': '#1e1e1e',
+            'soft-gray': '#2a2a2a',
+          },
+          fontFamily: {
+            sans: ['Lexend', 'sans-serif'],
+          },
+        }
       }
     }
-
-    @media (max-width: 900px) {
-      .hero {
-        padding: 56px 20px;
-      }
-
-      .features {
-        grid-template-columns: 1fr;
-      }
+  </script>
+<style data-purpose="custom-animations">
+    .hover-lime-shadow:hover {
+      box-shadow: 0 0 20px rgba(185, 242, 13, 0.2);
     }
-
-    @media (min-width: 700px) {
-      .features-container {
-        padding: 36px 24px;
-      }
-
-      .features-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-
-      .coming-container {
-        padding: 34px 24px;
-      }
-
-      .coming-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
+    details summary::-webkit-details-marker {
+      display: none;
     }
-
-    @media (min-width: 1080px) {
-      .features-grid {
-        grid-template-columns: repeat(4, minmax(0, 1fr));
-      }
-
-      .coming-grid {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-      }
+    .gradient-overlay {
+      background: linear-gradient(180deg, rgba(18,18,18,0) 0%, rgba(18,18,18,1) 100%);
     }
   </style>
 </head>
-<body data-title-de="Pacr | Performance Training Reimagined" data-title-en="Pacr | Performance Training Reimagined">
-  <main class="page">
-    <section class="hero">
-      <div class="lang-switch">
-        <button class="lang-btn" data-lang-switch="de" aria-pressed="false">DE</button>
-        <button class="lang-btn" data-lang-switch="en" aria-pressed="false">EN</button>
-      </div>
-      <div class="hero-glow hero-glow-left"></div>
-      <div class="hero-glow hero-glow-right"></div>
-      <img class="hero-logo" src="pacr_logo.png" alt="PACR Logo">
-      <p class="hero-kicker" data-i18n-de="Performance Training Reimagined" data-i18n-en="Performance Training Reimagined">Performance Training Reimagined</p>
-      <h1 data-i18n-html-de="<span class='gradient-text'>Pacr</span> fuer deinen naechsten Wettkampf." data-i18n-html-en="<span class='gradient-text'>Pacr</span> for your next race."><span class="gradient-text">Pacr</span> fuer deinen naechsten Wettkampf.</h1>
-      <p class="hero-subtitle" data-i18n-de="Plane strukturiert, trainiere konsistent und behalte deinen Fortschritt in jeder Trainingswoche im Blick." data-i18n-en="Plan with structure, train consistently, and track your progress every week.">
-        Plane strukturiert, trainiere konsistent und behalte deinen Fortschritt in jeder Trainingswoche im Blick.
-      </p>
-      <div class="hero-actions">
-        <a class="cta cta-primary" href="features.html" data-i18n-de="Jetzt starten" data-i18n-en="Get started">Jetzt starten</a>
-        <a class="cta cta-secondary" href="contact.html" data-i18n-de="Kontakt" data-i18n-en="Contact">Kontakt</a>
-        <a class="cta cta-secondary" href="datenschutz.html" data-i18n-de="Datenschutz" data-i18n-en="Privacy Policy">Datenschutz</a>
-      </div>
-      <p class="hero-legal-note" data-i18n-html-de="Direkter Link zur Unternehmens-Datenschutzerklaerung: <a href='datenschutz.html'>datenschutz.html</a>" data-i18n-html-en="Direct company privacy policy link: <a href='datenschutz.html'>privacy policy</a>">
-        Direkter Link zur Unternehmens-Datenschutzerklaerung: <a href="datenschutz.html">datenschutz.html</a>
-      </p>
-    </section>
-
-    <section class="features-section" id="features" aria-labelledby="features-title">
-      <div class="features-container">
-        <p class="section-kicker" data-i18n-de="Features" data-i18n-en="Features">Features</p>
-        <h2 id="features-title" data-i18n-de="Trainiere wie mit einem Coach - angetrieben von deinen Strava-Runs." data-i18n-en="Train like you have a coach - powered by your Strava runs.">Trainiere wie mit einem Coach - angetrieben von deinen Strava-Runs.</h2>
-        <p class="section-subtitle" data-i18n-de="PACR verwandelt rohe Aktivitaetsdaten in Strain-, Readiness- und Fortschritts-Insights, mit denen du wirklich arbeiten kannst." data-i18n-en="PACR turns raw activity data into Strain, Readiness, and progress insights you can actually act on.">
-          PACR verwandelt rohe Aktivitaetsdaten in Strain-, Readiness- und Fortschritts-Insights, mit denen du wirklich arbeiten kannst.
+<body class="bg-charcoal text-white font-sans antialiased">
+<!-- BEGIN: Navigation -->
+<nav class="fixed top-0 w-full z-50 bg-charcoal/80 backdrop-blur-md border-b border-white/5">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex justify-between items-center h-20">
+<div class="flex-shrink-0 flex items-center">
+<span class="text-3xl font-extrabold tracking-tighter text-white">PACR<span class="text-electric-lime">.</span></span>
+</div>
+<div class="flex items-center space-x-4">
+<a class="bg-electric-lime hover:bg-[#a6d80c] text-charcoal font-bold py-2.5 px-6 rounded-full transition-all duration-300 transform hover:scale-105 text-sm sm:text-base" href="#early-access">
+            Frühzugang sichern
+          </a>
+</div>
+</div>
+</div>
+</nav>
+<!-- END: Navigation -->
+<main class="pt-20">
+<!-- BEGIN: HeroSection -->
+<section class="relative min-h-[90vh] flex items-center overflow-hidden py-20">
+<div class="absolute inset-0 z-0">
+<img alt="Runner at dawn" class="w-full h-full object-cover opacity-30 grayscale hover:grayscale-0 transition-all duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA1tr228Y2v0NUZwtqBdAIgPIc_k65ZIMNBv6V6L3KVZkSlh032Iw4oVE9JsAJSFOPhBeccrjCnSxQjy_PCTD5z6gLoHISXfYrO8I3bP5V5UN3laIbCiu7Ou3Cmvx2bHzyQOCeiFAFQcq4pncDGCpKeg-5Ez1suqq0TuDPMnqDIj-pMPll2Fw9hco8F8EZsiZyTwV4FcR1GqsRr8ZBf2N2VarPt_sRBSLnXfcS1PlqS4HhsFv63owJ77EmkBNK5YHu80iEQIVoioBM"/>
+<div class="absolute inset-0 gradient-overlay"></div>
+</div>
+<div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+<!-- Badge -->
+<div class="inline-flex items-center space-x-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-4 py-1.5 mb-8 animate-fade-in">
+<span class="text-blue-400">🇪🇺</span>
+<span class="text-xs sm:text-sm font-medium uppercase tracking-wider">Europäische App · DSGVO-konform · Bald verfügbar</span>
+</div>
+<h1 class="text-4xl md:text-6xl lg:text-7xl font-extrabold leading-tight mb-6 max-w-4xl mx-auto">
+          Heute nicht so gut drauf? <br/>
+<span class="text-electric-lime">Dein Plan weiß es.</span>
+</h1>
+<p class="text-lg md:text-xl text-gray-400 max-w-2xl mx-auto mb-10 leading-relaxed">
+          PACR ist die erste Lauf-App, die sich in Echtzeit an dein Tagesgefühl anpasst – nicht an einen starren Kalender. Du sagst, wie du dich fühlst. PACR passt den Plan sofort an.
         </p>
-
-        <div class="features-grid">
-          <div class="feature-card">
-            <div class="feature-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h4l2-5 4 10 2-5h4"></path></svg>
-            </div>
-            <h3 data-i18n-de="Herzfrequenzzonen &amp; Zeit in der Zone" data-i18n-en="Heart Rate Zones &amp; Time-in-Zone">Herzfrequenzzonen &amp; Zeit in der Zone</h3>
-            <p class="feature-description" data-i18n-de="Sieh sofort, wo deine Belastung wirklich stattgefunden hat. Wir berechnen eine praezise Zeit-in-Zone aus deinem Herzfrequenz-Stream - auch bei ungleichmaessiger Abtastung." data-i18n-en="Instantly see where your effort really happened. We compute accurate time-in-zone from your heart rate stream - even with uneven sampling.">Sieh sofort, wo deine Belastung wirklich stattgefunden hat. Wir berechnen eine praezise Zeit-in-Zone aus deinem Herzfrequenz-Stream - auch bei ungleichmaessiger Abtastung.</p>
-            <p class="feature-best-for" data-i18n-html-de="<strong>Am besten fuer:</strong> Aerobe Basis aufbauen &amp; Intensitaet steuern." data-i18n-html-en="<strong>Best for:</strong> Building aerobic base &amp; controlling intensity."><strong>Am besten fuer:</strong> Aerobe Basis aufbauen &amp; Intensitaet steuern.</p>
-          </div>
-          <div class="feature-card">
-            <div class="feature-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15l4-4 3 3 6-6 3 3"></path><path d="M20 10V6h-4"></path></svg>
-            </div>
-            <h3 data-i18n-de="Session Strain Score" data-i18n-en="Session Strain Score">Session Strain Score</h3>
-            <p class="feature-description" data-i18n-de="Ein einzelner WHOOP-aehnlicher Strain-Score fuer jeden Lauf. Nach Intensitaet gewichtet, damit ein lockerer Jog und ein hartes Workout nicht gleich aussehen." data-i18n-en="A single WHOOP-style Strain score for every run. Weighted by intensity so an easy jog and a hard workout don&apos;t look the same.">Ein einzelner WHOOP-aehnlicher Strain-Score fuer jeden Lauf. Nach Intensitaet gewichtet, damit ein lockerer Jog und ein hartes Workout nicht gleich aussehen.</p>
-            <p class="feature-best-for" data-i18n-html-de="<strong>Am besten fuer:</strong> Taegliche Trainingslast und Konstanz." data-i18n-html-en="<strong>Best for:</strong> Daily training load and consistency."><strong>Am besten fuer:</strong> Taegliche Trainingslast und Konstanz.</p>
-          </div>
-          <div class="feature-card">
-            <div class="feature-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 18h16"></path><path d="M7 18V9"></path><path d="M12 18V6"></path><path d="M17 18v-4"></path></svg>
-            </div>
-            <h3 data-i18n-de="TRIMP-Last (Science Mode)" data-i18n-en="TRIMP Load (Science Mode)">TRIMP-Last (Science Mode)</h3>
-            <p class="feature-description" data-i18n-de="Du bevorzugst klassische Sportwissenschaft? TRIMP uebersetzt Herzfrequenz-Intensitaet in eine Trainingslast-Metrik, die du ueber Wochen trenden kannst." data-i18n-en="Prefer classic sports science? TRIMP turns heart rate intensity into a training load metric you can trend over weeks.">Du bevorzugst klassische Sportwissenschaft? TRIMP uebersetzt Herzfrequenz-Intensitaet in eine Trainingslast-Metrik, die du ueber Wochen trenden kannst.</p>
-            <p class="feature-best-for" data-i18n-html-de="<strong>Am besten fuer:</strong> Strukturierte Plaene und langfristiges Load-Tracking." data-i18n-html-en="<strong>Best for:</strong> Structured plans and long-term load tracking."><strong>Am besten fuer:</strong> Strukturierte Plaene und langfristiges Load-Tracking.</p>
-          </div>
-          <div class="feature-card">
-            <div class="feature-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 6h14"></path><path d="M5 12h8"></path><path d="M5 18h4"></path></svg>
-            </div>
-            <h3 data-i18n-de="Aerobic Decoupling (HR Drift)" data-i18n-en="Aerobic Decoupling (HR Drift)">Aerobic Decoupling (HR Drift)</h3>
-            <p class="feature-description" data-i18n-de="Erkenne versteckte Ermuedung und Ausdauergrenzen. HR Drift zeigt, wenn die zweite Haelfte deines Laufs mehr kostet als die erste." data-i18n-en="Detect hidden fatigue and endurance limitations. HR drift shows when the second half of your run starts costing more than the first.">Erkenne versteckte Ermuedung und Ausdauergrenzen. HR Drift zeigt, wenn die zweite Haelfte deines Laufs mehr kostet als die erste.</p>
-            <p class="feature-best-for" data-i18n-html-de="<strong>Am besten fuer:</strong> Grundlagenausdauer und Pace-Disziplin." data-i18n-html-en="<strong>Best for:</strong> Base endurance and pacing discipline."><strong>Am besten fuer:</strong> Grundlagenausdauer und Pace-Disziplin.</p>
-          </div>
-          <div class="feature-card">
-            <div class="feature-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 16c3-6 6-8 9-8s5 2 7 6"></path><circle cx="7" cy="16" r="1.5"></circle><circle cx="17" cy="14" r="1.5"></circle></svg>
-            </div>
-            <h3 data-i18n-de="Efficiency Factor (EF) &amp; Trends" data-i18n-en="Efficiency Factor (EF) &amp; Trends">Efficiency Factor (EF) &amp; Trends</h3>
-            <p class="feature-description" data-i18n-de="Miss Fortschritt ohne Ratespiel: Tempo relativ zur Herzfrequenz. Verfolge rollierende 7/28-Tage-Trends, um den Fitnessaufbau zu sehen." data-i18n-en="Measure progress without guesswork: speed relative to heart rate. Track rolling 7/28-day trends to see fitness build up.">Miss Fortschritt ohne Ratespiel: Tempo relativ zur Herzfrequenz. Verfolge rollierende 7/28-Tage-Trends, um den Fitnessaufbau zu sehen.</p>
-            <p class="feature-best-for" data-i18n-html-de="<strong>Am besten fuer:</strong> Laufoekonomie &amp; aerobe Verbesserung." data-i18n-html-en="<strong>Best for:</strong> Running economy &amp; aerobic improvement."><strong>Am besten fuer:</strong> Laufoekonomie &amp; aerobe Verbesserung.</p>
-          </div>
-          <div class="feature-card">
-            <div class="feature-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 18h16"></path><path d="M7 18V12"></path><path d="M12 18V8"></path><path d="M17 18V5"></path></svg>
-            </div>
-            <h3 data-i18n-de="Akute vs. chronische Last + ACWR-Risiko-Flags" data-i18n-en="Acute vs Chronic Load + ACWR Risk Flags">Akute vs. chronische Last + ACWR-Risiko-Flags</h3>
-            <p class="feature-description" data-i18n-de="Erkenne, wenn du zu viel zu schnell stapelst. ACWR markiert Ueberlastungsrisiken auf Basis deiner aktuellen vs. deiner Basis-Trainingslast." data-i18n-en="Know when you&apos;re stacking too much too fast. ACWR flags overload risk using your recent vs. baseline training load.">Erkenne, wenn du zu viel zu schnell stapelst. ACWR markiert Ueberlastungsrisiken auf Basis deiner aktuellen vs. deiner Basis-Trainingslast.</p>
-            <p class="feature-best-for" data-i18n-html-de="<strong>Am besten fuer:</strong> Gesund bleiben und Lastspitzen vermeiden." data-i18n-html-en="<strong>Best for:</strong> Staying healthy and avoiding spikes."><strong>Am besten fuer:</strong> Gesund bleiben und Lastspitzen vermeiden.</p>
-          </div>
-          <div class="feature-card">
-            <div class="feature-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18"></path><path d="M3 12h18"></path><circle cx="12" cy="12" r="8"></circle></svg>
-            </div>
-            <h3 data-i18n-de="Readiness Proxy (ohne HRV erforderlich)" data-i18n-en="Readiness Proxy (No HRV Required)">Readiness Proxy (ohne HRV erforderlich)</h3>
-            <p class="feature-description" data-i18n-de="Erhalte eine praktische Empfehlung &quot;Heute: Leicht / Moderat / Hart / Pause&quot; auf Basis von Last, Intensitaet und Drift - auch ohne Schlaf-/HRV-Daten." data-i18n-en="Get a practical &quot;Today: Easy / Moderate / Hard / Rest&quot; recommendation based on your load, intensity, and drift - even without sleep/HRV data.">Erhalte eine praktische Empfehlung &quot;Heute: Leicht / Moderat / Hart / Pause&quot; auf Basis von Last, Intensitaet und Drift - auch ohne Schlaf-/HRV-Daten.</p>
-            <p class="feature-best-for" data-i18n-html-de="<strong>Am besten fuer:</strong> Smarte Entscheidungen von Tag zu Tag." data-i18n-html-en="<strong>Best for:</strong> Smart day-to-day decisions."><strong>Am besten fuer:</strong> Smarte Entscheidungen von Tag zu Tag.</p>
-          </div>
-          <div class="feature-card">
-            <div class="feature-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h16"></path><path d="M6 16l3-3 3 2 4-6 2 2"></path></svg>
-            </div>
-            <h3 data-i18n-de="Coach Cards (erklaerbare Insights)" data-i18n-en="Coach Cards (Explainable Insights)">Coach Cards (erklaerbare Insights)</h3>
-            <p class="feature-description" data-i18n-de="Keine Black Box. PACR sagt dir in klaren Punkten, warum eine Trainingsintensitaet empfohlen wird." data-i18n-en="No black box. PACR tells you why it recommends a training intensity - in clear bullets you can trust.">Keine Black Box. PACR sagt dir in klaren Punkten, warum eine Trainingsintensitaet empfohlen wird.</p>
-            <p class="feature-best-for" data-i18n-html-de="<strong>Am besten fuer:</strong> Schnell umsetzbare Handlungsempfehlungen." data-i18n-html-en="<strong>Best for:</strong> Actionable guidance, fast."><strong>Am besten fuer:</strong> Schnell umsetzbare Handlungsempfehlungen.</p>
-          </div>
-        </div>
-
-        <div class="section-cta">
-          <h3 data-i18n-de="Bereit, deinen echten Strain zu sehen?" data-i18n-en="Ready to see your real Strain?">Bereit, deinen echten Strain zu sehen?</h3>
-          <a class="cta cta-primary" href="contact.html" data-i18n-de="Verbinde dein Strava" data-i18n-en="Connect your Strava">Verbinde dein Strava</a>
-        </div>
-      </div>
-    </section>
-
-    <section class="coming-soon-section" id="coming-soon" aria-labelledby="coming-soon-title">
-      <div class="coming-container">
-        <div class="coming-header">
-          <h2 id="coming-soon-title">What&apos;s next for PACR</h2>
-          <p>We&apos;re building the most intelligent performance system for runners - and this is just the beginning.</p>
-        </div>
-
-        <div class="coming-grid">
-          <div class="coming-card">
-            <span class="coming-badge">Coming Soon</span>
-            <h3>Critical Pace &amp; Performance Modeling</h3>
-            <p class="coming-description">Automatically calculate your critical pace and anaerobic capacity from real race efforts and hard sessions.</p>
-            <p class="coming-value"><strong>Value:</strong> Race prediction and pacing strategy built on real data.</p>
-          </div>
-          <div class="coming-card">
-            <span class="coming-badge">Coming Soon</span>
-            <h3>Real Recovery (HRV + Sleep Integration)</h3>
-            <p class="coming-description">Connect Garmin, Apple Health, or WHOOP to unlock full recovery scoring based on HRV and sleep quality.</p>
-            <p class="coming-value"><strong>Value:</strong> True readiness instead of load-only estimation.</p>
-          </div>
-          <div class="coming-card">
-            <span class="coming-badge">Coming Soon</span>
-            <h3>Race Predictor Engine</h3>
-            <p class="coming-description">Dynamic 5K, 10K, Half, and Marathon predictions updated weekly based on your fitness trend.</p>
-            <p class="coming-value"><strong>Value:</strong> See exactly where your training is taking you.</p>
-          </div>
-          <div class="coming-card">
-            <span class="coming-badge">Coming Soon</span>
-            <h3>Fatigue Pattern Detection</h3>
-            <p class="coming-description">Machine learning identifies recurring overload patterns before performance drops.</p>
-            <p class="coming-value"><strong>Value:</strong> Prevent stagnation and overtraining cycles.</p>
-          </div>
-          <div class="coming-card">
-            <span class="coming-badge">Coming Soon</span>
-            <h3>Heat &amp; Elevation Adjustment Model</h3>
-            <p class="coming-description">Automatically normalize performance for temperature, humidity, and elevation gain.</p>
-            <p class="coming-value"><strong>Value:</strong> Compare efforts fairly across conditions.</p>
-          </div>
-          <div class="coming-card">
-            <span class="coming-badge">Coming Soon</span>
-            <h3>AI Training Recommendations</h3>
-            <p class="coming-description">Personalized weekly suggestions based on load, trend, and performance signals.</p>
-            <p class="coming-value"><strong>Value:</strong> Train smarter without hiring a coach.</p>
-          </div>
-        </div>
-
-        <div class="coming-mini-cta">
-          <h3>Be first when these go live.</h3>
-          <a class="cta cta-secondary" href="contact.html">Join the early access list</a>
-        </div>
-      </div>
-    </section>
-
-    <footer class="legal-footer">
-      <a href="impressum.html" data-i18n-de="Impressum" data-i18n-en="Legal Notice">Impressum</a>
-      <a href="datenschutz.html" data-i18n-de="Datenschutz" data-i18n-en="Privacy Policy">Datenschutz</a>
-    </footer>
-  </main>
-  <script src="i18n.js"></script>
-  <script src="main.js"></script>
-</body>
-</html>
-
+<!-- CTA Form -->
+<div class="max-w-md mx-auto mb-6" id="early-access">
+<form class="flex flex-col sm:flex-row gap-3">
+<input class="flex-grow bg-soft-gray border-none rounded-xl px-6 py-4 focus:ring-2 focus:ring-electric-lime text-white placeholder-gray-500" placeholder="deine@email.de" required="" type="email"/>
+<button class="bg-electric-lime text-charcoal font-bold px-8 py-4 rounded-xl hover:bg-[#a6d80c] transition-colors whitespace-nowrap" type="submit">
+              Frühzugang sichern →
+            </button>
+</form>
+</div>
+<!-- Trust Line -->
+<div class="flex flex-wrap justify-center gap-4 text-xs md:text-sm text-gray-500 mb-16">
+<span>✓ Kostenlos &amp; unverbindlich</span>
+<span>✓ Keine Weitergabe deiner Daten</span>
+<span>✓ DSGVO-konform</span>
+</div>
+<!-- Stats -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto border-t border-white/10 pt-12">
+<div class="flex items-center justify-center space-x-4">
+<div class="w-12 h-12 bg-soft-gray rounded-full flex items-center justify-center text-electric-lime">
+<svg class="h-6 w-6" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+<div class="text-left">
+<div class="text-xl font-bold">Schlaf-Analyse</div>
+<p class="text-xs text-gray-400 uppercase tracking-widest">Optimale Erholung</p>
+</div>
+</div>
+<div class="flex items-center justify-center space-x-4">
+<div class="w-12 h-12 bg-soft-gray rounded-full flex items-center justify-center text-electric-lime">
+<svg class="h-6 w-6" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+<div class="text-left">
+<div class="text-xl font-bold">Smart Calendar</div>
+<p class="text-xs text-gray-400 uppercase tracking-widest">Live Adaption</p>
+</div>
+</div>
+<div class="flex items-center justify-center space-x-4">
+<div class="w-12 h-12 bg-soft-gray rounded-full flex items-center justify-center text-electric-lime">
+<svg class="h-6 w-6" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+<div class="text-left">
+<div class="text-xl font-bold">Cycle-Sync</div>
+<p class="text-xs text-gray-400 uppercase tracking-widest">Hormonelles Training</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- END: HeroSection -->
+<!-- BEGIN: ProblemSection -->
+<section class="py-24 bg-deep-gray">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="text-center mb-16">
+<span class="text-electric-lime font-semibold uppercase tracking-[0.2em] text-sm">Kennst du das?</span>
+<h2 class="text-3xl md:text-5xl font-bold mt-4">Lauf-Apps nerven. <span class="text-gray-500">Fast alle.</span></h2>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+<!-- Card 1 -->
+<div class="bg-charcoal p-8 rounded-2xl border border-white/5 hover:border-white/20 transition-all">
+<div class="text-3xl mb-4">🤯</div>
+<h3 class="font-bold mb-3">Zu viele Zahlen</h3>
+<p class="text-sm text-gray-400">V02 Max hier, TSS dort. Wer soll das verstehen?</p>
+</div>
+<!-- Card 2 -->
+<div class="bg-charcoal p-8 rounded-2xl border border-white/5 hover:border-white/20 transition-all">
+<div class="text-3xl mb-4">📉</div>
+<h3 class="font-bold mb-3">Gefühl zählt nicht</h3>
+<p class="text-sm text-gray-400">Stressiger Tag? Die App pusht dich trotzdem in den roten Bereich.</p>
+</div>
+<!-- Card 3 -->
+<div class="bg-charcoal p-8 rounded-2xl border border-white/5 hover:border-white/20 transition-all">
+<div class="text-3xl mb-4">🚫</div>
+<h3 class="font-bold mb-3">Plan bricht ab</h3>
+<p class="text-sm text-gray-400">Ein Tag verpasst und der gesamte Trainingsplan ist Schrott.</p>
+</div>
+<!-- Card 4 -->
+<div class="bg-charcoal p-8 rounded-2xl border border-white/5 hover:border-white/20 transition-all">
+<div class="text-3xl mb-4">🩸</div>
+<h3 class="font-bold mb-3">Kein Zyklus-Fokus</h3>
+<p class="text-sm text-gray-400">Weibliche Physiologie wird in 99% der Apps ignoriert.</p>
+</div>
+<!-- Card 5 -->
+<div class="bg-charcoal p-8 rounded-2xl border border-white/5 hover:border-white/20 transition-all">
+<div class="text-3xl mb-4">🇺🇸</div>
+<h3 class="font-bold mb-3">USA-Zentriert</h3>
+<p class="text-sm text-gray-400">Deine Gesundheitsdaten wandern ungefiltert über den Ozean.</p>
+</div>
+</div>
+</div>
+</section>
+<!-- END: ProblemSection -->
+<!-- BEGIN: FeaturesSection -->
+<section class="py-24">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
+<div class="max-w-2xl">
+<span class="text-electric-lime font-semibold uppercase tracking-[0.2em] text-sm">Die Lösung</span>
+<h2 class="text-3xl md:text-5xl font-bold mt-4">Einfach genug für jeden Tag. Schlau genug für den Wettkampf.</h2>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+<!-- Featured Card -->
+<div class="md:col-span-8 bg-soft-gray rounded-3xl p-8 md:p-12 border border-electric-lime/20 flex flex-col md:flex-row gap-8 overflow-hidden relative group">
+<div class="flex-1 z-10">
+<div class="bg-electric-lime text-charcoal text-xs font-bold px-3 py-1 rounded-full inline-block mb-4">TOP FEATURE</div>
+<h3 class="text-2xl md:text-4xl font-bold mb-6">„Heute nicht so gut“ <br/>Recalculation</h3>
+<p class="text-gray-400 text-lg mb-8">Ein Klick vor dem Start. PACR berechnet dein Intervalltraining in Sekunden zu einem regenerativen Lauf um, wenn dein Körper es braucht. Ohne schlechtes Gewissen.</p>
+<ul class="space-y-3">
+<li class="flex items-center space-x-3">
+<span class="text-electric-lime">✓</span>
+<span>Echtzeit-Anpassung der Intensität</span>
+</li>
+<li class="flex items-center space-x-3">
+<span class="text-electric-lime">✓</span>
+<span>Schutz vor Übertraining</span>
+</li>
+</ul>
+</div>
+<div class="flex-1 relative flex items-center justify-center min-h-[300px]">
+<!-- Abstract Mockup -->
+<div class="w-64 h-64 bg-electric-lime/10 rounded-full absolute blur-3xl"></div>
+<div class="w-full max-w-[280px] aspect-[9/19] bg-charcoal rounded-[2.5rem] border-4 border-gray-800 shadow-2xl overflow-hidden p-6 z-10 transform group-hover:rotate-2 transition-transform">
+<div class="w-12 h-1 bg-gray-800 rounded-full mx-auto mb-8"></div>
+<div class="text-center">
+<p class="text-xs text-gray-500 mb-2">Wie fühlst du dich?</p>
+<div class="grid grid-cols-3 gap-2 mb-8">
+<div class="aspect-square bg-soft-gray rounded-lg flex items-center justify-center text-xl">😴</div>
+<div class="aspect-square bg-electric-lime rounded-lg flex items-center justify-center text-xl">😊</div>
+<div class="aspect-square bg-soft-gray rounded-lg flex items-center justify-center text-xl">🔥</div>
+</div>
+<div class="h-2 w-full bg-soft-gray rounded-full overflow-hidden">
+<div class="h-full bg-electric-lime w-2/3"></div>
+</div>
+<p class="text-[10px] mt-2 text-gray-400">Plan angepasst: Easy Run (45min)</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Secondary Cards -->
+<div class="md:col-span-4 bg-deep-gray rounded-3xl p-8 border border-white/5 hover:border-white/10 transition-colors">
+<div class="w-12 h-12 bg-white/5 rounded-xl flex items-center justify-center text-electric-lime mb-6 text-2xl">🔄</div>
+<h3 class="text-xl font-bold mb-4">Adaptiver Plan</h3>
+<p class="text-gray-400">Dein Plan lernt mit jedem Lauf. Er wird nicht einfach nur schwerer, sondern präziser.</p>
+</div>
+<div class="md:col-span-4 bg-deep-gray rounded-3xl p-8 border border-white/5 hover:border-white/10 transition-colors">
+<div class="w-12 h-12 bg-white/5 rounded-xl flex items-center justify-center text-electric-lime mb-6 text-2xl">🌙</div>
+<h3 class="text-xl font-bold mb-4">Zyklus-Training</h3>
+<p class="text-gray-400">Trainiere im Einklang mit deinem biologischen Rhythmus für bessere Leistung und weniger Frust.</p>
+</div>
+<div class="md:col-span-4 bg-deep-gray rounded-3xl p-8 border border-white/5 hover:border-white/10 transition-colors">
+<div class="w-12 h-12 bg-white/5 rounded-xl flex items-center justify-center text-electric-lime mb-6 text-2xl">📊</div>
+<h3 class="text-xl font-bold mb-4">Deep Metrics Simple</h3>
+<p class="text-gray-400">Komplexe Daten werden in klare Handlungsempfehlungen übersetzt. Kein Fachchinesisch.</p>
+</div>
+<div class="md:col-span-4 bg-deep-gray rounded-3xl p-8 border border-white/5 hover:border-white/10 transition-colors">
+<div class="w-12 h-12 bg-white/5 rounded-xl flex items-center justify-center text-electric-lime mb-6 text-2xl">🏁</div>
+<h3 class="text-xl font-bold mb-4">Wettkampf-Prep</h3>
+<p class="text-gray-400">Spezialisierte Blöcke für 5k bis Marathon, die sich deinem Leben anpassen.</p>
+</div>
+</div>
+</div>
+</section>
+<!-- END: FeaturesSection -->
+<!-- BEGIN: HowItWorks -->
+<section class="py-24 bg-electric-lime text-charcoal">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<h2 class="text-4xl md:text-5xl font-extrabold mb-16 text-center">In 4 Schritten zum Ziel</h2>
+<div class="grid grid-cols-1 md:grid-cols-4 gap-12 relative">
+<!-- Connector Line (Desktop) -->
+<div class="hidden md:block absolute top-12 left-0 w-full h-0.5 bg-charcoal/10 z-0"></div>
+<div class="relative z-10 flex flex-col items-center text-center">
+<div class="w-24 h-24 bg-charcoal text-electric-lime rounded-full flex items-center justify-center text-4xl font-black mb-6 border-8 border-electric-lime">1</div>
+<h3 class="text-xl font-bold mb-2">Ziel setzen</h3>
+<p class="text-charcoal/80 font-medium">Sag uns, was du erreichen willst. Ob Fitness oder PB.</p>
+</div>
+<div class="relative z-10 flex flex-col items-center text-center">
+<div class="w-24 h-24 bg-charcoal text-electric-lime rounded-full flex items-center justify-center text-4xl font-black mb-6 border-8 border-electric-lime">2</div>
+<h3 class="text-xl font-bold mb-2">Plan erstellt</h3>
+<p class="text-charcoal/80 font-medium">Dein individueller, wissenschaftlich fundierter Plan steht.</p>
+</div>
+<div class="relative z-10 flex flex-col items-center text-center">
+<div class="w-24 h-24 bg-charcoal text-electric-lime rounded-full flex items-center justify-center text-4xl font-black mb-6 border-8 border-electric-lime">3</div>
+<h3 class="text-xl font-bold mb-2">Check-In</h3>
+<p class="text-charcoal/80 font-medium">Jeden Tag kurzes Feedback zu Schlaf &amp; Gefühl.</p>
+</div>
+<div class="relative z-10 flex flex-col items-center text-center">
+<div class="w-24 h-24 bg-charcoal text-electric-lime rounded-full flex items-center justify-center text-4xl font-black mb-6 border-8 border-electric-lime">4</div>
+<h3 class="text-xl font-bold mb-2">Run &amp; Adapt</h3>
+<p class="text-charcoal/80 font-medium">Laufen gehen und zusehen, wie der Plan mitwächst.</p>
+</div>
+</div>
+</div>
+</section>
+<!-- END: HowItWorks -->
+<!-- BEGIN: ForWhom -->
+<section class="py-24">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="text-center mb-16">
+<h2 class="text-3xl md:text-5xl font-bold">Für wen ist PACR?</h2>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+<!-- Person A -->
+<div class="group relative h-[500px] rounded-3xl overflow-hidden border-2 border-electric-lime">
+<img alt="Ambitionierte Läuferin" class="w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDytRdWExmIRstonzjo2Uc36FikhvoBZx7F7D1pi5ZE2XcborQzzn3IfgH-zsGoUjGg9epFpEaISQC3txzw99Dsyr22VG5qIHmdHMSfur9kayXUUFKUvFhfe9Z84ise-hdh-kTIXuHS7MuGPvMhVIZNX7iMV-79_UuxedIch9rv1mHkapkUTPrJLi9bBquBzZeIj1naUlEMw7zA2ZBzq2YPoIrsV_on30gXNufFsm7Axve_VVP6WO8lTCFqMt_lv60drPHXTssKbKk"/>
+<div class="absolute inset-0 bg-gradient-to-t from-charcoal via-charcoal/40 to-transparent flex flex-col justify-end p-10">
+<span class="bg-electric-lime text-charcoal font-bold px-4 py-1 rounded-full w-fit mb-4">Empfohlen</span>
+<h3 class="text-3xl font-bold mb-2">Ambitionierte Läuferin</h3>
+<p class="text-gray-300">Du jonglierst Job, Zyklus und Training? PACR passt dein Training an deinen Lifestyle an, nicht umgekehrt.</p>
+</div>
+</div>
+<!-- Person B -->
+<div class="group relative h-[500px] rounded-3xl overflow-hidden border border-white/10">
+<img alt="Wettkampforientierter Läufer" class="w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBp5TQ0cq6kMLBffmw23SEeG5mo8wGIb333giWJP72td7rq6CHBiDq766hZyeC8YZW7ZrXVMdD7zYwAHQIp-YYIINA3FnBAE4sHnd4kaPxKSpc_reZJ_DZw5hVYSu9-NPuesTqeZNgGaIDWdi_yF-4VyWQu_urxMTJvlFMkf8DBCDhThqCqZNuVKudhmziB3Dkqr7wn6pkwZNhjEgG8IP3Ie93uqNmUePO2bEndNDXrMOuh9RuSItxJCpP-eYtXoaVTU4fMyr6ys9M"/>
+<div class="absolute inset-0 bg-gradient-to-t from-charcoal via-charcoal/40 to-transparent flex flex-col justify-end p-10">
+<h3 class="text-3xl font-bold mb-2">Wettkampf-Läufer</h3>
+<p class="text-gray-300">Du willst eine neue Bestzeit auf 10km oder Halbmarathon? Nutze Deep Metrics, um das Maximum aus deiner Form rauszuholen.</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- END: ForWhom -->
+<!-- BEGIN: TrustEurope -->
+<section class="py-24 bg-soft-gray">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+<h2 class="text-3xl md:text-5xl font-bold mb-8">Deine Daten bleiben in Europa. <br/><span class="text-electric-lime">Dein Plan auch.</span></h2>
+<div class="bg-charcoal p-8 md:p-16 rounded-[3rem] mb-12 border border-white/10 max-w-5xl mx-auto shadow-2xl">
+<p class="text-xl md:text-2xl font-medium leading-relaxed italic">
+            „Wir leben in einer Zeit, in der man sehr genau überlegen sollte, welchem Unternehmen man seine Gesundheitsdaten anvertraut. PACR ist die Antwort darauf, die aus Europa kommt.“
+          </p>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+<div class="bg-deep-gray p-8 rounded-2xl border border-white/5">
+<div class="text-2xl mb-4">🇩🇪</div>
+<h4 class="font-bold mb-2">Made in Germany</h4>
+<p class="text-sm text-gray-400">Entwicklung und Hosting komplett in Deutschland.</p>
+</div>
+<div class="bg-deep-gray p-8 rounded-2xl border border-white/5">
+<div class="text-2xl mb-4">🛡️</div>
+<h4 class="font-bold mb-2">GDPR by Design</h4>
+<p class="text-sm text-gray-400">Datenschutz ist kein Add-on, sondern das Fundament.</p>
+</div>
+<div class="bg-deep-gray p-8 rounded-2xl border border-white/5">
+<div class="text-2xl mb-4">🤝</div>
+<h4 class="font-bold mb-2">No Data Selling</h4>
+<p class="text-sm text-gray-400">Wir verkaufen keine Daten an Versicherungen oder Werber.</p>
+</div>
+<div class="bg-deep-gray p-8 rounded-2xl border border-white/5">
+<div class="text-2xl mb-4">🌍</div>
+<h4 class="font-bold mb-2">European Vision</h4>
+<p class="text-sm text-gray-400">Echte Technologie-Unabhängigkeit für deine Fitness.</p>
+</div>
+</div>
+</div>
+</section>
+<!-- END: TrustEurope -->
+<!-- BEGIN: ComparisonSection -->
+<section class="py-24">
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+<h2 class="text-3xl md:text-5xl font-bold mb-16 text-center">Warum PACR anders ist</h2>
+<div class="space-y-4">
+<div class="bg-deep-gray p-6 rounded-2xl flex items-center justify-between border-l-4 border-gray-600">
+<div class="flex items-center space-x-4">
+<span class="text-2xl font-bold text-gray-500">vs</span>
+<span class="font-bold text-xl">Strava / Garmin</span>
+</div>
+<p class="text-gray-400 text-right text-sm">Diese sammeln Daten. <br class="md:hidden"/><span class="text-white">PACR interpretiert sie.</span></p>
+</div>
+<div class="bg-deep-gray p-6 rounded-2xl flex items-center justify-between border-l-4 border-gray-600">
+<div class="flex items-center space-x-4">
+<span class="text-2xl font-bold text-gray-500">vs</span>
+<span class="font-bold text-xl">Nike / Runna</span>
+</div>
+<p class="text-gray-400 text-right text-sm">Die sind starr. <br class="md:hidden"/><span class="text-white">PACR ist lebendig.</span></p>
+</div>
+<div class="bg-electric-lime p-8 rounded-2xl flex flex-col md:flex-row items-center justify-between text-charcoal">
+<div class="mb-4 md:mb-0">
+<h3 class="text-2xl font-black italic">Das fehlende Puzzleteil</h3>
+<p class="font-medium">Die Brücke zwischen Ambition und Achtsamkeit.</p>
+</div>
+<span class="text-4xl">🧩</span>
+</div>
+</div>
+</div>
+</section>
+<!-- END: ComparisonSection -->
+<!-- BEGIN: Testimonials -->
+<section class="py-24 bg-deep-gray overflow-hidden">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<h2 class="text-3xl font-bold mb-16 text-center italic">Stimmen aus der Beta-Phase</h2>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<div class="bg-charcoal p-8 rounded-2xl border border-white/5">
+<div class="flex text-electric-lime mb-4">★★★★★</div>
+<p class="text-gray-300 mb-6 italic">"Endlich eine App, die kapiert, dass ich nicht jeden Dienstag Vollgas geben kann. Mein Training fühlt sich zum ersten Mal gesund an."</p>
+<div class="font-bold">— Sara M., Berlin</div>
+</div>
+<div class="bg-charcoal p-8 rounded-2xl border border-white/5">
+<div class="flex text-electric-lime mb-4">★★★★★</div>
+<p class="text-gray-300 mb-6 italic">"Der Fokus auf Datenschutz war für mich der Grund. Dass die Trainingspläne so präzise sind, hat mich dann völlig überzeugt."</p>
+<div class="font-bold">— Markus T., Wien</div>
+</div>
+<div class="bg-charcoal p-8 rounded-2xl border border-white/5">
+<div class="flex text-electric-lime mb-4">★★★★★</div>
+<p class="text-gray-300 mb-6 italic">"Die Zyklus-Integration ist ein Gamechanger. Kein unnötiges Leiden mehr in der Lutealphase."</p>
+<div class="font-bold">— Julia K., Hamburg</div>
+</div>
+</div>
+</div>
+</section>
+<!-- END: Testimonials -->
+<!-- BEGIN: FAQ -->
+<section class="py-24">
+<div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+<h2 class="text-3xl md:text-5xl font-bold mb-12 text-center">Häufige Fragen</h2>
+<div class="space-y-4">
+<details class="group bg-soft-gray rounded-2xl p-6 cursor-pointer">
+<summary class="list-none flex justify-between items-center font-bold">
+<span>Für wen ist PACR geeignet?</span>
+<span class="text-electric-lime group-open:rotate-180 transition-transform">↓</span>
+</summary>
+<p class="mt-4 text-gray-400">PACR richtet sich an alle Läufer, die ihr Training optimieren wollen, ohne dabei ihre Gesundheit oder ihren Alltag zu opfern. Besonders wenn du Struktur brauchst, aber Flexibilität liebst.</p>
+</details>
+<details class="group bg-soft-gray rounded-2xl p-6 cursor-pointer">
+<summary class="list-none flex justify-between items-center font-bold">
+<span>Wie funktioniert das Zyklus-Feature?</span>
+<span class="text-electric-lime group-open:rotate-180 transition-transform">↓</span>
+</summary>
+<p class="mt-4 text-gray-400">Du kannst deine Zyklusdaten (manuell oder via Schnittstelle) hinterlegen. PACR passt die Intensität der Einheiten automatisch an die hormonellen Phasen an.</p>
+</details>
+<details class="group bg-soft-gray rounded-2xl p-6 cursor-pointer">
+<summary class="list-none flex justify-between items-center font-bold">
+<span>Welche Geräte werden unterstützt?</span>
+<span class="text-electric-lime group-open:rotate-180 transition-transform">↓</span>
+</summary>
+<p class="mt-4 text-gray-400">Zum Launch unterstützen wir Apple Watch, Garmin und Coros. Weitere Hersteller folgen kurz nach dem Start.</p>
+</details>
+<details class="group bg-soft-gray rounded-2xl p-6 cursor-pointer">
+<summary class="list-none flex justify-between items-center font-bold">
+<span>Ist der Plan wirklich zu 100% adaptiv?</span>
+<span class="text-electric-lime group-open:rotate-180 transition-transform">↓</span>
+</summary>
+<p class="mt-4 text-gray-400">Ja. Jede Interaktion mit der App – egal ob gelaufenes Training oder Feedback zum Schlaf – beeinflusst die kommenden Einheiten in Echtzeit.</p>
+</details>
+<details class="group bg-soft-gray rounded-2xl p-6 cursor-pointer">
+<summary class="list-none flex justify-between items-center font-bold">
+<span>Was kostet PACR?</span>
+<span class="text-electric-lime group-open:rotate-180 transition-transform">↓</span>
+</summary>
+<p class="mt-4 text-gray-400">Wir planen ein faires Abo-Modell nach einer 14-tägigen Testphase. Frühbucher erhalten einen exklusiven "Founder-Lifetime" Rabatt.</p>
+</details>
+<details class="group bg-soft-gray rounded-2xl p-6 cursor-pointer">
+<summary class="list-none flex justify-between items-center font-bold">
+<span>Wie steht es um den Datenschutz?</span>
+<span class="text-electric-lime group-open:rotate-180 transition-transform">↓</span>
+</summary>
+<p class="mt-4 text-gray-400">Deine Daten werden auf Servern in Frankfurt verschlüsselt gespeichert. Wir halten uns streng an die DSGVO und verkaufen niemals Nutzerdaten.</p>
+</details>
+<details class="group bg-soft-gray rounded-2xl p-6 cursor-pointer">
+<summary class="list-none flex justify-between items-center font-bold">
+<span>Wann ist der offizielle Launch?</span>
+<span class="text-electric-lime group-open:rotate-180 transition-transform">↓</span>
+</summary>
+<p class="mt-4 text-gray-400">Die geschlossene Beta läuft bereits. Der öffentliche Launch ist für das 1. Quartal 2026 geplant.</p>
+</details>
+</div>
+</div>
+</section>
+<!-- END: FAQ -->
+<!-- BEGIN: FinalCTA -->
+<section class="py-24 bg-electric-lime text-charcoal relative overflow-hidden">
+<!-- Decorative Elements -->
+<div class="absolute -top-24 -right-24 w-64 h-64 bg-white/20 rounded-full blur-3xl"></div>
+<div class="absolute -bottom-24 -left-24 w-64 h-64 bg-white/20 rounded-full blur-3xl"></div>
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+<h2 class="text-4xl md:text-6xl font-black mb-8">Bereit für das Training, das wirklich für dich arbeitet?</h2>
+<p class="text-xl font-medium mb-12 opacity-80">Sichere dir jetzt deinen Platz auf der Warteliste und gehöre zu den Ersten, die PACR erleben.</p>
+<div class="max-w-md mx-auto mb-8">
+<form class="flex flex-col sm:flex-row gap-3">
+<input class="flex-grow bg-white/20 border-charcoal/10 rounded-xl px-6 py-4 focus:ring-2 focus:ring-charcoal text-charcoal placeholder-charcoal/50 font-bold" placeholder="deine@email.de" required="" type="email"/>
+<button class="bg-charcoal text-white font-bold px-8 py-4 rounded-xl hover:bg-black transition-colors whitespace-nowrap" type="submit">
+              Frühzugang sichern →
+            </button>
+</form>
+</div>
+<p class="text-sm font-semibold opacity-60 italic">✓ Wir hassen Spam genauso wie schlechte Lauf-Apps.</p>
+</div>
+</section>
+<!-- END: FinalCTA -->
+</main>
+<!-- BEGIN: Footer -->
+<footer class="bg-charcoal py-20 border-t border-white/5">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
+<div class="md:col-span-2">
+<span class="text-4xl font-black tracking-tighter text-white mb-6 block">PACR<span class="text-electric-lime">.</span></span>
+<p class="text-gray-500 max-w-sm text-lg font-medium leading-relaxed">
+            Run. Adapt. Perform. <br/>
+            Die Zukunft des adaptiven Trainings aus Europa. <br/>
+<span class="text-white">Made in Germany.</span>
+</p>
+</div>
+<div>
+<h4 class="font-bold mb-6 uppercase tracking-widest text-sm text-electric-lime">Rechtliches</h4>
+<ul class="space-y-4 text-gray-400">
+<li><a class="hover:text-white transition-colors" href="#">Datenschutz</a></li>
+<li><a class="hover:text-white transition-colors" href="#">Impressum</a></li>
+<li><a class="hover:text-white transition-colors" href="#">Nutzungsbedingungen</a></li>
+</ul>
+</div>
+<div>
+<h4 class="font-bold mb-6 uppercase tracking-widest text-sm text-electric-lime">Connect</h4>
+<ul class="space-y-4 text-gray-400">
+<li><a class="hover:text-white transition-colors" href="#">Kontakt</a></li>
+<li><a class="hover:text-white transition-colors" href="#">Instagram</a></li>
+<li><a class="hover:text-white transition-colors" href="#">Strava Club</a></li>
+</ul>
+</div>
+</div>
+<div class="border-t border-white/5 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-gray-600 text-sm">
+<p>© 2026 PACR Running Technology. Alle Rechte vorbehalten.</p>
+<div class="flex space-x-6">
+<span>Built with ❤️ in Europe</span>
+</div>
+</div>
+</div>
+</footer>
+<!-- END: Footer -->
+</body></html>
