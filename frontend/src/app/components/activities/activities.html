@@ -4,16 +4,35 @@
   <header class="page-header">
     <div class="header-left">
       <span class="material-symbols-outlined header-icon">database</span>
-      <h2 class="page-title">All Activities</h2>
+      <div>
+        <h2 class="page-title">{{ isCurrentWeek ? 'This Week' : 'Week' }}</h2>
+        <p class="page-subtitle">{{ weekLabel }}</p>
+      </div>
+      <div class="week-nav">
+        <button class="week-nav-btn" (click)="prevWeek()" title="Previous week">
+          <span class="material-symbols-outlined">chevron_left</span>
+        </button>
+        <button class="week-nav-btn" (click)="nextWeek()" [disabled]="isCurrentWeek" title="Next week">
+          <span class="material-symbols-outlined">chevron_right</span>
+        </button>
+      </div>
     </div>
     <div class="header-right">
+      @if (isSyncing) {
+        <div class="sync-badge">
+          <span class="material-symbols-outlined sync-spin">sync</span>
+          Syncing Strava...
+        </div>
+      } @else if (stravaConnected) {
+        <div class="sync-badge sync-badge--ok">
+          <span class="material-symbols-outlined">check_circle</span>
+          Strava synced
+        </div>
+      }
       <div class="search-wrap">
         <span class="material-symbols-outlined search-icon">search</span>
         <input class="search-input" type="text" placeholder="Search activities..." />
       </div>
-      <button class="icon-btn">
-        <span class="material-symbols-outlined">tune</span>
-      </button>
     </div>
   </header>
 
@@ -28,104 +47,113 @@
         >{{ f.label }}</button>
       }
     </div>
-    <div class="sort-wrap">
-      <span class="sort-label">Sort by:</span>
-      <select class="sort-select">
-        <option>Recent First</option>
-        <option>Longest Distance</option>
-        <option>Fastest Pace</option>
-        <option>Oldest First</option>
-      </select>
-    </div>
   </div>
+
+  <!-- Loading State -->
+  @if (isLoading) {
+    <div class="loading-state">
+      <span class="material-symbols-outlined loading-icon">sync</span>
+      <p>{{ isSyncing ? 'Syncing with Strava...' : 'Loading activities...' }}</p>
+    </div>
+  }
+
+  <!-- Error State -->
+  @if (hasError && !isLoading) {
+    <div class="error-state">
+      <span class="material-symbols-outlined">error</span>
+      <p>Could not load activities. Make sure the backend is running.</p>
+    </div>
+  }
+
+  <!-- Empty State -->
+  @if (!isLoading && !hasError && activities.length === 0) {
+    <div class="empty-state">
+      <span class="material-symbols-outlined">directions_run</span>
+      <p>No activities this week.</p>
+      @if (!stravaConnected) {
+        <p class="empty-hint">Connect Strava in Settings to sync automatically.</p>
+      }
+    </div>
+  }
 
   <!-- Activities Grid -->
-  <div class="activities-grid">
+  @if (!isLoading && activities.length > 0) {
+    <div class="activities-grid">
 
-    <!-- Featured Card -->
-    @if (showFeatured()) {
-      <div class="featured-card">
-        <div class="featured-map">
-          <img [src]="featuredActivity.mapImage" alt="Route map" />
-          <span class="featured-badge">Latest Activity</span>
-        </div>
-        <div class="featured-body">
-          <div class="featured-top">
-            <div>
-              <h3 class="featured-title">{{ featuredActivity.name }}</h3>
-              <p class="featured-date">{{ featuredActivity.date }}</p>
-            </div>
-            <button class="icon-btn-ghost">
-              <span class="material-symbols-outlined">more_vert</span>
-            </button>
+      <!-- Featured Card (latest activity) -->
+      @if (showFeatured() && filteredFeatured) {
+        <div class="featured-card">
+          <div class="featured-map sport-placeholder">
+            <span class="material-symbols-outlined sport-icon-large">{{ filteredFeatured.sportIcon }}</span>
+            <span class="featured-badge">Latest</span>
           </div>
-          <div class="featured-stats">
-            <div class="stat-cell">
-              <span class="stat-label">Distance</span>
-              <span class="stat-value">{{ featuredActivity.distance }}</span>
+          <div class="featured-body">
+            <div class="featured-top">
+              <div>
+                <h3 class="featured-title">{{ filteredFeatured.name }}</h3>
+                <p class="featured-date">{{ filteredFeatured.date }}</p>
+              </div>
             </div>
-            <div class="stat-cell">
-              <span class="stat-label">Time</span>
-              <span class="stat-value">{{ featuredActivity.time }}</span>
+            <div class="featured-stats">
+              <div class="stat-cell">
+                <span class="stat-label">Distance</span>
+                <span class="stat-value">{{ filteredFeatured.distance }}</span>
+              </div>
+              <div class="stat-cell">
+                <span class="stat-label">Time</span>
+                <span class="stat-value">{{ filteredFeatured.time }}</span>
+              </div>
+              <div class="stat-cell">
+                <span class="stat-label">Avg Pace</span>
+                <span class="stat-value">{{ filteredFeatured.pace }}</span>
+              </div>
+              <div class="stat-cell">
+                <span class="stat-label">Elev Gain</span>
+                <span class="stat-value">{{ filteredFeatured.elevGain }}</span>
+              </div>
             </div>
-            <div class="stat-cell">
-              <span class="stat-label">Avg Pace</span>
-              <span class="stat-value">{{ featuredActivity.pace }}</span>
+            <div class="featured-actions">
+              <button class="btn-primary" [routerLink]="['/activities', filteredFeatured.id]">
+                <span class="material-symbols-outlined">visibility</span>
+                View Details
+              </button>
             </div>
-            <div class="stat-cell">
-              <span class="stat-label">Elev Gain</span>
-              <span class="stat-value">{{ featuredActivity.elevGain }}</span>
-            </div>
-          </div>
-          <div class="featured-actions">
-            <button class="btn-primary" [routerLink]="['/activities', featuredActivity.id]">
-              <span class="material-symbols-outlined">visibility</span>
-              View Details
-            </button>
-            <button class="btn-ghost-icon">
-              <span class="material-symbols-outlined">share</span>
-            </button>
           </div>
         </div>
-      </div>
-    }
+      }
 
-    <!-- List Cards -->
-    @for (activity of filteredListActivities; track activity.id) {
-      <div class="activity-card" [routerLink]="['/activities', activity.id]">
-        <div class="activity-thumb">
-          <img [src]="activity.mapImage" alt="Route map" />
-        </div>
-        <div class="activity-info">
-          <div class="activity-info-top">
-            <div>
-              <h4 class="activity-name">{{ activity.name }}</h4>
-              <p class="activity-date">{{ activity.date }}</p>
-            </div>
-            <span class="material-symbols-outlined chevron">chevron_right</span>
+      <!-- List Cards -->
+      @for (activity of filteredListActivities; track activity.id) {
+        <div class="activity-card" [routerLink]="['/activities', activity.id]">
+          <div class="activity-thumb sport-placeholder">
+            <span class="material-symbols-outlined sport-icon-small">{{ activity.sportIcon }}</span>
           </div>
-          <div class="activity-stats">
-            <div>
-              <p class="mini-label">Distance</p>
-              <p class="mini-value">{{ activity.distance }}</p>
+          <div class="activity-info">
+            <div class="activity-info-top">
+              <div>
+                <h4 class="activity-name">{{ activity.name }}</h4>
+                <p class="activity-date">{{ activity.date }}</p>
+              </div>
+              <span class="material-symbols-outlined chevron">chevron_right</span>
             </div>
-            <div>
-              <p class="mini-label">Time</p>
-              <p class="mini-value">{{ activity.time }}</p>
-            </div>
-            <div>
-              <p class="mini-label">Pace</p>
-              <p class="mini-value">{{ activity.pace }}</p>
+            <div class="activity-stats">
+              <div>
+                <p class="mini-label">Distance</p>
+                <p class="mini-value">{{ activity.distance }}</p>
+              </div>
+              <div>
+                <p class="mini-label">Time</p>
+                <p class="mini-value">{{ activity.time }}</p>
+              </div>
+              <div>
+                <p class="mini-label">Pace</p>
+                <p class="mini-value">{{ activity.pace }}</p>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    }
-  </div>
-
-  <!-- Load More -->
-  <div class="load-more-wrap">
-    <button class="load-more-btn">Load More Activities</button>
-  </div>
+      }
+    </div>
+  }
 
 </div>

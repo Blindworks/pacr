@@ -22,6 +22,10 @@ export class StravaService {
     return this.http.get<{ url: string }>(`${this.base}/auth-url`);
   }
 
+  syncActivities(startDate: string, endDate: string): Observable<unknown> {
+    return this.http.get(`${this.base}/activities?startDate=${startDate}&endDate=${endDate}`);
+  }
+
   disconnect(): Observable<void> {
     return this.http.delete<void>(`${this.base}/disconnect`);
   }

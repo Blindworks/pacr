@@ -40,6 +40,8 @@ public interface CompletedTrainingRepository extends JpaRepository<CompletedTrai
 
     List<CompletedTraining> findByUserIdAndTrainingDateBetweenOrderByTrainingDate(Long userId, LocalDate startDate, LocalDate endDate);
 
+    List<CompletedTraining> findByUserIdAndTrainingDateBetweenOrderByTrainingDateDescUploadDateDesc(Long userId, LocalDate startDate, LocalDate endDate);
+
     List<CompletedTraining> findByUserIdAndTrainingDateOrderByUploadDateDesc(Long userId, LocalDate trainingDate);
 
     Optional<CompletedTraining> findTopByUserIdAndTrainingDateOrderByUploadDateDesc(Long userId, LocalDate trainingDate);

@@ -1,5 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { ActivityService, CompletedTraining } from '../../services/activity.service';
+import { StravaService } from '../../services/strava.service';
+import { catchError, switchMap, of, finalize } from 'rxjs';
 
 interface Activity {
   id: number;
@@ -8,87 +12,123 @@ interface Activity {
   distance: string;
   time: string;
   pace: string;
-  elevGain?: string;
-  type: 'road' | 'trail' | 'track';
-  featured?: boolean;
-  mapImage: string;
+  elevGain: string;
+  sport: string;
+  sportIcon: string;
 }
 
 @Component({
   selector: 'app-activities',
   standalone: true,
-  imports: [RouterModule],
+  imports: [RouterModule, CommonModule],
   templateUrl: './activities.html',
   styleUrl: './activities.scss'
 })
-export class Activities {
+export class Activities implements OnInit {
+  private readonly activityService = inject(ActivityService);
+  private readonly stravaService = inject(StravaService);
+  private readonly cdr = inject(ChangeDetectorRef);
+
   selectedFilter: string = 'all';
-  selectedSort: string = 'recent';
+  isLoading = true;
+  isSyncing = false;
+  hasError = false;
+  stravaConnected = false;
 
   filters = [
     { id: 'all', label: 'All' },
-    { id: 'road', label: 'Road' },
-    { id: 'trail', label: 'Trail' },
-    { id: 'track', label: 'Track' },
+    { id: 'run', label: 'Running' },
+    { id: 'cycl', label: 'Cycling' },
+    { id: 'swim', label: 'Swimming' },
   ];
 
-  activities: Activity[] = [
-    {
-      id: 1,
-      name: 'Sunday Long Run',
-      date: 'Oct 29, 2023 • 08:30 AM',
-      distance: '19.9 km',
-      time: '1:42:05',
-      pace: '5\'08" /km',
-      elevGain: '257 m',
-      type: 'road',
-      featured: true,
-      mapImage: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBzhJYjjcQoTEoemxeKBVR33EvCaptA2wIPhERpIqDqbJbPBso3ccYP42UY4nbptfrYJa7cOBhfuMl-5vpF0Gg-9RpJyVEK4bfyrCNWlixF6uP3ExS7gWSRSfmHiMMWpqppyPvdxVZEgawJLwWb5_UiFq1nEMI_pUEYxnRnhy2YSx4NGoUUZhXJHxHNqKICFi-Vso1T1gxLrlG4qf5pYXZP5td4AZkGgzXhz7k2kaDBz_6a1u7A0Rqb4Czizk0a1pe9plcUYJNCtJk'
-    },
-    {
-      id: 2,
-      name: 'Trail Recovery',
-      date: 'Oct 27, 2023 • 5:15 PM',
-      distance: '6.8 km',
-      time: '40:12',
-      pace: '5\'54" /km',
-      type: 'trail',
-      mapImage: 'https://lh3.googleusercontent.com/aida-public/AB6AXuB3EdaEeJ6PUfNqhhg8dBeJZPHHG2m1x7d7ZFyyLoW1KSueKICw4DBvU1VlKAtGqc19bd_fcjHcPwR9WlI2AfLhQA6-PX-qr0jq-6HHzOApdcxYiF3FnHdaw2JhlvXJw2YTQigsEB4etdv6o9rOaw5_R0Mr4cubnq-6TOFGTKqnjLtMA7Pqjij4gOMK9GgCdZjYodOWQZvDkJt8vLrLgB8cAO5AMsQuCcrT_YaZC72724eQ-kyf_VlRTaQ40CSoK8D13x8fx1gMJHs'
-    },
-    {
-      id: 3,
-      name: 'Interval Sprints',
-      date: 'Oct 25, 2023 • 07:00 AM',
-      distance: '5.0 km',
-      time: '22:45',
-      pace: '4\'33" /km',
-      type: 'track',
-      mapImage: 'https://lh3.googleusercontent.com/aida-public/AB6AXuA2gYF38D3Da5qQvhLgVwD9WBLx7eCtiUtnfYCalwWEs_fmrRWmA0NhUlx2eGwAYJ1lSC7_e486ZLUf1CYPnVhMhPU60A3xRSMWa4SPVFSDDErTwW4NckFhFQ4TaQ_8gOzNkNgcVN6cn-OB51OjHDpdEH2-B9Xv0qpA1XIWFh3PTjsH1xyZujULhw3C9VDcchtTQxzPABAt1MK58JL8YrhKD0K71HoxuxRJMYErBZcCSlu7UsoexghUGvIDxKe0BbK_x4ua4ojQk7Q'
-    },
-    {
-      id: 4,
-      name: 'Evening Commute',
-      date: 'Oct 24, 2023 • 6:42 PM',
-      distance: '9.3 km',
-      time: '48:30',
-      pace: '5\'13" /km',
-      type: 'road',
-      mapImage: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAhSLEmQhoX6CkmeCJeY1ujwgW-YQSZfky00vBXuFTugss8Oxv_BGtfj4u7tWQnQIasayoD_b6d5Gd7r64w9NQfmzE9oCkvZlxnERpnOlit2vDd8St1KdrxVf7i-Kypbr8rGtEMoegRuNvLTHP8PPAODOq1u5XhymtW3e8HTxrmNM22RPG0SbvmkgDMNvqw05GYYDbX_4pCrh0msot-p7U_m_ZDYHJDb0SQoEi3QITGZhFoTRrlb0-9PwVVuOcKWZT1O01gv3OpxXg'
-    },
-    {
-      id: 5,
-      name: 'Elevation Challenge',
-      date: 'Oct 22, 2023 • 09:10 AM',
-      distance: '10.5 km',
-      time: '1:02:15',
-      pace: '5\'56" /km',
-      type: 'trail',
-      mapImage: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCWjKtZiwDas7wF8HbpQYepfrDwhAwL6nigLEx24wD6EUYb5b4OYA84oiV_uM1g28OOw9W6w5KN4Jberyo0O1LmJ3ecb8cxg1_DugFhqSfmfgTjC29aLtWwaazg3vH0RpTQ_xUoPpN2_Qxebk6WhIZtPuzXIoXHOF99rTn3oaYuhXNbylJdblBAm10rKT5faysFPUBeXse8h5RQ471-72GJYneDfm8VnP_Z5TeQycOU2buKF53IIH5fYSdL3qw_XZEw8YZ-ykvJ0Zw'
-    },
-  ];
+  activities: Activity[] = [];
 
-  get featuredActivity(): Activity {
-    return this.activities[0];
+  /** Offset in weeks from current week (0 = this week, -1 = last week, ...) */
+  weekOffset = 0;
+
+  get isCurrentWeek(): boolean {
+    return this.weekOffset === 0;
+  }
+
+  private get weekRange(): { start: string; end: string } {
+    const today = new Date();
+    const day = today.getDay();
+    const diffToMonday = (day === 0 ? -6 : 1 - day);
+    const monday = new Date(today);
+    monday.setDate(today.getDate() + diffToMonday + this.weekOffset * 7);
+    const sunday = new Date(monday);
+    sunday.setDate(monday.getDate() + 6);
+    return {
+      start: this.toIsoDate(monday),
+      end: this.toIsoDate(sunday),
+    };
+  }
+
+  prevWeek(): void {
+    this.weekOffset--;
+    this.loadWeek();
+  }
+
+  nextWeek(): void {
+    if (this.isCurrentWeek) return;
+    this.weekOffset++;
+    this.loadWeek();
+  }
+
+  private toIsoDate(d: Date): string {
+    return d.toISOString().slice(0, 10);
+  }
+
+  ngOnInit(): void {
+    this.loadWeek();
+  }
+
+  private loadWeek(): void {
+    this.isLoading = true;
+    this.hasError = false;
+    const { start, end } = this.weekRange;
+
+    // Check Strava status first, then sync if connected, then load from DB
+    this.stravaService.getStatus().pipe(
+      switchMap(status => {
+        this.stravaConnected = status.connected;
+        if (status.connected) {
+          this.isSyncing = true;
+          return this.stravaService.syncActivities(start, end).pipe(
+            catchError(() => of(null)) // sync failure is non-fatal
+          );
+        }
+        return of(null);
+      }),
+      switchMap(() => {
+        this.isSyncing = false;
+        return this.activityService.getByDateRange(start, end);
+      }),
+      catchError((err) => {
+        console.error('[Activities] error in pipe:', err);
+        this.hasError = true;
+        this.isSyncing = false;
+        return of([]);
+      }),
+      finalize(() => {
+        this.isLoading = false;
+        this.isSyncing = false;
+        this.cdr.detectChanges();
+      })
+    ).subscribe({
+      next: (data) => {
+        this.activities = (data as CompletedTraining[]).map(ct => this.mapToActivity(ct));
+      },
+      error: (err) => {
+        console.error('[Activities] subscribe error:', err);
+        this.hasError = true;
+      }
+    });
+  }
+
+  get featuredActivity(): Activity | null {
+    return this.activities[0] ?? null;
   }
 
   get listActivities(): Activity[] {
@@ -97,14 +137,82 @@ export class Activities {
 
   get filteredListActivities(): Activity[] {
     if (this.selectedFilter === 'all') return this.listActivities;
-    return this.listActivities.filter(a => a.type === this.selectedFilter);
+    return this.listActivities.filter(a =>
+      a.sport.toLowerCase().includes(this.selectedFilter.toLowerCase())
+    );
+  }
+
+  get filteredFeatured(): Activity | null {
+    if (!this.featuredActivity) return null;
+    if (this.selectedFilter === 'all') return this.featuredActivity;
+    return this.featuredActivity.sport.toLowerCase().includes(this.selectedFilter.toLowerCase())
+      ? this.featuredActivity
+      : null;
   }
 
   showFeatured(): boolean {
-    return this.selectedFilter === 'all';
+    return !!this.filteredFeatured;
   }
 
   setFilter(id: string): void {
     this.selectedFilter = id;
+  }
+
+  get weekLabel(): string {
+    const { start, end } = this.weekRange;
+    const s = new Date(start);
+    const e = new Date(end);
+    const fmt = (d: Date) => d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    return `${fmt(s)} – ${fmt(e)}, ${e.getFullYear()}`;
+  }
+
+  private mapToActivity(ct: CompletedTraining): Activity {
+    return {
+      id: ct.id,
+      name: ct.activityName ?? ct.trainingType ?? this.formatSport(ct.sport) ?? 'Activity',
+      date: this.formatDate(ct.trainingDate),
+      distance: ct.distanceKm != null ? `${ct.distanceKm.toFixed(1)} km` : '—',
+      time: ct.durationSeconds != null ? this.formatDuration(ct.durationSeconds) : '—',
+      pace: ct.averagePaceSecondsPerKm != null ? this.formatPace(ct.averagePaceSecondsPerKm) : '—',
+      elevGain: ct.elevationGainM != null ? `${ct.elevationGainM} m` : '—',
+      sport: ct.sport ?? 'unknown',
+      sportIcon: this.getSportIcon(ct.sport),
+    };
+  }
+
+  private formatDate(dateStr: string): string {
+    if (!dateStr) return '';
+    const d = new Date(dateStr);
+    return d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+  }
+
+  private formatDuration(seconds: number): string {
+    const h = Math.floor(seconds / 3600);
+    const m = Math.floor((seconds % 3600) / 60);
+    const s = seconds % 60;
+    if (h > 0) {
+      return `${h}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+    }
+    return `${m}:${s.toString().padStart(2, '0')}`;
+  }
+
+  private formatPace(secondsPerKm: number): string {
+    const m = Math.floor(secondsPerKm / 60);
+    const s = secondsPerKm % 60;
+    return `${m}'${s.toString().padStart(2, '0')}" /km`;
+  }
+
+  private formatSport(sport: string | null): string {
+    if (!sport) return 'Activity';
+    return sport.charAt(0).toUpperCase() + sport.slice(1).toLowerCase().replace('_', ' ');
+  }
+
+  private getSportIcon(sport: string | null): string {
+    const s = (sport ?? '').toLowerCase();
+    if (s.includes('run')) return 'directions_run';
+    if (s.includes('cycl') || s.includes('bik') || s.includes('ride')) return 'directions_bike';
+    if (s.includes('swim')) return 'pool';
+    if (s.includes('walk') || s.includes('hik')) return 'hiking';
+    return 'fitness_center';
   }
 }

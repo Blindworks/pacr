@@ -115,7 +115,9 @@ public class StravaService {
             token.setProfileMedium(athlete.path("profile_medium").asText(null));
 
             tokenRepository.save(token);
+            log.info("Strava connected: athlete='{}', city='{}'", token.getAthleteName(), token.getAthleteCity());
         } catch (Exception e) {
+            log.error("Strava token exchange failed: {}", e.getMessage());
             throw new RuntimeException("Failed to exchange Strava code for token", e);
         }
     }
@@ -153,9 +155,11 @@ public class StravaService {
     public StravaStatusDto getStatus() {
         Optional<StravaToken> tokenOpt = tokenRepository.findFirstByOrderByIdAsc();
         if (tokenOpt.isEmpty()) {
+            log.info("Strava status: not connected");
             return new StravaStatusDto(false, null, null, null);
         }
         StravaToken token = tokenOpt.get();
+        log.info("Strava status: connected, athlete='{}'", token.getAthleteName());
         return new StravaStatusDto(true, token.getAthleteName(), token.getAthleteCity(), token.getProfileMedium());
     }
 
@@ -173,10 +177,13 @@ public class StravaService {
         try {
             List<StravaActivityDto> activities = fetchAllActivitiesInRange(token.getAccessToken(), after, before);
             User currentUser = securityUtils.getCurrentUser();
+            log.info("Strava sync {}/{}: {} activities found, userId={}", start, end, activities.size(),
+                    currentUser != null ? currentUser.getId() : "null");
             syncActivitiesToDb(activities, token.getAccessToken(), currentUser);
             removeDeletedActivitiesFromDb(activities, currentUser, start, end);
             return activities;
         } catch (Exception e) {
+            log.error("Strava sync failed: {}", e.getMessage());
             throw new RuntimeException("Failed to fetch Strava activities", e);
         }
     }

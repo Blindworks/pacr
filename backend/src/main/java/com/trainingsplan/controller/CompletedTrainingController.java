@@ -14,6 +14,8 @@ import com.trainingsplan.service.StravaService;
 import com.trainingsplan.service.TrainingStatsService;
 import com.trainingsplan.service.UserProfileValidationService;
 import jakarta.transaction.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -34,6 +36,8 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api/completed-trainings")
 public class CompletedTrainingController {
+
+    private static final Logger log = LoggerFactory.getLogger(CompletedTrainingController.class);
 
     @Autowired
     private CompletedTrainingService completedTrainingService;
@@ -92,6 +96,19 @@ public class CompletedTrainingController {
         }
     }
 
+    @GetMapping
+    public ResponseEntity<List<CompletedTraining>> getAllActivities(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+        User user = securityUtils.getCurrentUser();
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        List<CompletedTraining> trainings = completedTrainingRepository
+                .findByUserIdOrderByTrainingDateDescUploadDateDesc(user.getId(), PageRequest.of(page, Math.min(size, 100)));
+        return ResponseEntity.ok(trainings);
+    }
+
     @GetMapping("/by-date")
     public ResponseEntity<List<CompletedTraining>> getCompletedTrainingsByDate(
             @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
@@ -104,8 +121,14 @@ public class CompletedTrainingController {
     public ResponseEntity<List<CompletedTraining>> getCompletedTrainingsByDateRange(
             @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
-        
-        List<CompletedTraining> trainings = completedTrainingService.getCompletedTrainingsBetweenDates(startDate, endDate);
+        User user = securityUtils.getCurrentUser();
+        if (user == null) {
+            log.warn("by-date-range: no authenticated user");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        List<CompletedTraining> trainings = completedTrainingRepository
+                .findByUserIdAndTrainingDateBetweenOrderByTrainingDateDescUploadDateDesc(user.getId(), startDate, endDate);
+        log.info("by-date-range [{}/{}]: userId={}, found={}", startDate, endDate, user.getId(), trainings.size());
         return ResponseEntity.ok(trainings);
     }
 
