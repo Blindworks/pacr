@@ -12,6 +12,16 @@ export const routes: Routes = [
     data: { fullPage: true }
   },
   {
+    path: 'forgot-password',
+    loadComponent: () => import('./components/forgot-password/forgot-password').then(m => m.ForgotPassword),
+    data: { fullPage: true }
+  },
+  {
+    path: 'forgot-password/confirmation',
+    loadComponent: () => import('./components/forgot-password-confirmation/forgot-password-confirmation').then(m => m.ForgotPasswordConfirmation),
+    data: { fullPage: true }
+  },
+  {
     path: '',
     pathMatch: 'full',
     loadComponent: () => import('./components/dashboard/dashboard').then(m => m.Dashboard)
