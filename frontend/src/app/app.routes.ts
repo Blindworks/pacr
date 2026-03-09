@@ -22,6 +22,11 @@ export const routes: Routes = [
     data: { fullPage: true }
   },
   {
+    path: 'new-password',
+    loadComponent: () => import('./components/new-password/new-password').then(m => m.NewPassword),
+    data: { fullPage: true }
+  },
+  {
     path: '',
     pathMatch: 'full',
     loadComponent: () => import('./components/dashboard/dashboard').then(m => m.Dashboard)
