@@ -1,11 +1,22 @@
-@if (activity) {
+@if (loading) {
+  <div class="not-found">
+    <span class="material-symbols-outlined spinning">sync</span>
+    <p>Aktivität wird geladen...</p>
+  </div>
+} @else if (error || !activity) {
+  <div class="not-found">
+    <span class="material-symbols-outlined">directions_run</span>
+    <p>Aktivität nicht gefunden.</p>
+    <button class="btn-primary" (click)="goBack()">Zurück zu Aktivitäten</button>
+  </div>
+} @else {
   <div class="detail-page">
 
     <!-- Header -->
     <header class="page-header">
       <button class="back-btn" (click)="goBack()">
         <span class="material-symbols-outlined">arrow_back</span>
-        <span>All Activities</span>
+        <span>Alle Aktivitäten</span>
       </button>
       <div class="header-actions">
         <button class="icon-btn">
@@ -19,9 +30,9 @@
 
     <!-- Hero: Map + Key Stats -->
     <div class="hero">
-      <div class="hero-map" [style.background-image]="'url(' + activity.mapImage + ')'">
+      <div class="hero-map">
         <div class="hero-overlay"></div>
-        <!-- Route Path SVG -->
+        <!-- Route Path SVG Placeholder -->
         <svg class="route-svg" viewBox="0 0 800 400" preserveAspectRatio="xMidYMid slice">
           <path
             d="M80 320 C140 270 210 340 310 295 C410 250 470 155 560 185 C650 215 700 110 750 130"
@@ -38,22 +49,22 @@
       </div>
       <div class="hero-content">
         <div class="hero-meta">
-          <span class="activity-badge">{{ activity.label }}</span>
-          <h1 class="hero-title">{{ activity.name }}</h1>
-          <p class="hero-date">{{ activity.date }}</p>
+          <span class="activity-badge">{{ displayLabel }}</span>
+          <h1 class="hero-title">{{ displayName }}</h1>
+          <p class="hero-date">{{ formattedDate }}</p>
         </div>
         <div class="hero-stats">
           <div class="hero-stat">
-            <p class="hero-stat-label">Distance</p>
-            <p class="hero-stat-value">{{ activity.distance }} <span class="hero-stat-unit">km</span></p>
+            <p class="hero-stat-label">Distanz</p>
+            <p class="hero-stat-value">{{ formattedDistance }} <span class="hero-stat-unit">km</span></p>
           </div>
           <div class="hero-stat">
-            <p class="hero-stat-label">Avg Pace</p>
-            <p class="hero-stat-value">{{ activity.pace }} <span class="hero-stat-unit">/km</span></p>
+            <p class="hero-stat-label">Ø Pace</p>
+            <p class="hero-stat-value">{{ formattedPace }} <span class="hero-stat-unit">/km</span></p>
           </div>
           <div class="hero-stat">
-            <p class="hero-stat-label">Total Time</p>
-            <p class="hero-stat-value">{{ activity.time }}</p>
+            <p class="hero-stat-label">Zeit</p>
+            <p class="hero-stat-value">{{ formattedDuration }}</p>
           </div>
         </div>
       </div>
@@ -62,36 +73,21 @@
     <!-- Content -->
     <div class="content">
 
-      <!-- Smart Insights -->
-      <div class="insights-card">
-        <div class="insights-icon">
-          <span class="material-symbols-outlined">auto_awesome</span>
-        </div>
-        <div class="insights-body">
-          <h3 class="insights-title">Smart Insights</h3>
-          <p class="insights-text">{{ activity.insight }}</p>
-        </div>
-        <button class="btn-primary insights-cta">
-          Full Breakdown
-          <span class="material-symbols-outlined">arrow_forward</span>
-        </button>
-      </div>
-
       <!-- Performance Chart -->
       <div class="chart-card">
         <div class="chart-header">
           <div>
             <h3 class="chart-title">Performance Overlay</h3>
-            <p class="chart-subtitle">Heart Rate vs. Elevation</p>
+            <p class="chart-subtitle">Herzfrequenz vs. Höhenprofil</p>
           </div>
           <div class="chart-legend">
             <div class="legend-item">
               <span class="legend-dot legend-dot--hr"></span>
-              <span>Heart Rate</span>
+              <span>Herzfrequenz</span>
             </div>
             <div class="legend-item">
               <span class="legend-dot legend-dot--elev"></span>
-              <span>Elevation</span>
+              <span>Höhe</span>
             </div>
           </div>
         </div>
@@ -106,51 +102,96 @@
             <!-- HR line -->
             <path [attr.d]="hrPoints" fill="none" stroke="#b9f20d" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
             <!-- Midpoint marker -->
-            <circle cx="500" cy="105" r="4" fill="#b9f20d"/>
+            <circle cx="500" cy="128" r="4" fill="#b9f20d"/>
             <line x1="500" x2="500" y1="0" y2="256" stroke="#b9f20d" stroke-dasharray="4" stroke-width="1" stroke-opacity="0.5"/>
           </svg>
-          <!-- Tooltip -->
-          <div class="chart-tooltip">
-            <p class="tooltip-label">Midpoint</p>
-            <p class="tooltip-hr">162 BPM</p>
-            <p class="tooltip-elev">Elev: +68 m</p>
-          </div>
+          @if (activity.averageHeartRate) {
+            <div class="chart-tooltip">
+              <p class="tooltip-label">Ø Herzfrequenz</p>
+              <p class="tooltip-hr">{{ activity.averageHeartRate }} BPM</p>
+              @if (activity.maxHeartRate) {
+                <p class="tooltip-elev">Max: {{ activity.maxHeartRate }} BPM</p>
+              }
+            </div>
+          }
         </div>
         <div class="chart-axis">
           <span>0 km</span>
-          <span>{{ (activity.distanceRaw * 0.25).toFixed(1) }} km</span>
-          <span>{{ (activity.distanceRaw * 0.5).toFixed(1) }} km</span>
-          <span>{{ (activity.distanceRaw * 0.75).toFixed(1) }} km</span>
-          <span>{{ activity.distance }} km</span>
+          @if (activity.distanceKm) {
+            <span>{{ (activity.distanceKm * 0.25).toFixed(1) }} km</span>
+            <span>{{ (activity.distanceKm * 0.5).toFixed(1) }} km</span>
+            <span>{{ (activity.distanceKm * 0.75).toFixed(1) }} km</span>
+            <span>{{ formattedDistance }} km</span>
+          }
         </div>
       </div>
 
       <!-- Secondary Metrics -->
       <div class="metrics-grid">
-        <div class="metric-card">
-          <p class="metric-label">Est. Calories</p>
-          <p class="metric-value">{{ activity.calories }} <span class="metric-unit">kcal</span></p>
-        </div>
-        <div class="metric-card">
-          <p class="metric-label">Elevation Gain</p>
-          <p class="metric-value">{{ activity.elevGain }}</p>
-        </div>
-        <div class="metric-card">
-          <p class="metric-label">Avg Cadence</p>
-          <p class="metric-value">{{ activity.cadence }} <span class="metric-unit">spm</span></p>
-        </div>
-        <div class="metric-card metric-card--accent">
-          <p class="metric-label">Training Effect</p>
-          <p class="metric-value metric-value--accent">{{ activity.trainingEffect }} <span class="metric-unit">{{ activity.trainingEffectLabel }}</span></p>
-        </div>
+        @if (activity.calories != null) {
+          <div class="metric-card">
+            <p class="metric-label">Kalorien</p>
+            <p class="metric-value">{{ activity.calories }} <span class="metric-unit">kcal</span></p>
+          </div>
+        }
+        @if (activity.elevationGainM != null) {
+          <div class="metric-card">
+            <p class="metric-label">Höhenmeter</p>
+            <p class="metric-value">{{ activity.elevationGainM }} <span class="metric-unit">m</span></p>
+          </div>
+        }
+        @if (activity.averageCadence != null) {
+          <div class="metric-card">
+            <p class="metric-label">Ø Kadenz</p>
+            <p class="metric-value">{{ activity.averageCadence }} <span class="metric-unit">spm</span></p>
+          </div>
+        }
+        @if (activity.averageHeartRate != null) {
+          <div class="metric-card">
+            <p class="metric-label">Ø Herzfrequenz</p>
+            <p class="metric-value">{{ activity.averageHeartRate }} <span class="metric-unit">bpm</span></p>
+          </div>
+        }
+        @if (activity.maxHeartRate != null) {
+          <div class="metric-card">
+            <p class="metric-label">Max. Herzfrequenz</p>
+            <p class="metric-value">{{ activity.maxHeartRate }} <span class="metric-unit">bpm</span></p>
+          </div>
+        }
+        @if (activity.averagePowerWatts != null) {
+          <div class="metric-card metric-card--accent">
+            <p class="metric-label">Ø Leistung</p>
+            <p class="metric-value metric-value--accent">{{ activity.averagePowerWatts }} <span class="metric-unit">W</span></p>
+          </div>
+        }
+        @if (activity.averageSpeedKmh != null) {
+          <div class="metric-card">
+            <p class="metric-label">Ø Geschwindigkeit</p>
+            <p class="metric-value">{{ activity.averageSpeedKmh.toFixed(1) }} <span class="metric-unit">km/h</span></p>
+          </div>
+        }
+        @if (activity.movingTimeSeconds != null) {
+          <div class="metric-card">
+            <p class="metric-label">Bewegungszeit</p>
+            <p class="metric-value">{{ formattedDuration }}</p>
+          </div>
+        }
+      </div>
+
+      <!-- Source Info -->
+      <div class="source-card">
+        <span class="material-symbols-outlined">info</span>
+        <span>Quelle: {{ activity.source }}</span>
+        @if (activity.sport) {
+          <span class="source-divider">·</span>
+          <span>{{ activity.sport }}</span>
+        }
+        @if (activity.subSport) {
+          <span class="source-divider">·</span>
+          <span>{{ activity.subSport }}</span>
+        }
       </div>
 
     </div>
-  </div>
-} @else {
-  <div class="not-found">
-    <span class="material-symbols-outlined">directions_run</span>
-    <p>Activity not found.</p>
-    <button class="btn-primary" (click)="goBack()">Back to Activities</button>
   </div>
 }
