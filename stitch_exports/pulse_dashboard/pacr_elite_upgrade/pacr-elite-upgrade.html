@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>PACR Elite Upgrade</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#b9f20d",
+                        "background-light": "#f8f8f5",
+                        "background-dark": "#1e2210",
+                    },
+                    fontFamily: {
+                        "display": ["Lexend"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 antialiased">
+<div class="flex min-h-screen">
+<!-- Sidebar Navigation -->
+<aside class="w-64 fixed inset-y-0 left-0 bg-background-light dark:bg-background-dark border-r border-primary/10 hidden md:flex flex-col z-50">
+<div class="p-6 flex flex-col h-full">
+<div class="flex items-center gap-3 mb-10">
+<div class="size-10 rounded-full bg-primary/20 flex items-center justify-center border border-primary/30 overflow-hidden">
+<img alt="User Profile" data-alt="Portrait of a male runner smiling" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAY3xXXWtjuUbUslwTFZ0o42HqKk4z9PTSr7JPMFQQkaHx6vV89QhIskC626fI5x2AkVZAdkT_myO7a4fJS7bY6mn-oqAT72prXxYBaLb-naBlHC39T_VepUrtyusR82PxyUmGUALZS-_lE1xdDXpyNsEO5qrv6Aj7-Z0jgPr2uSUcTCGfk9Cuepp2nUYeKVRf8wa7uUQs_Mx0xJlSYAu7mvdVnDrz-Vzjoxh1YFLEw6XWN_FzzUO8X5vB0CGdzVl2o9MeyvK_keHk"/>
+</div>
+<div class="flex flex-col">
+<span class="text-sm font-bold">Runner Pro</span>
+<span class="text-xs text-slate-500 dark:text-primary/70">Marathoner</span>
+</div>
+</div>
+<nav class="flex-1 space-y-2">
+<a class="flex items-center gap-3 px-4 py-2.5 rounded-lg hover:bg-primary/10 transition-colors" href="#">
+<span class="material-symbols-outlined text-primary">dashboard</span>
+<span class="text-sm font-medium">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2.5 rounded-lg hover:bg-primary/10 transition-colors" href="#">
+<span class="material-symbols-outlined text-primary">sprint</span>
+<span class="text-sm font-medium">Workouts</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2.5 rounded-lg bg-primary text-background-dark font-bold" href="#">
+<span class="material-symbols-outlined">workspace_premium</span>
+<span class="text-sm">PACR Elite</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2.5 rounded-lg hover:bg-primary/10 transition-colors" href="#">
+<span class="material-symbols-outlined text-primary">bar_chart</span>
+<span class="text-sm font-medium">Statistics</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2.5 rounded-lg hover:bg-primary/10 transition-colors" href="#">
+<span class="material-symbols-outlined text-primary">settings</span>
+<span class="text-sm font-medium">Settings</span>
+</a>
+</nav>
+<button class="mt-auto w-full py-2.5 rounded-lg bg-primary/10 border border-primary/20 text-primary text-sm font-bold hover:bg-primary/20 transition-all">
+                View Profile
+            </button>
+</div>
+</aside>
+<!-- Main Content -->
+<main class="flex-1 md:ml-64 relative">
+<!-- Hero Section -->
+<section class="relative h-[450px] overflow-hidden">
+<div class="absolute inset-0 bg-gradient-to-r from-background-dark via-background-dark/80 to-transparent z-10"></div>
+<img alt="Athlete Running" class="absolute inset-0 w-full h-full object-cover grayscale contrast-125" data-alt="Dynamic shot of a runner on a modern track" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDQjhLYDDETzsMYxcHaoGGAPstBIH_BVmIUw75PlS-VDKVdwRoUWeJq-tQRa4QqLE6J8U73YjUTF2ahYz_DkY_lnKqi_Yluw-eihAf_cLJg-w6ZWgksTUfYJushQiwBJEtIYajokYygZo7LSRwuUX0kmqbMI7ZjNCMi_YrlQbNSif4XT8ARFNAKfPsIgVI8GTDu5qMbhpvoFeUNukP9dwQAIQgZU-sZHPL4DNRIuI57tBM3oAPwCvhLmLRIIqX2LiCveB6xf5xOh-M"/>
+<div class="relative z-20 h-full flex flex-col justify-center px-6 md:px-12 max-w-4xl">
+<span class="inline-block px-3 py-1 rounded bg-primary text-background-dark text-[10px] font-black uppercase tracking-widest mb-4">Elite Membership</span>
+<h1 class="text-4xl md:text-6xl font-black text-white leading-tight mb-6 tracking-tight">
+                    Unlock Your Full <br/> <span class="text-primary italic">Potential</span> with PACR Elite
+                </h1>
+<p class="text-slate-300 text-lg md:text-xl max-w-xl mb-8 leading-relaxed">
+                    Gain the metabolic insights, personalized AI coaching, and race predictions you need to smash your personal bests.
+                </p>
+<div class="flex flex-col sm:flex-row gap-4">
+<button class="bg-primary text-background-dark px-8 py-4 rounded-xl font-black text-base shadow-[0_0_20px_rgba(185,242,13,0.3)] hover:shadow-primary/50 transition-all uppercase tracking-tight">
+                        Start 14-Day Free Trial
+                    </button>
+<button class="bg-white/10 backdrop-blur-md border border-white/20 text-white px-8 py-4 rounded-xl font-bold text-base hover:bg-white/20 transition-all">
+                        Compare Plans
+                    </button>
+</div>
+</div>
+</section>
+<!-- Trusted By -->
+<div class="bg-primary/5 border-y border-primary/10 py-6">
+<div class="container mx-auto px-6 flex flex-wrap justify-center items-center gap-8 md:gap-16 opacity-50 grayscale">
+<p class="text-xs font-bold uppercase tracking-widest text-slate-400 w-full text-center md:w-auto mb-4 md:mb-0">Trusted by athletes from</p>
+<div class="flex items-center gap-2"><span class="material-symbols-outlined">bolt</span> <span class="font-black text-lg">VELOCITY</span></div>
+<div class="flex items-center gap-2"><span class="material-symbols-outlined">timer</span> <span class="font-black text-lg">CHRONOS</span></div>
+<div class="flex items-center gap-2"><span class="material-symbols-outlined">mountain_flag</span> <span class="font-black text-lg">PEAKRUN</span></div>
+<div class="flex items-center gap-2"><span class="material-symbols-outlined">fitness_center</span> <span class="font-black text-lg">STRIDE</span></div>
+</div>
+</div>
+<!-- Comparison Table Section -->
+<section class="py-20 px-6 container mx-auto">
+<div class="text-center mb-16">
+<h2 class="text-3xl font-black mb-4">Why upgrade to Elite?</h2>
+<p class="text-slate-400 max-w-2xl mx-auto">Stop guessing. Start knowing. Elite gives you the metrics and the plan to reach the finish line faster.</p>
+</div>
+<div class="max-w-4xl mx-auto overflow-hidden rounded-2xl border border-primary/10 bg-primary/5">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-primary/10">
+<th class="p-6 text-sm font-black uppercase tracking-widest text-primary">Feature</th>
+<th class="p-6 text-sm font-black uppercase tracking-widest text-center">Free</th>
+<th class="p-6 text-sm font-black uppercase tracking-widest text-center bg-primary/20 text-primary">Elite</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-primary/5">
+<tr>
+<td class="p-6">
+<span class="font-bold block">Advanced Metabolic Insights</span>
+<span class="text-xs text-slate-500">VO2 Max, lactate threshold, and recovery trends.</span>
+</td>
+<td class="p-6 text-center text-slate-600">—</td>
+<td class="p-6 text-center bg-primary/5">
+<span class="material-symbols-outlined text-primary font-black">check_circle</span>
+</td>
+</tr>
+<tr>
+<td class="p-6">
+<span class="font-bold block">AI-Powered Training Plans</span>
+<span class="text-xs text-slate-500">Dynamic schedules that adapt to your performance.</span>
+</td>
+<td class="p-6 text-center text-slate-400">Basic</td>
+<td class="p-6 text-center bg-primary/5">
+<span class="font-black text-primary uppercase text-xs">Premium</span>
+</td>
+</tr>
+<tr>
+<td class="p-6">
+<span class="font-bold block">Race Predictions</span>
+<span class="text-xs text-slate-500">Highly accurate finish times for any distance.</span>
+</td>
+<td class="p-6 text-center text-slate-600">—</td>
+<td class="p-6 text-center bg-primary/5">
+<span class="material-symbols-outlined text-primary font-black">check_circle</span>
+</td>
+</tr>
+<tr>
+<td class="p-6">
+<span class="font-bold block">Ad-free Experience</span>
+<span class="text-xs text-slate-500">Zero distractions during your training sessions.</span>
+</td>
+<td class="p-6 text-center text-slate-600">—</td>
+<td class="p-6 text-center bg-primary/5">
+<span class="material-symbols-outlined text-primary font-black">check_circle</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<!-- Pricing Section -->
+<section class="py-20 px-6 bg-primary/5 border-t border-primary/10">
+<div class="container mx-auto max-w-5xl">
+<div class="grid md:grid-cols-2 gap-8">
+<!-- Monthly Plan -->
+<div class="p-8 rounded-2xl border border-primary/20 bg-background-dark relative group transition-all hover:scale-[1.02]">
+<h3 class="text-xl font-bold mb-2">Monthly</h3>
+<div class="flex items-baseline gap-1 mb-6">
+<span class="text-4xl font-black">$14.99</span>
+<span class="text-slate-500 font-medium">/month</span>
+</div>
+<ul class="space-y-4 mb-8">
+<li class="flex gap-3 text-sm">
+<span class="material-symbols-outlined text-primary">check</span>
+                                All Elite features included
+                            </li>
+<li class="flex gap-3 text-sm">
+<span class="material-symbols-outlined text-primary">check</span>
+                                Standard customer support
+                            </li>
+<li class="flex gap-3 text-sm">
+<span class="material-symbols-outlined text-primary">check</span>
+                                Cancel anytime
+                            </li>
+</ul>
+<button class="w-full py-4 rounded-xl border border-primary/40 text-primary font-bold hover:bg-primary/10 transition-colors">
+                            Select Monthly
+                        </button>
+</div>
+<!-- Yearly Plan -->
+<div class="p-8 rounded-2xl border-2 border-primary bg-background-dark relative group transition-all hover:scale-[1.02] shadow-[0_0_40px_rgba(185,242,13,0.1)]">
+<div class="absolute -top-4 left-1/2 -translate-x-1/2 bg-primary text-background-dark text-[10px] font-black px-4 py-1 rounded-full uppercase tracking-widest">
+                            Most Popular &amp; Best Value
+                        </div>
+<h3 class="text-xl font-bold mb-2">Yearly</h3>
+<div class="flex items-baseline gap-1 mb-6">
+<span class="text-4xl font-black">$99.99</span>
+<span class="text-slate-500 font-medium">/year</span>
+<span class="ml-auto text-primary text-xs font-bold bg-primary/10 px-2 py-1 rounded italic">Save 45%</span>
+</div>
+<ul class="space-y-4 mb-8">
+<li class="flex gap-3 text-sm">
+<span class="material-symbols-outlined text-primary">check</span>
+                                All Elite features included
+                            </li>
+<li class="flex gap-3 text-sm">
+<span class="material-symbols-outlined text-primary">check</span>
+                                Priority 24/7 VIP support
+                            </li>
+<li class="flex gap-3 text-sm">
+<span class="material-symbols-outlined text-primary">check</span>
+                                Early access to new labs
+                            </li>
+</ul>
+<button class="w-full py-4 rounded-xl bg-primary text-background-dark font-black shadow-lg shadow-primary/20 hover:shadow-primary/40 transition-all">
+                            Select Yearly &amp; Start Trial
+                        </button>
+</div>
+</div>
+<!-- Testimonial -->
+<div class="mt-20 p-8 rounded-2xl bg-primary/10 border border-primary/20 max-w-3xl mx-auto flex flex-col md:flex-row gap-6 items-center">
+<div class="size-16 rounded-full overflow-hidden border-2 border-primary flex-shrink-0">
+<img alt="Sarah J." data-alt="Close-up of an active woman's face" src="https://lh3.googleusercontent.com/aida-public/AB6AXuChCuyMJ5f91RsBGU8c2WqUQ7FC9lvlkhA_Y8AYo3TBIsJy7qV2L2mbNHOi1reeE0onZMbo1GhmtqldxH5ys07celeRQyC36qStoq8kzFsAzbYCwiiQ9-TkBjxHLelWc3wqWjN8AGT-1dTeNjXLr1aY229Bx8hkj7zKoZN3_TMsXAI-G6Eyw8gg1sXCio1CJ52mxJZ5VUSL2pXUsJhKrZ8xCssQ0Oi5dkW8HAH-5P1AyEv8NTTCL4EC1yjuxkF2bQXLuyJ4Urhi64s"/>
+</div>
+<div>
+<p class="text-lg italic text-slate-200 mb-2">"Elite training plans completely changed how I approach my marathon prep. I shaved 12 minutes off my PB in just three months."</p>
+<p class="text-sm font-bold text-primary">— Sarah Jenkins, <span class="text-slate-400 font-normal">Sub-3 Marathoner</span></p>
+</div>
+</div>
+</div>
+</section>
+<!-- Footer Call to Action -->
+<section class="py-24 text-center px-6 border-t border-primary/10">
+<h2 class="text-4xl font-black mb-8 italic uppercase tracking-tighter">Ready to lead the pack?</h2>
+<button class="bg-primary text-background-dark px-12 py-5 rounded-xl font-black text-xl shadow-[0_0_30px_rgba(185,242,13,0.4)] hover:shadow-primary/60 transition-all uppercase tracking-tight">
+                Get Started Now
+            </button>
+<p class="mt-6 text-sm text-slate-500">No credit card required for the first 14 days. Cancel anytime.</p>
+</section>
+<footer class="p-8 text-center text-xs text-slate-600 border-t border-primary/5">
+            © 2024 PACR Labs Inc. | Performance. Analytics. Community. Results.
+        </footer>
+</main>
+</div>
+</body></html>

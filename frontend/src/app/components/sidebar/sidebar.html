@@ -41,6 +41,10 @@
         <span class="material-symbols-outlined">lightbulb</span>
         <span>Insights</span>
       </a>
+      <a routerLink="/elite-upgrade" routerLinkActive="active" class="nav-item">
+        <span class="material-symbols-outlined">workspace_premium</span>
+        <span>PACR Elite</span>
+      </a>
     </nav>
   </div>
 
@@ -50,7 +54,7 @@
     <div class="upgrade-card">
       <h3>Upgrade to Pro</h3>
       <p>Unlock advanced analytics and personal coaching.</p>
-      <button class="upgrade-btn">Get Started</button>
+      <button class="upgrade-btn" routerLink="/elite-upgrade">Get Started</button>
     </div>
 
     <!-- User Profile -->
@@ -62,7 +66,7 @@
           <span class="user-role">Pro Member</span>
         </div>
       </div>
-      <a href="#" class="nav-item nav-item--sm">
+      <a routerLink="/settings" routerLinkActive="active" class="nav-item nav-item--sm">
         <span class="material-symbols-outlined">settings</span>
         <span>Settings</span>
       </a>

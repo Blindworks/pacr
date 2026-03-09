@@ -25,5 +25,13 @@ export const routes: Routes = [
   {
     path: 'statistics',
     loadComponent: () => import('./components/statistics/statistics').then(m => m.Statistics)
+  },
+  {
+    path: 'elite-upgrade',
+    loadComponent: () => import('./components/elite-upgrade/elite-upgrade').then(m => m.EliteUpgrade)
+  },
+  {
+    path: 'settings',
+    loadComponent: () => import('./components/settings/settings').then(m => m.Settings)
   }
 ];

@@ -1,0 +1,75 @@
+<section class="upgrade-page">
+  <header class="hero">
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <span class="hero-badge">Elite Membership</span>
+      <h1>Unlock your full potential with PACR Elite</h1>
+      <p>
+        Hol dir persoenliche AI-Coaching-Impulse, bessere Leistungsprognosen und klare
+        Metriken fuer dein naechstes Personal Best.
+      </p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" routerLink="/plans">14-Tage Test starten</a>
+        <a class="btn btn-secondary" href="#pricing">Preise ansehen</a>
+      </div>
+    </div>
+  </header>
+
+  <section class="section comparison">
+    <div class="section-head">
+      <h2>Warum auf Pro upgraden?</h2>
+      <p>Mehr Daten, bessere Entscheidungen, schneller ins Ziel.</p>
+    </div>
+
+    <div class="table-shell">
+      <table>
+        <thead>
+          <tr>
+            <th>Feature</th>
+            <th>Free</th>
+            <th>Elite</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let row of comparisons">
+            <td>
+              <strong>{{ row.feature }}</strong>
+              <span>{{ row.detail }}</span>
+            </td>
+            <td>{{ row.free }}</td>
+            <td>{{ row.elite }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="pricing" class="section pricing">
+    <div class="section-head">
+      <h2>Waehle deinen Elite Plan</h2>
+      <p>Starte risikofrei und skaliere danach nach deinem Bedarf.</p>
+    </div>
+
+    <div class="plan-grid">
+      <article class="plan-card" *ngFor="let plan of plans" [class.featured]="plan.featured">
+        <p class="badge" *ngIf="plan.featured">Best Value</p>
+        <h3>{{ plan.title }}</h3>
+        <div class="price-row">
+          <span class="price">{{ plan.price }}</span>
+          <span class="cadence">{{ plan.cadence }}</span>
+        </div>
+        <p class="saving" *ngIf="plan.highlight">{{ plan.highlight }}</p>
+        <ul>
+          <li *ngFor="let note of plan.notes">{{ note }}</li>
+        </ul>
+        <button type="button">{{ plan.cta }}</button>
+      </article>
+    </div>
+  </section>
+
+  <section class="section cta">
+    <h2>Ready to level up?</h2>
+    <p>Keine Kreditkarte fuer die ersten 14 Tage noetig.</p>
+    <a class="btn btn-primary" routerLink="/profile">Jetzt Upgrade starten</a>
+  </section>
+</section>

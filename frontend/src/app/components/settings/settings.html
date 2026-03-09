@@ -1,0 +1,149 @@
+<section class="settings-view">
+  <header class="settings-header">
+    <div>
+      <h1>Settings</h1>
+      <p>Manage your profile, metrics, and app preferences.</p>
+    </div>
+  </header>
+
+  <div class="settings-body">
+
+    <!-- Body Metrics -->
+    <article class="section">
+      <div class="section-head">
+        <span class="material-symbols-outlined">straighten</span>
+        <h2>Body Metrics</h2>
+      </div>
+      <div class="metrics-grid">
+        <div class="field">
+          <label>Weight (kg)</label>
+          <input type="number" [ngModel]="weight()" (ngModelChange)="weight.set($event)" placeholder="72" />
+        </div>
+        <div class="field">
+          <label>Height (cm)</label>
+          <input type="number" [ngModel]="height()" (ngModelChange)="height.set($event)" placeholder="180" />
+        </div>
+        <div class="field">
+          <label>Age</label>
+          <input type="number" [ngModel]="age()" (ngModelChange)="age.set($event)" placeholder="28" />
+        </div>
+        <div class="field">
+          <label>Gender</label>
+          <select [ngModel]="gender()" (ngModelChange)="gender.set($event)">
+            <option>Male</option>
+            <option>Female</option>
+            <option>Non-binary</option>
+            <option>Prefer not to say</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Resting HR (bpm)</label>
+          <input type="number" [ngModel]="restingHr()" (ngModelChange)="restingHr.set($event)" placeholder="54" />
+        </div>
+      </div>
+    </article>
+
+    <!-- App Preferences -->
+    <article class="section">
+      <div class="section-head">
+        <span class="material-symbols-outlined">tune</span>
+        <h2>App Preferences</h2>
+      </div>
+
+      <div class="prefs-grid">
+        <div class="pref-card">
+          <h3><span class="material-symbols-outlined">distance</span>Units of Measurement</h3>
+          <div class="toggle-group">
+            <button [class.active]="unit() === 'metric'" (click)="setUnit('metric')">Metric (km)</button>
+            <button [class.active]="unit() === 'imperial'" (click)="setUnit('imperial')">Imperial (mi)</button>
+          </div>
+        </div>
+
+        <div class="pref-card">
+          <h3><span class="material-symbols-outlined">dark_mode</span>Visual Theme</h3>
+          <div class="toggle-group">
+            <button [class.active]="theme() === 'light'" (click)="setTheme('light')">Light</button>
+            <button [class.active]="theme() === 'dark'" (click)="setTheme('dark')">Dark</button>
+            <button [class.active]="theme() === 'auto'" (click)="setTheme('auto')">Auto</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="toggles">
+        <div class="toggle-row">
+          <div class="toggle-info">
+            <span class="toggle-title">Push Notifications</span>
+            <span class="toggle-sub">Alerts for runs, training plans and social</span>
+          </div>
+          <label class="switch">
+            <input type="checkbox" [ngModel]="pushNotifications()" (ngModelChange)="pushNotifications.set($event)" />
+            <span class="track"></span>
+          </label>
+        </div>
+        <div class="toggle-row">
+          <div class="toggle-info">
+            <span class="toggle-title">Email Digest</span>
+            <span class="toggle-sub">Weekly summary of your activity performance</span>
+          </div>
+          <label class="switch">
+            <input type="checkbox" [ngModel]="emailDigest()" (ngModelChange)="emailDigest.set($event)" />
+            <span class="track"></span>
+          </label>
+        </div>
+      </div>
+    </article>
+
+    <!-- Integrations -->
+    <article class="section">
+      <div class="section-head">
+        <span class="material-symbols-outlined">hub</span>
+        <h2>Integrations</h2>
+      </div>
+      <div class="integrations">
+        @for (item of integrations; track item.id) {
+          <div class="integration-row">
+            <div class="int-left">
+              <div class="int-icon" [style.background]="item.iconBg">
+                @if (item.id === 'strava') {
+                  <svg class="icon-svg" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M15.387 17.944l-2.089-4.116h-3.065L15.387 24l5.15-10.172h-3.066m-7.008-5.599l2.836 5.598h4.172L10.463 0l-7 13.828h4.169"/>
+                  </svg>
+                } @else if (item.id === 'garmin') {
+                  <span class="material-symbols-outlined">watch_button_press</span>
+                } @else {
+                  <svg class="icon-svg" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M17.05 20.28c-.96.95-2.04 1.72-3.32 1.72-1.24 0-1.78-.79-3.23-.79-1.46 0-2.12.77-3.26.79-1.27.02-2.38-.85-3.32-1.79-1.95-1.97-3.41-5.55-3.41-8.72 0-3.17 1.63-4.85 3.2-4.85 1.57 0 2.45.82 3.41.82.95 0 1.95-.82 3.61-.82 1.34 0 2.48.56 3.22 1.45-2.6 1.45-2.18 4.79.43 5.86-.68 1.6-1.57 3.19-2.33 4.33zm-3.05-15.65c0-1.87 1.56-3.4 3.41-3.63.14 1.87-1.49 3.56-3.41 3.63z"/>
+                  </svg>
+                }
+              </div>
+              <div class="int-info">
+                <strong>{{ item.name }}</strong>
+                <span>{{ item.description }}</span>
+              </div>
+            </div>
+            <button
+              class="int-btn"
+              [class.int-btn--connected]="item.connected"
+              (click)="toggleIntegration(item)"
+            >
+              @if (item.connected) {
+                <span class="material-symbols-outlined">check_circle</span>
+                Connected
+              } @else {
+                Connect
+              }
+            </button>
+          </div>
+        }
+      </div>
+    </article>
+
+    <!-- Footer Actions -->
+    <div class="footer-actions">
+      <button class="btn-save" type="button" (click)="saveChanges()">SAVE CHANGES</button>
+      <button class="btn-cancel" type="button">CANCEL</button>
+      <button class="btn-delete" type="button">Delete Account</button>
+    </div>
+
+  </div>
+</section>
