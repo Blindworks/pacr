@@ -47,7 +47,12 @@
           </div>
         </div>
 
-        <button type="submit" class="btn-login">LOG IN</button>
+        @if (error()) {
+          <p class="login-error">{{ error() }}</p>
+        }
+        <button type="submit" class="btn-login" [disabled]="loading()">
+          {{ loading() ? 'LOGGING IN...' : 'LOG IN' }}
+        </button>
       </form>
 
       <div class="divider">

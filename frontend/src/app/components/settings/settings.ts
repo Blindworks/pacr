@@ -1,6 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component, signal } from '@angular/core';
+import { Component, OnInit, signal, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { StravaService } from '../../services/strava.service';
+import { UserService, UserProfile } from '../../services/user.service';
 
 type Integration = {
   id: string;
@@ -17,17 +19,28 @@ type Integration = {
   templateUrl: './settings.html',
   styleUrl: './settings.scss'
 })
-export class Settings {
-  protected weight = signal('72');
-  protected height = signal('180');
-  protected age = signal('28');
+export class Settings implements OnInit {
+  private readonly stravaService = inject(StravaService);
+  private readonly userService = inject(UserService);
+
+  private userId = 0;
+  private currentUser: UserProfile | null = null;
+
+  protected weight = signal('');
+  protected height = signal('');
+  protected dateOfBirth = signal('');
   protected gender = signal('Male');
-  protected restingHr = signal('54');
+  protected restingHr = signal('');
+  protected maxHr = signal('');
 
   protected unit = signal<'metric' | 'imperial'>('metric');
   protected theme = signal<'light' | 'dark' | 'auto'>('dark');
   protected pushNotifications = signal(true);
   protected emailDigest = signal(false);
+
+  protected stravaLoading = signal(false);
+  protected saving = signal(false);
+  protected saveError = signal('');
 
   protected readonly integrations: Integration[] = [
     {
@@ -42,7 +55,7 @@ export class Settings {
       name: 'Garmin Connect',
       description: 'Import health metrics and training data',
       iconBg: '#0076C0',
-      connected: true
+      connected: false
     },
     {
       id: 'apple',
@@ -53,6 +66,37 @@ export class Settings {
     }
   ];
 
+  ngOnInit(): void {
+    this.loadStravaStatus();
+    this.loadUserProfile();
+  }
+
+  private loadUserProfile(): void {
+    this.userService.getMe().subscribe({
+      next: user => {
+        this.currentUser = user;
+        this.userId = user.id;
+        this.weight.set(user.weightKg != null ? String(user.weightKg) : '');
+        this.height.set(user.heightCm != null ? String(user.heightCm) : '');
+        this.gender.set(user.gender ?? 'Male');
+        this.restingHr.set(user.hrRest != null ? String(user.hrRest) : '');
+        this.maxHr.set(user.maxHeartRate != null ? String(user.maxHeartRate) : '');
+        this.dateOfBirth.set(user.dateOfBirth ?? '');
+      },
+      error: () => { /* keep defaults if backend unreachable */ }
+    });
+  }
+
+  private loadStravaStatus(): void {
+    this.stravaService.getStatus().subscribe({
+      next: status => {
+        const strava = this.integrations.find(i => i.id === 'strava');
+        if (strava) strava.connected = status.connected;
+      },
+      error: () => { /* backend unreachable, keep default */ }
+    });
+  }
+
   protected setUnit(value: 'metric' | 'imperial'): void {
     this.unit.set(value);
   }
@@ -62,11 +106,53 @@ export class Settings {
   }
 
   protected toggleIntegration(integration: Integration): void {
-    integration.connected = !integration.connected;
+    if (integration.id === 'strava') {
+      integration.connected ? this.disconnectStrava(integration) : this.connectStrava();
+    }
+  }
+
+  private connectStrava(): void {
+    this.stravaLoading.set(true);
+    this.stravaService.getAuthUrl().subscribe({
+      next: ({ url }) => window.location.href = url,
+      error: () => this.stravaLoading.set(false)
+    });
+  }
+
+  private disconnectStrava(integration: Integration): void {
+    this.stravaService.disconnect().subscribe({
+      next: () => { integration.connected = false; },
+      error: () => { /* ignore */ }
+    });
   }
 
   protected saveChanges(): void {
-    // TODO: wire to backend
-    console.log('Settings saved');
+    if (!this.userId || !this.currentUser) return;
+
+    this.saving.set(true);
+    this.saveError.set('');
+
+    this.userService.updateUser(this.userId, {
+      username: this.currentUser.username,
+      email: this.currentUser.email,
+      firstName: this.currentUser.firstName,
+      lastName: this.currentUser.lastName,
+      dateOfBirth: this.dateOfBirth() || null,
+      heightCm: this.height() ? parseInt(this.height(), 10) : null,
+      weightKg: this.weight() ? parseFloat(this.weight()) : null,
+      maxHeartRate: this.maxHr() ? parseInt(this.maxHr(), 10) : null,
+      hrRest: this.restingHr() ? parseInt(this.restingHr(), 10) : null,
+      gender: this.gender(),
+      status: this.currentUser.status
+    }).subscribe({
+      next: updated => {
+        this.currentUser = updated;
+        this.saving.set(false);
+      },
+      error: () => {
+        this.saveError.set('Failed to save. Please try again.');
+        this.saving.set(false);
+      }
+    });
   }
 }

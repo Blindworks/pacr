@@ -24,8 +24,8 @@
           <input type="number" [ngModel]="height()" (ngModelChange)="height.set($event)" placeholder="180" />
         </div>
         <div class="field">
-          <label>Age</label>
-          <input type="number" [ngModel]="age()" (ngModelChange)="age.set($event)" placeholder="28" />
+          <label>Date of Birth</label>
+          <input type="date" [ngModel]="dateOfBirth()" (ngModelChange)="dateOfBirth.set($event)" />
         </div>
         <div class="field">
           <label>Gender</label>
@@ -39,6 +39,10 @@
         <div class="field">
           <label>Resting HR (bpm)</label>
           <input type="number" [ngModel]="restingHr()" (ngModelChange)="restingHr.set($event)" placeholder="54" />
+        </div>
+        <div class="field">
+          <label>Max HR (bpm)</label>
+          <input type="number" [ngModel]="maxHr()" (ngModelChange)="maxHr.set($event)" placeholder="190" />
         </div>
       </div>
     </article>
@@ -124,9 +128,12 @@
             <button
               class="int-btn"
               [class.int-btn--connected]="item.connected"
+              [disabled]="(item.id === 'strava' && stravaLoading()) || item.id === 'garmin'"
               (click)="toggleIntegration(item)"
             >
-              @if (item.connected) {
+              @if (item.id === 'strava' && stravaLoading()) {
+                <span class="material-symbols-outlined">progress_activity</span>
+              } @else if (item.connected) {
                 <span class="material-symbols-outlined">check_circle</span>
                 Connected
               } @else {
@@ -140,10 +147,15 @@
 
     <!-- Footer Actions -->
     <div class="footer-actions">
-      <button class="btn-save" type="button" (click)="saveChanges()">SAVE CHANGES</button>
+      <button class="btn-save" type="button" (click)="saveChanges()" [disabled]="saving()">
+        {{ saving() ? 'SAVING...' : 'SAVE CHANGES' }}
+      </button>
       <button class="btn-cancel" type="button">CANCEL</button>
       <button class="btn-delete" type="button">Delete Account</button>
     </div>
+    @if (saveError()) {
+      <p class="save-error">{{ saveError() }}</p>
+    }
 
   </div>
 </section>

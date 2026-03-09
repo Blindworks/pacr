@@ -105,7 +105,9 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody AuthRequest request) {
-        User user = userRepository.findByUsername(request.username()).orElse(null);
+        User user = userRepository.findByUsername(request.username())
+                .or(() -> userRepository.findByEmail(request.username()))
+                .orElse(null);
         if (user != null && user.getStatus() != UserStatus.ACTIVE) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of(
                     "status", user.getStatus().name(),
