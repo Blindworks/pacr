@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="049-1" author="system">
+        <addColumn tableName="trainings">
+            <column name="intensity_score" type="INT"/>
+            <column name="estimated_calories" type="INT"/>
+            <column name="benefit" type="VARCHAR(100)"/>
+            <column name="estimated_distance_meters" type="INT"/>
+            <column name="difficulty" type="VARCHAR(50)"/>
+            <column name="hero_image_url" type="VARCHAR(500)"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="049-2" author="system">
+        <createTable tableName="training_steps">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="training_id" type="BIGINT">
+                <constraints nullable="false" foreignKeyName="fk_step_training" references="trainings(id)"/>
+            </column>
+            <column name="sort_order" type="INT"/>
+            <column name="step_type" type="VARCHAR(20)"/>
+            <column name="title" type="VARCHAR(200)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="subtitle" type="VARCHAR(300)"/>
+            <column name="duration_minutes" type="INT"/>
+            <column name="pace_display" type="VARCHAR(50)"/>
+            <column name="icon" type="VARCHAR(100)"/>
+            <column name="highlight" type="BOOLEAN" defaultValueBoolean="false"/>
+            <column name="muted" type="BOOLEAN" defaultValueBoolean="false"/>
+            <column name="repetitions" type="INT"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="049-3" author="system">
+        <createTable tableName="training_prep_tips">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="training_id" type="BIGINT">
+                <constraints nullable="false" foreignKeyName="fk_prep_tip_training" references="trainings(id)"/>
+            </column>
+            <column name="sort_order" type="INT"/>
+            <column name="icon" type="VARCHAR(100)"/>
+            <column name="title" type="VARCHAR(200)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="text" type="VARCHAR(500)"/>
+        </createTable>
+    </changeSet>
+
+</databaseChangeLog>

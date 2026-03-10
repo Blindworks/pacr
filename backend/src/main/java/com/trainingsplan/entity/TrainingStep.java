@@ -1,0 +1,83 @@
+package com.trainingsplan.entity;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "training_steps")
+public class TrainingStep {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "training_id", nullable = false)
+    @JsonIgnore
+    private Training training;
+
+    @Column(name = "sort_order")
+    private Integer sortOrder;
+
+    @Column(name = "step_type", length = 20)
+    private String stepType;
+
+    @Column(nullable = false)
+    private String title;
+
+    @Column(length = 300)
+    private String subtitle;
+
+    @Column(name = "duration_minutes")
+    private Integer durationMinutes;
+
+    @Column(name = "pace_display", length = 50)
+    private String paceDisplay;
+
+    @Column(length = 100)
+    private String icon;
+
+    private Boolean highlight;
+
+    private Boolean muted;
+
+    private Integer repetitions;
+
+    public TrainingStep() {}
+
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+
+    public Training getTraining() { return training; }
+    public void setTraining(Training training) { this.training = training; }
+
+    public Integer getSortOrder() { return sortOrder; }
+    public void setSortOrder(Integer sortOrder) { this.sortOrder = sortOrder; }
+
+    public String getStepType() { return stepType; }
+    public void setStepType(String stepType) { this.stepType = stepType; }
+
+    public String getTitle() { return title; }
+    public void setTitle(String title) { this.title = title; }
+
+    public String getSubtitle() { return subtitle; }
+    public void setSubtitle(String subtitle) { this.subtitle = subtitle; }
+
+    public Integer getDurationMinutes() { return durationMinutes; }
+    public void setDurationMinutes(Integer durationMinutes) { this.durationMinutes = durationMinutes; }
+
+    public String getPaceDisplay() { return paceDisplay; }
+    public void setPaceDisplay(String paceDisplay) { this.paceDisplay = paceDisplay; }
+
+    public String getIcon() { return icon; }
+    public void setIcon(String icon) { this.icon = icon; }
+
+    public Boolean getHighlight() { return highlight; }
+    public void setHighlight(Boolean highlight) { this.highlight = highlight; }
+
+    public Boolean getMuted() { return muted; }
+    public void setMuted(Boolean muted) { this.muted = muted; }
+
+    public Integer getRepetitions() { return repetitions; }
+    public void setRepetitions(Integer repetitions) { this.repetitions = repetitions; }
+}

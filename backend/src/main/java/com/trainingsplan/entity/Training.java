@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import java.time.DayOfWeek;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "trainings")
@@ -55,6 +57,32 @@ public class Training {
     @Column(name = "recovery_distance_meters")
     private Integer recoveryDistanceMeters;
 
+    @Column(name = "intensity_score")
+    private Integer intensityScore;
+
+    @Column(name = "estimated_calories")
+    private Integer estimatedCalories;
+
+    @Column(length = 100)
+    private String benefit;
+
+    @Column(name = "estimated_distance_meters")
+    private Integer estimatedDistanceMeters;
+
+    @Column(length = 50)
+    private String difficulty;
+
+    @Column(name = "hero_image_url", length = 500)
+    private String heroImageUrl;
+
+    @OneToMany(mappedBy = "training", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("sortOrder ASC")
+    private List<TrainingStep> steps = new ArrayList<>();
+
+    @OneToMany(mappedBy = "training", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("sortOrder ASC")
+    private List<TrainingPrepTip> prepTips = new ArrayList<>();
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "training_plan_id")
     @JsonIgnore
@@ -103,6 +131,30 @@ public class Training {
 
     public Integer getRecoveryDistanceMeters() { return recoveryDistanceMeters; }
     public void setRecoveryDistanceMeters(Integer recoveryDistanceMeters) { this.recoveryDistanceMeters = recoveryDistanceMeters; }
+
+    public Integer getIntensityScore() { return intensityScore; }
+    public void setIntensityScore(Integer intensityScore) { this.intensityScore = intensityScore; }
+
+    public Integer getEstimatedCalories() { return estimatedCalories; }
+    public void setEstimatedCalories(Integer estimatedCalories) { this.estimatedCalories = estimatedCalories; }
+
+    public String getBenefit() { return benefit; }
+    public void setBenefit(String benefit) { this.benefit = benefit; }
+
+    public Integer getEstimatedDistanceMeters() { return estimatedDistanceMeters; }
+    public void setEstimatedDistanceMeters(Integer estimatedDistanceMeters) { this.estimatedDistanceMeters = estimatedDistanceMeters; }
+
+    public String getDifficulty() { return difficulty; }
+    public void setDifficulty(String difficulty) { this.difficulty = difficulty; }
+
+    public String getHeroImageUrl() { return heroImageUrl; }
+    public void setHeroImageUrl(String heroImageUrl) { this.heroImageUrl = heroImageUrl; }
+
+    public List<TrainingStep> getSteps() { return steps; }
+    public void setSteps(List<TrainingStep> steps) { this.steps = steps; }
+
+    public List<TrainingPrepTip> getPrepTips() { return prepTips; }
+    public void setPrepTips(List<TrainingPrepTip> prepTips) { this.prepTips = prepTips; }
 
     public TrainingPlan getTrainingPlan() { return trainingPlan; }
     public void setTrainingPlan(TrainingPlan trainingPlan) { this.trainingPlan = trainingPlan; }

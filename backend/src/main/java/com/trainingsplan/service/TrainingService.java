@@ -25,7 +25,7 @@ public class TrainingService {
     }
 
     public Training findById(Long id) {
-        return trainingRepository.findById(id).orElse(null);
+        return trainingRepository.findByIdWithDetails(id).orElse(null);
     }
 
     public List<Training> findByTrainingPlanId(Long planId) {
