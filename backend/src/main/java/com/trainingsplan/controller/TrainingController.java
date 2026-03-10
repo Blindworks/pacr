@@ -51,13 +51,13 @@ public class TrainingController {
     @PutMapping("/{id}")
     public ResponseEntity<Training> updateTraining(@PathVariable Long id,
                                                    @Valid @RequestBody Training incoming) {
-        if (trainingService.findById(id) == null) return ResponseEntity.notFound().build();
+        if (!trainingService.existsById(id)) return ResponseEntity.notFound().build();
         return ResponseEntity.ok(trainingService.update(id, incoming));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteTraining(@PathVariable Long id) {
-        if (trainingService.findById(id) == null) return ResponseEntity.notFound().build();
+        if (!trainingService.existsById(id)) return ResponseEntity.notFound().build();
         trainingService.deleteById(id);
         return ResponseEntity.noContent().build();
     }

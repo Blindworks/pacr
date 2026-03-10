@@ -24,12 +24,25 @@ public class TrainingService {
         return trainingRepository.findAll();
     }
 
+    @Transactional(readOnly = true)
     public Training findById(Long id) {
-        return trainingRepository.findByIdWithDetails(id).orElse(null);
+        Training training = trainingRepository.findByIdWithSteps(id).orElse(null);
+        if (training == null) {
+            return null;
+        }
+
+        trainingRepository.findByIdWithPrepTips(id);
+        training.getSteps().size();
+        training.getPrepTips().size();
+        return training;
     }
 
     public List<Training> findByTrainingPlanId(Long planId) {
         return trainingRepository.findByTrainingPlan_Id(planId);
+    }
+
+    public boolean existsById(Long id) {
+        return trainingRepository.existsById(id);
     }
 
     public Training save(Training training) {
@@ -55,6 +68,14 @@ public class TrainingService {
         existing.setRecoveryPace(incoming.getRecoveryPace());
         existing.setRecoveryTimeSeconds(incoming.getRecoveryTimeSeconds());
         existing.setRecoveryDistanceMeters(incoming.getRecoveryDistanceMeters());
+        existing.setIntensityScore(incoming.getIntensityScore());
+        existing.setEstimatedCalories(incoming.getEstimatedCalories());
+        existing.setBenefit(incoming.getBenefit());
+        existing.setEstimatedDistanceMeters(incoming.getEstimatedDistanceMeters());
+        existing.setDifficulty(incoming.getDifficulty());
+        existing.setHeroImageUrl(incoming.getHeroImageUrl());
+        existing.setSteps(incoming.getSteps());
+        existing.setPrepTips(incoming.getPrepTips());
 
         return existing; // managed entity → Hibernate schreibt bei Transaktionsende automatisch
     }
@@ -80,20 +101,17 @@ public class TrainingService {
         validatePositiveIfPresent(recoveryTimeSeconds, "recovery_time_seconds");
         validatePositiveIfPresent(recoveryDistanceMeters, "recovery_distance_meters");
 
-        if (workPace == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    "work_pace ist erforderlich");
-        }
-
-        int workPaceSecondsPerKm = parsePaceSecondsPerKm(workPace, "work_pace");
-        if (workTimeSeconds == null && workDistanceMeters == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    "Bei work_pace muss work_time_seconds oder work_distance_meters gesetzt sein");
-        }
-        if (workTimeSeconds == null) {
-            training.setWorkTimeSeconds(calculateSecondsFromDistance(workPaceSecondsPerKm, workDistanceMeters));
-        } else if (workDistanceMeters == null) {
-            training.setWorkDistanceMeters(calculateDistanceFromSeconds(workPaceSecondsPerKm, workTimeSeconds));
+        if (workPace != null) {
+            int workPaceSecondsPerKm = parsePaceSecondsPerKm(workPace, "work_pace");
+            if (workTimeSeconds == null && workDistanceMeters == null) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                        "Bei work_pace muss work_time_seconds oder work_distance_meters gesetzt sein");
+            }
+            if (workTimeSeconds == null) {
+                training.setWorkTimeSeconds(calculateSecondsFromDistance(workPaceSecondsPerKm, workDistanceMeters));
+            } else if (workDistanceMeters == null) {
+                training.setWorkDistanceMeters(calculateDistanceFromSeconds(workPaceSecondsPerKm, workTimeSeconds));
+            }
         }
 
         if (recoveryPace != null) {

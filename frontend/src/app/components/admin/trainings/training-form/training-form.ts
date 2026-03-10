@@ -36,7 +36,7 @@ export class TrainingForm implements OnInit {
     dayOfWeek: [null as number | null],
     description: [''],
     benefit: [''],
-    duration: [null as number | null],
+    durationMinutes: [null as number | null],
     workPace: [''],
     recoveryPace: [''],
     intensityScore: [null as number | null],
@@ -83,10 +83,10 @@ export class TrainingForm implements OnInit {
         intensityLevel: t.intensityLevel ?? '',
         difficulty: t.difficulty ?? '',
         weekNumber: t.weekNumber ?? null,
-        dayOfWeek: t.dayOfWeek ?? null,
+        dayOfWeek: this.toFormDayOfWeek(t.dayOfWeek),
         description: t.description ?? '',
         benefit: t.benefit ?? '',
-        duration: t.duration ?? null,
+        durationMinutes: t.durationMinutes ?? null,
         workPace: t.workPace ?? '',
         recoveryPace: t.recoveryPace ?? '',
         intensityScore: t.intensityScore ?? null,
@@ -94,17 +94,32 @@ export class TrainingForm implements OnInit {
         estimatedDistanceMeters: t.estimatedDistanceMeters ?? null,
         heroImageUrl: t.heroImageUrl ?? ''
       });
+      this.steps.clear();
+      this.prepTips.clear();
       (t.steps ?? []).forEach(s => this.steps.push(this.makeStepGroup(s)));
       (t.prepTips ?? []).forEach(p => this.prepTips.push(this.makeTipGroup(p)));
     });
   }
 
-  private makeStepGroup(s?: Partial<{stepType:string;title:string;subtitle:string;durationMinutes:number;paceDisplay:string;icon:string;highlight:boolean;muted:boolean;repetitions:number}>): FormGroup {
+  private makeStepGroup(s?: Partial<{
+    stepType: string;
+    subtitle: string;
+    durationMinutes: number;
+    durationSeconds: number;
+    distanceMeters: number;
+    paceDisplay: string;
+    icon: string;
+    highlight: boolean;
+    muted: boolean;
+    repetitions: number;
+  }>): FormGroup {
+    const durationSeconds = s?.durationSeconds ?? ((s?.durationMinutes ?? null) != null ? (s?.durationMinutes ?? 0) * 60 : null);
     return this.fb.group({
-      stepType: [s?.stepType ?? ''],
-      title: [s?.title ?? '', Validators.required],
+      stepType: [s?.stepType ?? '', Validators.required],
       subtitle: [s?.subtitle ?? ''],
-      durationMinutes: [s?.durationMinutes ?? null],
+      measurementType: [s?.distanceMeters != null ? 'distance' : 'duration', Validators.required],
+      durationText: [this.formatDurationInput(durationSeconds)],
+      distanceMeters: [s?.distanceMeters ?? null],
       paceDisplay: [s?.paceDisplay ?? ''],
       icon: [s?.icon ?? ''],
       highlight: [s?.highlight ?? false],
@@ -130,7 +145,7 @@ export class TrainingForm implements OnInit {
   removeTip(i: number): void { this.prepTips.removeAt(i); }
 
   save(): void {
-    if (this.form.invalid) { this.form.markAllAsTouched(); return; }
+    if (this.form.invalid || !this.validateSteps()) { this.form.markAllAsTouched(); return; }
     const payload = this.buildPayload();
     this.isSaving.set(true);
 
@@ -154,11 +169,201 @@ export class TrainingForm implements OnInit {
     const v = this.form.value;
     return {
       ...v,
-      steps: (v.steps ?? []).map((s: any, i: number) => ({ ...s, sortOrder: i })),
+      dayOfWeek: this.toBackendDayOfWeek(v.dayOfWeek),
+      steps: (v.steps ?? []).map((s: any, i: number) => {
+        const durationSeconds = s.measurementType === 'duration'
+          ? this.parseDurationText(s.durationText)
+          : null;
+        const distanceMeters = s.measurementType === 'distance'
+          ? this.parsePositiveInteger(s.distanceMeters)
+          : null;
+
+        return {
+          stepType: s.stepType,
+          title: this.formatStepTitle(s.stepType),
+          subtitle: s.subtitle || null,
+          durationMinutes: durationSeconds != null ? Math.max(1, Math.round(durationSeconds / 60)) : null,
+          durationSeconds,
+          distanceMeters,
+          paceDisplay: this.normalizePaceDisplay(s.paceDisplay) ?? null,
+          icon: s.icon || null,
+          highlight: !!s.highlight,
+          muted: !!s.muted,
+          repetitions: this.parsePositiveInteger(s.repetitions),
+          sortOrder: i
+        };
+      }),
       prepTips: (v.prepTips ?? []).map((p: any, i: number) => ({ ...p, sortOrder: i }))
     };
   }
 
   stepGroup(i: number): FormGroup { return this.steps.at(i) as FormGroup; }
   tipGroup(i: number): FormGroup { return this.prepTips.at(i) as FormGroup; }
+
+  protected onMeasurementTypeChange(index: number): void {
+    const group = this.stepGroup(index);
+    const measurementType = group.get('measurementType')?.value;
+    if (measurementType === 'duration') {
+      group.get('distanceMeters')?.setValue(null);
+      group.get('distanceMeters')?.setErrors(null);
+    } else {
+      group.get('durationText')?.setValue('');
+      group.get('durationText')?.setErrors(null);
+    }
+  }
+
+  protected onMaskedTimeInput(index: number, controlName: 'durationText' | 'paceDisplay'): void {
+    const control = this.stepGroup(index).get(controlName);
+    if (!control) {
+      return;
+    }
+
+    const digits = String(control.value ?? '').replace(/\D/g, '').slice(0, 4);
+    control.setValue(this.formatMaskedTime(digits), { emitEvent: false });
+  }
+
+  protected onMaskedTimeBlur(index: number, controlName: 'durationText' | 'paceDisplay'): void {
+    const control = this.stepGroup(index).get(controlName);
+    if (!control) {
+      return;
+    }
+
+    const normalized = this.normalizePaceDisplay(control.value);
+    if (normalized) {
+      control.setValue(normalized, { emitEvent: false });
+    }
+  }
+
+  private validateSteps(): boolean {
+    let isValid = true;
+
+    this.steps.controls.forEach(control => {
+      const group = control as FormGroup;
+      const measurementType = group.get('measurementType')?.value;
+      const durationControl = group.get('durationText');
+      const distanceControl = group.get('distanceMeters');
+
+      durationControl?.setErrors(null);
+      distanceControl?.setErrors(null);
+
+      if (measurementType === 'duration') {
+        if (this.parseDurationText(durationControl?.value) == null) {
+          durationControl?.setErrors({ invalidDuration: true });
+          isValid = false;
+        }
+      } else if (measurementType === 'distance') {
+        if (this.parsePositiveInteger(distanceControl?.value) == null) {
+          distanceControl?.setErrors({ invalidDistance: true });
+          isValid = false;
+        }
+      } else {
+        isValid = false;
+      }
+
+      const paceDisplayControl = group.get('paceDisplay');
+      const paceDisplay = this.normalizePaceDisplay(paceDisplayControl?.value);
+      paceDisplayControl?.setErrors(null);
+      if (paceDisplayControl && paceDisplay == null && String(paceDisplayControl.value ?? '').trim() !== '') {
+        paceDisplayControl.setErrors({ invalidPaceDisplay: true });
+        isValid = false;
+      }
+    });
+
+    return isValid;
+  }
+
+  private parseDurationText(value: unknown): number | null {
+    if (typeof value !== 'string') {
+      return null;
+    }
+
+    const trimmed = value.trim();
+    const match = /^(\d{1,2}):([0-5]\d)$/.exec(trimmed);
+    if (!match) {
+      return null;
+    }
+
+    const minutes = Number.parseInt(match[1], 10);
+    const seconds = Number.parseInt(match[2], 10);
+    const totalSeconds = (minutes * 60) + seconds;
+    return totalSeconds > 0 ? totalSeconds : null;
+  }
+
+  private formatDurationInput(value: number | null): string {
+    if (value == null || value <= 0) {
+      return '';
+    }
+
+    const minutes = Math.floor(value / 60);
+    const seconds = value % 60;
+    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+  }
+
+  private formatStepTitle(stepType: string | null | undefined): string {
+    if (!stepType) {
+      return 'Step';
+    }
+
+    return stepType
+      .split(/[-_\s]+/)
+      .filter(Boolean)
+      .map(part => part.charAt(0).toUpperCase() + part.slice(1))
+      .join(' ');
+  }
+
+  private parsePositiveInteger(value: unknown): number | null {
+    const parsed = typeof value === 'number' ? value : Number.parseInt(String(value ?? ''), 10);
+    return Number.isInteger(parsed) && parsed > 0 ? parsed : null;
+  }
+
+  private normalizePaceDisplay(value: unknown): string | null {
+    if (typeof value !== 'string') {
+      return null;
+    }
+
+    const trimmed = value.trim();
+    const match = /^(\d{1,2}):([0-5]\d)$/.exec(trimmed);
+    if (!match) {
+      return null;
+    }
+
+    const minutes = Number.parseInt(match[1], 10);
+    const seconds = Number.parseInt(match[2], 10);
+    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+  }
+
+  private formatMaskedTime(digits: string): string {
+    if (!digits) {
+      return '';
+    }
+
+    if (digits.length <= 2) {
+      return digits;
+    }
+
+    return `${digits.slice(0, 2)}:${digits.slice(2)}`;
+  }
+
+  private toFormDayOfWeek(value: number | string | null | undefined): number | null {
+    if (typeof value === 'number') {
+      return value >= 1 && value <= 7 ? value : null;
+    }
+
+    if (typeof value !== 'string') {
+      return null;
+    }
+
+    const days = ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY'];
+    const index = days.indexOf(value.trim().toUpperCase());
+    return index >= 0 ? index + 1 : null;
+  }
+
+  private toBackendDayOfWeek(value: number | null | undefined): string | null {
+    if (value == null || value < 1 || value > 7) {
+      return null;
+    }
+
+    const days = ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY'];
+    return days[value - 1];
+  }
 }

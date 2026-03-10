@@ -22,7 +22,7 @@ public class TrainingStep {
     @Column(name = "step_type", length = 20)
     private String stepType;
 
-    @Column(nullable = false)
+    @Column
     private String title;
 
     @Column(length = 300)
@@ -30,6 +30,12 @@ public class TrainingStep {
 
     @Column(name = "duration_minutes")
     private Integer durationMinutes;
+
+    @Column(name = "duration_seconds")
+    private Integer durationSeconds;
+
+    @Column(name = "distance_meters")
+    private Integer distanceMeters;
 
     @Column(name = "pace_display", length = 50)
     private String paceDisplay;
@@ -65,6 +71,12 @@ public class TrainingStep {
 
     public Integer getDurationMinutes() { return durationMinutes; }
     public void setDurationMinutes(Integer durationMinutes) { this.durationMinutes = durationMinutes; }
+
+    public Integer getDurationSeconds() { return durationSeconds; }
+    public void setDurationSeconds(Integer durationSeconds) { this.durationSeconds = durationSeconds; }
+
+    public Integer getDistanceMeters() { return distanceMeters; }
+    public void setDistanceMeters(Integer distanceMeters) { this.distanceMeters = distanceMeters; }
 
     public String getPaceDisplay() { return paceDisplay; }
     public void setPaceDisplay(String paceDisplay) { this.paceDisplay = paceDisplay; }

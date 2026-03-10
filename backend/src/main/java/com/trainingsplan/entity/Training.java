@@ -151,10 +151,36 @@ public class Training {
     public void setHeroImageUrl(String heroImageUrl) { this.heroImageUrl = heroImageUrl; }
 
     public List<TrainingStep> getSteps() { return steps; }
-    public void setSteps(List<TrainingStep> steps) { this.steps = steps; }
+    public void setSteps(List<TrainingStep> steps) {
+        this.steps.clear();
+        if (steps != null) {
+            steps.forEach(this::addStep);
+        }
+    }
+
+    public void addStep(TrainingStep step) {
+        if (step == null) {
+            return;
+        }
+        step.setTraining(this);
+        this.steps.add(step);
+    }
 
     public List<TrainingPrepTip> getPrepTips() { return prepTips; }
-    public void setPrepTips(List<TrainingPrepTip> prepTips) { this.prepTips = prepTips; }
+    public void setPrepTips(List<TrainingPrepTip> prepTips) {
+        this.prepTips.clear();
+        if (prepTips != null) {
+            prepTips.forEach(this::addPrepTip);
+        }
+    }
+
+    public void addPrepTip(TrainingPrepTip prepTip) {
+        if (prepTip == null) {
+            return;
+        }
+        prepTip.setTraining(this);
+        this.prepTips.add(prepTip);
+    }
 
     public TrainingPlan getTrainingPlan() { return trainingPlan; }
     public void setTrainingPlan(TrainingPlan trainingPlan) { this.trainingPlan = trainingPlan; }

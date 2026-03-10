@@ -1,6 +1,6 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { catchError, finalize, switchMap } from 'rxjs/operators';
+import { catchError, finalize } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { TrainingService, Training } from '../../../../services/training.service';
 import { TrainingPlanService, TrainingPlan } from '../../../../services/training-plan.service';
@@ -86,7 +86,20 @@ export class TrainingList implements OnInit {
     }
   }
 
-  dayLabel(day?: number): string {
+  dayLabel(day?: number | string): string {
+    if (typeof day === 'string') {
+      const enumMap: Record<string, string> = {
+        MONDAY: 'Mon',
+        TUESDAY: 'Tue',
+        WEDNESDAY: 'Wed',
+        THURSDAY: 'Thu',
+        FRIDAY: 'Fri',
+        SATURDAY: 'Sat',
+        SUNDAY: 'Sun'
+      };
+      return enumMap[day] ?? day;
+    }
+
     const days = ['', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
     return day != null ? (days[day] ?? `D${day}`) : '—';
   }

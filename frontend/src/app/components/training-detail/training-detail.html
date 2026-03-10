@@ -70,7 +70,7 @@
         <span class="td-section__sub">{{ training.estimatedDistance }} Estimated</span>
       </div>
       <div class="td-steps">
-        @for (step of training.steps; track step.title) {
+        @for (step of training.steps; track $index) {
           <div class="td-step"
                [class.td-step--highlight]="step.highlight"
                [class.td-step--muted]="step.muted">
@@ -79,7 +79,7 @@
             </div>
             <div class="td-step__body">
               <p class="td-step__title">{{ step.title }}</p>
-              <p class="td-step__sub">{{ step.subtitle }}</p>
+              <p class="td-step__sub">{{ step.subtitle || step.measurement }}</p>
             </div>
             <span class="td-step__pace">{{ step.pace }}</span>
           </div>

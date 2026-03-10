@@ -8,10 +8,10 @@ interface WorkoutStep {
   title: string;
   subtitle: string;
   pace: string;
+  measurement: string;
   highlight: boolean;
   muted: boolean;
   repetitions?: number;
-  duration?: number;
 }
 
 interface PrepTip {
@@ -24,12 +24,12 @@ export interface TrainingDetailData {
   id: number;
   sessionNumber: number;
   title: string;
-  difficulty: string;  // e.g. 'Advanced'
-  duration: string;    // e.g. '45 min'
-  intensity: string;   // e.g. 'High (8/10)'
-  calories: string;    // e.g. '540 kcal'
-  benefit: string;     // e.g. 'VO2 Max'
-  estimatedDistance: string; // e.g. '8.2 km'
+  difficulty: string;
+  duration: string;
+  intensity: string;
+  calories: string;
+  benefit: string;
+  estimatedDistance: string;
   heroImage: string | null;
   steps: WorkoutStep[];
   prepTips: PrepTip[];
@@ -69,7 +69,7 @@ export class TrainingDetail implements OnInit {
       sessionNumber: t.id,
       title: t.name,
       difficulty: t.difficulty || '—',
-      duration: `${t.duration || 0} min`,
+      duration: `${t.durationMinutes || 0} min`,
       intensity: t.intensityScore
         ? `High (${t.intensityScore}/10)`
         : (t.intensityLevel || 'Medium'),
@@ -81,13 +81,13 @@ export class TrainingDetail implements OnInit {
       heroImage: t.heroImageUrl || null,
       steps: (t.steps || []).map(s => ({
         icon: s.icon || '',
-        title: s.title,
+        title: s.title || this.formatStepTitle(s.stepType),
         subtitle: s.subtitle || '',
         pace: s.paceDisplay || '—',
+        measurement: this.formatStepMeasurement(s.durationSeconds, s.durationMinutes, s.distanceMeters),
         highlight: s.highlight ?? false,
         muted: s.muted ?? false,
-        repetitions: s.repetitions,
-        duration: s.durationMinutes
+        repetitions: s.repetitions
       })),
       prepTips: (t.prepTips || []).map(p => ({
         icon: p.icon || '',
@@ -99,5 +99,32 @@ export class TrainingDetail implements OnInit {
 
   goBack(): void {
     this.router.navigate(['/training-plans']);
+  }
+
+  private formatStepTitle(stepType?: string): string {
+    if (!stepType) {
+      return 'Step';
+    }
+
+    return stepType
+      .split(/[-_\s]+/)
+      .filter(Boolean)
+      .map(part => part.charAt(0).toUpperCase() + part.slice(1))
+      .join(' ');
+  }
+
+  private formatStepMeasurement(durationSeconds?: number, durationMinutes?: number, distanceMeters?: number): string {
+    if (distanceMeters != null && distanceMeters > 0) {
+      return `${distanceMeters} m`;
+    }
+
+    const totalSeconds = durationSeconds ?? (durationMinutes != null ? durationMinutes * 60 : null);
+    if (totalSeconds == null || totalSeconds <= 0) {
+      return '—';
+    }
+
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
   }
 }

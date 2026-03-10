@@ -6,9 +6,11 @@ export interface TrainingStep {
   id: number;
   sortOrder: number;
   stepType: string;
-  title: string;
+  title?: string;
   subtitle?: string;
   durationMinutes?: number;
+  durationSeconds?: number;
+  distanceMeters?: number;
   paceDisplay?: string;
   icon?: string;
   highlight?: boolean;
@@ -29,10 +31,10 @@ export interface Training {
   name: string;
   description?: string;
   weekNumber?: number;
-  dayOfWeek?: number;
+  dayOfWeek?: number | string;
   intensityLevel?: string;
   trainingType?: string;
-  duration?: number;
+  durationMinutes?: number;
   workPace?: string;
   recoveryPace?: string;
   intensityScore?: number;

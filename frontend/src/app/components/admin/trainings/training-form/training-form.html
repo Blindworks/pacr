@@ -136,7 +136,7 @@
         <div class="field-grid">
           <div class="field">
             <label>Duration (min)</label>
-            <input formControlName="duration" type="number" min="0" placeholder="60" class="input" />
+            <input formControlName="durationMinutes" type="number" min="0" placeholder="60" class="input" />
           </div>
           <div class="field">
             <label>Work Pace</label>
@@ -212,20 +212,36 @@
                 </select>
               </div>
               <div class="field">
-                <label>Title <span class="required">*</span></label>
-                <input formControlName="title" type="text" placeholder="e.g. 1000m Interval" class="input" />
-              </div>
-              <div class="field">
                 <label>Subtitle</label>
                 <input formControlName="subtitle" type="text" placeholder="Optional detail" class="input" />
               </div>
               <div class="field">
-                <label>Duration (min)</label>
-                <input formControlName="durationMinutes" type="number" min="0" class="input" />
+                <label>Measurement</label>
+                <select formControlName="measurementType" class="input" (change)="onMeasurementTypeChange($index)">
+                  <option value="duration">Duration</option>
+                  <option value="distance">Distance</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>{{ stepGroup($index).get('measurementType')?.value === 'distance' ? 'Distance (m)' : 'Duration (mm:ss)' }}</label>
+                @if (stepGroup($index).get('measurementType')?.value === 'distance') {
+                  <input formControlName="distanceMeters" type="number" min="1" placeholder="e.g. 1000" class="input" [class.invalid]="stepGroup($index).get('distanceMeters')?.invalid && stepGroup($index).get('distanceMeters')?.touched" />
+                  @if (stepGroup($index).get('distanceMeters')?.hasError('invalidDistance') && stepGroup($index).get('distanceMeters')?.touched) {
+                    <span class="field-error">Enter a distance in meters</span>
+                  }
+                } @else {
+                  <input formControlName="durationText" type="text" inputmode="numeric" maxlength="5" placeholder="e.g. 05:30" class="input" [class.invalid]="stepGroup($index).get('durationText')?.invalid && stepGroup($index).get('durationText')?.touched" (input)="onMaskedTimeInput($index, 'durationText')" (blur)="onMaskedTimeBlur($index, 'durationText')" />
+                  @if (stepGroup($index).get('durationText')?.hasError('invalidDuration') && stepGroup($index).get('durationText')?.touched) {
+                    <span class="field-error">Use the format mm:ss</span>
+                  }
+                }
               </div>
               <div class="field">
                 <label>Pace Display</label>
-                <input formControlName="paceDisplay" type="text" placeholder="e.g. 4:15/km" class="input" />
+                <input formControlName="paceDisplay" type="text" inputmode="numeric" maxlength="5" placeholder="e.g. 04:15" class="input" [class.invalid]="stepGroup($index).get('paceDisplay')?.invalid && stepGroup($index).get('paceDisplay')?.touched" (input)="onMaskedTimeInput($index, 'paceDisplay')" (blur)="onMaskedTimeBlur($index, 'paceDisplay')" />
+                @if (stepGroup($index).get('paceDisplay')?.hasError('invalidPaceDisplay') && stepGroup($index).get('paceDisplay')?.touched) {
+                  <span class="field-error">Use the format mm:ss</span>
+                }
               </div>
               <div class="field">
                 <label>Icon</label>
