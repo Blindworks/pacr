@@ -1,0 +1,121 @@
+<div class="list-page">
+
+  <!-- Breadcrumb -->
+  <div class="breadcrumb">
+    <button class="breadcrumb-link" (click)="backToPlans()">
+      <span class="material-symbols-outlined">arrow_back</span>
+      Training Plans
+    </button>
+    <span class="material-symbols-outlined breadcrumb-sep">chevron_right</span>
+    <span class="breadcrumb-current">{{ plan()?.name ?? 'Plan' }}</span>
+  </div>
+
+  <!-- Toolbar -->
+  <div class="toolbar">
+    <div class="toolbar-left">
+      <h2>Trainings</h2>
+      @if (!isLoading()) {
+        <span class="count-badge">{{ trainings().length }}</span>
+      }
+    </div>
+    <button class="btn-primary" (click)="navigateNew()">
+      <span class="material-symbols-outlined">add</span>
+      New Training
+    </button>
+  </div>
+
+  @if (isLoading()) {
+    <div class="state-box">
+      <span class="material-symbols-outlined spin">progress_activity</span>
+      <span>Loading trainings…</span>
+    </div>
+  }
+
+  @if (hasError() && !isLoading()) {
+    <div class="state-box state-box--error">
+      <span class="material-symbols-outlined">error</span>
+      <span>Failed to load trainings.</span>
+      <button class="btn-ghost" (click)="loadTrainings()">Retry</button>
+    </div>
+  }
+
+  @if (!isLoading() && !hasError() && trainings().length === 0) {
+    <div class="state-box">
+      <span class="material-symbols-outlined">fitness_center</span>
+      <span>No trainings in this plan yet.</span>
+      <button class="btn-primary" (click)="navigateNew()">Add first training</button>
+    </div>
+  }
+
+  @if (!isLoading() && trainings().length > 0) {
+    <div class="table-card">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Week / Day</th>
+            <th>Name</th>
+            <th>Type</th>
+            <th>Intensity</th>
+            <th>Duration</th>
+            <th>Difficulty</th>
+            <th>Steps</th>
+            <th>Prep Tips</th>
+            <th class="col-actions">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (t of trainings(); track t.id) {
+            <tr>
+              <td class="cell-schedule">
+                @if (t.weekNumber != null) {
+                  <span class="schedule-tag">W{{ t.weekNumber }}</span>
+                }
+                @if (t.dayOfWeek != null) {
+                  <span class="schedule-tag">{{ dayLabel(t.dayOfWeek) }}</span>
+                }
+                @if (t.weekNumber == null && t.dayOfWeek == null) {
+                  <span class="cell-muted">—</span>
+                }
+              </td>
+              <td class="cell-name">{{ t.name }}</td>
+              <td class="cell-muted">{{ t.trainingType || '—' }}</td>
+              <td>
+                @if (t.intensityLevel) {
+                  <span class="pill" [class]="intensityClass(t.intensityLevel)">{{ t.intensityLevel }}</span>
+                } @else {
+                  <span class="cell-muted">—</span>
+                }
+              </td>
+              <td class="cell-muted">{{ t.duration != null ? t.duration + ' min' : '—' }}</td>
+              <td class="cell-muted">{{ t.difficulty || '—' }}</td>
+              <td class="cell-muted">{{ t.steps.length }}</td>
+              <td class="cell-muted">{{ t.prepTips.length }}</td>
+              <td class="cell-actions">
+                <button class="icon-btn" title="Edit" (click)="navigateEdit(t.id)">
+                  <span class="material-symbols-outlined">edit</span>
+                </button>
+                <button class="icon-btn icon-btn--danger" title="Delete" (click)="requestDelete(t.id)">
+                  <span class="material-symbols-outlined">delete</span>
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+
+  @if (confirmDeleteId() !== null) {
+    <div class="dialog-overlay" (click)="cancelDelete()">
+      <div class="dialog" (click)="$event.stopPropagation()">
+        <span class="material-symbols-outlined dialog-icon">warning</span>
+        <h3>Delete Training?</h3>
+        <p>This action cannot be undone.</p>
+        <div class="dialog-actions">
+          <button class="btn-ghost" (click)="cancelDelete()">Cancel</button>
+          <button class="btn-danger" (click)="confirmDelete(confirmDeleteId()!)">Delete</button>
+        </div>
+      </div>
+    </div>
+  }
+</div>

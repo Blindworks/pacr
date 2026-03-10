@@ -1,0 +1,85 @@
+<div class="form-page">
+  <header class="form-header">
+    <div class="form-header-left">
+      <button class="btn-ghost icon-only" (click)="cancel()" title="Back">
+        <span class="material-symbols-outlined">arrow_back</span>
+      </button>
+      <h2>{{ isEdit ? 'Edit Training Plan' : 'New Training Plan' }}</h2>
+    </div>
+    <div class="form-header-actions">
+      @if (hasError()) {
+        <span class="error-hint">
+          <span class="material-symbols-outlined">error</span>
+          Save failed
+        </span>
+      }
+      <button class="btn-ghost" (click)="cancel()" [disabled]="isSaving()">Cancel</button>
+      <button class="btn-primary" (click)="save()" [disabled]="isSaving()">
+        @if (isSaving()) {
+          <span class="material-symbols-outlined spin">progress_activity</span>
+        } @else {
+          <span class="material-symbols-outlined">save</span>
+        }
+        {{ isSaving() ? 'Saving…' : 'Save' }}
+      </button>
+    </div>
+  </header>
+
+  @if (isLoading()) {
+    <div class="loading-state">
+      <span class="material-symbols-outlined spin">progress_activity</span>
+      <span>Loading plan…</span>
+    </div>
+  }
+
+  @if (!isLoading()) {
+    <form [formGroup]="form" (ngSubmit)="save()" class="form-body">
+      <section class="form-card">
+        <h3 class="section-title">
+          <span class="material-symbols-outlined">calendar_month</span>
+          Plan Details
+        </h3>
+        <div class="field-grid">
+          <div class="field field--full">
+            <label>Name <span class="required">*</span></label>
+            <input formControlName="name" type="text" placeholder="e.g. 10-Week Marathon Prep" class="input"
+              [class.invalid]="form.get('name')?.invalid && form.get('name')?.touched" />
+            @if (form.get('name')?.invalid && form.get('name')?.touched) {
+              <span class="field-error">Name is required</span>
+            }
+          </div>
+
+          <div class="field field--full">
+            <label>Description</label>
+            <textarea formControlName="description" rows="3" placeholder="What is this plan for?" class="input textarea"></textarea>
+          </div>
+
+          <div class="field">
+            <label>Competition Type</label>
+            <select formControlName="competitionType" class="input">
+              <option value="">— Select —</option>
+              <option value="MARATHON">Marathon</option>
+              <option value="HALF_MARATHON">Half Marathon</option>
+              <option value="TEN_KM">10 km</option>
+              <option value="FIVE_KM">5 km</option>
+              <option value="TRIATHLON">Triathlon</option>
+              <option value="TRAIL_RUN">Trail Run</option>
+              <option value="OTHER">Other</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label>Target Time</label>
+            <input formControlName="targetTime" type="text" placeholder="e.g. 3:30:00" class="input" />
+          </div>
+
+          <div class="field field--full">
+            <label>Prerequisites</label>
+            <textarea formControlName="prerequisites" rows="2"
+              placeholder="e.g. Able to run 30 min continuously" class="input textarea"></textarea>
+          </div>
+        </div>
+      </section>
+    </form>
+  }
+</div>

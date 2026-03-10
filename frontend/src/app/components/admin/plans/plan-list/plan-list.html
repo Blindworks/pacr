@@ -1,0 +1,101 @@
+<div class="list-page">
+  <div class="toolbar">
+    <div class="toolbar-left">
+      <h2>Training Plans</h2>
+      @if (!isLoading()) {
+        <span class="count-badge">{{ plans().length }}</span>
+      }
+    </div>
+    <button class="btn-primary" (click)="navigateNew()">
+      <span class="material-symbols-outlined">add</span>
+      New Plan
+    </button>
+  </div>
+
+  @if (isLoading()) {
+    <div class="state-box">
+      <span class="material-symbols-outlined spin">progress_activity</span>
+      <span>Loading plans…</span>
+    </div>
+  }
+
+  @if (hasError() && !isLoading()) {
+    <div class="state-box state-box--error">
+      <span class="material-symbols-outlined">error</span>
+      <span>Failed to load plans.</span>
+      <button class="btn-ghost" (click)="load()">Retry</button>
+    </div>
+  }
+
+  @if (!isLoading() && !hasError() && plans().length === 0) {
+    <div class="state-box">
+      <span class="material-symbols-outlined">calendar_month</span>
+      <span>No training plans yet.</span>
+      <button class="btn-primary" (click)="navigateNew()">Create first plan</button>
+    </div>
+  }
+
+  @if (!isLoading() && plans().length > 0) {
+    <div class="plan-grid">
+      @for (plan of plans(); track plan.id) {
+        <div class="plan-card">
+          <div class="plan-card-header">
+            <div class="plan-info">
+              <h3>{{ plan.name }}</h3>
+              @if (plan.competitionType) {
+                <span class="type-badge">{{ competitionTypeLabel(plan.competitionType) }}</span>
+              }
+            </div>
+            <div class="plan-actions">
+              <button class="icon-btn" title="Edit plan" (click)="navigateEdit(plan.id)">
+                <span class="material-symbols-outlined">edit</span>
+              </button>
+              <button class="icon-btn icon-btn--danger" title="Delete plan" (click)="requestDelete(plan.id)">
+                <span class="material-symbols-outlined">delete</span>
+              </button>
+            </div>
+          </div>
+
+          @if (plan.description) {
+            <p class="plan-description">{{ plan.description }}</p>
+          }
+
+          <div class="plan-meta">
+            @if (plan.targetTime) {
+              <span class="meta-item">
+                <span class="material-symbols-outlined">timer</span>
+                {{ plan.targetTime }}
+              </span>
+            }
+            @if (plan.trainingCount != null) {
+              <span class="meta-item">
+                <span class="material-symbols-outlined">fitness_center</span>
+                {{ plan.trainingCount }} trainings
+              </span>
+            }
+          </div>
+
+          <button class="btn-manage" (click)="navigateTrainings(plan.id)">
+            <span class="material-symbols-outlined">fitness_center</span>
+            Manage Trainings
+            <span class="material-symbols-outlined arrow">arrow_forward</span>
+          </button>
+        </div>
+      }
+    </div>
+  }
+
+  @if (confirmDeleteId() !== null) {
+    <div class="dialog-overlay" (click)="cancelDelete()">
+      <div class="dialog" (click)="$event.stopPropagation()">
+        <span class="material-symbols-outlined dialog-icon">warning</span>
+        <h3>Delete Training Plan?</h3>
+        <p>All associated trainings will also be deleted.</p>
+        <div class="dialog-actions">
+          <button class="btn-ghost" (click)="cancelDelete()">Cancel</button>
+          <button class="btn-danger" (click)="confirmDelete(confirmDeleteId()!)">Delete</button>
+        </div>
+      </div>
+    </div>
+  }
+</div>

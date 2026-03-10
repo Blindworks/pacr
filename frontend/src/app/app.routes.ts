@@ -77,5 +77,10 @@ export const routes: Routes = [
     path: 'body-data/log-symptoms',
     canActivate: [authGuard],
     loadComponent: () => import('./components/body-data/log-symptoms/log-symptoms').then(m => m.LogSymptoms)
+  },
+  {
+    path: 'admin',
+    canActivate: [authGuard],
+    loadChildren: () => import('./components/admin/admin.routes').then(m => m.adminRoutes)
   }
 ];

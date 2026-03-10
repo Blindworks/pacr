@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 export interface TrainingStep {
@@ -28,7 +28,8 @@ export interface Training {
   id: number;
   name: string;
   description?: string;
-  trainingDate?: string;
+  weekNumber?: number;
+  dayOfWeek?: number;
   intensityLevel?: string;
   trainingType?: string;
   duration?: number;
@@ -50,7 +51,29 @@ export class TrainingService {
 
   constructor(private http: HttpClient) {}
 
+  getAll(): Observable<Training[]> {
+    return this.http.get<Training[]>(`${this.baseUrl}/trainings`);
+  }
+
+  getByPlan(planId: number): Observable<Training[]> {
+    return this.http.get<Training[]>(`${this.baseUrl}/trainings/plan/${planId}`);
+  }
+
   getTrainingById(id: number): Observable<Training> {
     return this.http.get<Training>(`${this.baseUrl}/trainings/${id}`);
+  }
+
+  create(payload: Partial<Training>, planId?: number): Observable<Training> {
+    let params = new HttpParams();
+    if (planId != null) params = params.set('planId', planId);
+    return this.http.post<Training>(`${this.baseUrl}/trainings`, payload, { params });
+  }
+
+  update(id: number, payload: Partial<Training>): Observable<Training> {
+    return this.http.put<Training>(`${this.baseUrl}/trainings/${id}`, payload);
+  }
+
+  delete(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/trainings/${id}`);
   }
 }

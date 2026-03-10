@@ -1,0 +1,299 @@
+<div class="form-page">
+  <!-- Breadcrumb -->
+  <div class="breadcrumb">
+    <button class="breadcrumb-link" (click)="cancel()">
+      <span class="material-symbols-outlined">arrow_back</span>
+      {{ plan()?.name ?? 'Plan' }}
+    </button>
+    <span class="material-symbols-outlined breadcrumb-sep">chevron_right</span>
+    <span class="breadcrumb-current">{{ isEdit ? 'Edit Training' : 'New Training' }}</span>
+  </div>
+
+  <!-- Sticky header -->
+  <header class="form-header">
+    <div class="form-header-left">
+      <button class="btn-ghost icon-only" (click)="cancel()" title="Back">
+        <span class="material-symbols-outlined">arrow_back</span>
+      </button>
+      <h2>{{ isEdit ? 'Edit Training' : 'New Training' }}</h2>
+    </div>
+    <div class="form-header-actions">
+      @if (hasError()) {
+        <span class="error-hint">
+          <span class="material-symbols-outlined">error</span>
+          Save failed
+        </span>
+      }
+      <button class="btn-ghost" (click)="cancel()" [disabled]="isSaving()">Cancel</button>
+      <button class="btn-primary" (click)="save()" [disabled]="isSaving()">
+        @if (isSaving()) {
+          <span class="material-symbols-outlined spin">progress_activity</span>
+        } @else {
+          <span class="material-symbols-outlined">save</span>
+        }
+        {{ isSaving() ? 'Saving…' : 'Save' }}
+      </button>
+    </div>
+  </header>
+
+  <!-- Loading overlay for edit -->
+  @if (isLoading()) {
+    <div class="loading-state">
+      <span class="material-symbols-outlined spin">progress_activity</span>
+      <span>Loading training…</span>
+    </div>
+  }
+
+  @if (!isLoading()) {
+    <form [formGroup]="form" class="form-body" (ngSubmit)="save()">
+
+      <!-- Section 1: Basic Info -->
+      <section class="form-card">
+        <h3 class="section-title">
+          <span class="material-symbols-outlined">info</span>
+          Basic Info
+        </h3>
+        <div class="field-grid">
+          <div class="field field--full">
+            <label>Name <span class="required">*</span></label>
+            <input formControlName="name" type="text" placeholder="e.g. Tempo Intervals" class="input" [class.invalid]="form.get('name')?.invalid && form.get('name')?.touched" />
+            @if (form.get('name')?.invalid && form.get('name')?.touched) {
+              <span class="field-error">Name is required</span>
+            }
+          </div>
+          <div class="field">
+            <label>Training Type</label>
+            <select formControlName="trainingType" class="input">
+              <option value="">— Select —</option>
+              <option value="speed">Speed</option>
+              <option value="endurance">Endurance</option>
+              <option value="strength">Strength</option>
+              <option value="race">Race</option>
+              <option value="fartlek">Fartlek</option>
+              <option value="recovery">Recovery</option>
+              <option value="swimming">Swimming</option>
+              <option value="cycling">Cycling</option>
+              <option value="general">General</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Intensity Level</label>
+            <select formControlName="intensityLevel" class="input">
+              <option value="">— Select —</option>
+              <option value="high">High</option>
+              <option value="medium">Medium</option>
+              <option value="low">Low</option>
+              <option value="recovery">Recovery</option>
+              <option value="rest">Rest</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Difficulty</label>
+            <select formControlName="difficulty" class="input">
+              <option value="">— Select —</option>
+              <option value="beginner">Beginner</option>
+              <option value="intermediate">Intermediate</option>
+              <option value="advanced">Advanced</option>
+              <option value="elite">Elite</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Week</label>
+            <input formControlName="weekNumber" type="number" min="1" placeholder="e.g. 1" class="input" />
+            <span class="field-hint">Training week within the plan</span>
+          </div>
+          <div class="field">
+            <label>Day of Week</label>
+            <select formControlName="dayOfWeek" class="input">
+              <option [ngValue]="null">— Select —</option>
+              <option [ngValue]="1">Monday</option>
+              <option [ngValue]="2">Tuesday</option>
+              <option [ngValue]="3">Wednesday</option>
+              <option [ngValue]="4">Thursday</option>
+              <option [ngValue]="5">Friday</option>
+              <option [ngValue]="6">Saturday</option>
+              <option [ngValue]="7">Sunday</option>
+            </select>
+            <span class="field-hint">Relative day (1 = Mon, 7 = Sun)</span>
+          </div>
+          <div class="field field--full">
+            <label>Description</label>
+            <textarea formControlName="description" rows="3" placeholder="Describe this training…" class="input textarea"></textarea>
+          </div>
+          <div class="field field--full">
+            <label>Benefit</label>
+            <input formControlName="benefit" type="text" placeholder="e.g. Improves lactate threshold" class="input" />
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 2: Metrics & Pace -->
+      <section class="form-card">
+        <h3 class="section-title">
+          <span class="material-symbols-outlined">speed</span>
+          Metrics &amp; Pace
+        </h3>
+        <div class="field-grid">
+          <div class="field">
+            <label>Duration (min)</label>
+            <input formControlName="duration" type="number" min="0" placeholder="60" class="input" />
+          </div>
+          <div class="field">
+            <label>Work Pace</label>
+            <input formControlName="workPace" type="text" placeholder="e.g. 4:30/km" class="input" />
+          </div>
+          <div class="field">
+            <label>Recovery Pace</label>
+            <input formControlName="recoveryPace" type="text" placeholder="e.g. 6:00/km" class="input" />
+          </div>
+          <div class="field">
+            <label>Intensity Score</label>
+            <input formControlName="intensityScore" type="number" min="0" max="100" placeholder="0–100" class="input" />
+          </div>
+          <div class="field">
+            <label>Est. Calories</label>
+            <input formControlName="estimatedCalories" type="number" min="0" placeholder="500" class="input" />
+          </div>
+          <div class="field">
+            <label>Est. Distance (m)</label>
+            <input formControlName="estimatedDistanceMeters" type="number" min="0" placeholder="10000" class="input" />
+          </div>
+          <div class="field field--full">
+            <label>Hero Image URL</label>
+            <input formControlName="heroImageUrl" type="url" placeholder="https://…" class="input" />
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 3: Workout Steps -->
+      <section class="form-card">
+        <div class="section-header">
+          <h3 class="section-title">
+            <span class="material-symbols-outlined">format_list_numbered</span>
+            Workout Steps
+            <span class="badge">{{ steps.length }}</span>
+          </h3>
+          <button type="button" class="btn-ghost small" (click)="addStep()">
+            <span class="material-symbols-outlined">add</span>
+            Add Step
+          </button>
+        </div>
+
+        @if (steps.length === 0) {
+          <p class="empty-hint">No steps yet. Click "Add Step" to define the workout structure.</p>
+        }
+
+        @for (step of steps.controls; track $index) {
+          <div class="array-item" [formGroup]="stepGroup($index)">
+            <div class="array-item-header">
+              <span class="array-item-index">{{ $index + 1 }}</span>
+              <div class="array-item-actions">
+                <button type="button" class="icon-btn" title="Move up" (click)="moveStepUp($index)" [disabled]="$index === 0">
+                  <span class="material-symbols-outlined">arrow_upward</span>
+                </button>
+                <button type="button" class="icon-btn" title="Move down" (click)="moveStepDown($index)" [disabled]="$index === steps.length - 1">
+                  <span class="material-symbols-outlined">arrow_downward</span>
+                </button>
+                <button type="button" class="icon-btn icon-btn--danger" title="Remove" (click)="removeStep($index)">
+                  <span class="material-symbols-outlined">delete</span>
+                </button>
+              </div>
+            </div>
+            <div class="field-grid field-grid--compact">
+              <div class="field">
+                <label>Type</label>
+                <select formControlName="stepType" class="input">
+                  <option value="">— Select —</option>
+                  <option value="warmup">Warm-up</option>
+                  <option value="work">Work</option>
+                  <option value="recovery">Recovery</option>
+                  <option value="cooldown">Cool-down</option>
+                  <option value="rest">Rest</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>Title <span class="required">*</span></label>
+                <input formControlName="title" type="text" placeholder="e.g. 1000m Interval" class="input" />
+              </div>
+              <div class="field">
+                <label>Subtitle</label>
+                <input formControlName="subtitle" type="text" placeholder="Optional detail" class="input" />
+              </div>
+              <div class="field">
+                <label>Duration (min)</label>
+                <input formControlName="durationMinutes" type="number" min="0" class="input" />
+              </div>
+              <div class="field">
+                <label>Pace Display</label>
+                <input formControlName="paceDisplay" type="text" placeholder="e.g. 4:15/km" class="input" />
+              </div>
+              <div class="field">
+                <label>Icon</label>
+                <input formControlName="icon" type="text" placeholder="e.g. sprint" class="input" />
+              </div>
+              <div class="field">
+                <label>Repetitions</label>
+                <input formControlName="repetitions" type="number" min="1" class="input" />
+              </div>
+              <div class="field checkboxes">
+                <label class="checkbox-label">
+                  <input formControlName="highlight" type="checkbox" />
+                  Highlight
+                </label>
+                <label class="checkbox-label">
+                  <input formControlName="muted" type="checkbox" />
+                  Muted
+                </label>
+              </div>
+            </div>
+          </div>
+        }
+      </section>
+
+      <!-- Section 4: Prep Tips -->
+      <section class="form-card">
+        <div class="section-header">
+          <h3 class="section-title">
+            <span class="material-symbols-outlined">lightbulb</span>
+            Prep Tips
+            <span class="badge">{{ prepTips.length }}</span>
+          </h3>
+          <button type="button" class="btn-ghost small" (click)="addTip()">
+            <span class="material-symbols-outlined">add</span>
+            Add Tip
+          </button>
+        </div>
+
+        @if (prepTips.length === 0) {
+          <p class="empty-hint">No prep tips yet.</p>
+        }
+
+        @for (tip of prepTips.controls; track $index) {
+          <div class="array-item" [formGroup]="tipGroup($index)">
+            <div class="array-item-header">
+              <span class="array-item-index">{{ $index + 1 }}</span>
+              <button type="button" class="icon-btn icon-btn--danger" title="Remove" (click)="removeTip($index)">
+                <span class="material-symbols-outlined">delete</span>
+              </button>
+            </div>
+            <div class="field-grid field-grid--compact">
+              <div class="field">
+                <label>Title <span class="required">*</span></label>
+                <input formControlName="title" type="text" placeholder="e.g. Hydrate well" class="input" />
+              </div>
+              <div class="field">
+                <label>Icon</label>
+                <input formControlName="icon" type="text" placeholder="e.g. water_drop" class="input" />
+              </div>
+              <div class="field field--full">
+                <label>Text</label>
+                <textarea formControlName="text" rows="2" placeholder="Tip details…" class="input textarea"></textarea>
+              </div>
+            </div>
+          </div>
+        }
+      </section>
+
+    </form>
+  }
+</div>

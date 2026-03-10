@@ -1,0 +1,20 @@
+<div class="admin-shell">
+  <header class="admin-header">
+    <div class="admin-header-inner">
+      <div class="admin-title">
+        <span class="material-symbols-outlined admin-icon">admin_panel_settings</span>
+        <h1>Admin</h1>
+      </div>
+      <nav class="admin-tabs">
+        <a routerLink="plans" routerLinkActive="active" class="admin-tab">
+          <span class="material-symbols-outlined">calendar_month</span>
+          <span>Training Plans</span>
+        </a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="admin-content">
+    <router-outlet />
+  </main>
+</div>
