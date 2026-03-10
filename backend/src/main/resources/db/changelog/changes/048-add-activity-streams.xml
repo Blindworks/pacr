@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="048-create-activity-streams" author="dev">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="activity_streams"/>
+            </not>
+        </preConditions>
+        <createTable tableName="activity_streams">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="completed_training_id" type="BIGINT">
+                <constraints nullable="false" unique="true"
+                             foreignKeyName="fk_activity_streams_completed_training"
+                             references="completed_trainings(id)"/>
+            </column>
+            <column name="time_seconds_json" type="LONGTEXT"/>
+            <column name="heartrate_json" type="LONGTEXT"/>
+            <column name="velocity_smooth_json" type="LONGTEXT"/>
+            <column name="altitude_json" type="LONGTEXT"/>
+            <column name="distance_json" type="LONGTEXT"/>
+            <column name="latlng_json" type="LONGTEXT"/>
+            <column name="fetched_at" type="DATETIME"/>
+        </createTable>
+    </changeSet>
+
+</databaseChangeLog>

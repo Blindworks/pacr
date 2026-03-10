@@ -51,5 +51,6 @@
     <include file="db/changelog/changes/045-add-ai-training-plan.xml"/>
     <include file="db/changelog/changes/046-remove-training-descriptions.xml"/>
     <include file="db/changelog/changes/047-add-cycle-entries.xml"/>
+    <include file="db/changelog/changes/048-add-activity-streams.xml"/>
 
 </databaseChangeLog>

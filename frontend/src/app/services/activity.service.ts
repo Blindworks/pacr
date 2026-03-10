@@ -26,6 +26,17 @@ export interface CompletedTraining {
   averagePowerWatts: number | null;
 }
 
+export interface ActivityStreamDto {
+  completedTrainingId: number;
+  distancePoints: number[];
+  heartRate: (number | null)[];
+  altitude: (number | null)[];
+  paceSecondsPerKm: (number | null)[];
+  hasHeartRate: boolean;
+  hasAltitude: boolean;
+  hasPace: boolean;
+}
+
 @Injectable({ providedIn: 'root' })
 export class ActivityService {
   private readonly http = inject(HttpClient);
@@ -40,5 +51,13 @@ export class ActivityService {
 
   getById(id: number): Observable<CompletedTraining> {
     return this.http.get<CompletedTraining>(`${BASE}/${id}`);
+  }
+
+  getStreams(id: number): Observable<ActivityStreamDto> {
+    return this.http.get<ActivityStreamDto>(`${BASE}/${id}/streams`);
+  }
+
+  fetchStreams(id: number): Observable<ActivityStreamDto> {
+    return this.http.post<ActivityStreamDto>(`${BASE}/${id}/fetch-streams`, null);
   }
 }

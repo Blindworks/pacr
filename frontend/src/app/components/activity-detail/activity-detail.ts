@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { ActivityService, CompletedTraining } from '../../services/activity.service';
+import { ActivityService, ActivityStreamDto, CompletedTraining } from '../../services/activity.service';
 
 @Component({
   selector: 'app-activity-detail',
@@ -11,32 +11,129 @@ import { ActivityService, CompletedTraining } from '../../services/activity.serv
   styleUrl: './activity-detail.scss'
 })
 export class ActivityDetail implements OnInit {
+  private readonly cdr = inject(ChangeDetectorRef);
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
+  private readonly activityService = inject(ActivityService);
+
   activity: CompletedTraining | null = null;
   loading = true;
   error = false;
 
-  constructor(
-    private route: ActivatedRoute,
-    private router: Router,
-    private activityService: ActivityService
-  ) {}
+  streams: ActivityStreamDto | null = null;
+  streamsLoading = false;
+  streamsError = false;
+
+  hoverIndex: number | null = null;
+  hoverPixelX: number | null = null;
+  hoverSvgX: number | null = null;
+  hoverSvgY: number | null = null;
+
+  private activityId = 0;
 
   ngOnInit(): void {
-    const id = Number(this.route.snapshot.paramMap.get('id'));
-    this.activityService.getById(id).subscribe({
+    this.activityId = Number(this.route.snapshot.paramMap.get('id'));
+    this.activityService.getById(this.activityId).subscribe({
       next: (data) => {
         this.activity = data;
         this.loading = false;
+        this.cdr.detectChanges();
+        this.activityService.getStreams(this.activityId).subscribe({
+          next: (s) => {
+            this.streams = s;
+            this.cdr.detectChanges();
+          },
+          error: () => {}
+        });
       },
       error: () => {
         this.error = true;
         this.loading = false;
+        this.cdr.detectChanges();
       }
     });
   }
 
   goBack(): void {
     this.router.navigate(['/activities']);
+  }
+
+  fetchStreams(): void {
+    this.streamsLoading = true;
+    this.streamsError = false;
+    this.activityService.fetchStreams(this.activityId).subscribe({
+      next: (s) => {
+        this.streams = s;
+        this.streamsLoading = false;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.streamsError = true;
+        this.streamsLoading = false;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  onChartMouseMove(event: MouseEvent): void {
+    if (!this.streams?.hasHeartRate) return;
+    const el = event.currentTarget as HTMLElement;
+    const ratio = Math.max(0, Math.min(1, event.offsetX / el.offsetWidth));
+    const pts = this.streams.distancePoints;
+    const maxDist = pts[pts.length - 1];
+    const targetDist = ratio * maxDist;
+
+    let nearest = 0;
+    let minDiff = Infinity;
+    for (let i = 0; i < pts.length; i++) {
+      const diff = Math.abs(pts[i] - targetDist);
+      if (diff < minDiff) { minDiff = diff; nearest = i; }
+    }
+
+    this.hoverIndex = nearest;
+    this.hoverPixelX = event.offsetX;
+    this.hoverSvgX = ratio * 1000;
+
+    const hr = this.streams.heartRate;
+    const validHrs = hr.filter((v): v is number => v != null);
+    if (validHrs.length > 0 && hr[nearest] != null) {
+      const minHr = Math.min(...validHrs);
+      const maxHr = Math.max(...validHrs);
+      this.hoverSvgY = 256 - ((hr[nearest]! - minHr) / (maxHr - minHr || 1)) * 216;
+    } else {
+      this.hoverSvgY = null;
+    }
+    this.cdr.detectChanges();
+  }
+
+  onChartMouseLeave(): void {
+    this.hoverIndex = null;
+    this.hoverPixelX = null;
+    this.hoverSvgX = null;
+    this.hoverSvgY = null;
+    this.cdr.detectChanges();
+  }
+
+  get hoverHr(): number | null {
+    if (this.hoverIndex == null || !this.streams?.hasHeartRate) return null;
+    return this.streams.heartRate[this.hoverIndex] ?? null;
+  }
+
+  get hoverDist(): number | null {
+    if (this.hoverIndex == null || !this.streams) return null;
+    return this.streams.distancePoints[this.hoverIndex];
+  }
+
+  get tooltipLeft(): string {
+    return this.hoverPixelX != null ? `${this.hoverPixelX}px` : '50%';
+  }
+
+  get isStravaActivity(): boolean {
+    return this.activity?.source === 'STRAVA';
+  }
+
+  get hasStreams(): boolean {
+    return this.streams != null;
   }
 
   get formattedDistance(): string {
@@ -85,9 +182,15 @@ export class ActivityDetail implements OnInit {
   }
 
   get hrPoints(): string {
+    if (this.streams?.hasHeartRate) {
+      return this.buildSvgPath(
+        Array.from(this.streams.distancePoints),
+        this.streams.heartRate
+      );
+    }
+    // Fallback: generate a simple curve using avg and max heart rate
     const avg = this.activity?.averageHeartRate ?? 150;
     const max = this.activity?.maxHeartRate ?? avg + 20;
-    // Generate a simple curve using avg and max
     const points = [
       avg - 10, avg - 5, avg, avg + 5, max, max - 5, avg + 10, avg + 5, avg, avg - 5, avg - 8
     ];
@@ -103,6 +206,17 @@ export class ActivityDetail implements OnInit {
   }
 
   get elevationPath(): string {
+    if (this.streams?.hasAltitude) {
+      const linePath = this.buildSvgPath(
+        Array.from(this.streams.distancePoints),
+        this.streams.altitude
+      );
+      if (linePath) {
+        const w = 1000, h = 256;
+        return `${linePath} L ${w} ${h} L 0 ${h} Z`;
+      }
+    }
+    // Fallback: generate a simple elevation profile
     const total = this.activity?.elevationGainM ?? 0;
     const gains = [0, 0.08, 0.25, 0.45, 0.65, 0.8, 0.95, 1.0, 0.9, 0.75, 0.55].map(f => f * total);
     const w = 1000, h = 256;
@@ -121,5 +235,20 @@ export class ActivityDetail implements OnInit {
 
   get midpointElev(): number {
     return Math.round((this.activity?.elevationGainM ?? 0) * 0.8);
+  }
+
+  private buildSvgPath(xValues: number[], yValues: (number | null)[]): string {
+    if (!xValues?.length || !yValues?.length) return '';
+    const validPairs = xValues.map((x, i) => ({ x, y: yValues[i] })).filter(p => p.y != null);
+    if (validPairs.length < 2) return '';
+    const minX = validPairs[0].x;
+    const maxX = validPairs[validPairs.length - 1].x;
+    const minY = Math.min(...validPairs.map(p => p.y!));
+    const maxY = Math.max(...validPairs.map(p => p.y!));
+    const scaleX = (x: number) => ((x - minX) / (maxX - minX || 1)) * 1000;
+    const scaleY = (y: number) => 256 - ((y - minY) / (maxY - minY || 1)) * 216;
+    return validPairs.map((p, i) =>
+      `${i === 0 ? 'M' : 'L'}${scaleX(p.x).toFixed(1)},${scaleY(p.y!).toFixed(1)}`
+    ).join(' ');
   }
 }

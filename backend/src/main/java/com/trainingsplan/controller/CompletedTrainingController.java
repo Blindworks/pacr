@@ -1,6 +1,7 @@
 package com.trainingsplan.controller;
 
 import com.trainingsplan.dto.ActivityComparisonItemDto;
+import com.trainingsplan.dto.ActivityStreamDto;
 import com.trainingsplan.dto.ProfileCompletionDto;
 import com.trainingsplan.dto.TrainingStatsDto;
 import com.trainingsplan.entity.ActivityMetrics;
@@ -9,6 +10,7 @@ import com.trainingsplan.entity.User;
 import com.trainingsplan.repository.ActivityMetricsRepository;
 import com.trainingsplan.repository.CompletedTrainingRepository;
 import com.trainingsplan.security.SecurityUtils;
+import com.trainingsplan.service.ActivityStreamService;
 import com.trainingsplan.service.CompletedTrainingService;
 import com.trainingsplan.service.StravaService;
 import com.trainingsplan.service.TrainingStatsService;
@@ -23,6 +25,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import org.springframework.security.core.Authentication;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -59,6 +63,9 @@ public class CompletedTrainingController {
 
     @Autowired
     private TrainingStatsService trainingStatsService;
+
+    @Autowired
+    private ActivityStreamService activityStreamService;
 
     @PostMapping("/upload")
     public ResponseEntity<?> uploadFitFile(
@@ -342,6 +349,44 @@ public class CompletedTrainingController {
         }
         List<String> sports = completedTrainingRepository.findDistinctSportsByUserId(user.getId());
         return ResponseEntity.ok(sports);
+    }
+
+    @GetMapping("/{id}/streams")
+    public ResponseEntity<?> getStreams(@PathVariable Long id, Authentication auth) {
+        User user = securityUtils.getCurrentUser();
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        Optional<CompletedTraining> ctOpt = completedTrainingRepository.findByIdAndUserId(id, user.getId());
+        if (ctOpt.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        Optional<ActivityStreamDto> dto = activityStreamService.getStreamDto(id);
+        return dto.<ResponseEntity<?>>map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @PostMapping("/{id}/fetch-streams")
+    public ResponseEntity<?> fetchStreams(@PathVariable Long id, Authentication auth) {
+        User user = securityUtils.getCurrentUser();
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        Optional<CompletedTraining> ctOpt = completedTrainingRepository.findByIdAndUserId(id, user.getId());
+        if (ctOpt.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        try {
+            stravaService.fetchAndPersistStreamsForActivity(id);
+            Optional<ActivityStreamDto> dto = activityStreamService.getStreamDto(id);
+            return dto.<ResponseEntity<?>>map(ResponseEntity::ok)
+                    .orElse(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                            .body("Streams konnten nicht geladen werden"));
+        } catch (Exception e) {
+            log.error("Failed to fetch streams for completedTrainingId={}: {}", id, e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Fehler beim Laden der Streams: " + e.getMessage());
+        }
     }
 
     @DeleteMapping("/{id}")

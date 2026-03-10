@@ -18,16 +18,16 @@
       </div>
     </div>
     <div class="header-right">
-      @if (isSyncing) {
-        <div class="sync-badge">
-          <span class="material-symbols-outlined sync-spin">sync</span>
-          Syncing Strava...
-        </div>
-      } @else if (stravaConnected) {
-        <div class="sync-badge sync-badge--ok">
-          <span class="material-symbols-outlined">check_circle</span>
-          Strava synced
-        </div>
+      @if (stravaConnected) {
+        <button class="sync-badge" [class.sync-badge--ok]="!isSyncing" [disabled]="isSyncing" (click)="manualSync()">
+          @if (isSyncing) {
+            <span class="material-symbols-outlined sync-spin">sync</span>
+            Syncing...
+          } @else {
+            <span class="material-symbols-outlined">check_circle</span>
+            Strava synced
+          }
+        </button>
       }
       <div class="search-wrap">
         <span class="material-symbols-outlined search-icon">search</span>

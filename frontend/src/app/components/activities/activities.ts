@@ -3,7 +3,7 @@ import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { ActivityService, CompletedTraining } from '../../services/activity.service';
 import { StravaService } from '../../services/strava.service';
-import { catchError, switchMap, of, finalize } from 'rxjs';
+import { catchError, of, finalize, timeout } from 'rxjs';
 
 interface Activity {
   id: number;
@@ -80,8 +80,37 @@ export class Activities implements OnInit {
     return d.toISOString().slice(0, 10);
   }
 
+  syncDone = false;
+
   ngOnInit(): void {
+    this.stravaService.getStatus().subscribe({
+      next: (status) => {
+        this.stravaConnected = status.connected;
+        this.cdr.detectChanges();
+      }
+    });
     this.loadWeek();
+  }
+
+  manualSync(): void {
+    if (this.isSyncing) return;
+    const { start, end } = this.weekRange;
+    this.isSyncing = true;
+    this.syncDone = false;
+    this.stravaService.syncActivities(start, end).pipe(
+      timeout(60000),
+      catchError((err) => {
+        console.error('[Activities] sync error:', err);
+        return of(null);
+      }),
+      finalize(() => {
+        this.isSyncing = false;
+        this.syncDone = true;
+        this.cdr.detectChanges();
+      })
+    ).subscribe(() => {
+      this.loadWeek();
+    });
   }
 
   private loadWeek(): void {
@@ -89,40 +118,19 @@ export class Activities implements OnInit {
     this.hasError = false;
     const { start, end } = this.weekRange;
 
-    // Check Strava status first, then sync if connected, then load from DB
-    this.stravaService.getStatus().pipe(
-      switchMap(status => {
-        this.stravaConnected = status.connected;
-        if (status.connected) {
-          this.isSyncing = true;
-          return this.stravaService.syncActivities(start, end).pipe(
-            catchError(() => of(null)) // sync failure is non-fatal
-          );
-        }
-        return of(null);
-      }),
-      switchMap(() => {
-        this.isSyncing = false;
-        return this.activityService.getByDateRange(start, end);
-      }),
+    this.activityService.getByDateRange(start, end).pipe(
       catchError((err) => {
-        console.error('[Activities] error in pipe:', err);
+        console.error('[Activities] error loading activities:', err);
         this.hasError = true;
-        this.isSyncing = false;
         return of([]);
       }),
       finalize(() => {
         this.isLoading = false;
-        this.isSyncing = false;
         this.cdr.detectChanges();
       })
     ).subscribe({
       next: (data) => {
         this.activities = (data as CompletedTraining[]).map(ct => this.mapToActivity(ct));
-      },
-      error: (err) => {
-        console.error('[Activities] subscribe error:', err);
-        this.hasError = true;
       }
     });
   }
