@@ -1,0 +1,308 @@
+<div class="log-page">
+  <div class="log-content">
+
+    <!-- Header -->
+    <header class="log-header">
+      <div>
+        <h2>Log Symptoms</h2>
+        <p class="log-date">{{ today | date:'EEEE, MMMM d, y' }}</p>
+      </div>
+    </header>
+
+    <div class="sections">
+
+      <!-- Physical Symptoms -->
+      <section class="section">
+        <div class="section-title">
+          <span class="material-symbols-outlined section-icon">fitness_center</span>
+          <h3>Physical Symptoms</h3>
+        </div>
+        <div class="chip-group">
+          <button
+            *ngFor="let s of physicalOptions"
+            class="chip"
+            [class.chip--active]="isSymptomSelected(s.id)"
+            (click)="toggleSymptom(s.id)">
+            {{ s.label }}
+          </button>
+        </div>
+      </section>
+
+      <!-- Mood -->
+      <section class="section">
+        <div class="section-title">
+          <span class="material-symbols-outlined section-icon">mood</span>
+          <h3>Mood &amp; Emotional</h3>
+        </div>
+        <div class="mood-grid">
+          <button
+            *ngFor="let m of moodOptions"
+            class="mood-btn"
+            [class.mood-btn--active]="selectedMood === m.id"
+            (click)="selectMood(m.id)">
+            <span class="material-symbols-outlined mood-icon">{{ m.icon }}</span>
+            <span class="mood-label">{{ m.label }}</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- Energy & Sleep -->
+      <div class="two-col">
+
+        <!-- Energy Slider -->
+        <section class="section">
+          <div class="section-title section-title--between">
+            <div class="section-title">
+              <span class="material-symbols-outlined section-icon">bolt</span>
+              <h3>Energy Level</h3>
+            </div>
+            <span class="energy-value">{{ energyLabel }}</span>
+          </div>
+          <div class="slider-wrap">
+            <input
+              type="range"
+              min="1"
+              max="10"
+              [(ngModel)]="energyLevel"
+              class="slider"/>
+            <div class="slider-labels">
+              <span>Exhausted</span>
+              <span class="slider-label--primary">Peak Performance</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- Sleep Quality -->
+        <section class="section">
+          <div class="section-title">
+            <span class="material-symbols-outlined section-icon">bedtime</span>
+            <h3>Sleep Quality</h3>
+          </div>
+          <div class="sleep-row">
+            <div class="sleep-display">
+              <div class="sleep-block">
+                <span class="sleep-block-label">Duration</span>
+                <span class="sleep-block-value">{{ sleepLabel }}</span>
+              </div>
+              <div class="sleep-divider"></div>
+              <div class="sleep-block">
+                <span class="sleep-block-label">Quality</span>
+                <div class="sleep-quality-chips">
+                  <button
+                    *ngFor="let q of ['EXCELLENT','GOOD','FAIR','POOR']"
+                    class="sleep-chip"
+                    [class.sleep-chip--active]="sleepQuality === q"
+                    (click)="sleepQuality = sleepQuality === q ? null : $any(q)">
+                    {{ q | titlecase }}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="sleep-controls">
+            <div class="sleep-spinners">
+              <div class="spinner-group">
+                <span class="spinner-label">Hours</span>
+                <div class="spinner">
+                  <button class="spinner-btn" (click)="sleepHours = sleepHours > 0 ? sleepHours - 1 : 0">
+                    <span class="material-symbols-outlined">remove</span>
+                  </button>
+                  <span class="spinner-val">{{ sleepHours }}</span>
+                  <button class="spinner-btn" (click)="sleepHours = sleepHours < 24 ? sleepHours + 1 : 24">
+                    <span class="material-symbols-outlined">add</span>
+                  </button>
+                </div>
+              </div>
+              <div class="spinner-group">
+                <span class="spinner-label">Minutes</span>
+                <div class="spinner">
+                  <button class="spinner-btn" (click)="sleepMinutes = sleepMinutes >= 15 ? sleepMinutes - 15 : 0">
+                    <span class="material-symbols-outlined">remove</span>
+                  </button>
+                  <span class="spinner-val">{{ sleepMinutes.toString().padStart(2,'0') }}</span>
+                  <button class="spinner-btn" (click)="sleepMinutes = sleepMinutes < 45 ? sleepMinutes + 15 : 0">
+                    <span class="material-symbols-outlined">add</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- Cycle Flow -->
+      <section class="section flow-section">
+        <div class="section-title">
+          <span class="material-symbols-outlined section-icon">water_drop</span>
+          <h3>Cycle Flow</h3>
+        </div>
+        <div class="flow-grid">
+          <button
+            *ngFor="let f of flowOptions"
+            class="flow-btn"
+            [class.flow-btn--active]="flowIntensity === f.id"
+            (click)="selectFlow(f.id)">
+            <span class="flow-dot" [class.flow-dot--active]="flowIntensity === f.id"></span>
+            {{ f.label }}
+          </button>
+        </div>
+      </section>
+
+      <!-- Notes -->
+      <section class="section">
+        <div class="section-title">
+          <span class="material-symbols-outlined section-icon">edit_note</span>
+          <h3>Additional Notes</h3>
+        </div>
+        <textarea
+          class="notes-textarea"
+          [(ngModel)]="notes"
+          placeholder="How are you feeling overall? Any specific pains or breakthroughs?">
+        </textarea>
+      </section>
+
+      <!-- Error -->
+      <p *ngIf="error" class="error-msg">{{ error }}</p>
+
+      <!-- Actions -->
+      <div class="actions">
+        <button class="btn-save" (click)="save()" [disabled]="saving">
+          <span *ngIf="!saving">Save Daily Log</span>
+          <span *ngIf="saving">Saving...</span>
+        </button>
+        <button class="btn-discard" (click)="discard()" [disabled]="saving">Discard</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Saved Dialog -->
+  <dialog #symptomDialog class="symptom-dialog" (click)="onDialogBackdropClick($event)">
+    <div class="dialog-inner" (click)="$event.stopPropagation()">
+
+      <header class="dialog-header">
+        <div>
+          <h2 class="dialog-title">Log Symptoms</h2>
+          <p class="dialog-date">{{ today | date:'EEEE, MMMM d, y' }}</p>
+        </div>
+        <button class="dialog-close" (click)="closeDialog()">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </header>
+
+      <div class="dialog-body">
+
+        <!-- Physical Symptoms -->
+        <section class="dialog-section" *ngIf="savedSymptomsList().length > 0">
+          <div class="dialog-section-title">
+            <span class="material-symbols-outlined section-icon">fitness_center</span>
+            <h3>Physical Symptoms</h3>
+          </div>
+          <div class="chip-group">
+            <span class="chip chip--active" *ngFor="let s of savedSymptomsList()">
+              {{ symptomLabel(s) }}
+            </span>
+          </div>
+        </section>
+
+        <!-- Mood -->
+        <section class="dialog-section" *ngIf="savedEntry?.mood">
+          <div class="dialog-section-title">
+            <span class="material-symbols-outlined section-icon">mood</span>
+            <h3>Mood &amp; Emotional</h3>
+          </div>
+          <div class="dialog-mood">
+            <span class="material-symbols-outlined dialog-mood-icon">{{ moodIcon(savedEntry?.mood) }}</span>
+            <span class="dialog-mood-label">{{ moodLabel(savedEntry?.mood) }}</span>
+          </div>
+        </section>
+
+        <!-- Energy & Sleep -->
+        <div class="dialog-two-col">
+          <section class="dialog-section">
+            <div class="dialog-section-title">
+              <span class="material-symbols-outlined section-icon">bolt</span>
+              <h3>Energy Level</h3>
+            </div>
+            <p class="dialog-energy">{{ (savedEntry?.energyLevel ?? 0).toString().padStart(2, '0') }}<span class="dialog-energy-max"> / 10</span></p>
+            <div class="dialog-energy-bar">
+              <div class="dialog-energy-fill" [style.width.%]="(savedEntry?.energyLevel ?? 0) * 10"></div>
+            </div>
+          </section>
+
+          <section class="dialog-section" *ngIf="savedEntry?.sleepQuality">
+            <div class="dialog-section-title">
+              <span class="material-symbols-outlined section-icon">bedtime</span>
+              <h3>Sleep Quality</h3>
+            </div>
+            <div class="sleep-display">
+              <div class="sleep-block">
+                <span class="sleep-block-label">Duration</span>
+                <span class="sleep-block-value">{{ savedSleepLabel() }}</span>
+              </div>
+              <div class="sleep-divider"></div>
+              <div class="sleep-block">
+                <span class="sleep-block-label">Quality</span>
+                <span class="sleep-block-value dialog-sleep-quality">{{ savedEntry?.sleepQuality | titlecase }}</span>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <!-- Cycle Flow -->
+        <section class="dialog-section flow-section" *ngIf="savedEntry?.flowIntensity">
+          <div class="dialog-section-title">
+            <span class="material-symbols-outlined section-icon">water_drop</span>
+            <h3>Cycle Flow</h3>
+          </div>
+          <div class="dialog-flow">
+            <span class="flow-dot flow-dot--active"></span>
+            <span class="dialog-flow-label">{{ flowLabel(savedEntry?.flowIntensity) }}</span>
+          </div>
+        </section>
+
+        <!-- Notes -->
+        <section class="dialog-section" *ngIf="savedEntry?.notes">
+          <div class="dialog-section-title">
+            <span class="material-symbols-outlined section-icon">edit_note</span>
+            <h3>Notes</h3>
+          </div>
+          <p class="dialog-notes">{{ savedEntry?.notes }}</p>
+        </section>
+
+        <div class="dialog-actions">
+          <button class="btn-save" (click)="closeDialog()">Done</button>
+        </div>
+
+      </div>
+    </div>
+  </dialog>
+
+  <!-- Right Panel -->
+  <aside class="right-panel">
+    <div class="weekly-card">
+      <h4 class="weekly-title">Weekly Outlook</h4>
+      <div class="weekly-row">
+        <span class="weekly-label">Recovery Score</span>
+        <span class="weekly-score">92%</span>
+      </div>
+      <div class="weekly-bar">
+        <div class="weekly-bar-fill" style="width: 92%"></div>
+      </div>
+      <div class="weekly-tip">
+        <div class="weekly-tip-icon">
+          <span class="material-symbols-outlined">trending_up</span>
+        </div>
+        <p>Your energy levels are 15% higher than last week. Perfect day for a HIIT session.</p>
+      </div>
+    </div>
+
+    <div class="inspiration-card">
+      <div class="inspiration-overlay"></div>
+      <div class="inspiration-text">
+        <span class="inspiration-eyebrow">Daily Inspiration</span>
+        <p class="inspiration-quote">"Strength is built in the moments you want to stop."</p>
+      </div>
+    </div>
+  </aside>
+</div>

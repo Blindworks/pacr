@@ -67,5 +67,15 @@ export const routes: Routes = [
     path: 'settings',
     canActivate: [authGuard],
     loadComponent: () => import('./components/settings/settings').then(m => m.Settings)
+  },
+  {
+    path: 'body-data/cycle-tracking',
+    canActivate: [authGuard],
+    loadComponent: () => import('./components/body-data/cycle-tracking/cycle-tracking').then(m => m.CycleTracking)
+  },
+  {
+    path: 'body-data/log-symptoms',
+    canActivate: [authGuard],
+    loadComponent: () => import('./components/body-data/log-symptoms/log-symptoms').then(m => m.LogSymptoms)
   }
 ];

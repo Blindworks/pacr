@@ -147,6 +147,54 @@ $muted: #8b949e;
   }
 }
 
+/* ── Nav Group with Submenu ── */
+.nav-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.nav-item--group {
+  width: 100%;
+  background: none;
+  border: 1px solid transparent;
+  cursor: pointer;
+  font-family: inherit;
+  text-align: left;
+  justify-content: flex-start;
+
+  .nav-group-arrow {
+    margin-left: auto;
+    font-size: 18px;
+    transition: transform 0.2s ease;
+  }
+
+  &.open .nav-group-arrow {
+    transform: rotate(180deg);
+  }
+}
+
+.nav-submenu {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height 0.25s ease;
+
+  &.open {
+    max-height: 200px;
+  }
+}
+
+.nav-item--sub {
+  padding-left: 2.25rem;
+  font-size: 0.8125rem;
+
+  .material-symbols-outlined {
+    font-size: 18px;
+  }
+}
+
 /* ── Bottom (fixed) ── */
 .sidebar-bottom {
   display: flex;

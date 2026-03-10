@@ -1,0 +1,176 @@
+<div class="cycle-page">
+
+  <!-- Header -->
+  <header class="page-header">
+    <div>
+      <h2>Cycle Tracking</h2>
+      <p class="subtitle">Syncing your biology with your training.</p>
+    </div>
+    <button class="log-btn" (click)="goToLogSymptoms()">
+      <span class="material-symbols-outlined">add</span>
+      Log Today's Symptoms
+    </button>
+  </header>
+
+  <!-- Grid -->
+  <div class="grid">
+
+    <!-- Current Phase Card -->
+    <section class="card phase-card">
+      <span class="section-label">Current Phase</span>
+      <h3 class="phase-name" [ngClass]="phaseClass(currentPhase)">{{ phaseLabels[currentPhase] }}</h3>
+      <p class="phase-day">Day {{ currentDay }} of {{ cycleLength }}</p>
+
+      <div class="phase-divider">
+        <p class="next-phase-label">
+          Next Phase:
+          <span class="next-phase-value" [ngClass]="phaseClass(nextPhase)">{{ phaseLabels[nextPhase] }}</span>
+        </p>
+        <div class="phase-bar">
+          <div class="phase-bar-fill" [ngClass]="phaseClass(currentPhase)"></div>
+        </div>
+        <p class="days-remaining">{{ daysRemaining }} Days Remaining</p>
+      </div>
+
+      <div class="phase-tip">
+        <span class="tip-dot" [ngClass]="phaseClass(currentPhase)"></span>
+        <span class="tip-text">Optimal for high-intensity training</span>
+      </div>
+    </section>
+
+    <!-- Training Impact -->
+    <section class="card training-impact">
+      <h4 class="card-title">
+        <span class="material-symbols-outlined card-title-icon">trending_up</span>
+        Training Impact
+      </h4>
+      <div class="impact-grid">
+        <div class="impact-details">
+          <div class="impact-item impact-item--highlighted" [ngClass]="'border-' + currentPhase">
+            <p class="impact-label">Performance Outlook</p>
+            <p class="impact-text">{{ insight.performance }}</p>
+          </div>
+          <div class="impact-item">
+            <p class="impact-label">Fueling Focus</p>
+            <p class="impact-text">{{ insight.fueling }}</p>
+          </div>
+        </div>
+
+        <div class="intensity-ring-wrap">
+          <p class="ring-label">Recommended Intensity</p>
+          <div class="ring-container">
+            <svg viewBox="0 0 128 128" class="ring-svg">
+              <circle class="ring-track" cx="64" cy="64" r="58" stroke-width="8" fill="transparent"/>
+              <circle class="ring-fill" cx="64" cy="64" r="58" stroke-width="8" fill="transparent"
+                stroke-dasharray="364"
+                [attr.stroke-dashoffset]="intensityDashoffset"
+                stroke-linecap="round"
+                transform="rotate(-90 64 64)"/>
+            </svg>
+            <span class="ring-value">{{ insight.intensity }}%</span>
+          </div>
+          <p class="ring-phase-label">{{ insight.label }}</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Calendar -->
+    <section class="card calendar-card">
+      <div class="calendar-header">
+        <h4 class="card-title">{{ currentMonth }}</h4>
+        <div class="legend">
+          <div class="legend-item"><span class="legend-dot phase-menstrual"></span> Menstrual</div>
+          <div class="legend-item"><span class="legend-dot phase-follicular"></span> Follicular</div>
+          <div class="legend-item"><span class="legend-dot phase-ovulation"></span> Ovulation</div>
+          <div class="legend-item"><span class="legend-dot phase-luteal"></span> Luteal</div>
+        </div>
+      </div>
+
+      <div class="calendar-grid">
+        <div class="cal-weekday">MON</div>
+        <div class="cal-weekday">TUE</div>
+        <div class="cal-weekday">WED</div>
+        <div class="cal-weekday">THU</div>
+        <div class="cal-weekday">FRI</div>
+        <div class="cal-weekday">SAT</div>
+        <div class="cal-weekday">SUN</div>
+
+        <div *ngFor="let d of calendarDays"
+             class="cal-day"
+             [ngClass]="[phaseClass(d.phase), d.isToday ? 'cal-day--today' : '']">
+          <span class="cal-day-num">{{ d.day }}</span>
+          <span *ngIf="d.isToday" class="cal-today-dot"></span>
+          <span *ngIf="d.isToday" class="cal-today-label">Today</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- PACR Adaptive Adjustment -->
+    <section class="card adaptive-card">
+      <h4 class="card-title">
+        <span class="pulse-dot"></span>
+        PACR Adaptive Adjustment
+      </h4>
+      <div class="adaptive-items">
+        <div class="adaptive-item adaptive-item--prev">
+          <div class="adaptive-icon adaptive-icon--muted">
+            <span class="material-symbols-outlined">arrow_downward</span>
+          </div>
+          <div>
+            <p class="adaptive-item-label">Previous Plan</p>
+            <p class="adaptive-item-value">Active Recovery Walk (45 min)</p>
+          </div>
+        </div>
+        <div class="adaptive-item adaptive-item--adjusted">
+          <div class="adaptive-icon adaptive-icon--primary">
+            <span class="material-symbols-outlined">arrow_upward</span>
+          </div>
+          <div>
+            <p class="adaptive-item-label adaptive-item-label--primary">AI Adjusted ({{ phaseLabels[currentPhase] }} Optimization)</p>
+            <p class="adaptive-item-value adaptive-item-value--large">Tempo Run: 8km @ 4:45 min/km</p>
+          </div>
+        </div>
+      </div>
+      <p class="adaptive-quote">"Based on your rising estrogen and low RHR, we've swapped today's low intensity for a threshold session to maximize your hormonal peak."</p>
+      <div class="adaptive-glow"></div>
+    </section>
+
+    <!-- Physiological Insights -->
+    <section class="card physio-card">
+      <h4 class="card-title">Physiological Insights</h4>
+
+      <div class="physio-metric">
+        <div class="physio-metric-header">
+          <div>
+            <p class="physio-metric-label">Resting Heart Rate</p>
+            <p class="physio-metric-value">48 <span class="physio-metric-unit">BPM</span></p>
+          </div>
+          <p class="physio-metric-delta phase-follicular">-3% vs Average</p>
+        </div>
+        <div class="mini-bar-chart">
+          <div class="mini-bar" style="height: 60%"></div>
+          <div class="mini-bar" style="height: 65%"></div>
+          <div class="mini-bar" style="height: 70%"></div>
+          <div class="mini-bar" style="height: 60%"></div>
+          <div class="mini-bar mini-bar--primary" style="height: 45%"></div>
+          <div class="mini-bar mini-bar--primary" style="height: 40%"></div>
+          <div class="mini-bar mini-bar--primary" style="height: 42%"></div>
+        </div>
+      </div>
+
+      <div class="physio-metric physio-metric--bordered">
+        <div class="physio-metric-header">
+          <div>
+            <p class="physio-metric-label">Basal Body Temp</p>
+            <p class="physio-metric-value">36.2 <span class="physio-metric-unit">°C</span></p>
+          </div>
+          <p class="physio-metric-delta physio-metric-delta--neutral">Baseline Stable</p>
+        </div>
+        <div class="temp-bar">
+          <div class="temp-bar-fill"></div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</div>

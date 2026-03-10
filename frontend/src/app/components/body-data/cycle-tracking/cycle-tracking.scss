@@ -1,0 +1,628 @@
+$primary: #b9f20d;
+$bg: #0d1117;
+$surface: #161b22;
+$card: #161b22;
+$text: #e6edf3;
+$muted: #8b949e;
+
+$menstrual: #f87171;
+$follicular: #4ade80;
+$ovulation: #facc15;
+$luteal: #fb923c;
+
+:host {
+  display: block;
+  height: 100%;
+  overflow-y: auto;
+  background: $bg;
+}
+
+.cycle-page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+/* ── Header ── */
+.page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+
+  h2 {
+    font-size: 1.875rem;
+    font-weight: 700;
+    color: $text;
+    margin: 0;
+    letter-spacing: -0.02em;
+  }
+}
+
+.subtitle {
+  color: $muted;
+  margin: 0.25rem 0 0;
+  font-size: 0.9375rem;
+}
+
+.log-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background: $primary;
+  color: $bg;
+  border: none;
+  border-radius: 9999px;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  transition: box-shadow 0.2s, filter 0.2s;
+  white-space: nowrap;
+
+  .material-symbols-outlined {
+    font-size: 20px;
+  }
+
+  &:hover {
+    box-shadow: 0 0 20px rgba($primary, 0.4);
+    filter: brightness(1.05);
+  }
+}
+
+/* ── Grid ── */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 1.25rem;
+}
+
+/* ── Card Base ── */
+.card {
+  background: $card;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 1.5rem;
+  padding: 1.5rem;
+}
+
+.card-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: $text;
+  margin: 0 0 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.card-title-icon {
+  color: $primary;
+  font-size: 20px;
+}
+
+.section-label {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: $muted;
+}
+
+/* ── Phase Colors ── */
+.phase-menstrual { color: $menstrual; }
+.phase-follicular { color: $follicular; }
+.phase-ovulation { color: $ovulation; }
+.phase-luteal { color: $luteal; }
+
+/* ── Phase Card ── */
+.phase-card {
+  grid-column: span 4;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+
+  .phase-name {
+    font-size: 2.25rem;
+    font-weight: 900;
+    margin: 0.5rem 0 0.25rem;
+  }
+
+  .phase-day {
+    color: $muted;
+    font-size: 0.9375rem;
+    margin: 0;
+  }
+}
+
+.phase-divider {
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 1.25rem 0;
+  margin: 1.25rem 0;
+}
+
+.next-phase-label {
+  font-size: 0.875rem;
+  color: $muted;
+  margin: 0 0 0.75rem;
+
+  .next-phase-value {
+    font-weight: 700;
+  }
+}
+
+.phase-bar {
+  height: 6px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.phase-bar-fill {
+  height: 100%;
+  width: 65%;
+  border-radius: 3px;
+
+  &.phase-menstrual { background: $menstrual; }
+  &.phase-follicular { background: $follicular; }
+  &.phase-ovulation { background: $ovulation; }
+  &.phase-luteal { background: $luteal; }
+}
+
+.days-remaining {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: $text;
+  margin: 0.75rem 0 0;
+}
+
+.phase-tip {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: auto;
+}
+
+.tip-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+
+  &.phase-menstrual { background: $menstrual; }
+  &.phase-follicular { background: $follicular; }
+  &.phase-ovulation { background: $ovulation; }
+  &.phase-luteal { background: $luteal; }
+}
+
+.tip-text {
+  font-size: 0.8125rem;
+  color: $muted;
+}
+
+/* ── Training Impact ── */
+.training-impact {
+  grid-column: span 8;
+}
+
+.impact-grid {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 2rem;
+  align-items: start;
+}
+
+.impact-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.impact-item {
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 1rem;
+  padding: 1rem;
+
+  &--highlighted {
+    border-left: 4px solid $follicular;
+
+    &.border-menstrual { border-left-color: $menstrual; }
+    &.border-follicular { border-left-color: $follicular; }
+    &.border-ovulation { border-left-color: $ovulation; }
+    &.border-luteal { border-left-color: $luteal; }
+  }
+}
+
+.impact-label {
+  font-weight: 700;
+  font-size: 0.9375rem;
+  color: $text;
+  margin: 0 0 0.25rem;
+}
+
+.impact-text {
+  font-size: 0.8125rem;
+  color: $muted;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.intensity-ring-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 140px;
+}
+
+.ring-label {
+  font-size: 0.75rem;
+  color: $muted;
+  margin: 0;
+  text-align: center;
+}
+
+.ring-container {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ring-svg {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.ring-track {
+  stroke: rgba(255, 255, 255, 0.08);
+}
+
+.ring-fill {
+  stroke: $primary;
+  transition: stroke-dashoffset 0.5s ease;
+}
+
+.ring-value {
+  position: relative;
+  font-size: 1.5rem;
+  font-weight: 900;
+  color: $text;
+  z-index: 1;
+}
+
+.ring-phase-label {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: $primary;
+  margin: 0;
+}
+
+/* ── Calendar ── */
+.calendar-card {
+  grid-column: span 12;
+}
+
+.calendar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+
+  .card-title {
+    margin: 0;
+  }
+}
+
+.legend {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-size: 0.75rem;
+  color: $muted;
+}
+
+.legend-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+
+  &.phase-menstrual { background: $menstrual; }
+  &.phase-follicular { background: $follicular; }
+  &.phase-ovulation { background: $ovulation; }
+  &.phase-luteal { background: $luteal; }
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.5rem;
+}
+
+.cal-weekday {
+  text-align: center;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  color: $muted;
+  padding: 0.5rem 0;
+}
+
+.cal-day {
+  height: 72px;
+  border-radius: 0.75rem;
+  padding: 0.5rem;
+  position: relative;
+  border: 1px solid transparent;
+  display: flex;
+  flex-direction: column;
+  cursor: default;
+  transition: border-color 0.15s;
+
+  &.phase-menstrual { background: rgba($menstrual, 0.12); border-color: rgba($menstrual, 0.25); }
+  &.phase-follicular { background: rgba($follicular, 0.12); border-color: rgba($follicular, 0.25); }
+  &.phase-ovulation { background: rgba($ovulation, 0.12); border-color: rgba($ovulation, 0.25); }
+  &.phase-luteal { background: rgba($luteal, 0.12); border-color: rgba($luteal, 0.25); }
+
+  &--today {
+    border-color: $primary !important;
+    box-shadow: 0 0 12px rgba($primary, 0.25);
+
+    &.phase-follicular { background: rgba($follicular, 0.25); }
+  }
+}
+
+.cal-day-num {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: $text;
+}
+
+.cal-today-dot {
+  position: absolute;
+  bottom: 0.375rem;
+  right: 0.375rem;
+  width: 8px;
+  height: 8px;
+  background: $primary;
+  border-radius: 50%;
+}
+
+.cal-today-label {
+  font-size: 0.625rem;
+  color: $primary;
+  font-weight: 600;
+  margin-top: 2px;
+}
+
+/* ── Adaptive Card ── */
+.adaptive-card {
+  grid-column: span 7;
+  position: relative;
+  overflow: hidden;
+}
+
+.pulse-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: $primary;
+  animation: pulse 2s infinite;
+  flex-shrink: 0;
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+}
+
+.adaptive-items {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  position: relative;
+  z-index: 1;
+}
+
+.adaptive-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  border-radius: 1rem;
+
+  &--prev {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  &--adjusted {
+    background: rgba($primary, 0.08);
+    border: 1px solid rgba($primary, 0.25);
+  }
+}
+
+.adaptive-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  &--muted {
+    background: rgba(255, 255, 255, 0.08);
+    color: $muted;
+  }
+
+  &--primary {
+    background: $primary;
+    color: $bg;
+  }
+
+  .material-symbols-outlined {
+    font-size: 22px;
+  }
+}
+
+.adaptive-item-label {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: $muted;
+  margin: 0 0 0.25rem;
+
+  &--primary {
+    color: $primary;
+  }
+}
+
+.adaptive-item-value {
+  color: $text;
+  margin: 0;
+  font-size: 0.9375rem;
+
+  &--large {
+    font-size: 1.125rem;
+    font-weight: 700;
+  }
+}
+
+.adaptive-quote {
+  font-size: 0.8125rem;
+  color: $muted;
+  font-style: italic;
+  margin: 1rem 0 0;
+  line-height: 1.5;
+  position: relative;
+  z-index: 1;
+}
+
+.adaptive-glow {
+  position: absolute;
+  right: -4rem;
+  bottom: -4rem;
+  width: 16rem;
+  height: 16rem;
+  background: radial-gradient(circle, rgba($primary, 0.06) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+/* ── Physiological Insights ── */
+.physio-card {
+  grid-column: span 5;
+}
+
+.physio-metric {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+
+  &--bordered {
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    padding-top: 1.25rem;
+    margin-top: 0.5rem;
+  }
+}
+
+.physio-metric-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+}
+
+.physio-metric-label {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: $muted;
+  margin: 0 0 0.25rem;
+}
+
+.physio-metric-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: $text;
+  margin: 0;
+}
+
+.physio-metric-unit {
+  font-size: 0.875rem;
+  font-weight: 400;
+  color: $muted;
+}
+
+.physio-metric-delta {
+  font-size: 0.75rem;
+  font-weight: 700;
+  margin: 0;
+
+  &--neutral { color: $muted; }
+}
+
+.mini-bar-chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 64px;
+}
+
+.mini-bar {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 2px 2px 0 0;
+
+  &--primary {
+    background: $primary;
+  }
+}
+
+.temp-bar {
+  height: 8px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.temp-bar-fill {
+  width: 40%;
+  height: 100%;
+  background: rgba(96, 165, 250, 0.5);
+  border-radius: 4px;
+}
+
+/* ── Responsive ── */
+@media (max-width: 1024px) {
+  .phase-card { grid-column: span 12; }
+  .training-impact { grid-column: span 12; }
+  .adaptive-card { grid-column: span 12; }
+  .physio-card { grid-column: span 12; }
+}
+
+@media (max-width: 640px) {
+  .cycle-page { padding: 1rem; }
+  .impact-grid { grid-template-columns: 1fr; }
+  .intensity-ring-wrap { flex-direction: row; align-items: center; justify-content: space-between; width: 100%; }
+}

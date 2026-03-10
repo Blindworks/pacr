@@ -1,0 +1,802 @@
+$primary: #b9f20d;
+$bg: #0d1117;
+$surface: #161b22;
+$text: #e6edf3;
+$muted: #8b949e;
+
+:host {
+  display: block;
+  height: 100%;
+  overflow-y: auto;
+  background: $bg;
+}
+
+/* ── Layout ── */
+.log-page {
+  display: flex;
+  min-height: 100%;
+}
+
+.log-content {
+  flex: 1;
+  max-width: 860px;
+  padding: 3rem 3rem 4rem;
+  min-width: 0;
+}
+
+/* ── Header ── */
+.log-header {
+  margin-bottom: 2.5rem;
+
+  h2 {
+    font-size: 2.25rem;
+    font-weight: 900;
+    color: $text;
+    letter-spacing: -0.03em;
+    margin: 0;
+  }
+}
+
+.log-date {
+  color: rgba($primary, 0.7);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  margin: 0.25rem 0 0;
+}
+
+/* ── Sections ── */
+.sections {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+
+  h3 {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: $text;
+    margin: 0;
+  }
+
+  &--between {
+    justify-content: space-between;
+  }
+}
+
+.section-icon {
+  color: $primary;
+  font-size: 22px;
+}
+
+/* ── Physical Symptom Chips ── */
+.chip-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.625rem;
+}
+
+.chip {
+  padding: 0.625rem 1.25rem;
+  border-radius: 0.75rem;
+  border: 1px solid rgba($primary, 0.2);
+  background: rgba($primary, 0.05);
+  color: $muted;
+  font-size: 0.875rem;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s, box-shadow 0.15s;
+
+  &:hover {
+    background: rgba($primary, 0.12);
+    color: $text;
+  }
+
+  &--active {
+    border-color: $primary;
+    background: rgba($primary, 0.12);
+    color: $primary;
+    font-weight: 700;
+    box-shadow: 0 0 14px rgba($primary, 0.2);
+  }
+}
+
+/* ── Mood Grid ── */
+.mood-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 0.75rem;
+}
+
+.mood-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem 0.5rem;
+  border-radius: 0.75rem;
+  border: 1px solid rgba($primary, 0.1);
+  background: rgba($primary, 0.04);
+  color: $muted;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s, box-shadow 0.15s;
+
+  &:hover {
+    background: rgba($primary, 0.1);
+    color: $text;
+  }
+
+  &--active {
+    border-color: $primary;
+    background: rgba($primary, 0.12);
+    color: $primary;
+    box-shadow: 0 0 14px rgba($primary, 0.12);
+  }
+}
+
+.mood-icon {
+  font-size: 1.875rem;
+}
+
+.mood-label {
+  font-size: 0.625rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+/* ── Two-Column ── */
+.two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2.5rem;
+  align-items: start;
+}
+
+/* ── Energy Slider ── */
+.energy-value {
+  font-size: 1.5rem;
+  font-weight: 900;
+  font-style: italic;
+  color: $primary;
+}
+
+.slider-wrap {
+  padding-top: 0.5rem;
+}
+
+.slider {
+  width: 100%;
+  height: 6px;
+  appearance: none;
+  background: rgba($primary, 0.15);
+  border-radius: 3px;
+  outline: none;
+  cursor: pointer;
+  accent-color: $primary;
+
+  &::-webkit-slider-thumb {
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: $primary;
+    cursor: pointer;
+    box-shadow: 0 0 8px rgba($primary, 0.5);
+  }
+}
+
+.slider-labels {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 0.75rem;
+
+  span {
+    font-size: 0.625rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: $muted;
+  }
+}
+
+.slider-label--primary {
+  color: $primary !important;
+}
+
+/* ── Sleep ── */
+.sleep-display {
+  display: flex;
+  background: rgba($primary, 0.05);
+  border: 1px solid rgba($primary, 0.1);
+  border-radius: 0.75rem;
+  padding: 0.875rem 1rem;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.sleep-block {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  flex: 1;
+}
+
+.sleep-block-label {
+  font-size: 0.625rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: $muted;
+}
+
+.sleep-block-value {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: $text;
+}
+
+.sleep-divider {
+  width: 1px;
+  background: rgba($primary, 0.1);
+  align-self: stretch;
+}
+
+.sleep-quality-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}
+
+.sleep-chip {
+  padding: 0.2rem 0.5rem;
+  border-radius: 0.375rem;
+  border: 1px solid rgba($primary, 0.15);
+  background: transparent;
+  color: $muted;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.15s;
+
+  &:hover { background: rgba($primary, 0.1); color: $text; }
+  &--active { background: rgba($primary, 0.15); border-color: $primary; color: $primary; }
+}
+
+.sleep-controls {
+  margin-top: 0.25rem;
+}
+
+.sleep-spinners {
+  display: flex;
+  gap: 1.25rem;
+}
+
+.spinner-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.spinner-label {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: $muted;
+}
+
+.spinner {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba($primary, 0.05);
+  border: 1px solid rgba($primary, 0.1);
+  border-radius: 0.5rem;
+  padding: 0.25rem 0.375rem;
+}
+
+.spinner-btn {
+  background: none;
+  border: none;
+  color: $muted;
+  cursor: pointer;
+  padding: 0.125rem;
+  border-radius: 0.25rem;
+  display: flex;
+  transition: color 0.15s, background 0.15s;
+
+  &:hover { color: $primary; background: rgba($primary, 0.1); }
+
+  .material-symbols-outlined { font-size: 16px; }
+}
+
+.spinner-val {
+  font-size: 1rem;
+  font-weight: 700;
+  color: $text;
+  min-width: 1.5rem;
+  text-align: center;
+}
+
+/* ── Flow Section ── */
+.flow-section {
+  background: rgba($primary, 0.04);
+  border: 1px solid rgba($primary, 0.08);
+  border-radius: 1.25rem;
+  padding: 1.5rem;
+}
+
+.flow-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.75rem;
+}
+
+.flow-btn {
+  padding: 1rem 0.5rem;
+  border-radius: 0.75rem;
+  border: 1px solid rgba($primary, 0.1);
+  background: rgba(0, 0, 0, 0.25);
+  color: $muted;
+  font-size: 0.875rem;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.15s;
+
+  &:hover { background: rgba($primary, 0.1); color: $text; }
+
+  &--active {
+    border-color: $primary;
+    background: rgba($primary, 0.12);
+    color: $primary;
+    box-shadow: 0 0 12px rgba($primary, 0.15);
+  }
+}
+
+.flow-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: $muted;
+
+  &--active {
+    background: $primary;
+    animation: pulse 1.5s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+}
+
+/* ── Notes ── */
+.notes-textarea {
+  width: 100%;
+  height: 8rem;
+  background: rgba($primary, 0.04);
+  border: 1px solid rgba($primary, 0.1);
+  border-radius: 1rem;
+  padding: 1rem;
+  color: $text;
+  font-family: inherit;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  resize: none;
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color 0.15s;
+
+  &::placeholder { color: rgba($muted, 0.6); }
+
+  &:focus {
+    border-color: $primary;
+    box-shadow: 0 0 0 1px rgba($primary, 0.3);
+  }
+}
+
+/* ── Error ── */
+.error-msg {
+  color: #f87171;
+  font-size: 0.875rem;
+  margin: 0;
+}
+
+/* ── Actions ── */
+.actions {
+  display: flex;
+  gap: 1rem;
+  padding-top: 0.5rem;
+  padding-bottom: 2rem;
+}
+
+.btn-save {
+  flex: 1;
+  padding: 1.25rem;
+  background: $primary;
+  color: $bg;
+  border: none;
+  border-radius: 1rem;
+  font-size: 1.0625rem;
+  font-weight: 900;
+  font-family: inherit;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: filter 0.15s, box-shadow 0.15s, transform 0.1s;
+  box-shadow: 0 8px 32px rgba($primary, 0.2);
+
+  &:hover { filter: brightness(1.08); box-shadow: 0 8px 40px rgba($primary, 0.35); }
+  &:active { transform: scale(0.98); }
+  &:disabled { opacity: 0.6; cursor: not-allowed; }
+}
+
+.btn-discard {
+  padding: 1.25rem 2rem;
+  background: $surface;
+  border: 1px solid rgba($primary, 0.15);
+  color: $muted;
+  border-radius: 1rem;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+
+  &:hover { background: rgba($primary, 0.08); color: $text; }
+  &:disabled { opacity: 0.5; cursor: not-allowed; }
+}
+
+/* ── Right Panel ── */
+.right-panel {
+  width: 280px;
+  flex-shrink: 0;
+  background: rgba($primary, 0.03);
+  border-left: 1px solid rgba($primary, 0.08);
+  padding: 2rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.weekly-card {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba($primary, 0.15);
+  border-radius: 1.5rem;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.weekly-title {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: $primary;
+  margin: 0;
+}
+
+.weekly-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.weekly-label {
+  font-size: 0.75rem;
+  color: $muted;
+}
+
+.weekly-score {
+  font-size: 1.25rem;
+  font-weight: 900;
+  font-style: italic;
+  color: $text;
+}
+
+.weekly-bar {
+  height: 4px;
+  background: rgba($primary, 0.1);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.weekly-bar-fill {
+  height: 100%;
+  background: $primary;
+  border-radius: 2px;
+  transition: width 0.5s ease;
+}
+
+.weekly-tip {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+  padding-top: 0.5rem;
+  border-top: 1px solid rgba($primary, 0.08);
+}
+
+.weekly-tip-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba($primary, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  .material-symbols-outlined {
+    font-size: 16px;
+    color: $primary;
+  }
+}
+
+.weekly-tip p {
+  font-size: 0.75rem;
+  color: $muted;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.inspiration-card {
+  flex: 1;
+  border-radius: 1.5rem;
+  background: rgba($primary, 0.08);
+  border: 1px solid rgba($primary, 0.15);
+  position: relative;
+  overflow: hidden;
+  min-height: 180px;
+  display: flex;
+  align-items: flex-end;
+}
+
+.inspiration-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom right, rgba($primary, 0.2) 0%, transparent 60%);
+}
+
+.inspiration-text {
+  position: relative;
+  z-index: 1;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.inspiration-eyebrow {
+  font-size: 0.625rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: $primary;
+}
+
+.inspiration-quote {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  font-style: italic;
+  color: $text;
+  line-height: 1.4;
+  margin: 0;
+}
+
+/* ── Dialog ── */
+dialog.symptom-dialog {
+  background: $surface;
+  border: 1px solid rgba($primary, 0.2);
+  border-radius: 1.5rem;
+  width: min(640px, calc(100vw - 3rem));
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 0;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.6), 0 0 40px rgba($primary, 0.08);
+  animation: slideUp 0.25s ease;
+
+  &::backdrop {
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(4px);
+  }
+}
+
+.dialog-inner { /* wrapper inside <dialog> to stop backdrop click propagation */ }
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.dialog-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 2rem 2rem 1.25rem;
+  border-bottom: 1px solid rgba($primary, 0.08);
+}
+
+.dialog-title {
+  font-size: 1.75rem;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  color: $text;
+  margin: 0;
+}
+
+.dialog-date {
+  color: rgba($primary, 0.7);
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin: 0.25rem 0 0;
+}
+
+.dialog-close {
+  background: rgba($primary, 0.06);
+  border: 1px solid rgba($primary, 0.12);
+  border-radius: 0.5rem;
+  color: $muted;
+  cursor: pointer;
+  padding: 0.375rem;
+  display: flex;
+  transition: background 0.15s, color 0.15s;
+
+  &:hover { background: rgba($primary, 0.12); color: $text; }
+
+  .material-symbols-outlined { font-size: 20px; }
+}
+
+.dialog-body {
+  padding: 1.75rem 2rem 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.dialog-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+}
+
+.dialog-section-title {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+
+  h3 {
+    font-size: 1.0625rem;
+    font-weight: 700;
+    color: $text;
+    margin: 0;
+  }
+}
+
+.dialog-two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  align-items: start;
+}
+
+.dialog-mood {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  background: rgba($primary, 0.06);
+  border: 1px solid rgba($primary, 0.12);
+  border-radius: 0.875rem;
+  padding: 0.875rem 1rem;
+}
+
+.dialog-mood-icon {
+  font-size: 2rem;
+  color: $primary;
+}
+
+.dialog-mood-label {
+  font-size: 1rem;
+  font-weight: 700;
+  color: $text;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.dialog-energy {
+  font-size: 2.5rem;
+  font-weight: 900;
+  font-style: italic;
+  color: $primary;
+  margin: 0;
+  line-height: 1;
+}
+
+.dialog-energy-max {
+  font-size: 1rem;
+  font-weight: 500;
+  color: $muted;
+  font-style: normal;
+}
+
+.dialog-energy-bar {
+  height: 6px;
+  background: rgba($primary, 0.12);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-top: 0.5rem;
+}
+
+.dialog-energy-fill {
+  height: 100%;
+  background: $primary;
+  border-radius: 3px;
+  transition: width 0.5s ease;
+  box-shadow: 0 0 8px rgba($primary, 0.4);
+}
+
+.dialog-sleep-quality {
+  color: $primary !important;
+}
+
+.dialog-flow {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  padding: 0.75rem 0;
+}
+
+.dialog-flow-label {
+  font-size: 1.0625rem;
+  font-weight: 700;
+  color: $text;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.dialog-notes {
+  background: rgba($primary, 0.04);
+  border: 1px solid rgba($primary, 0.1);
+  border-radius: 0.875rem;
+  padding: 1rem;
+  color: $text;
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.dialog-actions {
+  padding-top: 0.5rem;
+}
+
+/* ── Responsive ── */
+@media (max-width: 1200px) {
+  .right-panel { display: none; }
+}
+
+@media (max-width: 768px) {
+  .log-content { padding: 1.5rem 1.25rem 3rem; }
+  .two-col { grid-template-columns: 1fr; }
+  .mood-grid { grid-template-columns: repeat(3, 1fr); }
+  .flow-grid { grid-template-columns: repeat(2, 1fr); }
+}
