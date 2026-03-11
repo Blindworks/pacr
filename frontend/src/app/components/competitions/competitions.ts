@@ -12,12 +12,18 @@ interface Race {
   image: string;
 }
 
-interface Strategy {
+interface TrainingPlan {
+  id: number;
   icon: string;
-  name: string;
+  level: string;
+  levelClass: string;
+  title: string;
   description: string;
-  sessions: string;
-  active: boolean;
+  commitment: string;
+  peakMileage: string;
+  keyFocus: string;
+  targetTime: string;
+  recommended: boolean;
 }
 
 @Component({
@@ -29,8 +35,12 @@ interface Strategy {
 })
 export class Competitions {
   activeFilter = 'All Races';
+  selectedRace: Race | null = null;
+  selectedTargetTime = 'Sub 3:30';
 
   filters = ['All Races', 'Marathon', 'Half Marathon', '10K Run', '5K Sprint'];
+
+  targetTimes = ['Sub 3:30', 'Sub 4:00', 'Sub 4:30', 'Just Finish'];
 
   races: Race[] = [
     {
@@ -55,38 +65,79 @@ export class Competitions {
     }
   ];
 
-  strategies: Strategy[] = [
+  trainingPlans: TrainingPlan[] = [
     {
-      icon: 'child_care',
-      name: 'Beginner',
-      description: 'Focus on finishing and building endurance. 12-week program.',
-      sessions: '3-4 Sessions/wk',
-      active: false
+      id: 1,
+      icon: 'speed',
+      level: 'Advanced',
+      levelClass: 'level-advanced',
+      title: 'Marathon Mastery: Sub 3:30',
+      description: 'Designed for experienced runners looking to break their PR.',
+      commitment: '5-6 sessions/wk',
+      peakMileage: '85 km/wk',
+      keyFocus: 'Speed & Lactate Threshold',
+      targetTime: 'Sub 3:30',
+      recommended: false
     },
     {
+      id: 2,
       icon: 'directions_run',
-      name: 'Intermediate',
-      description: 'Improve speed and metabolic efficiency. 16-week program.',
-      sessions: '5 Sessions/wk',
-      active: false
+      level: 'Intermediate',
+      levelClass: 'level-intermediate',
+      title: 'Pacing Hero: Sub 4:00',
+      description: 'The gold standard for the recreational marathoner.',
+      commitment: '4-5 sessions/wk',
+      peakMileage: '65 km/wk',
+      keyFocus: 'Endurance & Pacing',
+      targetTime: 'Sub 4:00',
+      recommended: true
     },
     {
-      icon: 'bolt',
-      name: 'Advanced',
-      description: 'High mileage and intense interval work for serious athletes.',
-      sessions: '6 Sessions/wk',
-      active: true
+      id: 3,
+      icon: 'heart_check',
+      level: 'Balanced',
+      levelClass: 'level-balanced',
+      title: 'Steady Finisher: Sub 4:30',
+      description: 'Focus on consistent aerobic base and recovery protocols.',
+      commitment: '3-4 sessions/wk',
+      peakMileage: '50 km/wk',
+      keyFocus: 'Consistency & Aerobic Base',
+      targetTime: 'Sub 4:30',
+      recommended: false
     },
     {
-      icon: 'trophy',
-      name: 'PB-Chaser',
-      description: 'Hyper-personalized plan targeting your specific time goal.',
-      sessions: 'Custom',
-      active: false
+      id: 4,
+      icon: 'flag',
+      level: 'Beginner',
+      levelClass: 'level-beginner',
+      title: 'First Finisher: Just Complete It',
+      description: 'Built for first-timers — cross that finish line strong.',
+      commitment: '3 sessions/wk',
+      peakMileage: '40 km/wk',
+      keyFocus: 'Endurance & Confidence',
+      targetTime: 'Just Finish',
+      recommended: false
     }
   ];
 
+  get filteredPlans(): TrainingPlan[] {
+    return this.trainingPlans.filter(p => p.targetTime === this.selectedTargetTime);
+  }
+
   setFilter(filter: string): void {
     this.activeFilter = filter;
+  }
+
+  selectRace(race: Race): void {
+    this.selectedRace = race;
+    this.selectedTargetTime = 'Sub 3:30';
+  }
+
+  deselectRace(): void {
+    this.selectedRace = null;
+  }
+
+  setTargetTime(time: string): void {
+    this.selectedTargetTime = time;
   }
 }

@@ -1,4 +1,5 @@
-<div class="competitions-page">
+<!-- Race Selection View -->
+<div class="competitions-page" *ngIf="!selectedRace">
   <header class="page-header">
     <h2 class="page-title">Select Your Goal</h2>
     <p class="page-subtitle">Choose a competition to unlock your personalized training path.</p>
@@ -34,7 +35,7 @@
           </div>
         </div>
         <div class="race-actions">
-          <button class="btn-select">Select Race</button>
+          <button class="btn-select" (click)="selectRace(race)">Select Race</button>
           <button class="btn-info">
             <span class="material-symbols-outlined">info</span>
           </button>
@@ -50,5 +51,94 @@
       <p class="cta-subtitle">Our AI coaches can build a plan around your busy schedule.</p>
     </div>
     <button class="cta-btn">Talk to AI Coach</button>
+  </div>
+</div>
+
+<!-- Training Plan Selection View -->
+<div class="plan-selection-page" *ngIf="selectedRace">
+  <!-- Sub-header -->
+  <div class="plan-subheader">
+    <button class="back-btn" (click)="deselectRace()">
+      <span class="material-symbols-outlined">arrow_back</span>
+    </button>
+    <div class="plan-subheader-race">
+      <span class="plan-subheader-label">Selected Race</span>
+      <div class="plan-subheader-divider"></div>
+      <span class="plan-subheader-name">{{ selectedRace.name }} | {{ selectedRace.date }}</span>
+    </div>
+  </div>
+
+  <div class="plan-content">
+    <!-- Intro -->
+    <div class="plan-intro">
+      <h1 class="plan-main-title">Select Your Training Plan</h1>
+      <p class="plan-main-subtitle">
+        Customize your journey to the finish line. Choose a target time to see tailored plans that fit your goals and schedule.
+      </p>
+    </div>
+
+    <!-- Target Time Filter -->
+    <section class="target-time-section">
+      <h2 class="section-heading">
+        <span class="material-symbols-outlined">target</span>
+        Select Your Target Time
+      </h2>
+      <div class="target-time-btns">
+        <button
+          *ngFor="let time of targetTimes"
+          class="time-btn"
+          [class.active]="selectedTargetTime === time"
+          (click)="setTargetTime(time)">
+          {{ time }}
+        </button>
+      </div>
+    </section>
+
+    <!-- Plan Cards -->
+    <section class="plan-cards-grid">
+      <div
+        *ngFor="let plan of filteredPlans"
+        class="plan-card"
+        [class.plan-card--recommended]="plan.recommended">
+        <div class="plan-card__recommended-badge" *ngIf="plan.recommended">RECOMMENDED</div>
+        <div class="plan-card__glow"></div>
+
+        <div class="plan-card__header">
+          <div class="plan-card__icon">
+            <span class="material-symbols-outlined">{{ plan.icon }}</span>
+          </div>
+          <span class="plan-card__level" [class]="plan.levelClass">{{ plan.level }}</span>
+        </div>
+
+        <h3 class="plan-card__title">{{ plan.title }}</h3>
+        <p class="plan-card__desc">{{ plan.description }}</p>
+
+        <div class="plan-card__stats">
+          <div class="plan-stat">
+            <span class="material-symbols-outlined plan-stat__icon">calendar_today</span>
+            <div>
+              <p class="plan-stat__label">Commitment</p>
+              <p class="plan-stat__value">{{ plan.commitment }}</p>
+            </div>
+          </div>
+          <div class="plan-stat">
+            <span class="material-symbols-outlined plan-stat__icon">distance</span>
+            <div>
+              <p class="plan-stat__label">Peak Mileage</p>
+              <p class="plan-stat__value">{{ plan.peakMileage }}</p>
+            </div>
+          </div>
+          <div class="plan-stat">
+            <span class="material-symbols-outlined plan-stat__icon">psychology</span>
+            <div>
+              <p class="plan-stat__label">Key Focus</p>
+              <p class="plan-stat__value">{{ plan.keyFocus }}</p>
+            </div>
+          </div>
+        </div>
+
+        <button class="plan-card__select-btn">SELECT PLAN</button>
+      </div>
+    </section>
   </div>
 </div>
