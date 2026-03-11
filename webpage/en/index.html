@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html class="scroll-smooth" lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>PACR | The adaptive running app from Europe</title>
+  <meta content="PACR is the running app that adapts to how you feel in real time. GDPR-compliant and built in Germany." name="description"/>
+  <link href="../pacer_icon.png" rel="icon" type="image/png"/>
+  <link href="https://fonts.googleapis.com" rel="preconnect"/>
+  <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+  <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            charcoal: '#121212',
+            'electric-lime': '#b9f20d',
+            'deep-gray': '#1e1e1e',
+            'soft-gray': '#2a2a2a',
+          },
+          fontFamily: {
+            sans: ['Lexend', 'sans-serif'],
+          },
+        }
+      }
+    }
+  </script>
+  <style>
+    details summary::-webkit-details-marker {
+      display: none;
+    }
+    .gradient-overlay {
+      background: linear-gradient(180deg, rgba(18,18,18,0) 0%, rgba(18,18,18,1) 100%);
+    }
+  </style>
+</head>
+<body class="bg-charcoal text-white font-sans antialiased">
+  <nav class="fixed top-0 w-full z-50 bg-charcoal/80 backdrop-blur-md border-b border-white/5">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-20">
+        <div class="flex-shrink-0 flex items-center">
+          <span class="text-3xl font-extrabold tracking-tighter text-white">PACR<span class="text-electric-lime">.</span></span>
+        </div>
+        <div class="flex items-center space-x-4">
+          <a class="text-sm font-semibold text-gray-300 hover:text-white transition-colors" href="../index.html" hreflang="de" lang="de">DE</a>
+          <a class="bg-electric-lime hover:bg-[#a6d80c] text-charcoal font-bold py-2.5 px-6 rounded-full transition-all duration-300 transform hover:scale-105 text-sm sm:text-base" href="#early-access">
+            Join early access
+          </a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <main class="pt-20">
+    <section class="relative min-h-[90vh] flex items-center overflow-hidden py-20">
+      <div class="absolute inset-0 z-0">
+        <img alt="Runner at dawn" class="w-full h-full object-cover opacity-30 grayscale hover:grayscale-0 transition-all duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA1tr228Y2v0NUZwtqBdAIgPIc_k65ZIMNBv6V6L3KVZkSlh032Iw4oVE9JsAJSFOPhBeccrjCnSxQjy_PCTD5z6gLoHISXfYrO8I3bP5V5UN3laIbCiu7Ou3Cmvx2bHzyQOCeiFAFQcq4pncDGCpKeg-5Ez1suqq0TuDPMnqDIj-pMPll2Fw9hco8F8EZsiZyTwV4FcR1GqsRr8ZBf2N2VarPt_sRBSLnXfcS1PlqS4HhsFv63owJ77EmkBNK5YHu80iEQIVoioBM"/>
+        <div class="absolute inset-0 gradient-overlay"></div>
+      </div>
+      <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <div class="inline-flex items-center space-x-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-4 py-1.5 mb-8">
+          <span class="text-xs sm:text-sm font-medium uppercase tracking-wider">European app · GDPR-compliant · Coming soon</span>
+        </div>
+        <h1 class="text-4xl md:text-6xl lg:text-7xl font-extrabold leading-tight mb-6 max-w-4xl mx-auto">
+          Not feeling your best today? <br/>
+          <span class="text-electric-lime">Your plan already knows.</span>
+        </h1>
+        <p class="text-lg md:text-xl text-gray-400 max-w-2xl mx-auto mb-10 leading-relaxed">
+          PACR is the running app that adapts to how you feel in real time instead of forcing you through a rigid calendar.
+          You check in. PACR updates the plan instantly.
+        </p>
+        <div class="max-w-md mx-auto mb-6" id="early-access">
+          <form action="https://formspree.io/f/xyknwjbq" class="flex flex-col sm:flex-row gap-3" method="POST">
+            <input name="_next" type="hidden" value="https://pacr.app/en/thanks.html"/>
+            <input name="email" class="flex-grow bg-soft-gray border-none rounded-xl px-6 py-4 focus:ring-2 focus:ring-electric-lime text-white placeholder-gray-500" placeholder="your@email.com" required="" type="email"/>
+            <button class="bg-electric-lime text-charcoal font-bold px-8 py-4 rounded-xl hover:bg-[#a6d80c] transition-colors whitespace-nowrap" type="submit">
+              Join early access →
+            </button>
+          </form>
+        </div>
+        <div class="flex flex-wrap justify-center gap-4 text-xs md:text-sm text-gray-500 mb-16">
+          <span>✓ Free and without commitment</span>
+          <span>✓ No resale of your data</span>
+          <span>✓ GDPR-compliant</span>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto border-t border-white/10 pt-12">
+          <div class="flex items-center justify-center space-x-4">
+            <div class="w-12 h-12 bg-soft-gray rounded-full flex items-center justify-center text-electric-lime">
+              <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+              </svg>
+            </div>
+            <div class="text-left">
+              <div class="text-xl font-bold">Sleep analysis</div>
+              <p class="text-xs text-gray-400 uppercase tracking-widest">Recovery insight</p>
+            </div>
+          </div>
+          <div class="flex items-center justify-center space-x-4">
+            <div class="w-12 h-12 bg-soft-gray rounded-full flex items-center justify-center text-electric-lime">
+              <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+              </svg>
+            </div>
+            <div class="text-left">
+              <div class="text-xl font-bold">Smart calendar</div>
+              <p class="text-xs text-gray-400 uppercase tracking-widest">Live adaptation</p>
+            </div>
+          </div>
+          <div class="flex items-center justify-center space-x-4">
+            <div class="w-12 h-12 bg-soft-gray rounded-full flex items-center justify-center text-electric-lime">
+              <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+              </svg>
+            </div>
+            <div class="text-left">
+              <div class="text-xl font-bold">Cycle sync</div>
+              <p class="text-xs text-gray-400 uppercase tracking-widest">Hormone-aware load</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="py-24 bg-deep-gray">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+          <span class="text-electric-lime font-semibold uppercase tracking-[0.2em] text-sm">Sound familiar?</span>
+          <h2 class="text-3xl md:text-5xl font-bold mt-4">Running apps are frustrating. <span class="text-gray-500">Most of them.</span></h2>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+          <div class="bg-charcoal p-8 rounded-2xl border border-white/5">
+            <h3 class="font-bold mb-3">Too many numbers</h3>
+            <p class="text-sm text-gray-400">VO2 max here, TSS there. Most runners do not want a dashboard puzzle.</p>
+          </div>
+          <div class="bg-charcoal p-8 rounded-2xl border border-white/5">
+            <h3 class="font-bold mb-3">No room for real life</h3>
+            <p class="text-sm text-gray-400">Stressful day? Traditional apps still push you into the red.</p>
+          </div>
+          <div class="bg-charcoal p-8 rounded-2xl border border-white/5">
+            <h3 class="font-bold mb-3">One missed day breaks everything</h3>
+            <p class="text-sm text-gray-400">Skip a session and the entire plan suddenly feels outdated.</p>
+          </div>
+          <div class="bg-charcoal p-8 rounded-2xl border border-white/5">
+            <h3 class="font-bold mb-3">No cycle awareness</h3>
+            <p class="text-sm text-gray-400">Female physiology is still ignored by most training products.</p>
+          </div>
+          <div class="bg-charcoal p-8 rounded-2xl border border-white/5">
+            <h3 class="font-bold mb-3">US-centric data handling</h3>
+            <p class="text-sm text-gray-400">Your health data often leaves Europe before you even notice.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="py-24">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
+          <div class="max-w-2xl">
+            <span class="text-electric-lime font-semibold uppercase tracking-[0.2em] text-sm">The answer</span>
+            <h2 class="text-3xl md:text-5xl font-bold mt-4">Simple enough for daily life. Smart enough for race day.</h2>
+          </div>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+          <div class="md:col-span-8 bg-soft-gray rounded-3xl p-8 md:p-12 border border-electric-lime/20 flex flex-col md:flex-row gap-8 overflow-hidden relative group">
+            <div class="flex-1 z-10">
+              <div class="bg-electric-lime text-charcoal text-xs font-bold px-3 py-1 rounded-full inline-block mb-4">TOP FEATURE</div>
+              <h3 class="text-2xl md:text-4xl font-bold mb-6">"Not feeling great today" recalculation</h3>
+              <p class="text-gray-400 text-lg mb-8">One tap before you start. PACR turns your interval session into a recovery run in seconds when your body needs it.</p>
+              <ul class="space-y-3">
+                <li class="flex items-center space-x-3">
+                  <span class="text-electric-lime">✓</span>
+                  <span>Real-time intensity adjustments</span>
+                </li>
+                <li class="flex items-center space-x-3">
+                  <span class="text-electric-lime">✓</span>
+                  <span>Protection against overtraining</span>
+                </li>
+              </ul>
+            </div>
+            <div class="flex-1 relative flex items-center justify-center min-h-[300px]">
+              <div class="w-64 h-64 bg-electric-lime/10 rounded-full absolute blur-3xl"></div>
+              <div class="w-full max-w-[280px] aspect-[9/19] bg-charcoal rounded-[2.5rem] border-4 border-gray-800 shadow-2xl overflow-hidden p-6 z-10">
+                <div class="w-12 h-1 bg-gray-800 rounded-full mx-auto mb-8"></div>
+                <div class="text-center">
+                  <p class="text-xs text-gray-500 mb-2">How do you feel?</p>
+                  <div class="grid grid-cols-3 gap-2 mb-8">
+                    <div class="aspect-square bg-soft-gray rounded-lg flex items-center justify-center text-xl">😴</div>
+                    <div class="aspect-square bg-electric-lime rounded-lg flex items-center justify-center text-xl">😊</div>
+                    <div class="aspect-square bg-soft-gray rounded-lg flex items-center justify-center text-xl">🔥</div>
+                  </div>
+                  <div class="h-2 w-full bg-soft-gray rounded-full overflow-hidden">
+                    <div class="h-full bg-electric-lime w-2/3"></div>
+                  </div>
+                  <p class="text-[10px] mt-2 text-gray-400">Plan updated: Easy Run (45 min)</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="md:col-span-4 bg-deep-gray rounded-3xl p-8 border border-white/5">
+            <h3 class="text-xl font-bold mb-4">Adaptive plan</h3>
+            <p class="text-gray-400">Your plan learns from every run and gets more precise over time.</p>
+          </div>
+          <div class="md:col-span-4 bg-deep-gray rounded-3xl p-8 border border-white/5">
+            <h3 class="text-xl font-bold mb-4">Cycle-aware training</h3>
+            <p class="text-gray-400">Train with your biological rhythm for stronger performance and less frustration.</p>
+          </div>
+          <div class="md:col-span-4 bg-deep-gray rounded-3xl p-8 border border-white/5">
+            <h3 class="text-xl font-bold mb-4">Deep metrics, simplified</h3>
+            <p class="text-gray-400">Complex data becomes clear action instead of jargon.</p>
+          </div>
+          <div class="md:col-span-4 bg-deep-gray rounded-3xl p-8 border border-white/5">
+            <h3 class="text-xl font-bold mb-4">Race prep</h3>
+            <p class="text-gray-400">Targeted blocks from 5K to marathon that adapt to your real life.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="py-24 bg-electric-lime text-charcoal">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 class="text-4xl md:text-5xl font-extrabold mb-16 text-center">Reach your goal in 4 steps</h2>
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-12">
+          <div class="flex flex-col items-center text-center">
+            <div class="w-24 h-24 bg-charcoal text-electric-lime rounded-full flex items-center justify-center text-4xl font-black mb-6">1</div>
+            <h3 class="text-xl font-bold mb-2">Set your goal</h3>
+            <p class="text-charcoal/80 font-medium">From feeling fitter to racing a new personal best.</p>
+          </div>
+          <div class="flex flex-col items-center text-center">
+            <div class="w-24 h-24 bg-charcoal text-electric-lime rounded-full flex items-center justify-center text-4xl font-black mb-6">2</div>
+            <h3 class="text-xl font-bold mb-2">Get your plan</h3>
+            <p class="text-charcoal/80 font-medium">A personalized, science-backed structure from day one.</p>
+          </div>
+          <div class="flex flex-col items-center text-center">
+            <div class="w-24 h-24 bg-charcoal text-electric-lime rounded-full flex items-center justify-center text-4xl font-black mb-6">3</div>
+            <h3 class="text-xl font-bold mb-2">Check in daily</h3>
+            <p class="text-charcoal/80 font-medium">Share sleep, readiness and how your body actually feels.</p>
+          </div>
+          <div class="flex flex-col items-center text-center">
+            <div class="w-24 h-24 bg-charcoal text-electric-lime rounded-full flex items-center justify-center text-4xl font-black mb-6">4</div>
+            <h3 class="text-xl font-bold mb-2">Run and adapt</h3>
+            <p class="text-charcoal/80 font-medium">Your plan evolves with your body, not against it.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="py-24">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+          <h2 class="text-3xl md:text-5xl font-bold">Who is PACR for?</h2>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div class="group relative h-[500px] rounded-3xl overflow-hidden border-2 border-electric-lime">
+            <img alt="Ambitious runner" class="w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDytRdWExmIRstonzjo2Uc36FikhvoBZx7F7D1pi5ZE2XcborQzzn3IfgH-zsGoUjGg9epFpEaISQC3txzw99Dsyr22VG5qIHmdHMSfur9kayXUUFKUvFhfe9Z84ise-hdh-kTIXuHS7MuGPvMhVIZNX7iMV-79_UuxedIch9rv1mHkapkUTPrJLi9bBquBzZeIj1naUlEMw7zA2ZBzq2YPoIrsV_on30gXNufFsm7Axve_VVP6WO8lTCFqMt_lv60drPHXTssKbKk"/>
+            <div class="absolute inset-0 bg-gradient-to-t from-charcoal via-charcoal/40 to-transparent flex flex-col justify-end p-10">
+              <span class="bg-electric-lime text-charcoal font-bold px-4 py-1 rounded-full w-fit mb-4">Recommended</span>
+              <h3 class="text-3xl font-bold mb-2">Ambitious runner</h3>
+              <p class="text-gray-300">Balancing work, cycle and training? PACR adapts training to your life, not the other way around.</p>
+            </div>
+          </div>
+          <div class="group relative h-[500px] rounded-3xl overflow-hidden border border-white/10">
+            <img alt="Performance runner" class="w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBp5TQ0cq6kMLBffmw23SEeG5mo8wGIb333giWJP72td7rq6CHBiDq766hZyeC8YZW7ZrXVMdD7zYwAHQIp-YYIINA3FnBAE4sHnd4kaPxKSpc_reZJ_DZw5hVYSu9-NPuesTqeZNgGaIDWdi_yF-4VyWQu_urxMTJvlFMkf8DBCDhThqCqZNuVKudhmziB3Dkqr7wn6pkwZNhjEgG8IP3Ie93uqNmUePO2bEndNDXrMOuh9RuSItxJCpP-eYtXoaVTU4fMyr6ys9M"/>
+            <div class="absolute inset-0 bg-gradient-to-t from-charcoal via-charcoal/40 to-transparent flex flex-col justify-end p-10">
+              <h3 class="text-3xl font-bold mb-2">Performance runner</h3>
+              <p class="text-gray-300">Chasing a 10K or half marathon PR? Use deeper insight without losing flexibility.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="py-24 bg-soft-gray">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h2 class="text-3xl md:text-5xl font-bold mb-8">Your data stays in Europe. <br/><span class="text-electric-lime">So does your plan.</span></h2>
+        <div class="bg-charcoal p-8 md:p-16 rounded-[3rem] mb-12 border border-white/10 max-w-5xl mx-auto shadow-2xl">
+          <p class="text-xl md:text-2xl font-medium leading-relaxed italic">
+            "You should think carefully about which company gets access to your health data. PACR is the European answer."
+          </p>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div class="bg-deep-gray p-8 rounded-2xl border border-white/5">
+            <h4 class="font-bold mb-2">Built in Germany</h4>
+            <p class="text-sm text-gray-400">Development and hosting based in Germany.</p>
+          </div>
+          <div class="bg-deep-gray p-8 rounded-2xl border border-white/5">
+            <h4 class="font-bold mb-2">GDPR by design</h4>
+            <p class="text-sm text-gray-400">Privacy is not an add-on. It is the foundation.</p>
+          </div>
+          <div class="bg-deep-gray p-8 rounded-2xl border border-white/5">
+            <h4 class="font-bold mb-2">No data selling</h4>
+            <p class="text-sm text-gray-400">We do not sell data to insurers or advertisers.</p>
+          </div>
+          <div class="bg-deep-gray p-8 rounded-2xl border border-white/5">
+            <h4 class="font-bold mb-2">European vision</h4>
+            <p class="text-sm text-gray-400">Real technological independence for training products.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="py-24">
+      <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 class="text-3xl md:text-5xl font-bold mb-12 text-center">Frequently asked questions</h2>
+        <div class="space-y-4">
+          <details class="group bg-soft-gray rounded-2xl p-6 cursor-pointer">
+            <summary class="list-none flex justify-between items-center font-bold">
+              <span>Who is PACR built for?</span>
+              <span class="text-electric-lime group-open:rotate-180 transition-transform">↓</span>
+            </summary>
+            <p class="mt-4 text-gray-400">PACR is built for runners who want structure without rigidity and progress without ignoring recovery.</p>
+          </details>
+          <details class="group bg-soft-gray rounded-2xl p-6 cursor-pointer">
+            <summary class="list-none flex justify-between items-center font-bold">
+              <span>How does the cycle feature work?</span>
+              <span class="text-electric-lime group-open:rotate-180 transition-transform">↓</span>
+            </summary>
+            <p class="mt-4 text-gray-400">You can add cycle data manually or via integrations. PACR adjusts session intensity to hormonal phases.</p>
+          </details>
+          <details class="group bg-soft-gray rounded-2xl p-6 cursor-pointer">
+            <summary class="list-none flex justify-between items-center font-bold">
+              <span>Which devices are supported?</span>
+              <span class="text-electric-lime group-open:rotate-180 transition-transform">↓</span>
+            </summary>
+            <p class="mt-4 text-gray-400">At launch we focus on Apple Watch, Garmin and Coros, with more device support planned.</p>
+          </details>
+          <details class="group bg-soft-gray rounded-2xl p-6 cursor-pointer">
+            <summary class="list-none flex justify-between items-center font-bold">
+              <span>Is the plan really adaptive?</span>
+              <span class="text-electric-lime group-open:rotate-180 transition-transform">↓</span>
+            </summary>
+            <p class="mt-4 text-gray-400">Yes. Completed runs, daily check-ins and recovery signals all affect upcoming sessions in real time.</p>
+          </details>
+          <details class="group bg-soft-gray rounded-2xl p-6 cursor-pointer">
+            <summary class="list-none flex justify-between items-center font-bold">
+              <span>What about privacy?</span>
+              <span class="text-electric-lime group-open:rotate-180 transition-transform">↓</span>
+            </summary>
+            <p class="mt-4 text-gray-400">PACR is built with a European privacy-first perspective and aims to keep health-related data handling transparent and compliant.</p>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <section class="py-24 bg-electric-lime text-charcoal relative overflow-hidden">
+      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+        <h2 class="text-4xl md:text-6xl font-black mb-8">Ready for training that actually works for you?</h2>
+        <p class="text-xl font-medium mb-12 opacity-80">Join the waitlist now and be among the first to experience PACR.</p>
+        <div class="max-w-md mx-auto mb-8">
+          <form action="https://formspree.io/f/xyknwjbq" class="flex flex-col sm:flex-row gap-3" method="POST">
+            <input name="_next" type="hidden" value="https://pacr.app/en/thanks.html"/>
+            <input name="email" class="flex-grow bg-white/20 border-charcoal/10 rounded-xl px-6 py-4 focus:ring-2 focus:ring-charcoal text-charcoal placeholder-charcoal/50 font-bold" placeholder="your@email.com" required="" type="email"/>
+            <button class="bg-charcoal text-white font-bold px-8 py-4 rounded-xl hover:bg-black transition-colors whitespace-nowrap" type="submit">
+              Join early access →
+            </button>
+          </form>
+        </div>
+        <p class="text-sm font-semibold opacity-60 italic">✓ We hate spam just as much as bad running apps.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="bg-charcoal py-20 border-t border-white/5">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
+        <div class="md:col-span-2">
+          <span class="text-4xl font-black tracking-tighter text-white mb-6 block">PACR<span class="text-electric-lime">.</span></span>
+          <p class="text-gray-500 max-w-sm text-lg font-medium leading-relaxed">
+            Run. Adapt. Perform. <br/>
+            The future of adaptive training from Europe. <br/>
+            <span class="text-white">Built in Germany.</span>
+          </p>
+        </div>
+        <div>
+          <h4 class="font-bold mb-6 uppercase tracking-widest text-sm text-electric-lime">Legal</h4>
+          <ul class="space-y-4 text-gray-400">
+            <li><a class="hover:text-white transition-colors" href="privacy.html">Privacy</a></li>
+            <li><a class="hover:text-white transition-colors" href="imprint.html">Legal Notice</a></li>
+            <li><a class="hover:text-white transition-colors" href="terms.html">Terms</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="font-bold mb-6 uppercase tracking-widest text-sm text-electric-lime">Connect</h4>
+          <ul class="space-y-4 text-gray-400">
+            <li><a class="hover:text-white transition-colors" href="imprint.html">Contact</a></li>
+            <li><a class="hover:text-white transition-colors" href="#">Instagram</a></li>
+            <li><a class="hover:text-white transition-colors" href="#">Strava Club</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="border-t border-white/5 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-gray-600 text-sm">
+        <p>© 2026 PACR. All rights reserved.</p>
+        <div class="flex space-x-6">
+          <span>Built with ❤️ in Europe</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>
