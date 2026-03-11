@@ -30,6 +30,18 @@ export const adminRoutes: Routes = [
       {
         path: 'plans/:planId/trainings/:id/edit',
         loadComponent: () => import('./trainings/training-form/training-form').then(m => m.TrainingForm)
+      },
+      {
+        path: 'competitions',
+        loadComponent: () => import('./competitions/competition-list/competition-list').then(m => m.CompetitionList)
+      },
+      {
+        path: 'competitions/new',
+        loadComponent: () => import('./competitions/competition-form/competition-form').then(m => m.CompetitionForm)
+      },
+      {
+        path: 'competitions/:compId/edit',
+        loadComponent: () => import('./competitions/competition-form/competition-form').then(m => m.CompetitionForm)
       }
     ]
   }

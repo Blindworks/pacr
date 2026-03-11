@@ -1,0 +1,93 @@
+<div class="list-page">
+  <div class="toolbar">
+    <div class="toolbar-left">
+      <h2>Competitions</h2>
+      @if (!isLoading()) {
+        <span class="count-badge">{{ competitions().length }}</span>
+      }
+    </div>
+    <button class="btn-primary" (click)="navigateNew()">
+      <span class="material-symbols-outlined">add</span>
+      New Competition
+    </button>
+  </div>
+
+  @if (isLoading()) {
+    <div class="state-box">
+      <span class="material-symbols-outlined spin">progress_activity</span>
+      <span>Loading competitions…</span>
+    </div>
+  }
+
+  @if (hasError() && !isLoading()) {
+    <div class="state-box state-box--error">
+      <span class="material-symbols-outlined">error</span>
+      <span>Failed to load competitions.</span>
+      <button class="btn-ghost" (click)="load()">Retry</button>
+    </div>
+  }
+
+  @if (!isLoading() && !hasError() && competitions().length === 0) {
+    <div class="state-box">
+      <span class="material-symbols-outlined">emoji_events</span>
+      <span>No competitions yet.</span>
+      <button class="btn-primary" (click)="navigateNew()">Create first competition</button>
+    </div>
+  }
+
+  @if (!isLoading() && competitions().length > 0) {
+    <div class="comp-grid">
+      @for (comp of competitions(); track comp.id) {
+        <div class="comp-card">
+          <div class="comp-card-header">
+            <div class="comp-info">
+              <h3>{{ comp.name }}</h3>
+              @if (comp.type) {
+                <span class="type-badge">{{ comp.type }}</span>
+              }
+            </div>
+            <div class="comp-actions">
+              <button class="icon-btn" title="Edit" (click)="navigateEdit(comp.id)">
+                <span class="material-symbols-outlined">edit</span>
+              </button>
+              <button class="icon-btn icon-btn--danger" title="Delete" (click)="requestDelete(comp.id)">
+                <span class="material-symbols-outlined">delete</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="comp-meta">
+            <span class="meta-item">
+              <span class="material-symbols-outlined">calendar_today</span>
+              {{ formatDate(comp.date) }}
+            </span>
+            @if (comp.location) {
+              <span class="meta-item">
+                <span class="material-symbols-outlined">location_on</span>
+                {{ comp.location }}
+              </span>
+            }
+          </div>
+
+          @if (comp.description) {
+            <p class="comp-description">{{ comp.description }}</p>
+          }
+        </div>
+      }
+    </div>
+  }
+
+  @if (confirmDeleteId() !== null) {
+    <div class="dialog-overlay" (click)="cancelDelete()">
+      <div class="dialog" (click)="$event.stopPropagation()">
+        <span class="material-symbols-outlined dialog-icon">warning</span>
+        <h3>Delete Competition?</h3>
+        <p>This action cannot be undone.</p>
+        <div class="dialog-actions">
+          <button class="btn-ghost" (click)="cancelDelete()">Cancel</button>
+          <button class="btn-danger" (click)="confirmDelete(confirmDeleteId()!)">Delete</button>
+        </div>
+      </div>
+    </div>
+  }
+</div>
