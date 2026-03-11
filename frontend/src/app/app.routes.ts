@@ -54,6 +54,11 @@ export const routes: Routes = [
     loadComponent: () => import('./components/training-detail/training-detail').then(m => m.TrainingDetail)
   },
   {
+    path: 'competitions',
+    canActivate: [authGuard],
+    loadComponent: () => import('./components/competitions/competitions').then(m => m.Competitions)
+  },
+  {
     path: 'statistics',
     canActivate: [authGuard],
     loadComponent: () => import('./components/statistics/statistics').then(m => m.Statistics)

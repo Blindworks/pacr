@@ -1,0 +1,54 @@
+<div class="competitions-page">
+  <header class="page-header">
+    <h2 class="page-title">Select Your Goal</h2>
+    <p class="page-subtitle">Choose a competition to unlock your personalized training path.</p>
+  </header>
+
+  <!-- Filters -->
+  <div class="filters">
+    <button
+      *ngFor="let filter of filters"
+      class="filter-btn"
+      [class.active]="activeFilter === filter"
+      (click)="setFilter(filter)">
+      {{ filter }}
+    </button>
+  </div>
+
+  <!-- Race Cards -->
+  <section class="races-grid">
+    <div class="race-card" *ngFor="let race of races">
+      <div class="race-image" [style.background-image]="'url(' + race.image + ')'"></div>
+      <div class="race-info">
+        <div class="race-meta">
+          <div class="race-meta-left">
+            <div class="race-tags">
+              <span class="tag" [class]="race.tagClass">{{ race.tag }}</span>
+              <span class="race-date">{{ race.date }}</span>
+            </div>
+            <h3 class="race-name">{{ race.name }}</h3>
+          </div>
+          <div class="race-meta-right">
+            <p class="race-distance">{{ race.distance }}</p>
+            <p class="race-location">{{ race.location }}</p>
+          </div>
+        </div>
+        <div class="race-actions">
+          <button class="btn-select">Select Race</button>
+          <button class="btn-info">
+            <span class="material-symbols-outlined">info</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Banner -->
+  <div class="cta-banner">
+    <div class="cta-text">
+      <h4 class="cta-title">Custom Plan Required?</h4>
+      <p class="cta-subtitle">Our AI coaches can build a plan around your busy schedule.</p>
+    </div>
+    <button class="cta-btn">Talk to AI Coach</button>
+  </div>
+</div>

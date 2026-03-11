@@ -1,0 +1,349 @@
+$primary: #b9f20d;
+$bg-dark: #0d1117;
+$card-bg: #161b22;
+$text-muted: #8b949e;
+
+.competitions-page {
+  max-width: 1024px;
+  margin: 0 auto;
+  padding: 2.5rem 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+
+.page-header {
+  .page-title {
+    font-size: 2.25rem;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    color: #f0f6fc;
+    margin: 0 0 0.5rem;
+  }
+
+  .page-subtitle {
+    font-size: 1rem;
+    color: $text-muted;
+    margin: 0;
+  }
+}
+
+.filters {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+
+  .filter-btn {
+    padding: 0.5rem 1.25rem;
+    border-radius: 9999px;
+    border: none;
+    cursor: pointer;
+    font-size: 0.875rem;
+    font-weight: 600;
+    background: #21262d;
+    color: #c9d1d9;
+    transition: background 0.15s;
+
+    &:hover {
+      background: #30363d;
+    }
+
+    &.active {
+      background: $primary;
+      color: $bg-dark;
+    }
+  }
+}
+
+.races-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+  gap: 1.5rem;
+}
+
+.race-card {
+  border-radius: 0.75rem;
+  background: $card-bg;
+  border: 1px solid #30363d;
+  overflow: hidden;
+  transition: border-color 0.2s;
+  cursor: pointer;
+
+  &:hover {
+    border-color: rgba($primary, 0.5);
+
+    .race-image {
+      transform: scale(1.03);
+    }
+  }
+
+  .race-image {
+    width: 100%;
+    aspect-ratio: 16/9;
+    background-size: cover;
+    background-position: center;
+    transition: transform 0.5s;
+  }
+
+  .race-info {
+    padding: 1.5rem;
+  }
+
+  .race-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+  }
+
+  .race-tags {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .tag {
+    padding: 0.125rem 0.5rem;
+    border-radius: 0.25rem;
+    font-size: 0.625rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+
+    &.tag-major {
+      background: $primary;
+      color: $bg-dark;
+    }
+
+    &.tag-city {
+      background: #21262d;
+      color: #8b949e;
+    }
+  }
+
+  .race-date {
+    font-size: 0.75rem;
+    color: $text-muted;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 500;
+  }
+
+  .race-name {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #f0f6fc;
+    margin: 0;
+  }
+
+  .race-meta-right {
+    text-align: right;
+  }
+
+  .race-distance {
+    font-size: 1.25rem;
+    font-weight: 900;
+    color: $primary;
+    margin: 0;
+  }
+
+  .race-location {
+    font-size: 0.75rem;
+    color: $text-muted;
+    margin: 0;
+    font-weight: 500;
+  }
+
+  .race-actions {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .btn-select {
+    flex: 1;
+    background: $primary;
+    color: $bg-dark;
+    border: none;
+    border-radius: 0.5rem;
+    padding: 0.75rem;
+    font-size: 0.875rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: filter 0.15s;
+
+    &:hover {
+      filter: brightness(1.1);
+    }
+  }
+
+  .btn-info {
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    background: #21262d;
+    color: #c9d1d9;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    transition: background 0.15s;
+
+    &:hover {
+      background: #30363d;
+    }
+
+    .material-symbols-outlined {
+      font-size: 1rem;
+      line-height: 1;
+    }
+  }
+}
+
+.strategy-section {
+  .section-title {
+    font-size: 1.5rem;
+    font-weight: 900;
+    color: #f0f6fc;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin: 0 0 1.5rem;
+
+    .material-symbols-outlined {
+      color: $primary;
+    }
+  }
+}
+
+.strategy-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.strategy-card {
+  padding: 1.5rem;
+  border-radius: 0.75rem;
+  background: rgba(#21262d, 0.5);
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: border-color 0.2s;
+
+  &:hover {
+    border-color: rgba($primary, 0.3);
+  }
+
+  &.active {
+    background: rgba($primary, 0.1);
+    border-color: $primary;
+    box-shadow: 0 0 20px rgba($primary, 0.05);
+  }
+
+  .strategy-icon {
+    font-size: 1.75rem;
+    color: $primary;
+    display: block;
+    margin-bottom: 1rem;
+  }
+
+  .strategy-name {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: #f0f6fc;
+    margin: 0 0 0.5rem;
+  }
+
+  .strategy-desc {
+    font-size: 0.75rem;
+    color: $text-muted;
+    line-height: 1.5;
+    margin: 0 0 1rem;
+  }
+
+  .strategy-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 1rem;
+    border-top: 1px solid #30363d;
+
+    .active & {
+      border-color: rgba($primary, 0.2);
+    }
+  }
+
+  .strategy-sessions {
+    font-size: 0.625rem;
+    font-weight: 700;
+    color: $text-muted;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+
+    .active & {
+      color: $primary;
+    }
+  }
+
+  .strategy-arrow {
+    font-size: 1rem;
+    color: #30363d;
+    transition: color 0.15s;
+
+    .active & {
+      color: $primary;
+    }
+  }
+
+  &:not(.active):hover .strategy-arrow {
+    color: $primary;
+  }
+}
+
+.cta-banner {
+  padding: 2rem;
+  border-radius: 1rem;
+  background: linear-gradient(135deg, $primary, #a8e00c);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+
+  .cta-text {
+    color: $bg-dark;
+  }
+
+  .cta-title {
+    font-size: 1.5rem;
+    font-weight: 900;
+    font-style: italic;
+    text-transform: uppercase;
+    margin: 0 0 0.25rem;
+  }
+
+  .cta-subtitle {
+    font-size: 0.875rem;
+    font-weight: 500;
+    opacity: 0.8;
+    margin: 0;
+  }
+
+  .cta-btn {
+    background: $bg-dark;
+    color: $primary;
+    border: none;
+    padding: 1rem 2rem;
+    border-radius: 0.75rem;
+    font-size: 0.875rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: transform 0.15s;
+
+    &:hover {
+      transform: scale(1.05);
+    }
+  }
+}
