@@ -47,6 +47,8 @@ public class TrainingService {
 
     public Training save(Training training) {
         normalizeAndValidatePaceFields(training);
+        training.getSteps().forEach(step -> step.setTraining(training));
+        training.getPrepTips().forEach(tip -> tip.setTraining(training));
         return trainingRepository.save(training);
     }
 
@@ -74,10 +76,20 @@ public class TrainingService {
         existing.setEstimatedDistanceMeters(incoming.getEstimatedDistanceMeters());
         existing.setDifficulty(incoming.getDifficulty());
         existing.setHeroImageUrl(incoming.getHeroImageUrl());
-        existing.setSteps(incoming.getSteps());
-        existing.setPrepTips(incoming.getPrepTips());
 
-        return existing; // managed entity → Hibernate schreibt bei Transaktionsende automatisch
+        existing.getSteps().clear();
+        incoming.getSteps().forEach(step -> {
+            step.setTraining(existing);
+            existing.getSteps().add(step);
+        });
+
+        existing.getPrepTips().clear();
+        incoming.getPrepTips().forEach(tip -> {
+            tip.setTraining(existing);
+            existing.getPrepTips().add(tip);
+        });
+
+        return existing;
     }
 
     public void deleteById(Long id) {
