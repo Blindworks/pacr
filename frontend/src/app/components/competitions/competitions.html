@@ -16,10 +16,28 @@
     </button>
   </div>
 
+  <!-- Loading State -->
+  <div class="state-box" *ngIf="isLoading">
+    <span class="material-symbols-outlined state-icon spin">progress_activity</span>
+    <span>Loading competitions…</span>
+  </div>
+
+  <!-- Error State -->
+  <div class="state-box state-box--error" *ngIf="hasError && !isLoading">
+    <span class="material-symbols-outlined state-icon">error</span>
+    <span>Failed to load competitions.</span>
+  </div>
+
+  <!-- Empty State -->
+  <div class="state-box" *ngIf="!isLoading && !hasError && filteredRaces.length === 0">
+    <span class="material-symbols-outlined state-icon">emoji_events</span>
+    <span>No competitions found.</span>
+  </div>
+
   <!-- Race Cards -->
-  <section class="races-grid">
-    <div class="race-card" *ngFor="let race of races">
-      <div class="race-image" [style.background-image]="'url(' + race.image + ')'"></div>
+  <section class="races-grid" *ngIf="!isLoading && !hasError">
+    <div class="race-card" *ngFor="let race of filteredRaces">
+      <div class="race-image" [style.background-image]="getImageStyle(race.image)"></div>
       <div class="race-info">
         <div class="race-meta">
           <div class="race-meta-left">
@@ -146,7 +164,7 @@
 <!-- Plan Confirmation View -->
 <div class="confirmation-page" *ngIf="selectedRace && selectedPlan">
   <!-- Hero Section -->
-  <section class="confirmation-hero" [style.background-image]="'url(' + selectedRace.image + ')'">
+  <section class="confirmation-hero" [style.background-image]="getImageStyle(selectedRace.image)">
     <div class="confirmation-hero__overlay"></div>
     <div class="confirmation-hero__content">
       <span class="confirmation-hero__badge">Plan Confirmed</span>
