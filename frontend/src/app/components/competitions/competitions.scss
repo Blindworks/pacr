@@ -633,6 +633,341 @@ $text-muted: #8b949e;
   }
 }
 
+// ─── Plan Confirmation View ──────────────────────────────────────────────────
+
+.confirmation-page {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+  max-width: 1024px;
+  margin: 0 auto;
+  padding: 0 0 3rem;
+  width: 100%;
+}
+
+.confirmation-hero {
+  position: relative;
+  height: 340px;
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: flex-end;
+  overflow: hidden;
+
+  &__overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, #0d1117 0%, rgba(#0d1117, 0.35) 60%, transparent 100%);
+  }
+
+  &__content {
+    position: relative;
+    padding: 2.5rem;
+    width: 100%;
+  }
+
+  &__badge {
+    display: inline-block;
+    background: rgba($primary, 0.92);
+    color: $bg-dark;
+    font-size: 0.625rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    padding: 0.25rem 0.875rem;
+    border-radius: 9999px;
+    margin-bottom: 1rem;
+  }
+
+  &__title {
+    font-size: 3rem;
+    font-weight: 900;
+    color: #f0f6fc;
+    letter-spacing: -0.03em;
+    line-height: 1;
+    margin: 0 0 0.5rem;
+  }
+
+  &__subtitle {
+    font-size: 1.125rem;
+    color: #c9d1d9;
+    font-weight: 500;
+    margin: 0;
+  }
+}
+
+.confirmation-grid {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 1.5rem;
+  padding: 0 2rem;
+}
+
+.confirmation-left,
+.confirmation-right {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.confirmation-card {
+  background: $card-bg;
+  border: 1px solid #30363d;
+  border-radius: 1rem;
+  padding: 1.75rem 2rem;
+
+  &__heading {
+    font-size: 0.625rem;
+    font-weight: 900;
+    color: $primary;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin: 0 0 1.5rem;
+
+    &.text-center {
+      text-align: center;
+    }
+  }
+}
+
+.confirmation-overview {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.overview-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.overview-icon {
+  width: 2.75rem;
+  height: 2.75rem;
+  background: #21262d;
+  border-radius: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: $primary;
+  flex-shrink: 0;
+
+  .material-symbols-outlined {
+    font-size: 1.25rem;
+  }
+}
+
+.overview-label {
+  font-size: 0.75rem;
+  color: $text-muted;
+  margin: 0 0 0.125rem;
+  font-weight: 500;
+}
+
+.overview-value {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #f0f6fc;
+  margin: 0;
+}
+
+.milestone-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.milestone-week {
+  font-size: 0.75rem;
+  color: $text-muted;
+  font-weight: 500;
+}
+
+.milestone-content {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  background: rgba(#0d1117, 0.5);
+  border: 1px solid #21262d;
+  border-radius: 0.875rem;
+  padding: 1.25rem;
+}
+
+.milestone-icon {
+  width: 3.5rem;
+  height: 3.5rem;
+  background: rgba($primary, 0.15);
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: $primary;
+  flex-shrink: 0;
+
+  .material-symbols-outlined {
+    font-size: 1.75rem;
+  }
+}
+
+.milestone-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.milestone-title {
+  font-size: 1.0625rem;
+  font-weight: 700;
+  color: #f0f6fc;
+  margin: 0 0 0.25rem;
+}
+
+.milestone-desc {
+  font-size: 0.8125rem;
+  color: $text-muted;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.milestone-stats {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-shrink: 0;
+}
+
+.milestone-stat {
+  text-align: center;
+
+  &__value {
+    font-size: 1.125rem;
+    font-weight: 900;
+    color: $primary;
+    margin: 0 0 0.125rem;
+  }
+
+  &__label {
+    font-size: 0.5625rem;
+    font-weight: 900;
+    color: $text-muted;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin: 0;
+  }
+}
+
+.milestone-stat-divider {
+  width: 1px;
+  height: 2.5rem;
+  background: #30363d;
+}
+
+.commitment-card {
+  flex: 1;
+}
+
+.commitment-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-top: 0.5rem;
+}
+
+.commitment-stat {
+  text-align: center;
+
+  &__value {
+    font-size: 2.5rem;
+    font-weight: 900;
+    color: #f0f6fc;
+    line-height: 1;
+    margin: 0 0 0.25rem;
+  }
+
+  &__label {
+    font-size: 0.6875rem;
+    font-weight: 700;
+    color: $text-muted;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin: 0;
+  }
+}
+
+.commitment-divider {
+  height: 1px;
+  background: #21262d;
+  margin: 0 1rem;
+}
+
+.action-card {
+  background: $primary;
+  border-radius: 1rem;
+  padding: 1.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+  text-align: center;
+
+  &__title {
+    font-size: 1.0625rem;
+    font-weight: 700;
+    color: $bg-dark;
+    margin: 0;
+  }
+
+  &__start-btn {
+    width: 100%;
+    background: $bg-dark;
+    color: $primary;
+    border: none;
+    border-radius: 0.75rem;
+    padding: 1rem;
+    font-size: 0.875rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    box-shadow: 0 4px 16px rgba($bg-dark, 0.3);
+    transition: transform 0.15s;
+
+    &:hover {
+      transform: scale(1.02);
+    }
+  }
+
+  &__schedule-btn {
+    width: 100%;
+    background: transparent;
+    border: none;
+    color: rgba($bg-dark, 0.75);
+    font-size: 0.875rem;
+    font-weight: 700;
+    cursor: pointer;
+    padding: 0.25rem;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  &__change-btn {
+    width: 100%;
+    background: transparent;
+    border: none;
+    color: rgba($bg-dark, 0.55);
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 0.25rem;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
 // ─── CTA Banner ─────────────────────────────────────────────────────────────
 
 .cta-banner {

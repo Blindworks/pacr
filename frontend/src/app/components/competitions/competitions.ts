@@ -36,6 +36,7 @@ interface TrainingPlan {
 export class Competitions {
   activeFilter = 'All Races';
   selectedRace: Race | null = null;
+  selectedPlan: TrainingPlan | null = null;
   selectedTargetTime = 'Sub 3:30';
 
   filters = ['All Races', 'Marathon', 'Half Marathon', '10K Run', '5K Sprint'];
@@ -130,14 +131,33 @@ export class Competitions {
 
   selectRace(race: Race): void {
     this.selectedRace = race;
+    this.selectedPlan = null;
     this.selectedTargetTime = 'Sub 3:30';
   }
 
   deselectRace(): void {
     this.selectedRace = null;
+    this.selectedPlan = null;
   }
 
   setTargetTime(time: string): void {
     this.selectedTargetTime = time;
+  }
+
+  selectPlan(plan: TrainingPlan): void {
+    this.selectedPlan = plan;
+  }
+
+  deselectPlan(): void {
+    this.selectedPlan = null;
+  }
+
+  get planWeeks(): number {
+    return 16;
+  }
+
+  get planTotalKm(): string {
+    const peak = parseInt(this.selectedPlan?.peakMileage ?? '0', 10);
+    return '~' + (peak * 10).toString();
   }
 }

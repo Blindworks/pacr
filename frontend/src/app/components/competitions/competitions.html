@@ -55,7 +55,7 @@
 </div>
 
 <!-- Training Plan Selection View -->
-<div class="plan-selection-page" *ngIf="selectedRace">
+<div class="plan-selection-page" *ngIf="selectedRace && !selectedPlan">
   <!-- Sub-header -->
   <div class="plan-subheader">
     <button class="back-btn" (click)="deselectRace()">
@@ -137,8 +137,121 @@
           </div>
         </div>
 
-        <button class="plan-card__select-btn">SELECT PLAN</button>
+        <button class="plan-card__select-btn" (click)="selectPlan(plan)">SELECT PLAN</button>
       </div>
     </section>
+  </div>
+</div>
+
+<!-- Plan Confirmation View -->
+<div class="confirmation-page" *ngIf="selectedRace && selectedPlan">
+  <!-- Hero Section -->
+  <section class="confirmation-hero" [style.background-image]="'url(' + selectedRace.image + ')'">
+    <div class="confirmation-hero__overlay"></div>
+    <div class="confirmation-hero__content">
+      <span class="confirmation-hero__badge">Plan Confirmed</span>
+      <h1 class="confirmation-hero__title">You're all set!</h1>
+      <p class="confirmation-hero__subtitle">Your road to {{ selectedRace.name }} starts today.</p>
+    </div>
+  </section>
+
+  <!-- Summary Grid -->
+  <div class="confirmation-grid">
+    <!-- Left Column -->
+    <div class="confirmation-left">
+      <!-- Plan Overview -->
+      <div class="confirmation-card">
+        <h2 class="confirmation-card__heading">Plan Overview</h2>
+        <div class="confirmation-overview">
+          <div class="overview-row">
+            <div class="overview-icon">
+              <span class="material-symbols-outlined">location_on</span>
+            </div>
+            <div>
+              <p class="overview-label">Race</p>
+              <p class="overview-value">{{ selectedRace.name }} | {{ selectedRace.date }}</p>
+            </div>
+          </div>
+          <div class="overview-row">
+            <div class="overview-icon">
+              <span class="material-symbols-outlined">timer</span>
+            </div>
+            <div>
+              <p class="overview-label">Target Time</p>
+              <p class="overview-value">{{ selectedPlan.targetTime }}</p>
+            </div>
+          </div>
+          <div class="overview-row">
+            <div class="overview-icon">
+              <span class="material-symbols-outlined">fitness_center</span>
+            </div>
+            <div>
+              <p class="overview-label">Plan Name</p>
+              <p class="overview-value">{{ selectedPlan.title }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- First Milestone -->
+      <div class="confirmation-card">
+        <div class="milestone-header">
+          <h2 class="confirmation-card__heading">First Milestone</h2>
+          <span class="milestone-week">Week 1, Day 1</span>
+        </div>
+        <div class="milestone-content">
+          <div class="milestone-icon">
+            <span class="material-symbols-outlined">play_circle</span>
+          </div>
+          <div class="milestone-info">
+            <h3 class="milestone-title">Foundation Run — 8 km</h3>
+            <p class="milestone-desc">Focus on easy pacing and building a rhythmic stride. Heart rate Zone 2.</p>
+          </div>
+          <div class="milestone-stats">
+            <div class="milestone-stat">
+              <p class="milestone-stat__value">8 km</p>
+              <p class="milestone-stat__label">Distance</p>
+            </div>
+            <div class="milestone-stat-divider"></div>
+            <div class="milestone-stat">
+              <p class="milestone-stat__value">45 m</p>
+              <p class="milestone-stat__label">Est. Time</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Column -->
+    <div class="confirmation-right">
+      <!-- Commitment Stats -->
+      <div class="confirmation-card commitment-card">
+        <h2 class="confirmation-card__heading text-center">Commitment</h2>
+        <div class="commitment-stats">
+          <div class="commitment-stat">
+            <p class="commitment-stat__value">{{ planWeeks }}</p>
+            <p class="commitment-stat__label">Weeks</p>
+          </div>
+          <div class="commitment-divider"></div>
+          <div class="commitment-stat">
+            <p class="commitment-stat__value">{{ selectedPlan.commitment.split(' ')[0] }}</p>
+            <p class="commitment-stat__label">Sessions/Week</p>
+          </div>
+          <div class="commitment-divider"></div>
+          <div class="commitment-stat">
+            <p class="commitment-stat__value">{{ planTotalKm }}</p>
+            <p class="commitment-stat__label">Total KM</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Card -->
+      <div class="action-card">
+        <h3 class="action-card__title">Ready to chase your PB?</h3>
+        <button class="action-card__start-btn">Start Training Plan</button>
+        <button class="action-card__schedule-btn">View Full Schedule</button>
+        <button class="action-card__change-btn" (click)="deselectPlan()">Change Plan</button>
+      </div>
+    </div>
   </div>
 </div>
