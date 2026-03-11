@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { UserTrainingEntryService, UserTrainingEntry } from '../../services/user-training-entry.service';
 
 interface TrainingDay {
   id: number;
@@ -23,6 +24,9 @@ interface Insight {
   text: string;
 }
 
+const DAY_NAMES = ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'];
+const DAY_SHORTS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
 @Component({
   selector: 'app-training-plan',
   standalone: true,
@@ -30,73 +34,23 @@ interface Insight {
   templateUrl: './training-plan.html',
   styleUrl: './training-plan.scss'
 })
-export class TrainingPlan {
-  constructor(private router: Router) {}
+export class TrainingPlan implements OnInit {
+  private router = inject(Router);
+  private entryService = inject(UserTrainingEntryService);
 
-  planName = 'Half Marathon Prep';
-  weekLabel = 'Week 6 of 12 • Sub-1:45 Goal';
-  progressPercent = 45;
-  completedSessions = 18;
-  totalSessions = 40;
+  planName = '—';
+  weekLabel = '—';
+  progressPercent = 0;
+  completedSessions = 0;
+  totalSessions = 0;
+  isLoading = true;
+  hasError = false;
+  hasPlan = false;
 
-  currentWeekLabel = 'This Week';
+  currentWeekLabel = 'Diese Woche';
+  weekOffset = 0;
 
-  days: TrainingDay[] = [
-    {
-      id: 1,
-      dayShort: 'Mon', dayNum: 12,
-      title: 'Recovery Run',
-      subtitle: '5.0 km • 32:40 • 6:32 /km',
-      status: 'completed'
-    },
-    {
-      id: 2,
-      dayShort: 'Tue', dayNum: 13,
-      title: 'Threshold Intervals',
-      subtitle: '8.0 km total • 4x1km @ 4:20 pace',
-      status: 'today'
-    },
-    {
-      id: 3,
-      dayShort: 'Wed', dayNum: 14,
-      title: 'Rest Day',
-      subtitle: 'Active mobility session recommended',
-      status: 'rest',
-      icon: 'hotel'
-    },
-    {
-      id: 4,
-      dayShort: 'Thu', dayNum: 15,
-      title: 'Aerobic Base Run',
-      subtitle: '10.0 km • Zone 2 effort',
-      status: 'upcoming',
-      icon: 'directions_run'
-    },
-    {
-      id: 5,
-      dayShort: 'Fri', dayNum: 16,
-      title: 'Strength & Core',
-      subtitle: '45 min • Gym session',
-      status: 'upcoming',
-      icon: 'fitness_center'
-    },
-    {
-      id: 6,
-      dayShort: 'Sat', dayNum: 17,
-      title: 'Tempo Run',
-      subtitle: '12.0 km • Lactate threshold',
-      status: 'upcoming',
-      icon: 'directions_run'
-    },
-    {
-      id: 7,
-      dayShort: 'Sun', dayNum: 18,
-      title: 'Long Run',
-      subtitle: '22.0 km • Easy pace',
-      status: 'upcoming',
-      icon: 'directions_run'
-    }
-  ];
+  days: TrainingDay[] = [];
 
   insights: Insight[] = [
     {
@@ -110,17 +64,144 @@ export class TrainingPlan {
   ];
 
   stats: Stat[] = [
-    { label: 'Weekly Distance', value: '24.2', unit: 'km' },
-    { label: 'Time on Feet', value: '2:15', unit: 'h' },
-    { label: 'Avg. HR', value: '142', unit: 'bpm' },
-    { label: 'Elevation', value: '310', unit: 'm' }
+    { label: 'Weekly Distance', value: '—', unit: 'km' },
+    { label: 'Time on Feet', value: '—', unit: 'h' },
+    { label: 'Avg. HR', value: '—', unit: 'bpm' },
+    { label: 'Elevation', value: '—', unit: 'm' }
   ];
 
-  recoveryScore = 82;
+  recoveryScore = 0;
 
-  prevWeek(): void { /* navigate to previous week */ }
-  nextWeek(): void { /* navigate to next week */ }
-  startWorkout(): void { /* start today's workout */ }
+  ngOnInit(): void {
+    this.loadWeek();
+  }
+
+  private getWeekRange(offset: number): { monday: Date; sunday: Date } {
+    const today = new Date();
+    const dow = today.getDay();
+    const monday = new Date(today);
+    monday.setDate(today.getDate() - (dow === 0 ? 6 : dow - 1) + offset * 7);
+    monday.setHours(0, 0, 0, 0);
+    const sunday = new Date(monday);
+    sunday.setDate(monday.getDate() + 6);
+    return { monday, sunday };
+  }
+
+  private toIso(d: Date): string {
+    return d.toISOString().split('T')[0];
+  }
+
+  private loadWeek(): void {
+    this.isLoading = true;
+    this.hasError = false;
+    const { monday, sunday } = this.getWeekRange(this.weekOffset);
+    this.entryService.getCalendar(this.toIso(monday), this.toIso(sunday)).subscribe({
+      next: (entries) => {
+        this.buildWeek(entries, monday);
+        if (entries.length > 0) {
+          this.hasPlan = true;
+          this.planName = entries[0].training.trainingPlanName ?? 'Trainingsplan';
+          const weekNum = entries[0].weekNumber;
+          this.weekLabel = `Woche ${weekNum}`;
+          this.completedSessions = entries.filter(e => e.completed).length;
+          this.totalSessions = entries.length;
+          this.progressPercent = this.totalSessions > 0
+            ? Math.round((this.completedSessions / this.totalSessions) * 100)
+            : 0;
+        }
+        this.isLoading = false;
+      },
+      error: () => {
+        this.hasError = true;
+        this.isLoading = false;
+      }
+    });
+  }
+
+  private buildWeek(entries: UserTrainingEntry[], monday: Date): void {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const entryByDate = new Map<string, UserTrainingEntry>();
+    entries.forEach(e => entryByDate.set(e.trainingDate, e));
+
+    this.days = [];
+    for (let i = 0; i < 7; i++) {
+      const day = new Date(monday);
+      day.setDate(monday.getDate() + i);
+      const iso = this.toIso(day);
+      const jsDay = day.getDay();
+      const entry = entryByDate.get(iso);
+
+      if (entry) {
+        let status: TrainingDay['status'];
+        if (entry.completed) {
+          status = 'completed';
+        } else if (day.getTime() === today.getTime()) {
+          status = 'today';
+        } else {
+          status = 'upcoming';
+        }
+        this.days.push({
+          id: entry.id,
+          dayShort: DAY_SHORTS[jsDay],
+          dayNum: day.getDate(),
+          title: entry.training.name,
+          subtitle: this.buildSubtitle(entry),
+          status,
+          icon: this.typeToIcon(entry.training.trainingType)
+        });
+      } else {
+        this.days.push({
+          id: -(i + 1),
+          dayShort: DAY_SHORTS[jsDay],
+          dayNum: day.getDate(),
+          title: 'Rest Day',
+          subtitle: 'Erholung & Mobilität',
+          status: 'rest',
+          icon: 'hotel'
+        });
+      }
+    }
+  }
+
+  private buildSubtitle(entry: UserTrainingEntry): string {
+    const parts: string[] = [];
+    if (entry.training.estimatedDistanceMeters) {
+      parts.push((entry.training.estimatedDistanceMeters / 1000).toFixed(1) + ' km');
+    }
+    if (entry.training.durationMinutes) {
+      parts.push(entry.training.durationMinutes + ' min');
+    }
+    if (entry.training.intensityLevel) {
+      parts.push(entry.training.intensityLevel);
+    }
+    return parts.join(' • ') || (entry.training.trainingType ?? '');
+  }
+
+  private typeToIcon(type?: string): string {
+    const map: Record<string, string> = {
+      'recovery': 'directions_run',
+      'endurance': 'directions_run',
+      'speed': 'speed',
+      'strength': 'fitness_center',
+      'race': 'flag',
+      'swimming': 'pool',
+      'cycling': 'directions_bike',
+    };
+    return map[type?.toLowerCase() ?? ''] ?? 'directions_run';
+  }
+
+  prevWeek(): void {
+    this.weekOffset--;
+    this.loadWeek();
+  }
+
+  nextWeek(): void {
+    this.weekOffset++;
+    this.loadWeek();
+  }
+
+  startWorkout(): void { /* TODO */ }
 
   viewDetail(id: number): void {
     this.router.navigate(['/training-plans', id]);

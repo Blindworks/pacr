@@ -5,6 +5,8 @@ import com.trainingsplan.entity.Competition;
 import com.trainingsplan.entity.CompetitionRegistration;
 import com.trainingsplan.entity.CompetitionType;
 import com.trainingsplan.service.CompetitionService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +18,8 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/competitions")
 public class CompetitionController {
+
+    private static final Logger log = LoggerFactory.getLogger(CompetitionController.class);
 
     @Autowired
     private CompetitionService competitionService;
@@ -30,7 +34,15 @@ public class CompetitionController {
 
     @GetMapping
     public ResponseEntity<List<CompetitionDto>> getAllCompetitions() {
-        return ResponseEntity.ok(competitionService.findAll());
+        log.info("[CompetitionController] GET /api/competitions");
+        try {
+            List<CompetitionDto> result = competitionService.findAll();
+            log.info("[CompetitionController] returning {} competitions", result.size());
+            return ResponseEntity.ok(result);
+        } catch (Exception e) {
+            log.error("[CompetitionController] GET /api/competitions failed: {}", e.getMessage(), e);
+            throw e;
+        }
     }
 
     @GetMapping("/{id}")

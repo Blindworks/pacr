@@ -11,6 +11,23 @@
   --dark-text: #1e2210;
 }
 
+.tp-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: .75rem;
+  padding: 4rem 1rem;
+  color: var(--text-muted);
+  text-align: center;
+
+  &__icon { font-size: 2.5rem; color: var(--pp); }
+  &--error .tp-state__icon { color: #ff5555; }
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+.spin { animation: spin 1s linear infinite; }
+
 .tp-page {
   min-height: 100vh;
   background: var(--bg);

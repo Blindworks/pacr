@@ -38,4 +38,14 @@ export class TrainingPlanService {
   delete(id: number): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/${id}`);
   }
+
+  getTemplates(): Observable<TrainingPlan[]> {
+    return this.http.get<TrainingPlan[]>(`${this.baseUrl}/templates`);
+  }
+
+  assignToCompetition(planId: number, competitionId: number): Observable<TrainingPlan> {
+    return this.http.post<TrainingPlan>(`${this.baseUrl}/assign`, null, {
+      params: { planId: planId.toString(), competitionId: competitionId.toString() }
+    });
+  }
 }

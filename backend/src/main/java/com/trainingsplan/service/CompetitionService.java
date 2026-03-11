@@ -6,6 +6,8 @@ import com.trainingsplan.entity.CompetitionRegistration;
 import com.trainingsplan.repository.CompetitionRegistrationRepository;
 import com.trainingsplan.repository.CompetitionRepository;
 import com.trainingsplan.security.SecurityUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +17,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class CompetitionService {
+
+    private static final Logger log = LoggerFactory.getLogger(CompetitionService.class);
 
     @Autowired
     private CompetitionRepository competitionRepository;
@@ -27,14 +31,26 @@ public class CompetitionService {
 
     public List<CompetitionDto> findAll() {
         Long userId = securityUtils.getCurrentUserId();
-        return competitionRepository.findAll().stream()
-                .map(c -> {
-                    CompetitionRegistration reg = userId != null
-                            ? registrationRepository.findByCompetitionIdAndUserId(c.getId(), userId).orElse(null)
-                            : null;
-                    return new CompetitionDto(c, reg);
-                })
-                .collect(Collectors.toList());
+        log.info("[CompetitionService] findAll() called, userId={}", userId);
+        try {
+            List<Competition> all = competitionRepository.findAll();
+            log.info("[CompetitionService] found {} competitions in DB", all.size());
+            List<CompetitionDto> result = all.stream()
+                    .map(c -> {
+                        log.debug("[CompetitionService] mapping competition id={} name='{}'", c.getId(), c.getName());
+                        CompetitionRegistration reg = userId != null
+                                ? registrationRepository.findByCompetitionIdAndUserId(c.getId(), userId).orElse(null)
+                                : null;
+                        log.debug("[CompetitionService] registration for competition {}: {}", c.getId(), reg != null ? "found id=" + reg.getId() : "none");
+                        return new CompetitionDto(c, reg);
+                    })
+                    .collect(Collectors.toList());
+            log.info("[CompetitionService] findAll() returning {} DTOs", result.size());
+            return result;
+        } catch (Exception e) {
+            log.error("[CompetitionService] findAll() failed: {}", e.getMessage(), e);
+            throw e;
+        }
     }
 
     public CompetitionDto findById(Long id) {

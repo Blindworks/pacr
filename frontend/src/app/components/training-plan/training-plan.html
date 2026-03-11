@@ -1,4 +1,4 @@
-<div class="tp-page">
+<div class="tp-page" *ngIf="!isLoading && !hasError && hasPlan">
 
   <!-- Header -->
   <header class="tp-header">
@@ -129,4 +129,20 @@
 
     </aside>
   </div>
+</div>
+
+<div class="tp-state" *ngIf="isLoading">
+  <span class="material-symbols-outlined tp-state__icon spin">progress_activity</span>
+  <span>Trainingsplan wird geladen…</span>
+</div>
+
+<div class="tp-state tp-state--error" *ngIf="hasError && !isLoading">
+  <span class="material-symbols-outlined tp-state__icon">error</span>
+  <span>Fehler beim Laden des Trainingsplans.</span>
+</div>
+
+<div class="tp-state" *ngIf="!isLoading && !hasError && !hasPlan">
+  <span class="material-symbols-outlined tp-state__icon">directions_run</span>
+  <p>Kein aktiver Trainingsplan gefunden.</p>
+  <p style="font-size:.85rem;color:#666;margin-top:.5rem;">Wähle im Bereich <strong>Wettkämpfe</strong> einen Plan aus.</p>
 </div>

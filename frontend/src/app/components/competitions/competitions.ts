@@ -1,9 +1,12 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { DomSanitizer, SafeStyle } from '@angular/platform-browser';
-import { CompetitionService, Competition } from '../../services/competition.service';
+import { Router } from '@angular/router';
 import { catchError, finalize } from 'rxjs/operators';
 import { of } from 'rxjs';
+import { DomSanitizer, SafeStyle } from '@angular/platform-browser';
+import { CompetitionService, Competition } from '../../services/competition.service';
+import { TrainingPlanService, TrainingPlan } from '../../services/training-plan.service';
+
 
 interface Race {
   id: number;
@@ -16,7 +19,7 @@ interface Race {
   image: string;
 }
 
-interface TrainingPlan {
+interface PlanCard {
   id: number;
   icon: string;
   level: string;
@@ -39,75 +42,26 @@ interface TrainingPlan {
 })
 export class Competitions implements OnInit {
   private competitionService = inject(CompetitionService);
+  private trainingPlanService = inject(TrainingPlanService);
+  private router = inject(Router);
   private sanitizer = inject(DomSanitizer);
+  private cdr = inject(ChangeDetectorRef);
 
   activeFilter = 'All Races';
   selectedRace: Race | null = null;
-  selectedPlan: TrainingPlan | null = null;
+  selectedPlan: PlanCard | null = null;
   selectedTargetTime = 'Sub 3:30';
   isLoading = false;
   hasError = false;
+  isAssigning = false;
+  assignError = false;
 
   filters = ['All Races', 'Marathon', 'Half Marathon', '10K', '5K', 'Ultra'];
-
   targetTimes = ['Sub 3:30', 'Sub 4:00', 'Sub 4:30', 'Just Finish'];
 
   races: Race[] = [];
-
-  trainingPlans: TrainingPlan[] = [
-    {
-      id: 1,
-      icon: 'speed',
-      level: 'Advanced',
-      levelClass: 'level-advanced',
-      title: 'Marathon Mastery: Sub 3:30',
-      description: 'Designed for experienced runners looking to break their PR.',
-      commitment: '5-6 sessions/wk',
-      peakMileage: '85 km/wk',
-      keyFocus: 'Speed & Lactate Threshold',
-      targetTime: 'Sub 3:30',
-      recommended: false
-    },
-    {
-      id: 2,
-      icon: 'directions_run',
-      level: 'Intermediate',
-      levelClass: 'level-intermediate',
-      title: 'Pacing Hero: Sub 4:00',
-      description: 'The gold standard for the recreational marathoner.',
-      commitment: '4-5 sessions/wk',
-      peakMileage: '65 km/wk',
-      keyFocus: 'Endurance & Pacing',
-      targetTime: 'Sub 4:00',
-      recommended: true
-    },
-    {
-      id: 3,
-      icon: 'heart_check',
-      level: 'Balanced',
-      levelClass: 'level-balanced',
-      title: 'Steady Finisher: Sub 4:30',
-      description: 'Focus on consistent aerobic base and recovery protocols.',
-      commitment: '3-4 sessions/wk',
-      peakMileage: '50 km/wk',
-      keyFocus: 'Consistency & Aerobic Base',
-      targetTime: 'Sub 4:30',
-      recommended: false
-    },
-    {
-      id: 4,
-      icon: 'flag',
-      level: 'Beginner',
-      levelClass: 'level-beginner',
-      title: 'First Finisher: Just Complete It',
-      description: 'Built for first-timers — cross that finish line strong.',
-      commitment: '3 sessions/wk',
-      peakMileage: '40 km/wk',
-      keyFocus: 'Endurance & Confidence',
-      targetTime: 'Just Finish',
-      recommended: false
-    }
-  ];
+  trainingPlans: PlanCard[] = [];
+  isPlansLoading = false;
 
   ngOnInit(): void {
     this.loadCompetitions();
@@ -116,17 +70,52 @@ export class Competitions implements OnInit {
   private loadCompetitions(): void {
     this.isLoading = true;
     this.hasError = false;
-    this.competitionService.getAll().pipe(
-      catchError(() => { this.hasError = true; return of([]); }),
-      finalize(() => { this.isLoading = false; })
-    ).subscribe(data => {
-      try {
-        this.races = data.map(c => this.mapToRace(c));
-      } catch (e) {
-        console.error('Error mapping competitions:', e);
+    this.competitionService.getAll().subscribe({
+      next: (data) => {
+        try {
+          this.races = data.map(c => this.mapToRace(c));
+        } catch (e) {
+          console.error('Error mapping competitions:', e);
+          this.hasError = true;
+        }
+        this.isLoading = false;
+        this.cdr.detectChanges();
+      },
+      error: () => {
         this.hasError = true;
+        this.isLoading = false;
+        this.cdr.detectChanges();
       }
     });
+  }
+
+  private loadTrainingPlans(): void {
+    this.isPlansLoading = true;
+    this.trainingPlanService.getTemplates().subscribe({
+      next: (plans) => {
+        this.trainingPlans = plans.map(p => this.mapToPlanCard(p));
+        this.isPlansLoading = false;
+      },
+      error: () => {
+        this.isPlansLoading = false;
+      }
+    });
+  }
+
+  private mapToPlanCard(p: TrainingPlan): PlanCard {
+    return {
+      id: p.id,
+      icon: 'directions_run',
+      level: p.targetTime ?? '—',
+      levelClass: 'level-intermediate',
+      title: p.name,
+      description: p.description ?? '',
+      commitment: '—',
+      peakMileage: '—',
+      keyFocus: p.prerequisites ?? '—',
+      targetTime: p.targetTime ?? '',
+      recommended: false
+    };
   }
 
   private mapToRace(c: Competition): Race {
@@ -209,8 +198,10 @@ export class Competitions implements OnInit {
     return this.races.filter(r => allowed.includes(r.tag));
   }
 
-  get filteredPlans(): TrainingPlan[] {
-    return this.trainingPlans.filter(p => p.targetTime === this.selectedTargetTime);
+  get filteredPlans(): PlanCard[] {
+    if (!this.selectedTargetTime) return this.trainingPlans;
+    const filtered = this.trainingPlans.filter(p => p.targetTime === this.selectedTargetTime);
+    return filtered.length > 0 ? filtered : this.trainingPlans;
   }
 
   setFilter(filter: string): void {
@@ -221,6 +212,9 @@ export class Competitions implements OnInit {
     this.selectedRace = race;
     this.selectedPlan = null;
     this.selectedTargetTime = 'Sub 3:30';
+    if (this.trainingPlans.length === 0) {
+      this.loadTrainingPlans();
+    }
   }
 
   deselectRace(): void {
@@ -232,12 +226,26 @@ export class Competitions implements OnInit {
     this.selectedTargetTime = time;
   }
 
-  selectPlan(plan: TrainingPlan): void {
+  selectPlan(plan: PlanCard): void {
     this.selectedPlan = plan;
   }
 
   deselectPlan(): void {
     this.selectedPlan = null;
+  }
+
+  startTrainingPlan(): void {
+    if (!this.selectedRace || !this.selectedPlan) return;
+    this.isAssigning = true;
+    this.assignError = false;
+    this.trainingPlanService.assignToCompetition(this.selectedPlan.id, this.selectedRace.id).pipe(
+      catchError(() => { this.assignError = true; return of(null); }),
+      finalize(() => { this.isAssigning = false; })
+    ).subscribe(result => {
+      if (result) {
+        this.router.navigate(['/training-plans']);
+      }
+    });
   }
 
   get planWeeks(): number {

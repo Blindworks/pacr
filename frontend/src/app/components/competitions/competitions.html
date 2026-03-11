@@ -266,7 +266,10 @@
       <!-- Action Card -->
       <div class="action-card">
         <h3 class="action-card__title">Ready to chase your PB?</h3>
-        <button class="action-card__start-btn">Start Training Plan</button>
+        <button class="action-card__start-btn" (click)="startTrainingPlan()" [disabled]="isAssigning">
+          {{ isAssigning ? 'Saving…' : 'Start Training Plan' }}
+        </button>
+        <p *ngIf="assignError" style="color:#ff5555;font-size:.8rem;margin:.5rem 0 0;">Fehler beim Speichern. Bitte erneut versuchen.</p>
         <button class="action-card__schedule-btn">View Full Schedule</button>
         <button class="action-card__change-btn" (click)="deselectPlan()">Change Plan</button>
       </div>
