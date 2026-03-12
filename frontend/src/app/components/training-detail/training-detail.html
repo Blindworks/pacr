@@ -24,7 +24,9 @@
     <!-- Hero -->
     <div class="td-hero">
       <div class="td-hero__overlay"></div>
-      <img [src]="training.heroImage" [alt]="training.title" class="td-hero__img" />
+      @if (training.heroImage) {
+        <img [src]="training.heroImage" [alt]="training.title" class="td-hero__img" />
+      }
       <div class="td-hero__content">
         <span class="td-difficulty-badge">{{ training.difficulty }}</span>
         <h1 class="td-hero__title">{{ training.title }}</h1>
