@@ -23,6 +23,11 @@ export interface UserTrainingEntry {
   competitionId: number;
 }
 
+export interface TrainingFeedbackPayload {
+  completed: boolean;
+  completionStatus: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class UserTrainingEntryService {
   private http = inject(HttpClient);
@@ -32,5 +37,9 @@ export class UserTrainingEntryService {
     return this.http.get<UserTrainingEntry[]>(`${this.base}/calendar`, {
       params: { from, to }
     });
+  }
+
+  updateFeedback(id: number, payload: TrainingFeedbackPayload): Observable<UserTrainingEntry> {
+    return this.http.put<UserTrainingEntry>(`${this.base}/${id}/feedback`, payload);
   }
 }

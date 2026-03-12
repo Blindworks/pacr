@@ -56,18 +56,38 @@
                   <h4>{{ day.title }}</h4>
                   @if (day.status === 'today') {
                     <span class="tp-today-badge">Today</span>
+                  } @else if (day.status === 'skipped') {
+                    <span class="tp-state-badge tp-state-badge--skipped">Skipped</span>
+                  } @else if (day.status === 'completed') {
+                    <span class="tp-state-badge">Completed</span>
                   }
                 </div>
                 <p class="tp-day__sub">{{ day.subtitle }}</p>
               </div>
 
-              @if (day.status === 'today') {
-                <button class="tp-start-btn" (click)="startWorkout()">
-                  <span class="material-symbols-outlined">play_arrow</span>
-                  Start Workout
-                </button>
-              } @else if (day.status === 'completed') {
-                <span class="material-symbols-outlined tp-icon--done">check_circle</span>
+              @if (day.status !== 'rest') {
+                <div class="tp-day__actions" (click)="$event.stopPropagation()">
+                  <button
+                    class="tp-action-btn tp-action-btn--done"
+                    [class.is-active]="day.status === 'completed'"
+                    (click)="markDay(day, 'completed')">
+                    <span class="material-symbols-outlined">check</span>
+                    Erledigt
+                  </button>
+                  <button
+                    class="tp-action-btn tp-action-btn--skip"
+                    [class.is-active]="day.status === 'skipped'"
+                    (click)="markDay(day, 'skipped')">
+                    <span class="material-symbols-outlined">close</span>
+                    Skip
+                  </button>
+                  @if (day.status === 'today') {
+                    <button class="tp-start-btn" (click)="startWorkout()">
+                      <span class="material-symbols-outlined">play_arrow</span>
+                      Start Workout
+                    </button>
+                  }
+                </div>
               } @else if (day.icon) {
                 <span class="material-symbols-outlined tp-icon--muted">{{ day.icon }}</span>
               }

@@ -394,6 +394,26 @@ export class TrainingPlanOverviewComponent implements OnInit, AfterViewChecked, 
     return intensity ? this.intensityColors[intensity] || '#9e9e9e' : '#9e9e9e';
   }
 
+  isTrainingCompleted(training: Training): boolean {
+    return training.completionStatus === 'completed' || !!training.completed;
+  }
+
+  isTrainingSkipped(training: Training): boolean {
+    return training.completionStatus === 'skipped';
+  }
+
+  getTrainingStatusLabel(training: Training): string | null {
+    if (this.isTrainingCompleted(training)) {
+      return 'Erledigt';
+    }
+
+    if (this.isTrainingSkipped(training)) {
+      return 'Übersprungen';
+    }
+
+    return null;
+  }
+
   formatStartTime(dateTimeString: string): string {
     const isoMatch = /^(\d{4}-\d{2}-\d{2})T(\d{2}):(\d{2})/.exec(dateTimeString);
     if (isoMatch) return `${isoMatch[2]}:${isoMatch[3]}`;
@@ -876,11 +896,12 @@ export class TrainingPlanOverviewComponent implements OnInit, AfterViewChecked, 
     });
   }
   // Training Completion Methods
-  toggleTrainingCompletion(training: Training): void {
-    const newCompletionStatus = !training.completed;
+  setTrainingCompletionStatus(training: Training, status: 'completed' | 'skipped'): void {
+    const isSameStatus = training.completionStatus === status;
+    const nextStatus = isSameStatus ? 'pending' : status;
     const feedback = {
-      completed: newCompletionStatus,
-      completionStatus: newCompletionStatus ? 'completed' : 'pending'
+      completed: nextStatus === 'completed',
+      completionStatus: nextStatus
     };
 
     // Use UserTrainingEntry feedback endpoint (new architecture)
@@ -889,8 +910,14 @@ export class TrainingPlanOverviewComponent implements OnInit, AfterViewChecked, 
       catchError(() => this.apiService.updateTrainingFeedback(training.id!, feedback))
     ).subscribe({
       next: () => {
-        training.completed = newCompletionStatus;
-        const message = newCompletionStatus ? 'Training als abgeschlossen markiert' : 'Training als offen markiert';
+        training.completed = feedback.completed;
+        training.isCompleted = feedback.completed;
+        training.completionStatus = nextStatus;
+        const message = nextStatus === 'completed'
+          ? 'Training als erledigt markiert'
+          : nextStatus === 'skipped'
+            ? 'Training als übersprungen markiert'
+            : 'Training wieder als offen markiert';
         this.snackBar.open(message, 'SchlieÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¸en', { duration: 2000 });
         this.loadWeekData();
       },

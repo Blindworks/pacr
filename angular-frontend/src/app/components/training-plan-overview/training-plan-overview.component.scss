@@ -209,8 +209,7 @@
         flex: 0 0 auto;
 
         .training-card.planned-training {
-          flex: 0 0 130px;
-          height: 130px;
+          min-height: 160px;
         }
       }
 
@@ -280,6 +279,10 @@
     }
 
     position: relative;
+  }
+
+  &.planned-training.skipped {
+    border-left-color: #ffca28 !important;
   }
 
   &.completed-training {
@@ -361,6 +364,22 @@
   line-height: 1.4;
 }
 
+.training-status-badge {
+  display: inline-flex;
+  padding: 2px 7px;
+  border-radius: 999px;
+  font-size: 9px;
+  text-transform: uppercase;
+
+  .planned-training.completed & {
+    color: var(--volt-green);
+  }
+
+  .planned-training.skipped & {
+    color: #ffca28;
+  }
+}
+
 .training-details {
   display: flex;
   gap: 8px;
@@ -435,6 +454,11 @@
         background-color: rgba(255, 255, 255, 0.1) !important;
         color: var(--text-primary) !important;
       }
+    }
+
+    &.is-active {
+      background: rgba(179, 255, 0, 0.12) !important;
+      color: var(--volt-green) !important;
     }
   }
 }

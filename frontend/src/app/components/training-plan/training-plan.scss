@@ -189,9 +189,13 @@
   transition: border-color 0.2s;
 
   &--completed {
-    opacity: 0.55;
     background: var(--pp-dim);
     border-color: var(--pp-border);
+  }
+
+  &--skipped {
+    background: rgba(255, 184, 0, 0.08);
+    border-color: rgba(255, 184, 0, 0.28);
   }
 
   &--today {
@@ -278,6 +282,22 @@
   padding: 2px 8px;
 }
 
+.tp-state-badge {
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  background: var(--pp-dim);
+  color: var(--pp);
+  border-radius: 999px;
+  padding: 2px 8px;
+}
+
+.tp-state-badge--skipped {
+  background: rgba(255, 184, 0, 0.14);
+  color: #ffb800;
+}
+
 .tp-day__sub {
   margin: 4px 0 0;
   font-size: 13px;
@@ -302,6 +322,49 @@
   &:hover { filter: brightness(1.08); }
 
   .material-symbols-outlined { font-size: 16px; }
+}
+
+.tp-day__actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.tp-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: border-color 0.15s, background-color 0.15s, color 0.15s;
+  white-space: nowrap;
+
+  .material-symbols-outlined { font-size: 16px; }
+
+  &:hover {
+    border-color: var(--pp-border);
+    background: rgba(255, 255, 255, 0.04);
+  }
+
+  &.is-active {
+    border-color: var(--pp);
+    background: var(--pp-dim);
+    color: var(--pp);
+  }
+}
+
+.tp-action-btn--skip.is-active {
+  border-color: rgba(255, 184, 0, 0.55);
+  background: rgba(255, 184, 0, 0.14);
+  color: #ffb800;
 }
 
 .tp-icon--done {

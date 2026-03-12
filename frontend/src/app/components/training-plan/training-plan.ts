@@ -5,11 +5,12 @@ import { UserTrainingEntryService, UserTrainingEntry } from '../../services/user
 
 interface TrainingDay {
   id: number;
+  entryId?: number;
   dayShort: string;
   dayNum: number;
   title: string;
   subtitle: string;
-  status: 'completed' | 'today' | 'upcoming' | 'rest';
+  status: 'completed' | 'today' | 'upcoming' | 'rest' | 'skipped';
   icon?: string;
 }
 
@@ -140,7 +141,9 @@ export class TrainingPlan implements OnInit {
 
       if (entry) {
         let status: TrainingDay['status'];
-        if (entry.completed) {
+        if (entry.completionStatus === 'skipped') {
+          status = 'skipped';
+        } else if (entry.completed) {
           status = 'completed';
         } else if (day.getTime() === today.getTime()) {
           status = 'today';
@@ -149,6 +152,7 @@ export class TrainingPlan implements OnInit {
         }
         this.days.push({
           id: entry.training.id,
+          entryId: entry.id,
           dayShort: DAY_SHORTS[jsDay],
           dayNum: day.getDate(),
           title: entry.training?.name ?? 'Training',
@@ -205,6 +209,21 @@ export class TrainingPlan implements OnInit {
   nextWeek(): void {
     this.weekOffset++;
     this.loadWeek();
+  }
+
+  markDay(day: TrainingDay, status: 'completed' | 'skipped'): void {
+    if (!day.entryId || day.status === 'rest') {
+      return;
+    }
+
+    const nextStatus = day.status === status ? 'upcoming' : status;
+    this.entryService.updateFeedback(day.entryId, {
+      completed: nextStatus === 'completed',
+      completionStatus: nextStatus === 'upcoming' ? 'pending' : nextStatus
+    }).subscribe({
+      next: () => this.loadWeek(),
+      error: (err) => console.error('Fehler beim Aktualisieren des Trainingsstatus:', err)
+    });
   }
 
   startWorkout(): void { /* TODO */ }

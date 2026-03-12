@@ -97,7 +97,8 @@
           <h5>Geplant</h5>
           <div
             class="training-card planned-training"
-            [class.completed]="training.completed"
+            [class.completed]="isTrainingCompleted(training)"
+            [class.skipped]="isTrainingSkipped(training)"
             *ngFor="let training of day.trainings"
             [style.border-left-color]="getTrainingTypeColor(training.type)"
             (click)="openTrainingDetails(training)">
@@ -114,6 +115,11 @@
               </div>
             </div>
             <span class="training-name">{{ training.description }}</span>
+            <span
+              class="training-status-badge"
+              *ngIf="getTrainingStatusLabel(training) as statusLabel">
+              {{ statusLabel }}
+            </span>
 
             <div class="training-details" *ngIf="training.duration">
               <span *ngIf="training.duration" class="training-duration">
@@ -126,10 +132,19 @@
             <div class="training-actions">
               <button
                 mat-raised-button
-                [color]="training.completed ? 'accent' : 'primary'"
-                (click)="$event.stopPropagation(); toggleTrainingCompletion(training)"
+                [color]="isTrainingCompleted(training) ? 'accent' : 'primary'"
+                [class.is-active]="isTrainingCompleted(training)"
+                (click)="$event.stopPropagation(); setTrainingCompletionStatus(training, 'completed')"
                 [matTooltip]="training.completed ? 'Als unvollstÃƒÂ¤ndig markieren' : 'Als abgeschlossen markieren'">
-                {{ training.completed ? 'Completed' : 'Mark Done' }}
+                {{ isTrainingCompleted(training) ? 'Erledigt' : 'Erledigen' }}
+              </button>
+              <button
+                mat-raised-button
+                color="accent"
+                [class.is-active]="isTrainingSkipped(training)"
+                (click)="$event.stopPropagation(); setTrainingCompletionStatus(training, 'skipped')"
+                matTooltip="Als übersprungen markieren">
+                {{ isTrainingSkipped(training) ? 'Übersprungen' : 'Skip' }}
               </button>
               <button
                 mat-raised-button

@@ -1,6 +1,8 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, DestroyRef, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormArray, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { debounceTime } from 'rxjs';
 
 import { TrainingService } from '../../../../services/training.service';
 import { TrainingPlanService, TrainingPlan } from '../../../../services/training-plan.service';
@@ -18,6 +20,8 @@ export class TrainingForm implements OnInit {
   private planService = inject(TrainingPlanService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
+
+  private destroyRef = inject(DestroyRef);
 
   planId = signal<number>(0);
   plan = signal<TrainingPlan | null>(null);
@@ -51,6 +55,11 @@ export class TrainingForm implements OnInit {
   get isEdit(): boolean { return this.editId() !== null; }
 
   ngOnInit(): void {
+    this.steps.valueChanges.pipe(
+      debounceTime(300),
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe(() => this.recalculateFromSteps());
+
     const planIdParam = this.route.snapshot.paramMap.get('planId');
     const idParam = this.route.snapshot.paramMap.get('id');
 
@@ -221,6 +230,10 @@ export class TrainingForm implements OnInit {
 
     const digits = String(control.value ?? '').replace(/\D/g, '').slice(0, 4);
     control.setValue(this.formatMaskedTime(digits), { emitEvent: false });
+
+    if (controlName === 'durationText') {
+      this.recalculateFromSteps();
+    }
   }
 
   protected onMaskedTimeBlur(index: number, controlName: 'durationText' | 'paceDisplay'): void {
@@ -232,6 +245,10 @@ export class TrainingForm implements OnInit {
     const normalized = this.normalizePaceDisplay(control.value);
     if (normalized) {
       control.setValue(normalized, { emitEvent: false });
+    }
+
+    if (controlName === 'durationText') {
+      this.recalculateFromSteps();
     }
   }
 
@@ -271,6 +288,72 @@ export class TrainingForm implements OnInit {
     });
 
     return isValid;
+  }
+
+  private kcalPerMinForStepType(stepType: string): number {
+    switch (stepType) {
+      case 'work':     return 10;
+      case 'warmup':
+      case 'cooldown': return 6;
+      case 'recovery': return 4;
+      case 'rest':     return 2;
+      default:         return 7;
+    }
+  }
+
+  private recalculateFromSteps(): void {
+    const stepsValue = this.steps.value as any[];
+    if (!stepsValue || stepsValue.length === 0) return;
+
+    let totalDurationSeconds = 0;
+    let hasDurationSteps = false;
+    let totalDistanceMeters = 0;
+    let hasDistanceSteps = false;
+    let totalCalories = 0;
+    let hasCaloriesData = false;
+
+    for (const step of stepsValue) {
+      const reps = this.parsePositiveInteger(step.repetitions) ?? 1;
+
+      if (step.measurementType === 'duration') {
+        const secs = this.parseDurationText(step.durationText);
+        if (secs != null) {
+          totalDurationSeconds += secs * reps;
+          hasDurationSteps = true;
+          totalCalories += (secs * reps / 60) * this.kcalPerMinForStepType(step.stepType);
+          hasCaloriesData = true;
+        }
+      } else if (step.measurementType === 'distance') {
+        const dist = this.parsePositiveInteger(step.distanceMeters);
+        if (dist != null) {
+          totalDistanceMeters += dist * reps;
+          hasDistanceSteps = true;
+          totalCalories += (dist * reps / 1000) * 70;
+          hasCaloriesData = true;
+
+          // Derive duration from distance + pace if pace is available
+          const paceSecs = this.parseDurationText(step.paceDisplay);
+          if (paceSecs != null) {
+            // pace is per 1000m (min:sec per km)
+            totalDurationSeconds += (dist / 1000) * paceSecs * reps;
+            hasDurationSteps = true;
+          }
+        }
+      }
+    }
+
+    if (hasDurationSteps) {
+      const minutes = Math.round(totalDurationSeconds / 60);
+      this.form.get('durationMinutes')?.setValue(minutes > 0 ? minutes : null, { emitEvent: false });
+    }
+
+    if (hasDistanceSteps) {
+      this.form.get('estimatedDistanceMeters')?.setValue(totalDistanceMeters > 0 ? totalDistanceMeters : null, { emitEvent: false });
+    }
+
+    if (hasCaloriesData) {
+      this.form.get('estimatedCalories')?.setValue(Math.round(totalCalories) > 0 ? Math.round(totalCalories) : null, { emitEvent: false });
+    }
   }
 
   private parseDurationText(value: unknown): number | null {
