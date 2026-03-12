@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { NgClass } from '@angular/common';
+import { PaceCalculatorService } from '../../services/pace-calculator.service';
 
 @Component({
   selector: 'app-sidebar',
@@ -12,7 +13,13 @@ import { NgClass } from '@angular/common';
 export class Sidebar {
   bodyDataOpen = false;
 
+  private readonly paceCalc = inject(PaceCalculatorService);
+
   toggleBodyData(): void {
     this.bodyDataOpen = !this.bodyDataOpen;
+  }
+
+  openPaceCalculator(): void {
+    this.paceCalc.open();
   }
 }

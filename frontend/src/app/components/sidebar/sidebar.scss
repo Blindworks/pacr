@@ -291,6 +291,15 @@ $muted: #8b949e;
     color: $primary;
   }
 
+  &--btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+    text-align: left;
+    font-family: inherit;
+  }
+
   &--danger {
     &:hover {
       background: rgba(239, 68, 68, 0.1);
