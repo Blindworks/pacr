@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { TrainingService, Training } from '../../services/training.service';
@@ -48,7 +48,8 @@ export class TrainingDetail implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private trainingService: TrainingService
+    private trainingService: TrainingService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -56,9 +57,11 @@ export class TrainingDetail implements OnInit {
     this.trainingService.getTrainingById(id).subscribe({
       next: (t: Training) => {
         this.training = this.mapToDetailData(t);
+        this.cdr.detectChanges();
       },
       error: () => {
         this.training = null;
+        this.cdr.detectChanges();
       }
     });
   }

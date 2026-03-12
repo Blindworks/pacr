@@ -148,7 +148,7 @@ export class TrainingPlan implements OnInit {
           status = 'upcoming';
         }
         this.days.push({
-          id: entry.id,
+          id: entry.training.id,
           dayShort: DAY_SHORTS[jsDay],
           dayNum: day.getDate(),
           title: entry.training?.name ?? 'Training',
