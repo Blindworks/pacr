@@ -21,6 +21,7 @@ export interface UserTrainingEntry {
   completionStatus?: string;
   registrationId: number;
   competitionId: number;
+  competitionName?: string;
 }
 
 export interface TrainingFeedbackPayload {

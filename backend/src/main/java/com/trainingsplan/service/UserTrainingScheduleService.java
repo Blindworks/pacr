@@ -115,6 +115,26 @@ public class UserTrainingScheduleService {
     public UserTrainingEntry updateCompletion(Long entryId, Boolean completed, String status) {
         UserTrainingEntry entry = entryRepository.findById(entryId)
                 .orElseThrow(() -> new RuntimeException("UserTrainingEntry not found: " + entryId));
+
+        if (Boolean.TRUE.equals(completed)
+                && entry.getCompetitionRegistration() != null
+                && entry.getCompetitionRegistration().getUser() != null
+                && entry.getTrainingDate() != null) {
+            Long userId = entry.getCompetitionRegistration().getUser().getId();
+            List<UserTrainingEntry> sameDayEntries = entryRepository.findEntriesForUserByDate(userId, entry.getTrainingDate());
+
+            for (UserTrainingEntry candidate : sameDayEntries) {
+                if (candidate.getId().equals(entryId)) {
+                    continue;
+                }
+                candidate.setCompleted(false);
+                if (!"skipped".equalsIgnoreCase(candidate.getCompletionStatus())) {
+                    candidate.setCompletionStatus("skipped");
+                }
+            }
+            entryRepository.saveAll(sameDayEntries);
+        }
+
         entry.setCompleted(completed);
         entry.setCompletionStatus(status);
         return entryRepository.save(entry);

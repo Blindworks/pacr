@@ -69,4 +69,10 @@ public class UserTrainingEntry {
         return competitionRegistration != null && competitionRegistration.getCompetition() != null
                 ? competitionRegistration.getCompetition().getId() : null;
     }
+
+    @JsonProperty("competitionName")
+    public String getCompetitionName() {
+        return competitionRegistration != null && competitionRegistration.getCompetition() != null
+                ? competitionRegistration.getCompetition().getName() : null;
+    }
 }

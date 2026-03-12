@@ -1,17 +1,24 @@
-import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { UserTrainingEntryService, UserTrainingEntry } from '../../services/user-training-entry.service';
+import { UserTrainingEntry, UserTrainingEntryService } from '../../services/user-training-entry.service';
 
-interface TrainingDay {
+interface TrainingSession {
   id: number;
   entryId?: number;
-  dayShort: string;
-  dayNum: number;
   title: string;
   subtitle: string;
-  status: 'completed' | 'today' | 'upcoming' | 'rest' | 'skipped';
+  status: 'completed' | 'today' | 'upcoming' | 'skipped';
   icon?: string;
+  competitionName?: string;
+}
+
+interface TrainingDay {
+  dayShort: string;
+  dayNum: number;
+  isoDate: string;
+  status: 'completed' | 'today' | 'upcoming' | 'rest' | 'skipped' | 'mixed';
+  sessions: TrainingSession[];
 }
 
 interface Stat {
@@ -25,7 +32,6 @@ interface Insight {
   text: string;
 }
 
-const DAY_NAMES = ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'];
 const DAY_SHORTS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
 @Component({
@@ -89,28 +95,46 @@ export class TrainingPlan implements OnInit {
     return { monday, sunday };
   }
 
-  private toIso(d: Date): string {
-    return d.toISOString().split('T')[0];
+  private toIso(date: Date): string {
+    return date.toISOString().split('T')[0];
   }
 
   private loadWeek(): void {
     this.isLoading = true;
     this.hasError = false;
+    this.hasPlan = false;
+
     const { monday, sunday } = this.getWeekRange(this.weekOffset);
     this.entryService.getCalendar(this.toIso(monday), this.toIso(sunday)).subscribe({
       next: (entries) => {
         this.buildWeek(entries, monday);
+
         if (entries.length > 0) {
           this.hasPlan = true;
-          this.planName = entries[0].training?.trainingPlanName ?? 'Trainingsplan';
-          const weekNum = entries[0].weekNumber;
-          this.weekLabel = `Woche ${weekNum}`;
-          this.completedSessions = entries.filter(e => e.completed).length;
+
+          const uniquePlanNames = Array.from(new Set(
+            entries
+              .map(entry => entry.training?.trainingPlanName)
+              .filter((name): name is string => !!name)
+          ));
+          this.planName = uniquePlanNames.length <= 1
+            ? (uniquePlanNames[0] ?? 'Trainingsplan')
+            : `${uniquePlanNames.length} aktive Pläne`;
+
+          const uniqueWeeks = Array.from(new Set(entries.map(entry => entry.weekNumber))).sort((a, b) => a - b);
+          this.weekLabel = uniqueWeeks.length <= 1
+            ? `Woche ${uniqueWeeks[0]}`
+            : `Planwochen ${uniqueWeeks.join(' / ')}`;
+
+          this.completedSessions = entries.filter(entry => entry.completed).length;
           this.totalSessions = entries.length;
           this.progressPercent = this.totalSessions > 0
             ? Math.round((this.completedSessions / this.totalSessions) * 100)
             : 0;
+          return;
         }
+
+        this.resetSummary();
       },
       error: (err) => {
         console.error('Fehler beim Laden der Trainingsplan-Einträge:', err);
@@ -125,53 +149,100 @@ export class TrainingPlan implements OnInit {
     });
   }
 
+  private resetSummary(): void {
+    this.planName = '—';
+    this.weekLabel = '—';
+    this.completedSessions = 0;
+    this.totalSessions = 0;
+    this.progressPercent = 0;
+  }
+
   private buildWeek(entries: UserTrainingEntry[], monday: Date): void {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    const entryByDate = new Map<string, UserTrainingEntry>();
-    entries.forEach(e => entryByDate.set(e.trainingDate, e));
+
+    const entriesByDate = new Map<string, UserTrainingEntry[]>();
+    for (const entry of entries) {
+      const dayEntries = entriesByDate.get(entry.trainingDate) ?? [];
+      dayEntries.push(entry);
+      entriesByDate.set(entry.trainingDate, dayEntries);
+    }
 
     this.days = [];
     for (let i = 0; i < 7; i++) {
       const day = new Date(monday);
       day.setDate(monday.getDate() + i);
-      const iso = this.toIso(day);
+      const isoDate = this.toIso(day);
       const jsDay = day.getDay();
-      const entry = entryByDate.get(iso);
-
-      if (entry) {
-        let status: TrainingDay['status'];
-        if (entry.completionStatus === 'skipped') {
-          status = 'skipped';
-        } else if (entry.completed) {
-          status = 'completed';
-        } else if (day.getTime() === today.getTime()) {
-          status = 'today';
-        } else {
-          status = 'upcoming';
+      const dayEntries = (entriesByDate.get(isoDate) ?? []).sort((left, right) => {
+        const planCompare = (left.training?.trainingPlanName ?? '').localeCompare(right.training?.trainingPlanName ?? '');
+        if (planCompare !== 0) {
+          return planCompare;
         }
+        return (left.training?.name ?? '').localeCompare(right.training?.name ?? '');
+      });
+
+      if (dayEntries.length === 0) {
         this.days.push({
-          id: entry.training.id,
-          entryId: entry.id,
           dayShort: DAY_SHORTS[jsDay],
           dayNum: day.getDate(),
-          title: entry.training?.name ?? 'Training',
-          subtitle: this.buildSubtitle(entry),
-          status,
-          icon: this.typeToIcon(entry.training?.trainingType)
-        });
-      } else {
-        this.days.push({
-          id: -(i + 1),
-          dayShort: DAY_SHORTS[jsDay],
-          dayNum: day.getDate(),
-          title: 'Rest Day',
-          subtitle: 'Erholung & Mobilität',
+          isoDate,
           status: 'rest',
-          icon: 'hotel'
+          sessions: []
         });
+        continue;
       }
+
+      this.days.push({
+        dayShort: DAY_SHORTS[jsDay],
+        dayNum: day.getDate(),
+        isoDate,
+        status: this.resolveDayStatus(day, today, dayEntries),
+        sessions: dayEntries.map(entry => this.mapSession(entry, day, today))
+      });
     }
+  }
+
+  private mapSession(entry: UserTrainingEntry, day: Date, today: Date): TrainingSession {
+    return {
+      id: entry.training.id,
+      entryId: entry.id,
+      title: entry.training?.name ?? 'Training',
+      subtitle: this.buildSubtitle(entry),
+      status: this.resolveSessionStatus(entry, day, today),
+      icon: this.typeToIcon(entry.training?.trainingType),
+      competitionName: entry.competitionName
+    };
+  }
+
+  private resolveDayStatus(day: Date, today: Date, entries: UserTrainingEntry[]): TrainingDay['status'] {
+    const statuses = entries.map(entry => this.resolveSessionStatus(entry, day, today));
+    if (statuses.every(status => status === 'completed')) {
+      return 'completed';
+    }
+    if (statuses.every(status => status === 'skipped')) {
+      return 'skipped';
+    }
+    if (statuses.some(status => status === 'completed' || status === 'skipped')) {
+      return 'mixed';
+    }
+    if (day.getTime() === today.getTime()) {
+      return 'today';
+    }
+    return 'upcoming';
+  }
+
+  private resolveSessionStatus(entry: UserTrainingEntry, day: Date, today: Date): TrainingSession['status'] {
+    if (entry.completionStatus === 'skipped') {
+      return 'skipped';
+    }
+    if (entry.completed) {
+      return 'completed';
+    }
+    if (day.getTime() === today.getTime()) {
+      return 'today';
+    }
+    return 'upcoming';
   }
 
   private buildSubtitle(entry: UserTrainingEntry): string {
@@ -190,13 +261,13 @@ export class TrainingPlan implements OnInit {
 
   private typeToIcon(type?: string): string {
     const map: Record<string, string> = {
-      'recovery': 'directions_run',
-      'endurance': 'directions_run',
-      'speed': 'speed',
-      'strength': 'fitness_center',
-      'race': 'flag',
-      'swimming': 'pool',
-      'cycling': 'directions_bike',
+      recovery: 'directions_run',
+      endurance: 'directions_run',
+      speed: 'speed',
+      strength: 'fitness_center',
+      race: 'flag',
+      swimming: 'pool',
+      cycling: 'directions_bike'
     };
     return map[type?.toLowerCase() ?? ''] ?? 'directions_run';
   }
@@ -211,13 +282,13 @@ export class TrainingPlan implements OnInit {
     this.loadWeek();
   }
 
-  markDay(day: TrainingDay, status: 'completed' | 'skipped'): void {
-    if (!day.entryId || day.status === 'rest') {
+  markSession(session: TrainingSession, status: 'completed' | 'skipped'): void {
+    if (!session.entryId) {
       return;
     }
 
-    const nextStatus = day.status === status ? 'upcoming' : status;
-    this.entryService.updateFeedback(day.entryId, {
+    const nextStatus = session.status === status ? 'upcoming' : status;
+    this.entryService.updateFeedback(session.entryId, {
       completed: nextStatus === 'completed',
       completionStatus: nextStatus === 'upcoming' ? 'pending' : nextStatus
     }).subscribe({
@@ -226,9 +297,11 @@ export class TrainingPlan implements OnInit {
     });
   }
 
-  startWorkout(): void { /* TODO */ }
+  startWorkout(): void {
+    // TODO: start structured workout flow
+  }
 
-  viewDetail(id: number): void {
-    this.router.navigate(['/training-plans', id]);
+  viewDetail(session: TrainingSession): void {
+    this.router.navigate(['/training-plans', session.id]);
   }
 }

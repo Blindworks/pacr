@@ -1,6 +1,4 @@
 <div class="tp-page" *ngIf="!isLoading && !hasError && hasPlan">
-
-  <!-- Header -->
   <header class="tp-header">
     <div class="tp-header__left">
       <span class="tp-eyebrow">Active Program</span>
@@ -21,10 +19,7 @@
     </div>
   </header>
 
-  <!-- Body Grid -->
   <div class="tp-grid">
-
-    <!-- Left: Weekly Schedule -->
     <section class="tp-schedule">
       <div class="tp-schedule__head">
         <h3>{{ currentWeekLabel }}</h3>
@@ -39,57 +34,75 @@
       </div>
 
       <div class="tp-days">
-        @for (day of days; track day.dayNum) {
-          <div class="tp-day" [class]="'tp-day--' + day.status"
-               [class.cursor-pointer]="day.status !== 'rest'"
-               (click)="day.status !== 'rest' && viewDetail(day.id)">
-            <!-- Day Label -->
+        @for (day of days; track day.isoDate) {
+          <div class="tp-day" [class]="'tp-day--' + day.status">
             <div class="tp-day__date">
               <span class="tp-day__name">{{ day.dayShort }}</span>
               <span class="tp-day__num">{{ day.dayNum }}</span>
             </div>
 
-            <!-- Content -->
             <div class="tp-day__body">
-              <div class="tp-day__info">
-                <div class="tp-day__title-row">
-                  <h4>{{ day.title }}</h4>
-                  @if (day.status === 'today') {
-                    <span class="tp-today-badge">Today</span>
-                  } @else if (day.status === 'skipped') {
-                    <span class="tp-state-badge tp-state-badge--skipped">Skipped</span>
-                  } @else if (day.status === 'completed') {
-                    <span class="tp-state-badge">Completed</span>
-                  }
+              @if (day.status === 'rest') {
+                <div class="tp-day__empty">
+                  <div class="tp-day__title-row">
+                    <h4>Rest Day</h4>
+                  </div>
+                  <p class="tp-day__sub">Erholung &amp; Mobilität</p>
                 </div>
-                <p class="tp-day__sub">{{ day.subtitle }}</p>
-              </div>
+                <span class="material-symbols-outlined tp-icon--muted">hotel</span>
+              } @else {
+                <div class="tp-session-list">
+                  @for (session of day.sessions; track session.entryId ?? session.id) {
+                    <div class="tp-session" [class]="'tp-session--' + session.status">
+                      <div
+                        class="tp-session__main"
+                        role="button"
+                        tabindex="0"
+                        (click)="viewDetail(session)"
+                        (keydown.enter)="viewDetail(session)"
+                      >
+                        <span class="material-symbols-outlined tp-session__icon">{{ session.icon }}</span>
+                        <div class="tp-session__info">
+                          <div class="tp-day__title-row">
+                            <h4>{{ session.title }}</h4>
+                            <span class="tp-plan-chip">{{ session.competitionName || 'Wettkampf' }}</span>
+                            @if (session.status === 'today') {
+                              <span class="tp-today-badge">Today</span>
+                            } @else if (session.status === 'skipped') {
+                              <span class="tp-state-badge tp-state-badge--skipped">Skipped</span>
+                            } @else if (session.status === 'completed') {
+                              <span class="tp-state-badge">Completed</span>
+                            }
+                          </div>
+                          <p class="tp-day__sub">{{ session.subtitle }}</p>
+                        </div>
+                      </div>
 
-              @if (day.status !== 'rest') {
-                <div class="tp-day__actions" (click)="$event.stopPropagation()">
-                  <button
-                    class="tp-action-btn tp-action-btn--done"
-                    [class.is-active]="day.status === 'completed'"
-                    (click)="markDay(day, 'completed')">
-                    <span class="material-symbols-outlined">check</span>
-                    Erledigt
-                  </button>
-                  <button
-                    class="tp-action-btn tp-action-btn--skip"
-                    [class.is-active]="day.status === 'skipped'"
-                    (click)="markDay(day, 'skipped')">
-                    <span class="material-symbols-outlined">close</span>
-                    Skip
-                  </button>
-                  @if (day.status === 'today') {
-                    <button class="tp-start-btn" (click)="startWorkout()">
-                      <span class="material-symbols-outlined">play_arrow</span>
-                      Start Workout
-                    </button>
+                      <div class="tp-day__actions" (click)="$event.stopPropagation()">
+                        <button
+                          class="tp-action-btn tp-action-btn--done"
+                          [class.is-active]="session.status === 'completed'"
+                          (click)="markSession(session, 'completed')">
+                          <span class="material-symbols-outlined">check</span>
+                          Erledigt
+                        </button>
+                        <button
+                          class="tp-action-btn tp-action-btn--skip"
+                          [class.is-active]="session.status === 'skipped'"
+                          (click)="markSession(session, 'skipped')">
+                          <span class="material-symbols-outlined">close</span>
+                          Skip
+                        </button>
+                        @if (session.status === 'today') {
+                          <button class="tp-start-btn" (click)="startWorkout()">
+                            <span class="material-symbols-outlined">play_arrow</span>
+                            Start Workout
+                          </button>
+                        }
+                      </div>
+                    </div>
                   }
                 </div>
-              } @else if (day.icon) {
-                <span class="material-symbols-outlined tp-icon--muted">{{ day.icon }}</span>
               }
             </div>
           </div>
@@ -97,10 +110,7 @@
       </div>
     </section>
 
-    <!-- Right: Insights + Stats + Recovery -->
     <aside class="tp-sidebar">
-
-      <!-- Smart Insights -->
       <section class="tp-insights">
         <div class="tp-insights__head">
           <span class="material-symbols-outlined">psychology</span>
@@ -117,7 +127,6 @@
         <button class="tp-insights__cta">View Full Analysis</button>
       </section>
 
-      <!-- Current Stats -->
       <section class="tp-stats-card">
         <h3>Current Stats</h3>
         <div class="tp-stats-grid">
@@ -130,7 +139,6 @@
         </div>
       </section>
 
-      <!-- Recovery Score -->
       <section class="tp-recovery">
         <div class="tp-recovery__left">
           <p class="tp-recovery__title">Recovery Score</p>
@@ -138,15 +146,19 @@
         </div>
         <div class="tp-recovery__ring">
           <svg viewBox="0 0 48 48" class="tp-recovery__svg">
-            <circle cx="24" cy="24" r="20" class="tp-recovery__track"/>
-            <circle cx="24" cy="24" r="20" class="tp-recovery__fill"
+            <circle cx="24" cy="24" r="20" class="tp-recovery__track" />
+            <circle
+              cx="24"
+              cy="24"
+              r="20"
+              class="tp-recovery__fill"
               [style.stroke-dasharray]="'125.7'"
-              [style.stroke-dashoffset]="125.7 - (125.7 * recoveryScore / 100)"/>
+              [style.stroke-dashoffset]="125.7 - (125.7 * recoveryScore / 100)"
+            />
           </svg>
           <span class="tp-recovery__score">{{ recoveryScore }}</span>
         </div>
       </section>
-
     </aside>
   </div>
 </div>

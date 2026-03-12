@@ -21,6 +21,7 @@ public interface UserTrainingEntryRepository extends JpaRepository<UserTrainingE
     @Query("SELECT e FROM UserTrainingEntry e " +
            "LEFT JOIN FETCH e.competitionRegistration reg " +
            "LEFT JOIN FETCH reg.competition " +
+           "LEFT JOIN FETCH reg.user " +
            "LEFT JOIN FETCH e.training t " +
            "LEFT JOIN FETCH t.trainingPlan " +
            "WHERE reg.user.id = :userId " +
@@ -29,6 +30,18 @@ public interface UserTrainingEntryRepository extends JpaRepository<UserTrainingE
             @Param("userId") Long userId,
             @Param("from") LocalDate from,
             @Param("to") LocalDate to);
+
+    @Query("SELECT e FROM UserTrainingEntry e " +
+           "LEFT JOIN FETCH e.competitionRegistration reg " +
+           "LEFT JOIN FETCH reg.competition " +
+           "LEFT JOIN FETCH reg.user " +
+           "LEFT JOIN FETCH e.training t " +
+           "LEFT JOIN FETCH t.trainingPlan " +
+           "WHERE reg.user.id = :userId " +
+           "AND e.trainingDate = :trainingDate")
+    List<UserTrainingEntry> findEntriesForUserByDate(
+            @Param("userId") Long userId,
+            @Param("trainingDate") LocalDate trainingDate);
 
     void deleteByCompetitionRegistrationId(Long registrationId);
 
