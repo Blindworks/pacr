@@ -1076,6 +1076,94 @@ $text-muted: #8b949e;
 
 // ─── CTA Banner ─────────────────────────────────────────────────────────────
 
+.confirm-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(13, 17, 23, 0.7);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+}
+
+.confirm-dialog {
+  width: min(100%, 28rem);
+  background: $card-bg;
+  border: 1px solid rgba($primary, 0.25);
+  border-radius: 1rem;
+  padding: 1.75rem;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+
+  &__icon {
+    width: 3rem;
+    height: 3rem;
+    border-radius: 9999px;
+    background: rgba($primary, 0.14);
+    color: $primary;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+
+    .material-symbols-outlined {
+      font-size: 1.5rem;
+    }
+  }
+
+  &__title {
+    margin: 0 0 0.75rem;
+    color: #f0f6fc;
+    font-size: 1.25rem;
+    font-weight: 800;
+  }
+
+  &__text {
+    margin: 0;
+    color: $text-muted;
+    line-height: 1.6;
+    font-size: 0.9375rem;
+  }
+
+  &__actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+  }
+
+  &__btn {
+    border: none;
+    border-radius: 0.75rem;
+    padding: 0.875rem 1.1rem;
+    font-size: 0.875rem;
+    font-weight: 800;
+    cursor: pointer;
+    transition: filter 0.15s, transform 0.15s;
+
+    &:hover:not(:disabled) {
+      filter: brightness(1.05);
+      transform: translateY(-1px);
+    }
+
+    &:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+
+    &--secondary {
+      background: #21262d;
+      color: #c9d1d9;
+    }
+
+    &--primary {
+      background: $primary;
+      color: $bg-dark;
+    }
+  }
+}
+
 .cta-banner {
   padding: 2rem;
   border-radius: 1rem;

@@ -58,6 +58,7 @@ export class Competitions implements OnInit {
   hasError = false;
   isAssigning = false;
   assignError = false;
+  showPlanChangeConfirm = false;
 
   filters = ['All Races', 'Marathon', 'Half Marathon', '10K', '5K', 'Ultra'];
   targetTimes = ['Sub 3:30', 'Sub 4:00', 'Sub 4:30', 'Just Finish'];
@@ -273,6 +274,28 @@ export class Competitions implements OnInit {
 
   startTrainingPlan(): void {
     if (!this.selectedRace || !this.selectedPlan) return;
+    if (this.requiresPlanChangeConfirmation()) {
+      this.showPlanChangeConfirm = true;
+      return;
+    }
+    this.assignSelectedPlan();
+  }
+
+  confirmPlanChange(): void {
+    this.showPlanChangeConfirm = false;
+    this.assignSelectedPlan();
+  }
+
+  cancelPlanChange(): void {
+    this.showPlanChangeConfirm = false;
+  }
+
+  private requiresPlanChangeConfirmation(): boolean {
+    return !!this.selectedRace?.trainingPlanId && this.selectedRace.trainingPlanId !== this.selectedPlan?.id;
+  }
+
+  private assignSelectedPlan(): void {
+    if (!this.selectedRace || !this.selectedPlan) return;
     this.isAssigning = true;
     this.assignError = false;
     this.trainingPlanService.assignToCompetition(this.selectedPlan.id, this.selectedRace.id).subscribe({
@@ -281,10 +304,12 @@ export class Competitions implements OnInit {
       },
       error: () => {
         this.assignError = true;
+        this.showPlanChangeConfirm = false;
         this.isAssigning = false;
         this.cdr.detectChanges();
       },
       complete: () => {
+        this.showPlanChangeConfirm = false;
         this.isAssigning = false;
         this.cdr.detectChanges();
       }

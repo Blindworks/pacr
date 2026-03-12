@@ -301,3 +301,23 @@
     </div>
   </div>
 </div>
+
+<div class="confirm-overlay" *ngIf="showPlanChangeConfirm">
+  <div class="confirm-dialog">
+    <div class="confirm-dialog__icon">
+      <span class="material-symbols-outlined">warning</span>
+    </div>
+    <h3 class="confirm-dialog__title">Change training plan?</h3>
+    <p class="confirm-dialog__text">
+      If you continue, the current training entries for this race will be deleted and rebuilt from the newly selected plan.
+    </p>
+    <div class="confirm-dialog__actions">
+      <button class="confirm-dialog__btn confirm-dialog__btn--secondary" (click)="cancelPlanChange()" [disabled]="isAssigning">
+        Cancel
+      </button>
+      <button class="confirm-dialog__btn confirm-dialog__btn--primary" (click)="confirmPlanChange()" [disabled]="isAssigning">
+        {{ isAssigning ? 'Changing…' : 'Yes, change plan' }}
+      </button>
+    </div>
+  </div>
+</div>
