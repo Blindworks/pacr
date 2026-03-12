@@ -7,6 +7,8 @@ import com.trainingsplan.repository.CompetitionRegistrationRepository;
 import com.trainingsplan.repository.UserTrainingEntryRepository;
 import com.trainingsplan.security.SecurityUtils;
 import com.trainingsplan.service.UserTrainingScheduleService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +21,8 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/user-training-entries")
 public class UserTrainingEntryController {
+
+    private static final Logger log = LoggerFactory.getLogger(UserTrainingEntryController.class);
 
     @Autowired
     private UserTrainingScheduleService scheduleService;
@@ -43,7 +47,11 @@ public class UserTrainingEntryController {
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to) {
         Long userId = securityUtils.getCurrentUserId();
-        if (userId == null) return ResponseEntity.status(401).build();
+        log.info("GET /calendar from={} to={} userId={}", from, to, userId);
+        if (userId == null) {
+            log.warn("GET /calendar rejected: no authenticated user");
+            return ResponseEntity.status(401).build();
+        }
         return ResponseEntity.ok(scheduleService.getEntriesForUser(userId, from, to));
     }
 

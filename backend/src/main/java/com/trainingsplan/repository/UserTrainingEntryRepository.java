@@ -18,8 +18,17 @@ public interface UserTrainingEntryRepository extends JpaRepository<UserTrainingE
 
     List<UserTrainingEntry> findByCompetitionRegistrationIdAndWeekNumber(Long registrationId, Integer weekNumber);
 
-    List<UserTrainingEntry> findByCompetitionRegistration_User_IdAndTrainingDateBetween(
-            Long userId, LocalDate from, LocalDate to);
+    @Query("SELECT e FROM UserTrainingEntry e " +
+           "LEFT JOIN FETCH e.competitionRegistration reg " +
+           "LEFT JOIN FETCH reg.competition " +
+           "LEFT JOIN FETCH e.training t " +
+           "LEFT JOIN FETCH t.trainingPlan " +
+           "WHERE reg.user.id = :userId " +
+           "AND e.trainingDate BETWEEN :from AND :to")
+    List<UserTrainingEntry> findCalendarEntriesForUser(
+            @Param("userId") Long userId,
+            @Param("from") LocalDate from,
+            @Param("to") LocalDate to);
 
     void deleteByCompetitionRegistrationId(Long registrationId);
 

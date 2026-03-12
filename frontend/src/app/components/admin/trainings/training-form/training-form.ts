@@ -1,8 +1,7 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormArray, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { catchError, finalize } from 'rxjs/operators';
-import { of } from 'rxjs';
+
 import { TrainingService } from '../../../../services/training.service';
 import { TrainingPlanService, TrainingPlan } from '../../../../services/training-plan.service';
 
@@ -58,8 +57,10 @@ export class TrainingForm implements OnInit {
     if (planIdParam) {
       const pid = parseInt(planIdParam, 10);
       this.planId.set(pid);
-      this.planService.getById(pid).pipe(catchError(() => of(null)))
-        .subscribe(p => this.plan.set(p));
+      this.planService.getById(pid).subscribe({
+        next: (p) => this.plan.set(p),
+        error: () => this.plan.set(null)
+      });
     }
 
     if (idParam) {
@@ -72,32 +73,33 @@ export class TrainingForm implements OnInit {
   private loadTraining(id: number): void {
     this.isLoading.set(true);
     this.hasError.set(false);
-    this.trainingService.getTrainingById(id).pipe(
-      catchError(() => { this.hasError.set(true); return of(null); }),
-      finalize(() => this.isLoading.set(false))
-    ).subscribe(t => {
-      if (!t) return;
-      this.form.patchValue({
-        name: t.name,
-        trainingType: t.trainingType ?? '',
-        intensityLevel: t.intensityLevel ?? '',
-        difficulty: t.difficulty ?? '',
-        weekNumber: t.weekNumber ?? null,
-        dayOfWeek: this.toFormDayOfWeek(t.dayOfWeek),
-        description: t.description ?? '',
-        benefit: t.benefit ?? '',
-        durationMinutes: t.durationMinutes ?? null,
-        workPace: t.workPace ?? '',
-        recoveryPace: t.recoveryPace ?? '',
-        intensityScore: t.intensityScore ?? null,
-        estimatedCalories: t.estimatedCalories ?? null,
-        estimatedDistanceMeters: t.estimatedDistanceMeters ?? null,
-        heroImageUrl: t.heroImageUrl ?? ''
-      });
-      this.steps.clear();
-      this.prepTips.clear();
-      (t.steps ?? []).forEach(s => this.steps.push(this.makeStepGroup(s)));
-      (t.prepTips ?? []).forEach(p => this.prepTips.push(this.makeTipGroup(p)));
+    this.trainingService.getTrainingById(id).subscribe({
+      next: (t) => {
+        if (!t) return;
+        this.form.patchValue({
+          name: t.name,
+          trainingType: t.trainingType ?? '',
+          intensityLevel: t.intensityLevel ?? '',
+          difficulty: t.difficulty ?? '',
+          weekNumber: t.weekNumber ?? null,
+          dayOfWeek: this.toFormDayOfWeek(t.dayOfWeek),
+          description: t.description ?? '',
+          benefit: t.benefit ?? '',
+          durationMinutes: t.durationMinutes ?? null,
+          workPace: t.workPace ?? '',
+          recoveryPace: t.recoveryPace ?? '',
+          intensityScore: t.intensityScore ?? null,
+          estimatedCalories: t.estimatedCalories ?? null,
+          estimatedDistanceMeters: t.estimatedDistanceMeters ?? null,
+          heroImageUrl: t.heroImageUrl ?? ''
+        });
+        this.steps.clear();
+        this.prepTips.clear();
+        (t.steps ?? []).forEach(s => this.steps.push(this.makeStepGroup(s)));
+        (t.prepTips ?? []).forEach(p => this.prepTips.push(this.makeTipGroup(p)));
+      },
+      error: () => { this.hasError.set(true); this.isLoading.set(false); },
+      complete: () => this.isLoading.set(false)
     });
   }
 
@@ -153,11 +155,10 @@ export class TrainingForm implements OnInit {
       ? this.trainingService.update(this.editId()!, payload)
       : this.trainingService.create(payload, this.planId());
 
-    op$.pipe(
-      catchError(() => { this.hasError.set(true); return of(null); }),
-      finalize(() => this.isSaving.set(false))
-    ).subscribe(result => {
-      if (result) this.router.navigate(['/admin/plans', this.planId(), 'trainings']);
+    op$.subscribe({
+      next: (result) => { if (result) this.router.navigate(['/admin/plans', this.planId(), 'trainings']); },
+      error: () => { this.hasError.set(true); this.isSaving.set(false); },
+      complete: () => this.isSaving.set(false)
     });
   }
 

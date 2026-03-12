@@ -29,7 +29,7 @@ public class TrainingCompletionService {
     public DailyTrainingCompletionDto getDailyTrainingCompletion(LocalDate date) {
         Long userId = securityUtils.getCurrentUserId();
         List<UserTrainingEntry> planned = userId != null
-                ? entryRepository.findByCompetitionRegistration_User_IdAndTrainingDateBetween(userId, date, date)
+                ? entryRepository.findCalendarEntriesForUser(userId, date, date)
                 : Collections.emptyList();
         List<CompletedTraining> completedTrainings =
                 completedTrainingRepository.findByTrainingDateOrderByUploadDateDesc(date);

@@ -1,8 +1,7 @@
 import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { catchError, finalize } from 'rxjs/operators';
-import { of } from 'rxjs';
+
 import { DomSanitizer, SafeStyle } from '@angular/platform-browser';
 import { CompetitionService, Competition } from '../../services/competition.service';
 import { TrainingPlanService, TrainingPlan } from '../../services/training-plan.service';
@@ -238,12 +237,18 @@ export class Competitions implements OnInit {
     if (!this.selectedRace || !this.selectedPlan) return;
     this.isAssigning = true;
     this.assignError = false;
-    this.trainingPlanService.assignToCompetition(this.selectedPlan.id, this.selectedRace.id).pipe(
-      catchError(() => { this.assignError = true; return of(null); }),
-      finalize(() => { this.isAssigning = false; })
-    ).subscribe(result => {
-      if (result) {
-        this.router.navigate(['/training-plans']);
+    this.trainingPlanService.assignToCompetition(this.selectedPlan.id, this.selectedRace.id).subscribe({
+      next: (result) => {
+        if (result) this.router.navigate(['/training-plans']);
+      },
+      error: () => {
+        this.assignError = true;
+        this.isAssigning = false;
+        this.cdr.detectChanges();
+      },
+      complete: () => {
+        this.isAssigning = false;
+        this.cdr.detectChanges();
       }
     });
   }

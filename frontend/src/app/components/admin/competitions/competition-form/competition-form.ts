@@ -1,8 +1,7 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
-import { catchError, finalize } from 'rxjs/operators';
-import { of } from 'rxjs';
+
 import { CompetitionService } from '../../../../services/competition.service';
 
 @Component({
@@ -57,20 +56,20 @@ export class CompetitionForm implements OnInit {
   private loadCompetition(id: number): void {
     this.isLoading.set(true);
     this.hasError.set(false);
-    this.service.getById(id).pipe(
-      catchError(() => { this.hasError.set(true); return of(null); }),
-      finalize(() => this.isLoading.set(false))
-    ).subscribe(c => {
-      if (!c) return;
-      // type from backend comes as display name; map back to enum key
-      const typeEntry = this.competitionTypes.find(t => t.label === c.type || t.value === c.type);
-      this.form.patchValue({
-        name: c.name,
-        date: c.date ?? '',
-        type: typeEntry?.value ?? '',
-        location: c.location ?? '',
-        description: c.description ?? ''
-      });
+    this.service.getById(id).subscribe({
+      next: (c) => {
+        if (!c) return;
+        const typeEntry = this.competitionTypes.find(t => t.label === c.type || t.value === c.type);
+        this.form.patchValue({
+          name: c.name,
+          date: c.date ?? '',
+          type: typeEntry?.value ?? '',
+          location: c.location ?? '',
+          description: c.description ?? ''
+        });
+      },
+      error: () => { this.hasError.set(true); this.isLoading.set(false); },
+      complete: () => this.isLoading.set(false)
     });
   }
 
@@ -89,11 +88,10 @@ export class CompetitionForm implements OnInit {
       ? this.service.update(this.editId()!, payload)
       : this.service.create(payload);
 
-    op$.pipe(
-      catchError(() => { this.hasError.set(true); return of(null); }),
-      finalize(() => this.isSaving.set(false))
-    ).subscribe(result => {
-      if (result) this.router.navigate(['/admin/competitions']);
+    op$.subscribe({
+      next: (result) => { if (result) this.router.navigate(['/admin/competitions']); },
+      error: () => { this.hasError.set(true); this.isSaving.set(false); },
+      complete: () => this.isSaving.set(false)
     });
   }
 

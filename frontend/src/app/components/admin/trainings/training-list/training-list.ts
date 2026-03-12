@@ -1,7 +1,6 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { catchError, finalize } from 'rxjs/operators';
-import { of } from 'rxjs';
+
 import { TrainingService, Training } from '../../../../services/training.service';
 import { TrainingPlanService, TrainingPlan } from '../../../../services/training-plan.service';
 
@@ -33,18 +32,20 @@ export class TrainingList implements OnInit {
   }
 
   private loadPlan(id: number): void {
-    this.planService.getById(id).pipe(
-      catchError(() => of(null))
-    ).subscribe(p => this.plan.set(p));
+    this.planService.getById(id).subscribe({
+      next: (p) => this.plan.set(p),
+      error: () => this.plan.set(null)
+    });
   }
 
   loadTrainings(id: number = this.planId()): void {
     this.isLoading.set(true);
     this.hasError.set(false);
-    this.trainingService.getByPlan(id).pipe(
-      catchError(() => { this.hasError.set(true); return of([]); }),
-      finalize(() => this.isLoading.set(false))
-    ).subscribe(data => this.trainings.set(data));
+    this.trainingService.getByPlan(id).subscribe({
+      next: (data) => this.trainings.set(data),
+      error: () => { this.hasError.set(true); this.isLoading.set(false); },
+      complete: () => this.isLoading.set(false)
+    });
   }
 
   navigateNew(): void {
@@ -68,11 +69,9 @@ export class TrainingList implements OnInit {
   }
 
   confirmDelete(id: number): void {
-    this.trainingService.delete(id).pipe(
-      catchError(() => { this.hasError.set(true); return of(void 0); })
-    ).subscribe(() => {
-      this.confirmDeleteId.set(null);
-      this.loadTrainings();
+    this.trainingService.delete(id).subscribe({
+      next: () => { this.confirmDeleteId.set(null); this.loadTrainings(); },
+      error: () => this.hasError.set(true)
     });
   }
 

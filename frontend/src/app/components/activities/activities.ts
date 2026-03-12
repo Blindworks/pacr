@@ -3,7 +3,7 @@ import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { ActivityService, CompletedTraining } from '../../services/activity.service';
 import { StravaService } from '../../services/strava.service';
-import { catchError, of, finalize, timeout } from 'rxjs';
+import { timeout } from 'rxjs';
 
 interface Activity {
   id: number;
@@ -98,18 +98,20 @@ export class Activities implements OnInit {
     this.isSyncing = true;
     this.syncDone = false;
     this.stravaService.syncActivities(start, end).pipe(
-      timeout(60000),
-      catchError((err) => {
+      timeout(60000)
+    ).subscribe({
+      next: () => { this.loadWeek(); },
+      error: (err) => {
         console.error('[Activities] sync error:', err);
-        return of(null);
-      }),
-      finalize(() => {
         this.isSyncing = false;
         this.syncDone = true;
         this.cdr.detectChanges();
-      })
-    ).subscribe(() => {
-      this.loadWeek();
+      },
+      complete: () => {
+        this.isSyncing = false;
+        this.syncDone = true;
+        this.cdr.detectChanges();
+      }
     });
   }
 
@@ -118,19 +120,19 @@ export class Activities implements OnInit {
     this.hasError = false;
     const { start, end } = this.weekRange;
 
-    this.activityService.getByDateRange(start, end).pipe(
-      catchError((err) => {
-        console.error('[Activities] error loading activities:', err);
-        this.hasError = true;
-        return of([]);
-      }),
-      finalize(() => {
-        this.isLoading = false;
-        this.cdr.detectChanges();
-      })
-    ).subscribe({
+    this.activityService.getByDateRange(start, end).subscribe({
       next: (data) => {
         this.activities = (data as CompletedTraining[]).map(ct => this.mapToActivity(ct));
+      },
+      error: (err) => {
+        console.error('[Activities] error loading activities:', err);
+        this.hasError = true;
+        this.isLoading = false;
+        this.cdr.detectChanges();
+      },
+      complete: () => {
+        this.isLoading = false;
+        this.cdr.detectChanges();
       }
     });
   }

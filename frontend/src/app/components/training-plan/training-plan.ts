@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { UserTrainingEntryService, UserTrainingEntry } from '../../services/user-training-entry.service';
@@ -37,6 +37,7 @@ const DAY_SHORTS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 export class TrainingPlan implements OnInit {
   private router = inject(Router);
   private entryService = inject(UserTrainingEntryService);
+  private cdr = inject(ChangeDetectorRef);
 
   planName = '—';
   weekLabel = '—';
@@ -100,7 +101,7 @@ export class TrainingPlan implements OnInit {
         this.buildWeek(entries, monday);
         if (entries.length > 0) {
           this.hasPlan = true;
-          this.planName = entries[0].training.trainingPlanName ?? 'Trainingsplan';
+          this.planName = entries[0].training?.trainingPlanName ?? 'Trainingsplan';
           const weekNum = entries[0].weekNumber;
           this.weekLabel = `Woche ${weekNum}`;
           this.completedSessions = entries.filter(e => e.completed).length;
@@ -109,11 +110,16 @@ export class TrainingPlan implements OnInit {
             ? Math.round((this.completedSessions / this.totalSessions) * 100)
             : 0;
         }
-        this.isLoading = false;
       },
-      error: () => {
+      error: (err) => {
+        console.error('Fehler beim Laden der Trainingsplan-Einträge:', err);
         this.hasError = true;
         this.isLoading = false;
+        this.cdr.detectChanges();
+      },
+      complete: () => {
+        this.isLoading = false;
+        this.cdr.detectChanges();
       }
     });
   }
@@ -145,10 +151,10 @@ export class TrainingPlan implements OnInit {
           id: entry.id,
           dayShort: DAY_SHORTS[jsDay],
           dayNum: day.getDate(),
-          title: entry.training.name,
+          title: entry.training?.name ?? 'Training',
           subtitle: this.buildSubtitle(entry),
           status,
-          icon: this.typeToIcon(entry.training.trainingType)
+          icon: this.typeToIcon(entry.training?.trainingType)
         });
       } else {
         this.days.push({

@@ -1,8 +1,7 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
-import { catchError, finalize } from 'rxjs/operators';
-import { of } from 'rxjs';
+
 import { TrainingPlanService } from '../../../../services/training-plan.service';
 
 @Component({
@@ -45,18 +44,19 @@ export class PlanForm implements OnInit {
   private loadPlan(id: number): void {
     this.isLoading.set(true);
     this.hasError.set(false);
-    this.planService.getById(id).pipe(
-      catchError(() => { this.hasError.set(true); return of(null); }),
-      finalize(() => this.isLoading.set(false))
-    ).subscribe(p => {
-      if (!p) return;
-      this.form.patchValue({
-        name: p.name,
-        description: p.description ?? '',
-        competitionType: p.competitionType ?? '',
-        targetTime: p.targetTime ?? '',
-        prerequisites: p.prerequisites ?? ''
-      });
+    this.planService.getById(id).subscribe({
+      next: (p) => {
+        if (!p) return;
+        this.form.patchValue({
+          name: p.name,
+          description: p.description ?? '',
+          competitionType: p.competitionType ?? '',
+          targetTime: p.targetTime ?? '',
+          prerequisites: p.prerequisites ?? ''
+        });
+      },
+      error: () => { this.hasError.set(true); this.isLoading.set(false); },
+      complete: () => this.isLoading.set(false)
     });
   }
 
@@ -75,11 +75,10 @@ export class PlanForm implements OnInit {
       ? this.planService.update(this.editId()!, payload)
       : this.planService.create(payload);
 
-    op$.pipe(
-      catchError(() => { this.hasError.set(true); return of(null); }),
-      finalize(() => this.isSaving.set(false))
-    ).subscribe(result => {
-      if (result) this.router.navigate(['/admin/plans']);
+    op$.subscribe({
+      next: (result) => { if (result) this.router.navigate(['/admin/plans']); },
+      error: () => { this.hasError.set(true); this.isSaving.set(false); },
+      complete: () => this.isSaving.set(false)
     });
   }
 

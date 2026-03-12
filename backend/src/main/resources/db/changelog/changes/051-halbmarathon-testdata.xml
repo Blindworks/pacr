@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <!-- Test user -->
+    <changeSet id="051-testdata-user" author="trainingsplan">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">SELECT COUNT(*) FROM users WHERE username = 'testuser'</sqlCheck>
+        </preConditions>
+        <insert tableName="users">
+            <column name="username" value="testuser"/>
+            <column name="email" value="test@example.com"/>
+            <column name="created_at" valueDate="2026-03-01T00:00:00"/>
+            <column name="first_name" value="Max"/>
+            <column name="last_name" value="Mustermann"/>
+            <column name="password_hash" value="$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lh32"/>
+            <column name="role" value="USER"/>
+            <column name="status" value="ACTIVE"/>
+        </insert>
+    </changeSet>
+
+    <!-- Competition -->
+    <changeSet id="051-testdata-competition" author="trainingsplan">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">SELECT COUNT(*) FROM competitions WHERE name = 'Stadtpark Halbmarathon 2026'</sqlCheck>
+        </preConditions>
+        <insert tableName="competitions">
+            <column name="name" value="Stadtpark Halbmarathon 2026"/>
+            <column name="date" valueDate="2026-05-23"/>
+            <column name="description" value="Halbmarathon Wettkampf – Zielzeit 1:26 h. Flacher Kurs durch den Stadtpark."/>
+            <column name="type" value="HALF_MARATHON"/>
+            <column name="location" value="Stadtpark"/>
+        </insert>
+    </changeSet>
+
+    <!-- Training plan -->
+    <changeSet id="051-testdata-training-plan" author="trainingsplan">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">SELECT COUNT(*) FROM training_plans WHERE name = 'Halbmarathon-Trainingsplan 1:26 h'</sqlCheck>
+        </preConditions>
+        <insert tableName="training_plans">
+            <column name="name" value="Halbmarathon-Trainingsplan 1:26 h"/>
+            <column name="description" value="10-Wochen Trainingsplan für den Halbmarathon mit Zielzeit 1:26 Stunden. Aufbau von Grundlagenausdauer, Intervalltraining und wettkampfspezifischem Tempo."/>
+            <column name="upload_date" valueDate="2026-03-01T00:00:00"/>
+            <column name="training_count" valueNumeric="70"/>
+            <column name="target_time" value="1:26:00"/>
+            <column name="prerequisites" value="Trainingsvoraussetzung: 10 km in 44:41 min oder Halbmarathon in 1:32 h oder Marathon in 3:15 h. Langsamer Dauerlauf mind. 1:30 h am Stück."/>
+            <column name="competition_type" value="HALF_MARATHON"/>
+        </insert>
+    </changeSet>
+
+    <!-- All 70 trainings (10 weeks × 7 days) -->
+    <!-- Competition starts 2026-05-23 (Saturday), Week 1 starts 2026-03-16 (Monday) -->
+    <changeSet id="051-testdata-trainings" author="trainingsplan">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">SELECT COUNT(*) FROM trainings WHERE training_plan_id = (SELECT id FROM training_plans WHERE name = 'Halbmarathon-Trainingsplan 1:26 h')</sqlCheck>
+        </preConditions>
+        <sql>
+SET @plan_id = (SELECT id FROM training_plans WHERE name = 'Halbmarathon-Trainingsplan 1:26 h');
+
+INSERT INTO trainings (name, description, week_number, day_of_week, duration_minutes, intensity_level, training_type, estimated_distance_meters, training_plan_id) VALUES
+-- Woche 1 (55 km)
+('12 km lockerer DL, GA1',             '12 km lockerer Dauerlauf im GA1-Bereich (70% HF max)',                                                   1, 'MONDAY',    72,  'low',      'endurance', 12000, @plan_id),
+('10 km lockerer DL',                  '10 km lockerer Dauerlauf',                                                                                1, 'TUESDAY',   60,  'low',      'endurance', 10000, @plan_id),
+('Krafttraining',                      'Allgemeines Krafttraining',                                                                               1, 'WEDNESDAY', 60,  'medium',   'strength',      0, @plan_id),
+('7 x 400 m Intervalle, SB',           '7 Wiederholungen 400 m im Schnelligkeitsbereich mit je 2 min Trabpause (90% HF max)',                     1, 'THURSDAY',  60,  'high',     'speed',      8000, @plan_id),
+('Ruhetag',                            'Vollständige Erholungspause oder lockeres Dehnen',                                                        1, 'FRIDAY',     0,  'rest',     'general',       0, @plan_id),
+('2 h Radfahren, RECOM',               '2 Stunden lockeres Radfahren im Regenerationsbereich (65% HF max)',                                       1, 'SATURDAY', 120,  'recovery', 'cycling',       0, @plan_id),
+('18 km langsamer DL, GA1',            '18 km langer langsamer Dauerlauf im GA1-Bereich (70% HF max)',                                            1, 'SUNDAY',   115,  'low',      'endurance', 18000, @plan_id),
+-- Woche 2 (61 km)
+('1 h Schwimmen &amp; Krafttraining, RECOM', '1 Stunde lockeres Schwimmen im Regenerationsbereich kombiniert mit Krafttraining (65% HF max)',    2, 'MONDAY',    90,  'recovery', 'swimming',      0, @plan_id),
+('1-2-2-1 km Fahrtspiel, GA2',         'Fahrtspiel: 1-2-2-1 km Intervalle im GA2-Bereich mit lockeren Übergängen (70% HF max)',                  2, 'TUESDAY',   75,  'medium',   'fartlek',   12000, @plan_id),
+('12 km langsamer DL, GA1',            '12 km langsamer Dauerlauf im GA1-Bereich (80% HF max)',                                                   2, 'WEDNESDAY', 78,  'low',      'endurance', 12000, @plan_id),
+('15 km lockerer DL, GA2',             '15 km lockerer Dauerlauf im GA2-Bereich (80% HF max)',                                                    2, 'THURSDAY',  90,  'medium',   'endurance', 15000, @plan_id),
+('Ruhetag',                            'Vollständige Erholungspause',                                                                             2, 'FRIDAY',     0,  'rest',     'general',       0, @plan_id),
+('10-km-Wettkampf',                    '10 km Wettkampf – Testrennen zur Formüberprüfung (90% HF max)',                                           2, 'SATURDAY',  45,  'high',     'race',      10000, @plan_id),
+('10 km langsamer DL, GA1',            '10 km langsamer Dauerlauf im GA1-Bereich zur Regeneration nach dem Wettkampf (70% HF max)',               2, 'SUNDAY',    65,  'low',      'endurance', 10000, @plan_id),
+-- Woche 3 (66 km)
+('2 h Radfahren, RECOM',               '2 Stunden lockeres Radfahren im Regenerationsbereich (65% HF max)',                                       3, 'MONDAY',   120,  'recovery', 'cycling',       0, @plan_id),
+('12 km lockerer DL, GA1',             '12 km lockerer Dauerlauf im GA1-Bereich (80% HF max)',                                                    3, 'TUESDAY',   72,  'low',      'endurance', 12000, @plan_id),
+('10 km lockerer DL, GA2',             '10 km lockerer Dauerlauf im GA2-Bereich (80% HF max)',                                                    3, 'WEDNESDAY', 60,  'medium',   'endurance', 10000, @plan_id),
+('Ruhetag',                            'Vollständige Erholungspause',                                                                             3, 'THURSDAY',   0,  'rest',     'general',       0, @plan_id),
+('10 x 400 m Intervalle, SB',          '10 Wiederholungen 400 m im Schnelligkeitsbereich mit je 90 s Pause (90% HF max)',                         3, 'FRIDAY',    65,  'high',     'speed',      9000, @plan_id),
+('10 km lockerer DL, GA2',             '10 km lockerer Dauerlauf im GA2-Bereich (80% HF max)',                                                    3, 'SATURDAY',  60,  'medium',   'endurance', 10000, @plan_id),
+('22 km langsamer DL, GA1',            '22 km langer langsamer Dauerlauf im GA1-Bereich (70% HF max)',                                            3, 'SUNDAY',   135,  'low',      'endurance', 22000, @plan_id),
+-- Woche 4 – Regenerationswoche (40 km)
+('Krafttraining',                      'Allgemeines Krafttraining',                                                                               4, 'MONDAY',    60,  'medium',   'strength',      0, @plan_id),
+('7 x 1000 m Intervalle, SB',          '7 Wiederholungen 1000 m im Schnelligkeitsbereich mit je 3 min Pause (90% HF max)',                        4, 'TUESDAY',   75,  'high',     'speed',     12000, @plan_id),
+('2 h Radfahren, RECOM',               '2 Stunden lockeres Radfahren im Regenerationsbereich (65% HF max)',                                       4, 'WEDNESDAY', 120,  'recovery', 'cycling',       0, @plan_id),
+('12 km lockerer DL, GA2',             '12 km lockerer Dauerlauf im GA2-Bereich (80% HF max)',                                                    4, 'THURSDAY',  70,  'medium',   'endurance', 12000, @plan_id),
+('Ruhetag',                            'Vollständige Erholungspause vor Wettkampf',                                                               4, 'FRIDAY',     0,  'rest',     'general',       0, @plan_id),
+('10-km-Wettkampf',                    '10 km Wettkampf – Formcheck Mitte der Vorbereitung (90% HF max)',                                         4, 'SATURDAY',  45,  'high',     'race',      10000, @plan_id),
+('1 h Schwimmen, RECOM',               '1 Stunde lockeres Schwimmen zur Regeneration nach dem Wettkampf',                                         4, 'SUNDAY',    60,  'recovery', 'swimming',      0, @plan_id),
+-- Woche 5 (71 km)
+('Krafttraining',                      'Allgemeines Krafttraining',                                                                               5, 'MONDAY',    60,  'medium',   'strength',      0, @plan_id),
+('15 km langsamer DL, GA1',            '15 km langsamer Dauerlauf im GA1-Bereich (75% HF max)',                                                   5, 'TUESDAY',   95,  'low',      'endurance', 15000, @plan_id),
+('10 x 400 m Intervalle, SB',          '10 Wiederholungen 400 m im Schnelligkeitsbereich mit je 90 s Pause (90% HF max)',                         5, 'WEDNESDAY', 65,  'high',     'speed',      9000, @plan_id),
+('2 h Radfahren, RECOM',               '2 Stunden lockeres Radfahren im Regenerationsbereich (65% HF max)',                                       5, 'THURSDAY', 120,  'recovery', 'cycling',       0, @plan_id),
+('6 km Halbmarathon-Renntempo, EB',    '6 km im Halbmarathon-Renntempo (Entwicklungsbereich, 85% HF max) – eingebettet in 12 km Gesamtlauf',     5, 'FRIDAY',    35,  'high',     'race',       6000, @plan_id),
+('12 km lockerer DL, GA2',             '12 km lockerer Dauerlauf im GA2-Bereich (80% HF max)',                                                    5, 'SATURDAY',  70,  'medium',   'endurance', 12000, @plan_id),
+('22 km langsamer DL, GA1',            '22 km langer langsamer Dauerlauf im GA1-Bereich (70% HF max)',                                            5, 'SUNDAY',   135,  'low',      'endurance', 22000, @plan_id),
+-- Woche 6 (77 km)
+('Krafttraining',                      'Allgemeines Krafttraining',                                                                               6, 'MONDAY',    60,  'medium',   'strength',      0, @plan_id),
+('12 km lockerer DL, GA2',             '12 km lockerer Dauerlauf im GA2-Bereich (80% HF max)',                                                    6, 'TUESDAY',   70,  'medium',   'endurance', 12000, @plan_id),
+('4 x 2000 m Intervalle, SB',          '4 Wiederholungen 2000 m im Schnelligkeitsbereich mit je 3 min Pause (90% HF max)',                        6, 'WEDNESDAY', 75,  'high',     'speed',     14000, @plan_id),
+('1 h Schwimmen, RECOM',               '1 Stunde lockeres Schwimmen zur Regeneration',                                                            6, 'THURSDAY',  60,  'recovery', 'swimming',      0, @plan_id),
+('1-2-3-2-1 km Fahrtspiel',            'Fahrtspiel: 1-2-3-2-1 km Steigerungsläufe im GA2-Bereich (81% HF max)',                                  6, 'FRIDAY',    75,  'medium',   'fartlek',   15000, @plan_id),
+('12 km lockerer DL, GA2',             '12 km lockerer Dauerlauf im GA2-Bereich (80% HF max)',                                                    6, 'SATURDAY',  70,  'medium',   'endurance', 12000, @plan_id),
+('22 km langsamer DL, GA1',            '22 km langer langsamer Dauerlauf im GA1-Bereich (70% HF max)',                                            6, 'SUNDAY',   135,  'low',      'endurance', 22000, @plan_id),
+-- Woche 7 (78 km)
+('15 km mit 1-2-3-2-1 km Fahrtspiel, GA2', '15 km Dauerlauf mit eingebautem Fahrtspiel 1-2-3-2-1 km im GA2-Bereich',                            7, 'MONDAY',    90,  'medium',   'fartlek',   15000, @plan_id),
+('8 km Halbmarathon-Renntempo, EB',    '8 km im Halbmarathon-Renntempo (Entwicklungsbereich, 85% HF max)',                                        7, 'TUESDAY',   40,  'high',     'race',       8000, @plan_id),
+('Krafttraining',                      'Allgemeines Krafttraining',                                                                               7, 'WEDNESDAY', 60,  'medium',   'strength',      0, @plan_id),
+('2 h Radfahren, RECOM',               '2 Stunden lockeres Radfahren im Regenerationsbereich (65% HF max)',                                       7, 'THURSDAY', 120,  'recovery', 'cycling',       0, @plan_id),
+('Ruhetag',                            'Vollständige Erholungspause',                                                                             7, 'FRIDAY',     0,  'rest',     'general',       0, @plan_id),
+('10 km lockerer DL, GA2',             '10 km lockerer Dauerlauf im GA2-Bereich (80% HF max)',                                                    7, 'SATURDAY',  60,  'medium',   'endurance', 10000, @plan_id),
+('22 km langsamer DL, GA1',            '22 km langer langsamer Dauerlauf im GA1-Bereich (70% HF max)',                                            7, 'SUNDAY',   135,  'low',      'endurance', 22000, @plan_id),
+-- Woche 8 (54 km)
+('Krafttraining',                      'Allgemeines Krafttraining',                                                                               8, 'MONDAY',    60,  'medium',   'strength',      0, @plan_id),
+('10 km Intervalltraining, SB',        '10 km Intervalltraining im Schnelligkeitsbereich (90% HF max)',                                           8, 'TUESDAY',   65,  'high',     'speed',     10000, @plan_id),
+('10 km lockerer DL, GA2',             '10 km lockerer Dauerlauf im GA2-Bereich (80% HF max)',                                                    8, 'WEDNESDAY', 60,  'medium',   'endurance', 10000, @plan_id),
+('12 km lockerer DL, GA1',             '12 km lockerer Dauerlauf im GA1-Bereich (75% HF max)',                                                    8, 'THURSDAY',  72,  'low',      'endurance', 12000, @plan_id),
+('Ruhetag',                            'Vollständige Erholungspause vor dem Wettkampf',                                                           8, 'FRIDAY',     0,  'rest',     'general',       0, @plan_id),
+('10-km-Wettkampf in 38:31 Min.',      '10 km Wettkampf – angestrebte Zielzeit 38:31 Min. (90% HF max)',                                         8, 'SATURDAY',  42,  'high',     'race',      10000, @plan_id),
+('1 h Schwimmen, RECOM',               '1 Stunde lockeres Schwimmen zur Regeneration nach dem Wettkampf',                                         8, 'SUNDAY',    60,  'recovery', 'swimming',      0, @plan_id),
+-- Woche 9 – Regenerationswoche (39 km)
+('Krafttraining',                      'Allgemeines Krafttraining',                                                                               9, 'MONDAY',    60,  'medium',   'strength',      0, @plan_id),
+('12 km langsamer DL, GA1',            '12 km langsamer Dauerlauf im GA1-Bereich (75% HF max)',                                                   9, 'TUESDAY',   78,  'low',      'endurance', 12000, @plan_id),
+('Ruhetag',                            'Vollständige Erholungspause',                                                                             9, 'WEDNESDAY',  0,  'rest',     'general',       0, @plan_id),
+('6 km Halbmarathon-Renntempo, EB',    '6 km im Halbmarathon-Renntempo (Entwicklungsbereich, 85% HF max)',                                        9, 'THURSDAY',  35,  'high',     'race',       6000, @plan_id),
+('Ruhetag',                            'Vollständige Erholungspause',                                                                             9, 'FRIDAY',     0,  'rest',     'general',       0, @plan_id),
+('10 x 400 m Intervalle, SB',          '10 Wiederholungen 400 m im Schnelligkeitsbereich (82% HF max)',                                           9, 'SATURDAY',  65,  'high',     'speed',      9000, @plan_id),
+('Ruhetag',                            'Vollständige Erholungspause',                                                                             9, 'SUNDAY',     0,  'rest',     'general',       0, @plan_id),
+-- Woche 10 – Wettkampfwoche (43 km)
+('Ruhetag',                            'Vollständige Erholungspause zu Beginn der Wettkampfwoche',                                                10, 'MONDAY',     0,  'rest',     'general',       0, @plan_id),
+('4 km Halbmarathon-Renntempo, EB',    '4 km kurzes Einlaufen im Halbmarathon-Renntempo zur Aktivierung (84% HF max)',                           10, 'TUESDAY',   25,  'high',     'race',       4000, @plan_id),
+('Ruhetag',                            'Vollständige Erholungspause',                                                                            10, 'WEDNESDAY',  0,  'rest',     'general',       0, @plan_id),
+('6 km lockerer DL, GA2',              '6 km lockerer Dauerlauf im GA2-Bereich zur Beinaktivierung',                                             10, 'THURSDAY',  36,  'medium',   'endurance',  6000, @plan_id),
+('4 km DL + 5 x 100 m Strides',        '4 km lockerer Dauerlauf gefolgt von 5 x 100 m flottes Einlaufen (Strides) zur Aktivierung',              10, 'FRIDAY',    30,  'medium',   'speed',      4500, @plan_id),
+('Halbmarathon-Wettkampf in 1:25 h',   'Halbmarathon Hauptwettkampf – Zielzeit 1:25 bis 1:26 h (84% HF max Schnitt)',                           10, 'SATURDAY',  90,  'high',     'race',      21097, @plan_id),
+('Regeneration nach Wettkampf',        'Lockere aktive Regeneration nach dem Halbmarathon – kurzer Spaziergang oder leichtes Dehnen',             10, 'SUNDAY',    30,  'recovery', 'general',       0, @plan_id);
+        </sql>
+    </changeSet>
+
+    <!-- Competition registration: link test user to competition with training plan -->
+    <changeSet id="051-testdata-registration" author="trainingsplan">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM competition_registrations
+                WHERE competition_id = (SELECT id FROM competitions WHERE name = 'Stadtpark Halbmarathon 2026')
+                  AND user_id = (SELECT id FROM users WHERE username = 'testuser')
+            </sqlCheck>
+        </preConditions>
+        <sql>
+INSERT INTO competition_registrations (competition_id, user_id, training_plan_id, registered_at)
+VALUES (
+    (SELECT id FROM competitions WHERE name = 'Stadtpark Halbmarathon 2026'),
+    (SELECT id FROM users WHERE username = 'testuser'),
+    (SELECT id FROM training_plans WHERE name = 'Halbmarathon-Trainingsplan 1:26 h'),
+    NOW()
+);
+        </sql>
+    </changeSet>
+
+    <!-- User training entries: one per training, date calculated from week + day -->
+    <!-- Week 1 starts 2026-03-16 (Monday), competition is 2026-05-23 (Saturday of week 10) -->
+    <changeSet id="051-testdata-user-training-entries" author="trainingsplan">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM user_training_entries
+                WHERE competition_registration_id = (
+                    SELECT cr.id FROM competition_registrations cr
+                    JOIN competitions c ON c.id = cr.competition_id
+                    WHERE c.name = 'Stadtpark Halbmarathon 2026'
+                      AND cr.user_id = (SELECT id FROM users WHERE username = 'testuser')
+                )
+            </sqlCheck>
+        </preConditions>
+        <sql>
+SET @reg_id = (
+    SELECT cr.id FROM competition_registrations cr
+    JOIN competitions c ON c.id = cr.competition_id
+    WHERE c.name = 'Stadtpark Halbmarathon 2026'
+      AND cr.user_id = (SELECT id FROM users WHERE username = 'testuser')
+);
+
+SET @plan_id = (SELECT id FROM training_plans WHERE name = 'Halbmarathon-Trainingsplan 1:26 h');
+
+INSERT INTO user_training_entries (competition_registration_id, training_id, training_date, week_number, completed)
+SELECT
+    @reg_id,
+    t.id,
+    DATE_ADD('2026-03-16', INTERVAL (
+        (t.week_number - 1) * 7 +
+        CASE t.day_of_week
+            WHEN 'MONDAY'    THEN 0
+            WHEN 'TUESDAY'   THEN 1
+            WHEN 'WEDNESDAY' THEN 2
+            WHEN 'THURSDAY'  THEN 3
+            WHEN 'FRIDAY'    THEN 4
+            WHEN 'SATURDAY'  THEN 5
+            WHEN 'SUNDAY'    THEN 6
+        END
+    ) DAY),
+    t.week_number,
+    false
+FROM trainings t
+WHERE t.training_plan_id = @plan_id
+ORDER BY t.week_number, FIELD(t.day_of_week, 'MONDAY','TUESDAY','WEDNESDAY','THURSDAY','FRIDAY','SATURDAY','SUNDAY');
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

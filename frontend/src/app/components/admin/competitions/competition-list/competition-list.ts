@@ -1,7 +1,6 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { catchError, finalize } from 'rxjs/operators';
-import { of } from 'rxjs';
+
 import { CompetitionService, Competition } from '../../../../services/competition.service';
 
 @Component({
@@ -27,10 +26,11 @@ export class CompetitionList implements OnInit {
   load(): void {
     this.isLoading.set(true);
     this.hasError.set(false);
-    this.service.getAll().pipe(
-      catchError(() => { this.hasError.set(true); return of([]); }),
-      finalize(() => this.isLoading.set(false))
-    ).subscribe(data => this.competitions.set(data));
+    this.service.getAll().subscribe({
+      next: (data) => this.competitions.set(data),
+      error: () => { this.hasError.set(true); this.isLoading.set(false); },
+      complete: () => this.isLoading.set(false)
+    });
   }
 
   navigateNew(): void {
@@ -50,11 +50,9 @@ export class CompetitionList implements OnInit {
   }
 
   confirmDelete(id: number): void {
-    this.service.delete(id).pipe(
-      catchError(() => { this.hasError.set(true); return of(void 0); })
-    ).subscribe(() => {
-      this.confirmDeleteId.set(null);
-      this.load();
+    this.service.delete(id).subscribe({
+      next: () => { this.confirmDeleteId.set(null); this.load(); },
+      error: () => this.hasError.set(true)
     });
   }
 

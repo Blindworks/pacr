@@ -3,6 +3,8 @@ package com.trainingsplan.service;
 import com.trainingsplan.entity.*;
 import com.trainingsplan.repository.TrainingRepository;
 import com.trainingsplan.repository.UserTrainingEntryRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,6 +18,8 @@ import java.util.List;
 
 @Service
 public class UserTrainingScheduleService {
+
+    private static final Logger log = LoggerFactory.getLogger(UserTrainingScheduleService.class);
 
     @Autowired
     private UserTrainingEntryRepository entryRepository;
@@ -85,8 +89,15 @@ public class UserTrainingScheduleService {
     /**
      * Returns all UserTrainingEntry records for a user within a date range (calendar view).
      */
+    @Transactional(readOnly = true)
     public List<UserTrainingEntry> getEntriesForUser(Long userId, LocalDate from, LocalDate to) {
-        return entryRepository.findByCompetitionRegistration_User_IdAndTrainingDateBetween(userId, from, to);
+        log.info("getEntriesForUser: userId={}, from={}, to={}", userId, from, to);
+        List<UserTrainingEntry> entries = entryRepository.findCalendarEntriesForUser(userId, from, to);
+        log.info("getEntriesForUser: {} entries found", entries.size());
+        entries.forEach(e -> log.debug("  entry id={} date={} training={}",
+                e.getId(), e.getTrainingDate(),
+                e.getTraining() != null ? e.getTraining().getName() : "NULL"));
+        return entries;
     }
 
     /**
