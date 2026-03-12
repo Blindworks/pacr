@@ -17,6 +17,8 @@ interface Race {
   location: string;
   image: string;
   registered: boolean;
+  trainingPlanId?: number;
+  trainingPlanName?: string;
 }
 
 interface PlanCard {
@@ -50,6 +52,7 @@ export class Competitions implements OnInit {
   activeFilter = 'All Races';
   selectedRace: Race | null = null;
   selectedPlan: PlanCard | null = null;
+  highlightedPlanId: number | null = null;
   selectedTargetTime = 'Sub 3:30';
   isLoading = false;
   hasError = false;
@@ -94,6 +97,7 @@ export class Competitions implements OnInit {
     this.trainingPlanService.getTemplates().subscribe({
       next: (plans) => {
         this.trainingPlans = plans.map(p => this.mapToPlanCard(p));
+        this.syncHighlightedPlan();
         this.isPlansLoading = false;
       },
       error: () => {
@@ -128,8 +132,26 @@ export class Competitions implements OnInit {
       distance: this.typeToDistance(c.type),
       location: c.location ?? '',
       image: this.typeToImage(c.type),
-      registered: c.registered ?? false
+      registered: c.registered ?? false,
+      trainingPlanId: c.trainingPlanId,
+      trainingPlanName: c.trainingPlanName
     };
+  }
+
+  private syncHighlightedPlan(): void {
+    if (!this.selectedRace?.trainingPlanId) {
+      return;
+    }
+
+    const assignedPlan = this.trainingPlans.find(plan => plan.id === this.selectedRace?.trainingPlanId);
+    if (!assignedPlan) {
+      return;
+    }
+
+    this.highlightedPlanId = assignedPlan.id;
+    if (assignedPlan.targetTime) {
+      this.selectedTargetTime = assignedPlan.targetTime;
+    }
   }
 
   private typeToImage(type?: string): string {
@@ -212,15 +234,23 @@ export class Competitions implements OnInit {
   selectRace(race: Race): void {
     this.selectedRace = race;
     this.selectedPlan = null;
+    this.highlightedPlanId = race.trainingPlanId ?? null;
     this.selectedTargetTime = 'Sub 3:30';
     if (this.trainingPlans.length === 0) {
       this.loadTrainingPlans();
+      return;
+    }
+
+    this.syncHighlightedPlan();
+    if (!race.trainingPlanId) {
+      this.highlightedPlanId = null;
     }
   }
 
   deselectRace(): void {
     this.selectedRace = null;
     this.selectedPlan = null;
+    this.highlightedPlanId = null;
   }
 
   setTargetTime(time: string): void {
@@ -228,11 +258,17 @@ export class Competitions implements OnInit {
   }
 
   selectPlan(plan: PlanCard): void {
+    this.highlightedPlanId = plan.id;
     this.selectedPlan = plan;
   }
 
   deselectPlan(): void {
+    this.highlightedPlanId = this.selectedPlan?.id ?? this.selectedRace?.trainingPlanId ?? null;
     this.selectedPlan = null;
+  }
+
+  isPlanSelected(plan: PlanCard): boolean {
+    return this.highlightedPlanId === plan.id;
   }
 
   startTrainingPlan(): void {

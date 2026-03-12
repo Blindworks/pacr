@@ -105,6 +105,9 @@
       <p class="plan-main-subtitle">
         Customize your journey to the finish line. Choose a target time to see tailored plans that fit your goals and schedule.
       </p>
+      <p class="plan-main-hint" *ngIf="selectedRace.trainingPlanId">
+        Your currently assigned training plan is already highlighted below.
+      </p>
     </div>
 
     <!-- Target Time Filter -->
@@ -129,8 +132,13 @@
       <div
         *ngFor="let plan of filteredPlans"
         class="plan-card"
-        [class.plan-card--recommended]="plan.recommended">
+        [class.plan-card--recommended]="plan.recommended"
+        [class.plan-card--selected]="isPlanSelected(plan)">
         <div class="plan-card__recommended-badge" *ngIf="plan.recommended">RECOMMENDED</div>
+        <div class="plan-card__selected-badge" *ngIf="isPlanSelected(plan)">
+          <span class="material-symbols-outlined">check_circle</span>
+          Selected
+        </div>
         <div class="plan-card__glow"></div>
 
         <div class="plan-card__header">
@@ -167,7 +175,12 @@
           </div>
         </div>
 
-        <button class="plan-card__select-btn" (click)="selectPlan(plan)">SELECT PLAN</button>
+        <button
+          class="plan-card__select-btn"
+          [class.plan-card__select-btn--selected]="isPlanSelected(plan)"
+          (click)="selectPlan(plan)">
+          {{ isPlanSelected(plan) ? 'SELECTED PLAN' : 'SELECT PLAN' }}
+        </button>
       </div>
     </section>
   </div>
