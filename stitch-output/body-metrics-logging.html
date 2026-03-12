@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>PACR Performance - Advanced Body Metrics Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#b9f20d",
+                        "background-light": "#f8f8f5",
+                        "background-dark": "#0a0b05",
+                        "surface-dark": "#161a0a",
+                        "border-dark": "#2d3418",
+                        "card-dark": "#1c210e",
+                    },
+                    fontFamily: {
+                        "display": ["Lexend"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "2xl": "1rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style type="text/tailwindcss">
+        body {
+            font-family: 'Lexend', sans-serif;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #2d3418;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="bg-background-dark text-slate-100 min-h-screen overflow-hidden">
+<div class="flex h-screen">
+<aside class="w-64 flex flex-col border-r border-border-dark bg-background-dark p-6 shrink-0 z-20">
+<div class="flex items-center gap-3 mb-10">
+<div class="w-10 h-10 rounded-full bg-cover bg-center border-2 border-primary" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuA2C-p1HI6awDmJu-C-svV54hFtNxzRPqCa38BAcIm3a16kYL3HntkSO5_He8LT78FlJVtW9MID2kh7tibBRBb96qQn2PezDsiRlOkyt4A2aaVKyski6r4VwrsDc6xWJcae9vkAc3ldzc-MbAjqrP1qZX6Mtlm1JadBwB9EZs4B7K1ZhSHl7HPWq8hWC80PHtW155eNoHf7Gu6hPHZiByDBI4xxKnaHuQ9m2Nos4KO3QJg7iYlqOJD9mpvvFgpv9ZcKD2xOGUejRNE')"></div>
+<div class="flex flex-col">
+<h1 class="text-slate-100 text-sm font-bold leading-tight">PACR Performance</h1>
+<p class="text-primary text-xs font-medium uppercase tracking-wider">Elite Athlete</p>
+</div>
+</div>
+<nav class="flex flex-col gap-1 flex-1">
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-xl">grid_view</span>
+<span class="text-sm font-medium">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-primary/10 text-primary border border-primary/20" href="#">
+<span class="material-symbols-outlined text-xl">monitoring</span>
+<span class="text-sm font-medium">Body Metrics</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-xl">fitness_center</span>
+<span class="text-sm font-medium">Workouts</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-xl">nutrition</span>
+<span class="text-sm font-medium">Nutrition</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-xl">settings</span>
+<span class="text-sm font-medium">Settings</span>
+</a>
+</nav>
+<div class="mt-auto p-4 bg-surface-dark rounded-xl border border-border-dark">
+<p class="text-[10px] text-slate-500 uppercase font-bold mb-2 tracking-widest text-center">Cloud Sync</p>
+<div class="flex items-center justify-between">
+<span class="text-xs text-slate-300">Last: 2m ago</span>
+<span class="w-2 h-2 rounded-full bg-primary shadow-[0_0_8px_rgba(185,242,13,0.6)]"></span>
+</div>
+</div>
+</aside>
+<main class="flex-1 flex flex-col h-full bg-background-dark relative overflow-hidden">
+<header class="h-20 border-b border-border-dark flex items-center justify-between px-8 shrink-0 bg-background-dark/80 backdrop-blur-md z-10">
+<div class="flex items-center gap-4">
+<div class="p-2 bg-surface-dark border border-border-dark rounded-lg">
+<span class="material-symbols-outlined text-primary">calendar_today</span>
+</div>
+<div>
+<h2 class="text-lg font-bold text-slate-100">Logging Session</h2>
+<p class="text-xs text-slate-400 font-medium">Monday, Oct 23, 2023 • 07:15 AM</p>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="px-5 py-2 text-sm font-bold text-slate-400 hover:text-slate-100 transition-colors">Discard</button>
+<button class="px-6 py-2.5 bg-primary hover:bg-primary/90 text-background-dark font-black text-sm rounded-lg shadow-lg shadow-primary/10 flex items-center gap-2 transition-transform hover:scale-[1.02] active:scale-[0.98]">
+<span class="material-symbols-outlined text-lg">save</span>
+                        SAVE METRICS
+                    </button>
+</div>
+</header>
+<div class="flex-1 flex overflow-hidden">
+<div class="flex-1 overflow-y-auto custom-scrollbar p-8">
+<div class="grid grid-cols-4 gap-4 mb-10">
+<div class="bg-surface-dark border border-border-dark p-4 rounded-xl">
+<p class="text-[10px] uppercase tracking-wider font-bold text-slate-500 mb-1">Previous Weight</p>
+<div class="flex items-baseline gap-2">
+<span class="text-xl font-display font-black text-slate-100">78.4</span>
+<span class="text-[10px] font-bold text-slate-400">KG</span>
+<span class="text-[10px] font-bold text-red-400 ml-auto flex items-center gap-0.5">
+<span class="material-symbols-outlined text-xs">trending_up</span>+0.2
+                                </span>
+</div>
+</div>
+<div class="bg-surface-dark border border-border-dark p-4 rounded-xl">
+<p class="text-[10px] uppercase tracking-wider font-bold text-slate-500 mb-1">Body Fat</p>
+<div class="flex items-baseline gap-2">
+<span class="text-xl font-display font-black text-slate-100">12.8</span>
+<span class="text-[10px] font-bold text-slate-400">%</span>
+<span class="text-[10px] font-bold text-primary ml-auto flex items-center gap-0.5">
+<span class="material-symbols-outlined text-xs">trending_down</span>-0.1
+                                </span>
+</div>
+</div>
+<div class="bg-surface-dark border border-border-dark p-4 rounded-xl">
+<p class="text-[10px] uppercase tracking-wider font-bold text-slate-500 mb-1">Muscle Mass</p>
+<div class="flex items-baseline gap-2">
+<span class="text-xl font-display font-black text-slate-100">64.2</span>
+<span class="text-[10px] font-bold text-slate-400">KG</span>
+<span class="text-[10px] font-bold text-slate-500 ml-auto">Stable</span>
+</div>
+</div>
+<div class="bg-surface-dark border border-border-dark p-4 rounded-xl border-dashed border-primary/30">
+<p class="text-[10px] uppercase tracking-wider font-bold text-primary mb-1">Session Target</p>
+<div class="flex items-baseline gap-2">
+<span class="text-xl font-display font-black text-primary/80">77.5</span>
+<span class="text-[10px] font-bold text-primary/60">KG</span>
+</div>
+</div>
+</div>
+<div class="max-w-4xl">
+<h3 class="text-sm font-black text-primary uppercase tracking-[0.2em] mb-6 flex items-center gap-3">
+<span class="h-px flex-1 bg-border-dark"></span>
+                            New Log Data
+                            <span class="h-px flex-1 bg-border-dark"></span>
+</h3>
+<form class="space-y-8">
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+<div class="space-y-2">
+<label class="block text-xs font-bold text-slate-400 uppercase tracking-wide">Weight</label>
+<div class="relative group">
+<input class="w-full bg-card-dark border border-border-dark rounded-xl px-4 py-4 text-slate-100 text-xl font-display focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-all group-hover:bg-surface-dark" placeholder="00.0" step="0.1" type="number"/>
+<span class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 font-bold text-[10px]">KG</span>
+</div>
+<p class="text-[10px] text-slate-500 italic">Target range: 77-79kg</p>
+</div>
+<div class="space-y-2">
+<label class="block text-xs font-bold text-slate-400 uppercase tracking-wide">Body Fat %</label>
+<div class="relative group">
+<input class="w-full bg-card-dark border border-border-dark rounded-xl px-4 py-4 text-slate-100 text-xl font-display focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-all group-hover:bg-surface-dark" placeholder="00.0" step="0.1" type="number"/>
+<span class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 font-bold text-[10px]">%</span>
+</div>
+<p class="text-[10px] text-slate-500 italic">Optimal athletic: 10-14%</p>
+</div>
+<div class="space-y-2">
+<label class="block text-xs font-bold text-slate-400 uppercase tracking-wide">Muscle Mass</label>
+<div class="relative group">
+<input class="w-full bg-card-dark border border-border-dark rounded-xl px-4 py-4 text-slate-100 text-xl font-display focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-all group-hover:bg-surface-dark" placeholder="00.0" step="0.1" type="number"/>
+<span class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 font-bold text-[10px]">KG</span>
+</div>
+<p class="text-[10px] text-slate-500 italic">Measured via BIA technology</p>
+</div>
+<div class="space-y-2">
+<label class="block text-xs font-bold text-slate-400 uppercase tracking-wide">Waist Circumference</label>
+<div class="relative group">
+<input class="w-full bg-card-dark border border-border-dark rounded-xl px-4 py-4 text-slate-100 text-xl font-display focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-all group-hover:bg-surface-dark" placeholder="00.0" step="0.5" type="number"/>
+<span class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 font-bold text-[10px]">CM</span>
+</div>
+<p class="text-[10px] text-slate-500 italic">Measure at narrowest point</p>
+</div>
+<div class="space-y-2">
+<label class="block text-xs font-bold text-slate-400 uppercase tracking-wide">Resting Heart Rate</label>
+<div class="relative group">
+<input class="w-full bg-card-dark border border-border-dark rounded-xl px-4 py-4 text-slate-100 text-xl font-display focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-all group-hover:bg-surface-dark" placeholder="00" type="number"/>
+<span class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 font-bold text-[10px]">BPM</span>
+</div>
+<p class="text-[10px] text-slate-500 italic">Best measured upon waking</p>
+</div>
+<div class="space-y-2">
+<label class="block text-xs font-bold text-slate-400 uppercase tracking-wide">Blood Pressure</label>
+<div class="relative group">
+<input class="w-full bg-card-dark border border-border-dark rounded-xl px-4 py-4 text-slate-100 text-xl font-display focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-all group-hover:bg-surface-dark" placeholder="120/80" type="text"/>
+<span class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 font-bold text-[10px]">mmHg</span>
+</div>
+<p class="text-[10px] text-slate-500 italic">Systolic / Diastolic</p>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4">
+<div class="space-y-2">
+<label class="block text-xs font-bold text-slate-400 uppercase tracking-wide">Water Percentage</label>
+<div class="relative group">
+<input class="w-full bg-card-dark/40 border border-border-dark rounded-xl px-4 py-3 text-slate-100 font-display focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-all" placeholder="55.0" step="0.1" type="number"/>
+<span class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 font-bold text-[10px]">%</span>
+</div>
+</div>
+<div class="space-y-2">
+<label class="block text-xs font-bold text-slate-400 uppercase tracking-wide">Bone Mass</label>
+<div class="relative group">
+<input class="w-full bg-card-dark/40 border border-border-dark rounded-xl px-4 py-3 text-slate-100 font-display focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-all" placeholder="3.2" step="0.1" type="number"/>
+<span class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 font-bold text-[10px]">KG</span>
+</div>
+</div>
+<div class="space-y-2">
+<label class="block text-xs font-bold text-slate-400 uppercase tracking-wide">Metabolic Age</label>
+<div class="relative group">
+<input class="w-full bg-card-dark/40 border border-border-dark rounded-xl px-4 py-3 text-slate-100 font-display focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-all" placeholder="24" type="number"/>
+<span class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 font-bold text-[10px]">YRS</span>
+</div>
+</div>
+</div>
+<div class="space-y-2 pt-4">
+<label class="block text-xs font-bold text-slate-400 uppercase tracking-wide">Contextual Notes</label>
+<textarea class="w-full bg-card-dark border border-border-dark rounded-xl px-4 py-4 text-slate-100 focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-all resize-none h-32" placeholder="Record physical state, recovery quality, or any variables affecting these readings..."></textarea>
+</div>
+</form>
+</div>
+</div>
+<aside class="w-80 border-l border-border-dark bg-surface-dark/30 flex flex-col shrink-0">
+<div class="p-6 border-b border-border-dark">
+<div class="flex items-center justify-between mb-4">
+<h3 class="font-bold text-slate-100 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-lg">history</span>
+                                History
+                            </h3>
+<button class="text-xs font-bold text-primary hover:underline">View All</button>
+</div>
+<div class="bg-card-dark p-4 rounded-xl border border-border-dark/50 mb-6">
+<p class="text-[10px] text-slate-500 uppercase font-black mb-3">7-Day Weight Trend</p>
+<div class="h-16 flex items-end gap-1 mb-2">
+<div class="flex-1 bg-border-dark h-[60%] rounded-sm"></div>
+<div class="flex-1 bg-border-dark h-[55%] rounded-sm"></div>
+<div class="flex-1 bg-primary h-[70%] rounded-sm"></div>
+<div class="flex-1 bg-primary/80 h-[65%] rounded-sm"></div>
+<div class="flex-1 bg-primary/60 h-[62%] rounded-sm"></div>
+<div class="flex-1 bg-primary/40 h-[58%] rounded-sm"></div>
+<div class="flex-1 bg-primary/20 h-[50%] rounded-sm"></div>
+</div>
+<div class="flex justify-between text-[8px] font-bold text-slate-500">
+<span>16 OCT</span>
+<span>TODAY</span>
+</div>
+</div>
+<div class="space-y-3">
+<div class="p-3 bg-card-dark/40 rounded-lg border border-border-dark/30 hover:border-primary/30 transition-colors cursor-pointer group">
+<div class="flex justify-between items-start mb-2">
+<span class="text-xs font-bold text-slate-300">Oct 22, 2023</span>
+<span class="text-[10px] text-slate-500">07:22 AM</span>
+</div>
+<div class="flex items-center gap-3">
+<div class="text-[10px]">
+<span class="text-slate-500 uppercase">WT:</span>
+<span class="text-slate-100 font-bold ml-1">78.2kg</span>
+</div>
+<div class="text-[10px]">
+<span class="text-slate-500 uppercase">BF:</span>
+<span class="text-slate-100 font-bold ml-1">12.9%</span>
+</div>
+</div>
+</div>
+<div class="p-3 bg-card-dark/40 rounded-lg border border-border-dark/30 hover:border-primary/30 transition-colors cursor-pointer group">
+<div class="flex justify-between items-start mb-2">
+<span class="text-xs font-bold text-slate-300">Oct 21, 2023</span>
+<span class="text-[10px] text-slate-500">07:45 AM</span>
+</div>
+<div class="flex items-center gap-3">
+<div class="text-[10px]">
+<span class="text-slate-500 uppercase">WT:</span>
+<span class="text-slate-100 font-bold ml-1">78.5kg</span>
+</div>
+<div class="text-[10px]">
+<span class="text-slate-500 uppercase">BF:</span>
+<span class="text-slate-100 font-bold ml-1">13.0%</span>
+</div>
+</div>
+</div>
+<div class="p-3 bg-card-dark/40 rounded-lg border border-border-dark/30 hover:border-primary/30 transition-colors cursor-pointer group">
+<div class="flex justify-between items-start mb-2">
+<span class="text-xs font-bold text-slate-300">Oct 20, 2023</span>
+<span class="text-[10px] text-slate-500">07:10 AM</span>
+</div>
+<div class="flex items-center gap-3">
+<div class="text-[10px]">
+<span class="text-slate-500 uppercase">WT:</span>
+<span class="text-slate-100 font-bold ml-1">77.9kg</span>
+</div>
+<div class="text-[10px]">
+<span class="text-slate-500 uppercase">BF:</span>
+<span class="text-slate-100 font-bold ml-1">12.7%</span>
+</div>
+</div>
+</div>
+<div class="p-3 bg-card-dark/40 rounded-lg border border-border-dark/30 hover:border-primary/30 transition-colors cursor-pointer group">
+<div class="flex justify-between items-start mb-2">
+<span class="text-xs font-bold text-slate-300">Oct 19, 2023</span>
+<span class="text-[10px] text-slate-500">08:00 AM</span>
+</div>
+<div class="flex items-center gap-3">
+<div class="text-[10px]">
+<span class="text-slate-500 uppercase">WT:</span>
+<span class="text-slate-100 font-bold ml-1">78.1kg</span>
+</div>
+<div class="text-[10px]">
+<span class="text-slate-500 uppercase">BF:</span>
+<span class="text-slate-100 font-bold ml-1">12.8%</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="p-6 mt-auto">
+<div class="bg-primary/5 border border-primary/20 rounded-xl p-4">
+<h4 class="text-[10px] font-black text-primary uppercase tracking-widest mb-2 flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">lightbulb</span>
+                                Insight
+                            </h4>
+<p class="text-[11px] text-slate-300 leading-relaxed">
+                                Your weight has fluctuated by <span class="text-primary font-bold">0.6kg</span> over 7 days. Muscle mass remains consistent, suggesting current caloric intake is at maintenance.
+                            </p>
+</div>
+</div>
+</aside>
+</div>
+</main>
+</div>
+
+</body></html>

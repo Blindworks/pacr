@@ -1,0 +1,144 @@
+<div class="body-measures-screen">
+  <header class="page-header">
+    <div class="page-header__titles">
+      <h2>Body Measures</h2>
+      <p>Last updated: Today, 08:45 AM</p>
+    </div>
+
+    <div class="page-header__actions">
+      <label class="search-box">
+        <span class="material-symbols-outlined">search</span>
+        <input [(ngModel)]="search" name="search" type="text" placeholder="Search logs...">
+      </label>
+
+      <button type="button" class="primary-action" (click)="goToLogNewData()">
+        <span class="material-symbols-outlined">add_circle</span>
+        Log New Data
+      </button>
+    </div>
+  </header>
+
+  <div class="page-content">
+    <section class="summary-grid">
+      <article class="summary-card" *ngFor="let card of summaryCards">
+        <span class="summary-card__label">{{ card.label }}</span>
+        <div class="summary-card__row">
+          <h3>{{ card.value }} <span>{{ card.unit }}</span></h3>
+          <div class="summary-card__change"
+            [class.summary-card__change--up]="card.trend === 'up'"
+            [class.summary-card__change--down]="card.trend === 'down'"
+            [class.summary-card__change--flat]="card.trend === 'flat'">
+            <span class="material-symbols-outlined">
+              {{ card.trend === 'up' ? 'arrow_upward' : card.trend === 'down' ? 'arrow_downward' : 'remove' }}
+            </span>
+            {{ card.change }}
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <div class="content-grid">
+      <div class="main-column">
+        <section class="panel">
+          <div class="panel__header">
+            <div>
+              <h4>Performance Trends</h4>
+              <p>Weight &amp; Body Fat Analysis</p>
+            </div>
+            <div class="legend">
+              <div class="legend__item">
+                <span class="legend__dot legend__dot--primary"></span>
+                <span>Weight</span>
+              </div>
+              <div class="legend__item">
+                <span class="legend__dot legend__dot--muted"></span>
+                <span>Body Fat</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="chart-area">
+            <svg viewBox="0 0 100 40" preserveAspectRatio="none">
+              <line x1="0" y1="10" x2="100" y2="10"></line>
+              <line x1="0" y1="20" x2="100" y2="20"></line>
+              <line x1="0" y1="30" x2="100" y2="30"></line>
+              <path class="chart-area__line chart-area__line--primary" d="M0,35 Q10,32 20,34 T40,28 T60,25 T80,20 T100,18"></path>
+              <path class="chart-area__fill" d="M0,35 Q10,32 20,34 T40,28 T60,25 T80,20 T100,18 L100,40 L0,40 Z"></path>
+              <path class="chart-area__line chart-area__line--secondary" d="M0,25 Q15,28 30,24 T60,26 T90,22 T100,23"></path>
+            </svg>
+
+            <div class="chart-axis">
+              <span>OCT</span>
+              <span>NOV</span>
+              <span>DEC</span>
+              <span>TODAY</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="detail-grid">
+          <article class="detail-card" *ngFor="let metric of detailMetrics">
+            <div class="detail-card__top">
+              <span class="material-symbols-outlined">{{ metric.icon }}</span>
+              <p>{{ metric.label }}</p>
+            </div>
+            <div class="detail-card__row">
+              <strong>{{ metric.value }}</strong>
+              <span
+                [class.detail-card__change--up]="metric.trend === 'up'"
+                [class.detail-card__change--down]="metric.trend === 'down'"
+                [class.detail-card__change--flat]="metric.trend === 'flat'">
+                {{ metric.change }}
+              </span>
+            </div>
+          </article>
+        </section>
+      </div>
+
+      <aside class="side-column">
+        <section class="insight-card">
+          <span class="material-symbols-outlined insight-card__bg">lightbulb</span>
+          <div class="insight-card__header">
+            <span class="material-symbols-outlined">psychology</span>
+            <h4>Smart Insight</h4>
+          </div>
+          <p>
+            Your muscle mass has increased by 0.5kg this month, indicating effective strength
+            training. Maintain your protein intake to support this growth.
+          </p>
+          <div class="insight-card__footer">
+            <span>AI ENGINE V2.4</span>
+            <button type="button">See plan</button>
+          </div>
+        </section>
+
+        <section class="history-panel">
+          <div class="history-panel__header">
+            <h4>Recent History</h4>
+          </div>
+
+          <div class="history-list">
+            <article class="history-item" *ngFor="let item of historyItems">
+              <div class="history-item__date">
+                <span>{{ item.date }}</span>
+                <small>{{ item.time }}</small>
+              </div>
+              <div class="history-item__metrics">
+                <div>
+                  <span>{{ item.weight }}</span>
+                  <small>Weight</small>
+                </div>
+                <div>
+                  <span>{{ item.bodyFat }}</span>
+                  <small>Body Fat</small>
+                </div>
+              </div>
+            </article>
+          </div>
+
+          <button type="button" class="history-panel__footer">View Full History</button>
+        </section>
+      </aside>
+    </div>
+  </div>
+</div>

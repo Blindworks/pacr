@@ -297,8 +297,8 @@ export class TrainingPlan implements OnInit {
     });
   }
 
-  startWorkout(): void {
-    // TODO: start structured workout flow
+  showWorkout(session: TrainingSession): void {
+    this.viewDetail(session);
   }
 
   viewDetail(session: TrainingSession): void {

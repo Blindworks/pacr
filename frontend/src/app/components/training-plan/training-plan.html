@@ -94,9 +94,9 @@
                           Skip
                         </button>
                         @if (session.status === 'today') {
-                          <button class="tp-start-btn" (click)="startWorkout()">
+                          <button class="tp-start-btn" (click)="showWorkout(session)">
                             <span class="material-symbols-outlined">play_arrow</span>
-                            Start Workout
+                            Show workout
                           </button>
                         }
                       </div>
