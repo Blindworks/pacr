@@ -79,11 +79,12 @@ $text-muted: #8b949e;
 }
 
 .race-card {
+  position: relative;
   border-radius: 0.75rem;
   background: $card-bg;
   border: 1px solid #30363d;
   overflow: hidden;
-  transition: border-color 0.2s;
+  transition: border-color 0.2s, box-shadow 0.2s;
   cursor: pointer;
 
   &:hover {
@@ -91,6 +92,32 @@ $text-muted: #8b949e;
 
     .race-image {
       transform: scale(1.03);
+    }
+  }
+
+  &--selected {
+    border: 2px solid $primary;
+    box-shadow: 0 0 24px rgba($primary, 0.12);
+  }
+
+  &__check-badge {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    z-index: 10;
+    background: $primary;
+    color: $bg-dark;
+    border-radius: 9999px;
+    width: 2rem;
+    height: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+
+    .material-symbols-outlined {
+      font-size: 1.125rem;
+      font-variation-settings: 'wght' 700;
     }
   }
 
@@ -188,9 +215,28 @@ $text-muted: #8b949e;
     font-weight: 700;
     cursor: pointer;
     transition: filter 0.15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.375rem;
+
+    .material-symbols-outlined {
+      font-size: 1rem;
+      line-height: 1;
+    }
 
     &:hover {
       filter: brightness(1.1);
+    }
+
+    &--selected {
+      background: #21262d;
+      color: $primary;
+      cursor: default;
+
+      &:hover {
+        filter: none;
+      }
     }
   }
 

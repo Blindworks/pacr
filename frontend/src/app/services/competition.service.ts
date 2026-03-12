@@ -9,6 +9,9 @@ export interface Competition {
   description?: string;
   type?: string;
   location?: string;
+  registered?: boolean;
+  trainingPlanId?: number;
+  trainingPlanName?: string;
 }
 
 @Injectable({ providedIn: 'root' })

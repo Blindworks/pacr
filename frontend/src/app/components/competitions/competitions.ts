@@ -16,6 +16,7 @@ interface Race {
   distance: string;
   location: string;
   image: string;
+  registered: boolean;
 }
 
 interface PlanCard {
@@ -126,7 +127,8 @@ export class Competitions implements OnInit {
       name: c.name,
       distance: this.typeToDistance(c.type),
       location: c.location ?? '',
-      image: this.typeToImage(c.type)
+      image: this.typeToImage(c.type),
+      registered: c.registered ?? false
     };
   }
 
