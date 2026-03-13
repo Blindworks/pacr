@@ -18,4 +18,6 @@ public interface CycleEntryRepository extends JpaRepository<CycleEntry, Long> {
     Optional<CycleEntry> findByIdAndUserId(Long id, Long userId);
 
     Optional<CycleEntry> findByUserIdAndEntryDate(Long userId, LocalDate date);
+
+    boolean existsByUserIdAndEntryDateGreaterThanEqualAndFlowIntensityIsNotNull(Long userId, LocalDate date);
 }

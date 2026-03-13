@@ -1,0 +1,143 @@
+<div class="settings-page">
+
+  <!-- Header -->
+  <header class="page-header">
+    <button class="back-btn" (click)="goBack()">
+      <span class="material-symbols-outlined">arrow_back</span>
+    </button>
+    <div>
+      <h2>Zykluseinstellungen</h2>
+      <p class="subtitle">Konfiguriere deine Zyklus-Parameter</p>
+    </div>
+  </header>
+
+  <div class="grid">
+
+    <!-- Settings Form -->
+    <section class="card form-card">
+      <h4 class="card-title">
+        <span class="material-symbols-outlined card-title-icon">settings</span>
+        Zyklus konfigurieren
+      </h4>
+
+      <div class="form-group">
+        <label class="form-label">Erster Tag der letzten Periode</label>
+        <input
+          class="form-input"
+          type="date"
+          [(ngModel)]="firstDayOfLastPeriod"
+          [max]="'today'"
+        />
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">
+          Durchschnittliche Zykluslänge
+          <span class="form-value">{{ averageCycleLength }} Tage</span>
+        </label>
+        <input
+          class="form-range"
+          type="range"
+          min="21"
+          max="40"
+          [(ngModel)]="averageCycleLength"
+        />
+        <div class="range-labels">
+          <span>21</span>
+          <span>40</span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Durchschnittliche Periodendauer</label>
+        <select class="form-select" [(ngModel)]="averagePeriodDuration">
+          <option *ngFor="let opt of periodDurationOptions" [value]="opt.value">{{ opt.label }}</option>
+        </select>
+      </div>
+
+      <div class="form-actions">
+        <div class="feedback-msg feedback-msg--success" *ngIf="saveSuccess">
+          <span class="material-symbols-outlined">check_circle</span>
+          Gespeichert! Weiterleitung...
+        </div>
+        <div class="feedback-msg feedback-msg--error" *ngIf="saveError">
+          <span class="material-symbols-outlined">error</span>
+          Fehler beim Speichern.
+        </div>
+        <button class="save-btn" (click)="save()" [disabled]="!firstDayOfLastPeriod">
+          <span class="material-symbols-outlined">save</span>
+          Einstellungen speichern
+        </button>
+      </div>
+    </section>
+
+    <!-- Cycle Projection -->
+    <section class="card projection-card">
+      <h4 class="card-title">
+        <span class="material-symbols-outlined card-title-icon">timeline</span>
+        Zyklusvorschau ({{ averageCycleLength }} Tage)
+      </h4>
+
+      <div class="phase-projection-bar">
+        <div
+          *ngFor="let seg of phaseBarSegments"
+          class="phase-seg"
+          [ngClass]="'phase-bg-' + seg.phase"
+          [style.width.%]="seg.width"
+          [title]="phaseLabels[seg.phase]"
+        ></div>
+      </div>
+
+      <div class="projection-legend">
+        <div class="legend-item">
+          <span class="legend-dot phase-menstrual"></span>
+          Menstrual (1–{{ averagePeriodDuration }})
+        </div>
+        <div class="legend-item">
+          <span class="legend-dot phase-follicular"></span>
+          Follikulär
+        </div>
+        <div class="legend-item">
+          <span class="legend-dot phase-ovulation"></span>
+          Ovulation
+        </div>
+        <div class="legend-item">
+          <span class="legend-dot phase-luteal"></span>
+          Luteal
+        </div>
+      </div>
+    </section>
+
+    <!-- Current Status (only if status loaded) -->
+    <section class="card status-card" *ngIf="status">
+      <h4 class="card-title">
+        <span class="material-symbols-outlined card-title-icon">calendar_today</span>
+        Aktueller Status
+      </h4>
+
+      <div class="status-grid">
+        <div class="status-item">
+          <p class="status-label">Aktuelle Phase</p>
+          <p class="status-value" [ngClass]="'phase-' + status.currentPhase">
+            {{ phaseLabels[status.currentPhase] }}
+          </p>
+        </div>
+        <div class="status-item">
+          <p class="status-label">Zyklustag</p>
+          <p class="status-value">{{ status.currentDay }} / {{ status.cycleLength }}</p>
+        </div>
+        <div class="status-item">
+          <p class="status-label">Verbleibende Tage</p>
+          <p class="status-value">{{ status.daysRemainingInPhase }}</p>
+        </div>
+        <div class="status-item">
+          <p class="status-label">Nächste Phase</p>
+          <p class="status-value" [ngClass]="'phase-' + status.nextPhase">
+            {{ phaseLabels[status.nextPhase] }}
+          </p>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</div>

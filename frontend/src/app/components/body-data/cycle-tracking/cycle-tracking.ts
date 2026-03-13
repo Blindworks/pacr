@@ -1,12 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { CycleSettingsService } from '../../../services/cycle-settings.service';
+import { CycleEntryService } from '../../../services/cycle-entry.service';
 
 export type CyclePhase = 'menstrual' | 'follicular' | 'ovulation' | 'luteal';
 
 export interface CycleDay {
-  day: number;
-  phase: CyclePhase;
+  day: number | null;
+  phase: CyclePhase | null;
   isToday: boolean;
 }
 
@@ -18,10 +20,20 @@ export interface CycleDay {
   styleUrl: './cycle-tracking.scss'
 })
 export class CycleTracking implements OnInit {
-  constructor(private router: Router) {}
+  private readonly today = new Date();
+
+  constructor(
+    private router: Router,
+    private cycleSettingsService: CycleSettingsService,
+    private cycleEntryService: CycleEntryService
+  ) {}
 
   goToLogSymptoms(): void {
     this.router.navigate(['/body-data/log-symptoms']);
+  }
+
+  goToCycleSettings(): void {
+    this.router.navigate(['/body-data/cycle-settings']);
   }
 
   currentPhase: CyclePhase = 'follicular';
@@ -29,9 +41,9 @@ export class CycleTracking implements OnInit {
   cycleLength = 28;
   daysRemaining = 4;
   nextPhase: CyclePhase = 'ovulation';
+  showNewCyclePrompt = false;
 
-  currentMonth = 'March 2026';
-
+  currentMonth = '';
   calendarDays: CycleDay[] = [];
 
   readonly phaseLabels: Record<CyclePhase, string> = {
@@ -78,29 +90,111 @@ export class CycleTracking implements OnInit {
   }
 
   ngOnInit(): void {
-    this.buildCalendar();
+    this.currentMonth = new Intl.DateTimeFormat('en-US', {
+      month: 'long',
+      year: 'numeric',
+    }).format(this.today);
+
+    this.cycleSettingsService.getStatus().subscribe({
+      next: (status) => {
+        this.currentPhase = status.currentPhase as CyclePhase;
+        this.currentDay = status.currentDay;
+        this.cycleLength = status.cycleLength;
+        this.daysRemaining = status.daysRemainingInPhase;
+        this.nextPhase = status.nextPhase as CyclePhase;
+        this.showNewCyclePrompt = status.shouldShowNewCyclePrompt;
+        this.buildCalendar();
+      },
+      error: () => {
+        // No settings yet — use defaults and show no prompt
+        this.buildCalendar();
+      }
+    });
+  }
+
+  confirmNewCycle(): void {
+    const today = this.today.toISOString().split('T')[0];
+    this.cycleEntryService.create({
+      entryDate: today,
+      flowIntensity: 'MEDIUM',
+    }).subscribe({
+      next: () => {
+        this.showNewCyclePrompt = false;
+        // Reload status to reflect the new cycle
+        this.cycleSettingsService.getStatus().subscribe({
+          next: (status) => {
+            this.currentPhase = status.currentPhase as CyclePhase;
+            this.currentDay = status.currentDay;
+            this.cycleLength = status.cycleLength;
+            this.daysRemaining = status.daysRemainingInPhase;
+            this.nextPhase = status.nextPhase as CyclePhase;
+            this.buildCalendar();
+          },
+          error: () => {}
+        });
+      },
+      error: () => {}
+    });
+  }
+
+  dismissNewCyclePrompt(): void {
+    this.showNewCyclePrompt = false;
+    sessionStorage.setItem('newCyclePromptDismissed', this.today.toISOString().split('T')[0]);
   }
 
   private buildCalendar(): void {
-    const phases: CyclePhase[] = [
-      'menstrual', 'menstrual', 'menstrual',
-      'follicular', 'follicular', 'follicular', 'follicular',
-      'follicular', 'follicular', 'follicular', 'follicular',
-      'ovulation', 'ovulation',
-      'luteal', 'luteal', 'luteal', 'luteal', 'luteal',
-      'luteal', 'luteal',
-    ];
+    this.calendarDays = [];
 
-    for (let i = 0; i < 21; i++) {
+    const year = this.today.getFullYear();
+    const month = this.today.getMonth();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const firstDayOfMonth = new Date(year, month, 1);
+    const leadingEmptyDays = (firstDayOfMonth.getDay() + 6) % 7;
+
+    for (let i = 0; i < leadingEmptyDays; i++) {
       this.calendarDays.push({
-        day: i + 1,
-        phase: phases[i] ?? 'luteal',
-        isToday: i + 1 === this.currentDay,
+        day: null,
+        phase: null,
+        isToday: false,
+      });
+    }
+
+    for (let day = 1; day <= daysInMonth; day++) {
+      const dayOffset = day - this.today.getDate();
+
+      this.calendarDays.push({
+        day,
+        phase: this.getPhaseForCycleDay(this.getCycleDayForOffset(dayOffset)),
+        isToday: day === this.today.getDate(),
       });
     }
   }
 
-  phaseClass(phase: CyclePhase): string {
+  phaseClass(phase: CyclePhase | null): string {
+    if (!phase) {
+      return '';
+    }
+
     return `phase-${phase}`;
+  }
+
+  private getCycleDayForOffset(dayOffset: number): number {
+    return ((this.currentDay - 1 + dayOffset) % this.cycleLength + this.cycleLength) % this.cycleLength + 1;
+  }
+
+  private getPhaseForCycleDay(cycleDay: number): CyclePhase {
+    if (cycleDay <= 3) {
+      return 'menstrual';
+    }
+
+    if (cycleDay <= 11) {
+      return 'follicular';
+    }
+
+    if (cycleDay <= 13) {
+      return 'ovulation';
+    }
+
+    return 'luteal';
   }
 }

@@ -55,5 +55,6 @@
     <include file="db/changelog/changes/049-extend-training-detail.xml"/>
     <include file="db/changelog/changes/050-update-training-step-measurements.xml"/>
     <include file="db/changelog/changes/051-halbmarathon-testdata.xml"/>
+    <include file="db/changelog/changes/052-add-cycle-settings.xml"/>
 
 </databaseChangeLog>

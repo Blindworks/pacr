@@ -89,6 +89,11 @@ export const routes: Routes = [
     loadComponent: () => import('./components/body-data/body-metrics/body-metrics').then(m => m.BodyMetrics)
   },
   {
+    path: 'body-data/cycle-settings',
+    canActivate: [authGuard],
+    loadComponent: () => import('./components/body-data/cycle-settings/cycle-settings').then(m => m.CycleSettingsComponent)
+  },
+  {
     path: 'body-data/log-body-metrics',
     canActivate: [authGuard],
     loadComponent: () => import('./components/body-data/log-body-metrics/log-body-metrics').then(m => m.LogBodyMetrics)
