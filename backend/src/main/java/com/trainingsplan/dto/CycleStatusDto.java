@@ -8,17 +8,20 @@ public class CycleStatusDto {
     private int daysRemainingInPhase;
     private String nextPhase;
     private boolean shouldShowNewCyclePrompt;
+    private int periodDuration;
 
     public CycleStatusDto() {}
 
     public CycleStatusDto(String currentPhase, int currentDay, int cycleLength,
-                          int daysRemainingInPhase, String nextPhase, boolean shouldShowNewCyclePrompt) {
+                          int daysRemainingInPhase, String nextPhase, boolean shouldShowNewCyclePrompt,
+                          int periodDuration) {
         this.currentPhase = currentPhase;
         this.currentDay = currentDay;
         this.cycleLength = cycleLength;
         this.daysRemainingInPhase = daysRemainingInPhase;
         this.nextPhase = nextPhase;
         this.shouldShowNewCyclePrompt = shouldShowNewCyclePrompt;
+        this.periodDuration = periodDuration;
     }
 
     public String getCurrentPhase() { return currentPhase; }
@@ -38,4 +41,7 @@ public class CycleStatusDto {
 
     public boolean isShouldShowNewCyclePrompt() { return shouldShowNewCyclePrompt; }
     public void setShouldShowNewCyclePrompt(boolean shouldShowNewCyclePrompt) { this.shouldShowNewCyclePrompt = shouldShowNewCyclePrompt; }
+
+    public int getPeriodDuration() { return periodDuration; }
+    public void setPeriodDuration(int periodDuration) { this.periodDuration = periodDuration; }
 }

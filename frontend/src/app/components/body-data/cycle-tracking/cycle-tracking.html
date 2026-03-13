@@ -43,14 +43,14 @@
           <span class="next-phase-value" [ngClass]="phaseClass(nextPhase)">{{ phaseLabels[nextPhase] }}</span>
         </p>
         <div class="phase-bar">
-          <div class="phase-bar-fill" [ngClass]="phaseClass(currentPhase)"></div>
+          <div class="phase-bar-fill" [ngClass]="phaseClass(currentPhase)" [style.width.%]="phaseProgressPercent"></div>
         </div>
         <p class="days-remaining">{{ daysRemaining }} Days Remaining</p>
       </div>
 
       <div class="phase-tip">
         <span class="tip-dot" [ngClass]="phaseClass(currentPhase)"></span>
-        <span class="tip-text">Optimal for high-intensity training</span>
+        <span class="tip-text">{{ insight.label }}</span>
       </div>
     </section>
 
@@ -115,6 +115,7 @@
              class="cal-day"
              [ngClass]="[d.day ? phaseClass(d.phase) : 'cal-day--empty', d.isToday ? 'cal-day--today' : '']">
           <span *ngIf="d.day !== null" class="cal-day-num">{{ d.day }}</span>
+          <div *ngIf="d.day !== null && d.phase" class="cal-phase-bar" [ngClass]="phaseClass(d.phase)"></div>
         </div>
       </div>
     </section>

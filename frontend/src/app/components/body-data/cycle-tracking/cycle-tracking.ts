@@ -39,6 +39,7 @@ export class CycleTracking implements OnInit {
   currentPhase: CyclePhase = 'follicular';
   currentDay = 8;
   cycleLength = 28;
+  periodDuration = 5;
   daysRemaining = 4;
   nextPhase: CyclePhase = 'ovulation';
   showNewCyclePrompt = false;
@@ -100,6 +101,7 @@ export class CycleTracking implements OnInit {
         this.currentPhase = status.currentPhase as CyclePhase;
         this.currentDay = status.currentDay;
         this.cycleLength = status.cycleLength;
+        this.periodDuration = status.periodDuration;
         this.daysRemaining = status.daysRemainingInPhase;
         this.nextPhase = status.nextPhase as CyclePhase;
         this.showNewCyclePrompt = status.shouldShowNewCyclePrompt;
@@ -126,6 +128,7 @@ export class CycleTracking implements OnInit {
             this.currentPhase = status.currentPhase as CyclePhase;
             this.currentDay = status.currentDay;
             this.cycleLength = status.cycleLength;
+            this.periodDuration = status.periodDuration;
             this.daysRemaining = status.daysRemainingInPhase;
             this.nextPhase = status.nextPhase as CyclePhase;
             this.buildCalendar();
@@ -182,16 +185,42 @@ export class CycleTracking implements OnInit {
     return ((this.currentDay - 1 + dayOffset) % this.cycleLength + this.cycleLength) % this.cycleLength + 1;
   }
 
+  get phaseProgressPercent(): number {
+    const phaseEndDay = this.phaseEndDay(this.currentPhase);
+    const phaseStartDay = this.phaseStartDay(this.currentPhase);
+    const totalPhaseDays = phaseEndDay - phaseStartDay + 1;
+    const elapsed = totalPhaseDays - this.daysRemaining;
+    return Math.min(100, Math.max(0, (elapsed / totalPhaseDays) * 100));
+  }
+
+  private phaseStartDay(phase: CyclePhase): number {
+    switch (phase) {
+      case 'menstrual': return 1;
+      case 'follicular': return this.periodDuration + 1;
+      case 'ovulation': return Math.floor(this.cycleLength / 2) - 1;
+      case 'luteal': return Math.floor(this.cycleLength / 2) + 1;
+    }
+  }
+
+  private phaseEndDay(phase: CyclePhase): number {
+    switch (phase) {
+      case 'menstrual': return this.periodDuration;
+      case 'follicular': return Math.floor(this.cycleLength / 2) - 2;
+      case 'ovulation': return Math.floor(this.cycleLength / 2);
+      case 'luteal': return this.cycleLength;
+    }
+  }
+
   private getPhaseForCycleDay(cycleDay: number): CyclePhase {
-    if (cycleDay <= 3) {
+    if (cycleDay <= this.periodDuration) {
       return 'menstrual';
     }
 
-    if (cycleDay <= 11) {
+    if (cycleDay <= this.cycleLength / 2 - 2) {
       return 'follicular';
     }
 
-    if (cycleDay <= 13) {
+    if (cycleDay <= this.cycleLength / 2) {
       return 'ovulation';
     }
 

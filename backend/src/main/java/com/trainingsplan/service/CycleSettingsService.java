@@ -64,7 +64,7 @@ public class CycleSettingsService {
         }
 
         return new CycleStatusDto(currentPhase, cycleDay, cycleLength, daysRemainingInPhase,
-                nextPhase, shouldShowNewCyclePrompt);
+                nextPhase, shouldShowNewCyclePrompt, periodDuration);
     }
 
     private String determinePhase(int cycleDay, int cycleLength, int periodDuration) {

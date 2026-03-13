@@ -16,6 +16,7 @@ export interface CycleStatusDto {
   daysRemainingInPhase: number;
   nextPhase: string;
   shouldShowNewCyclePrompt: boolean;
+  periodDuration: number;
 }
 
 @Injectable({ providedIn: 'root' })
