@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpContext } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { SKIP_AUTH_LOGOUT } from '../interceptors/auth.interceptor';
 
 const BASE = 'http://localhost:8080/api/users';
 
@@ -43,5 +44,18 @@ export class UserService {
 
   updateUser(id: number, request: UpdateUserRequest): Observable<UserProfile> {
     return this.http.put<UserProfile>(`${BASE}/${id}`, request);
+  }
+
+  uploadProfileImage(id: number, file: File): Observable<void> {
+    const formData = new FormData();
+    formData.append('file', file);
+    return this.http.post<void>(`${BASE}/${id}/profile-image`, formData);
+  }
+
+  getProfileImage(id: number): Observable<Blob> {
+    return this.http.get(`${BASE}/${id}/profile-image`, {
+      responseType: 'blob',
+      context: new HttpContext().set(SKIP_AUTH_LOGOUT, true)
+    });
   }
 }

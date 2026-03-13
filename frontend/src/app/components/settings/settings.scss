@@ -69,6 +69,112 @@
   }
 }
 
+/* ── Profile Picture ──────────────────────── */
+.avatar-row {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.avatar-wrap {
+  position: relative;
+  width: 5rem;
+  height: 5rem;
+  border-radius: 50%;
+  flex-shrink: 0;
+  cursor: pointer;
+  overflow: hidden;
+  border: 2px solid var(--border);
+  transition: border-color 0.2s;
+
+  &:hover {
+    border-color: var(--primary);
+
+    .avatar-overlay {
+      opacity: 1;
+    }
+  }
+}
+
+.avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.avatar-placeholder {
+  width: 100%;
+  height: 100%;
+  background: var(--panel-soft);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .material-symbols-outlined {
+    font-size: 2.5rem;
+    color: var(--muted);
+  }
+}
+
+.avatar-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.2s;
+  border-radius: 50%;
+
+  .material-symbols-outlined {
+    font-size: 1.5rem;
+    color: #fff;
+  }
+}
+
+.avatar-wrap:hover .avatar-overlay,
+.avatar-wrap:focus .avatar-overlay {
+  opacity: 1;
+}
+
+.avatar-spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.avatar-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.avatar-hint {
+  margin: 0;
+  font-size: 0.82rem;
+  color: var(--text);
+
+  &.muted {
+    color: var(--muted);
+    font-size: 0.75rem;
+  }
+}
+
+.avatar-error {
+  margin: 0.25rem 0 0;
+  font-size: 0.8rem;
+  color: #f87171;
+}
+
+.file-input-hidden {
+  display: none;
+}
+
 /* ── Body Metrics ─────────────────────────── */
 .metrics-grid {
   display: grid;

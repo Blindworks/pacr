@@ -8,6 +8,40 @@
 
   <div class="settings-body">
 
+    <!-- Profile Picture -->
+    <article class="section">
+      <div class="section-head">
+        <span class="material-symbols-outlined">person</span>
+        <h2>Profile Picture</h2>
+      </div>
+      <div class="avatar-row">
+        <div class="avatar-wrap" (click)="triggerFileInput()">
+          @if (profileImageUrl()) {
+            <img [src]="profileImageUrl()" class="avatar-img" alt="Profile picture" />
+          } @else {
+            <div class="avatar-placeholder">
+              <span class="material-symbols-outlined">person</span>
+            </div>
+          }
+          <div class="avatar-overlay">
+            @if (imageUploading()) {
+              <span class="material-symbols-outlined avatar-spin">progress_activity</span>
+            } @else {
+              <span class="material-symbols-outlined">photo_camera</span>
+            }
+          </div>
+        </div>
+        <div class="avatar-info">
+          <p class="avatar-hint">Click on the avatar to upload a new profile picture.</p>
+          <p class="avatar-hint muted">Supported formats: JPG, PNG, WebP.</p>
+          @if (imageError()) {
+            <p class="avatar-error">{{ imageError() }}</p>
+          }
+        </div>
+      </div>
+      <input #fileInput type="file" accept="image/jpeg,image/png,image/webp" class="file-input-hidden" (change)="onFileSelected($event)" />
+    </article>
+
     <!-- Body Metrics -->
     <article class="section">
       <div class="section-head">

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, signal, inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, signal, inject, ViewChild, ElementRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { StravaService } from '../../services/strava.service';
 import { UserService, UserProfile } from '../../services/user.service';
@@ -19,12 +19,15 @@ type Integration = {
   templateUrl: './settings.html',
   styleUrl: './settings.scss'
 })
-export class Settings implements OnInit {
+export class Settings implements OnInit, OnDestroy {
+  @ViewChild('fileInput') private fileInput!: ElementRef<HTMLInputElement>;
+
   private readonly stravaService = inject(StravaService);
   private readonly userService = inject(UserService);
 
   private userId = 0;
   private currentUser: UserProfile | null = null;
+  private profileImageObjectUrl: string | null = null;
 
   protected weight = signal('');
   protected height = signal('');
@@ -37,6 +40,10 @@ export class Settings implements OnInit {
   protected theme = signal<'light' | 'dark' | 'auto'>('dark');
   protected pushNotifications = signal(true);
   protected emailDigest = signal(false);
+
+  protected profileImageUrl = signal<string | null>(null);
+  protected imageUploading = signal(false);
+  protected imageError = signal('');
 
   protected stravaLoading = signal(false);
   protected saving = signal(false);
@@ -82,9 +89,56 @@ export class Settings implements OnInit {
         this.restingHr.set(user.hrRest != null ? String(user.hrRest) : '');
         this.maxHr.set(user.maxHeartRate != null ? String(user.maxHeartRate) : '');
         this.dateOfBirth.set(user.dateOfBirth ?? '');
+        this.loadProfileImage();
       },
       error: () => { /* keep defaults if backend unreachable */ }
     });
+  }
+
+  private loadProfileImage(): void {
+    if (!this.userId) return;
+    this.userService.getProfileImage(this.userId).subscribe({
+      next: blob => {
+        if (this.profileImageObjectUrl) {
+          URL.revokeObjectURL(this.profileImageObjectUrl);
+        }
+        this.profileImageObjectUrl = URL.createObjectURL(blob);
+        this.profileImageUrl.set(this.profileImageObjectUrl);
+      },
+      error: () => { /* no image yet, keep placeholder */ }
+    });
+  }
+
+  protected triggerFileInput(): void {
+    this.fileInput.nativeElement.click();
+  }
+
+  protected onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file || !this.userId) return;
+
+    this.imageUploading.set(true);
+    this.imageError.set('');
+
+    this.userService.uploadProfileImage(this.userId, file).subscribe({
+      next: () => {
+        this.imageUploading.set(false);
+        this.loadProfileImage();
+      },
+      error: () => {
+        this.imageUploading.set(false);
+        this.imageError.set('Upload failed. Please try again.');
+      }
+    });
+
+    input.value = '';
+  }
+
+  ngOnDestroy(): void {
+    if (this.profileImageObjectUrl) {
+      URL.revokeObjectURL(this.profileImageObjectUrl);
+    }
   }
 
   private loadStravaStatus(): void {
