@@ -17,6 +17,10 @@ export interface BloodPressureEntry {
 export class BloodPressureService {
   private readonly http = inject(HttpClient);
 
+  getAll(): Observable<BloodPressureEntry[]> {
+    return this.http.get<BloodPressureEntry[]>(BASE);
+  }
+
   getLatest(): Observable<BloodPressureEntry> {
     return this.http.get<BloodPressureEntry>(`${BASE}/latest`);
   }

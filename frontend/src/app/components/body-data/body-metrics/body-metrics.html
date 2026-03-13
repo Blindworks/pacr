@@ -118,7 +118,7 @@
           </div>
 
           <div class="history-list">
-            <article class="history-item" *ngFor="let item of historyItems">
+            <article class="history-item" *ngFor="let item of historyItems" (click)="loadHistoryItem(item)">
               <div class="history-item__date">
                 <span>{{ item.date }}</span>
                 <small>{{ item.time }}</small>

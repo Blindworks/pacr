@@ -23,6 +23,7 @@ interface DetailMetric {
 }
 
 interface HistoryItem {
+  measurement: BodyMeasurementEntry;
   date: string;
   time: string;
   weight: string;
@@ -43,6 +44,7 @@ export class BodyMetrics implements OnInit {
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly bodyMeasurementService = inject(BodyMeasurementService);
   private readonly bloodPressureService = inject(BloodPressureService);
+  private bloodPressures: BloodPressureEntry[] = [];
 
   summaryCards: SummaryCard[] = [
     { label: 'Weight', value: '-', unit: 'kg', change: 'Stable', trend: 'flat' },
@@ -74,16 +76,32 @@ export class BodyMetrics implements OnInit {
     forkJoin({
       latestMeasurement: this.bodyMeasurementService.getLatest().pipe(catchError(() => of(null))),
       measurements: this.bodyMeasurementService.getAll().pipe(catchError(() => of([]))),
+      bloodPressures: this.bloodPressureService.getAll().pipe(catchError(() => of([]))),
       latestBloodPressure: this.bloodPressureService.getLatest().pipe(catchError(() => of(null)))
-    }).subscribe(({ latestMeasurement, measurements, latestBloodPressure }) => {
+    }).subscribe(({ latestMeasurement, measurements, bloodPressures, latestBloodPressure }) => {
       const effectiveLatestMeasurement = latestMeasurement ?? measurements[0] ?? null;
+      this.bloodPressures = bloodPressures;
 
       this.summaryCards = this.buildSummaryCards(effectiveLatestMeasurement);
-      this.detailMetrics = this.buildDetailMetrics(effectiveLatestMeasurement, latestBloodPressure);
+      this.detailMetrics = this.buildDetailMetrics(
+        effectiveLatestMeasurement,
+        this.resolveBloodPressureForMeasurement(effectiveLatestMeasurement, latestBloodPressure)
+      );
       this.historyItems = this.buildHistoryItems(measurements);
-      this.lastUpdatedText = this.resolveLastUpdated(effectiveLatestMeasurement, latestBloodPressure);
+      this.lastUpdatedText = this.resolveLastUpdated(
+        effectiveLatestMeasurement,
+        this.resolveBloodPressureForMeasurement(effectiveLatestMeasurement, latestBloodPressure)
+      );
       this.cdr.detectChanges();
     });
+  }
+
+  loadHistoryItem(item: HistoryItem): void {
+    const matchingBloodPressure = this.resolveBloodPressureForMeasurement(item.measurement, null);
+    this.summaryCards = this.buildSummaryCards(item.measurement);
+    this.detailMetrics = this.buildDetailMetrics(item.measurement, matchingBloodPressure);
+    this.lastUpdatedText = this.resolveLastUpdated(item.measurement, matchingBloodPressure);
+    this.cdr.detectChanges();
   }
 
   private buildSummaryCards(latestMeasurement: BodyMeasurementEntry | null): SummaryCard[] {
@@ -152,11 +170,23 @@ export class BodyMetrics implements OnInit {
       })
       .slice(0, 4)
       .map(item => ({
+        measurement: item,
         date: this.formatLongDate(item.measuredAt),
         time: '08:00 AM',
         weight: item.weightKg != null ? `${this.formatNumber(item.weightKg)} kg` : 'No data',
         bodyFat: item.fatPercentage != null ? `${this.formatNumber(item.fatPercentage)}%` : 'No data'
       }));
+  }
+
+  private resolveBloodPressureForMeasurement(
+    measurement: BodyMeasurementEntry | null,
+    fallback: BloodPressureEntry | null
+  ): BloodPressureEntry | null {
+    if (!measurement) {
+      return fallback;
+    }
+
+    return this.bloodPressures.find(entry => entry.measuredAt === measurement.measuredAt) ?? fallback;
   }
 
   private resolveLastUpdated(
