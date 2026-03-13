@@ -4,6 +4,8 @@ import com.trainingsplan.entity.BodyMeasurement;
 import com.trainingsplan.entity.User;
 import com.trainingsplan.repository.BodyMeasurementRepository;
 import com.trainingsplan.security.SecurityUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -17,6 +19,8 @@ import java.util.Optional;
 @Service
 public class BodyMeasurementService {
 
+    private static final Logger log = LoggerFactory.getLogger(BodyMeasurementService.class);
+
     @Autowired
     private BodyMeasurementRepository bodyMeasurementRepository;
 
@@ -25,14 +29,52 @@ public class BodyMeasurementService {
 
     public List<BodyMeasurement> getAllForCurrentUser() {
         Long userId = securityUtils.getCurrentUserId();
-        if (userId == null) return Collections.emptyList();
-        return bodyMeasurementRepository.findByUserIdOrderByMeasuredAtDesc(userId);
+        if (userId == null) {
+            log.info("bodyMeasurements.getAll: userId=null, repository=findByUserIdOrderByMeasuredAtDesc, found=0");
+            return Collections.emptyList();
+        }
+
+        List<BodyMeasurement> measurements = bodyMeasurementRepository.findByUserIdOrderByMeasuredAtDesc(userId);
+        log.info(
+                "bodyMeasurements.getAll: userId={}, repository=findByUserIdOrderByMeasuredAtDesc, sort=measuredAtDesc, found={}, ids={}, latestValues={}",
+                userId,
+                measurements.size(),
+                measurements.stream().map(BodyMeasurement::getId).toList(),
+                measurements.isEmpty() ? null : summarize(measurements.getFirst())
+        );
+        return measurements;
     }
 
     public Optional<BodyMeasurement> getLatestForCurrentUser() {
         Long userId = securityUtils.getCurrentUserId();
-        if (userId == null) return Optional.empty();
-        return bodyMeasurementRepository.findTopByUserIdOrderByMeasuredAtDesc(userId);
+        if (userId == null) {
+            log.info("bodyMeasurements.getLatest: userId=null, repository=findTopByUserIdOrderByMeasuredAtDesc, found=0");
+            return Optional.empty();
+        }
+
+        Optional<BodyMeasurement> latest = bodyMeasurementRepository.findTopByUserIdOrderByMeasuredAtDesc(userId);
+        log.info(
+                "bodyMeasurements.getLatest: userId={}, repository=findTopByUserIdOrderByMeasuredAtDesc, sort=measuredAtDesc, found={}, measurementId={}, measuredAt={}, values={}",
+                userId,
+                latest.isPresent() ? 1 : 0,
+                latest.map(BodyMeasurement::getId).orElse(null),
+                latest.map(BodyMeasurement::getMeasuredAt).orElse(null),
+                latest.map(this::summarize).orElse(null)
+        );
+        return latest;
+    }
+
+    private String summarize(BodyMeasurement measurement) {
+        return String.format(
+                "weightKg=%s,fatPercentage=%s,muscleMassKg=%s,bmi=%s,waterPercentage=%s,boneMassKg=%s,visceralFatLevel=%s",
+                measurement.getWeightKg(),
+                measurement.getFatPercentage(),
+                measurement.getMuscleMassKg(),
+                measurement.getBmi(),
+                measurement.getWaterPercentage(),
+                measurement.getBoneMassKg(),
+                measurement.getVisceralFatLevel()
+        );
     }
 
     @Transactional

@@ -1,6 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, ViewChild, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
+import { forkJoin, of } from 'rxjs';
+import { BloodPressureEntry, BloodPressureService } from '../../../services/blood-pressure.service';
+import { BodyMeasurementEntry, BodyMeasurementService } from '../../../services/body-measurement.service';
+import { SleepDataEntry, SleepDataService } from '../../../services/sleep-data.service';
 
 interface LatestEntryMetric {
   label: string;
@@ -17,10 +22,17 @@ interface LatestEntryMetric {
 })
 export class LogBodyMetrics {
   @ViewChild('dateDialog') dateDialog?: ElementRef<HTMLDialogElement>;
+  @ViewChild('savedDialog') savedDialog?: ElementRef<HTMLDialogElement>;
   @ViewChild('entryTimeInput') entryTimeInput?: ElementRef<HTMLInputElement>;
 
-  entryDate = '2023-10-24';
-  entryTime = '08:30';
+  private readonly router = inject(Router);
+  private readonly bodyMeasurementService = inject(BodyMeasurementService);
+  private readonly bloodPressureService = inject(BloodPressureService);
+  private readonly sleepDataService = inject(SleepDataService);
+  private readonly now = new Date();
+
+  entryDate = this.now.toISOString().split('T')[0];
+  entryTime = `${this.now.getHours().toString().padStart(2, '0')}:${this.now.getMinutes().toString().padStart(2, '0')}`;
   weight = '';
   bodyFat = '';
   muscleMass = '';
@@ -28,16 +40,17 @@ export class LogBodyMetrics {
   waterPercentage = '';
   visceralFat = '';
   metabolicAge = '';
-  waist = '';
+  bmi = '';
   restingHeartRate = '';
   bloodPressure = '';
   notes = '';
+  saving = false;
+  error: string | null = null;
 
   readonly latestEntryMetrics: LatestEntryMetric[] = [
     { label: 'Weight', value: '75.8 kg', trend: 'up' },
     { label: 'Body Fat', value: '14.5%', trend: 'down' },
     { label: 'Muscle Mass', value: '61.9 kg', trend: 'down' },
-    { label: 'Waist', value: '82.5 cm', trend: 'down' },
     { label: 'Resting HR', value: '61 BPM', trend: 'down' },
   ];
 
@@ -64,6 +77,41 @@ export class LogBodyMetrics {
     input.click();
   }
 
+  save(): void {
+    const payload = this.buildPayload();
+    if (!payload) {
+      return;
+    }
+
+    this.saving = true;
+    this.error = null;
+
+    const bodyMeasurementRequest = payload.bodyMeasurement
+      ? this.bodyMeasurementService.create(payload.bodyMeasurement)
+      : of(null);
+    const bloodPressureRequest = payload.bloodPressure
+      ? this.bloodPressureService.create(payload.bloodPressure)
+      : of(null);
+    const sleepDataRequest = payload.sleepData
+      ? this.sleepDataService.create(payload.sleepData)
+      : of(null);
+
+    forkJoin([bodyMeasurementRequest, bloodPressureRequest, sleepDataRequest]).subscribe({
+      next: () => {
+        this.saving = false;
+        this.savedDialog?.nativeElement.showModal();
+      },
+      error: () => {
+        this.saving = false;
+        this.error = 'Failed to save. Please try again.';
+      }
+    });
+  }
+
+  discard(): void {
+    this.router.navigate(['/body-data/body-metrics']);
+  }
+
   onDialogBackdropClick(event: MouseEvent): void {
     const dialog = this.dateDialog?.nativeElement;
     if (!dialog) {
@@ -77,5 +125,110 @@ export class LogBodyMetrics {
     if (isOutside) {
       dialog.close();
     }
+  }
+
+  closeSavedDialog(): void {
+    this.savedDialog?.nativeElement.close();
+    this.router.navigate(['/body-data/body-metrics']);
+  }
+
+  onSavedDialogBackdropClick(event: MouseEvent): void {
+    const dialog = this.savedDialog?.nativeElement;
+    if (!dialog) {
+      return;
+    }
+
+    const rect = dialog.getBoundingClientRect();
+    const isOutside = event.clientX < rect.left || event.clientX > rect.right
+      || event.clientY < rect.top || event.clientY > rect.bottom;
+
+    if (isOutside) {
+      this.closeSavedDialog();
+    }
+  }
+
+  private buildPayload(): { bodyMeasurement?: BodyMeasurementEntry; bloodPressure?: BloodPressureEntry; sleepData?: SleepDataEntry } | null {
+    const bloodPressure = this.parseBloodPressure(this.bloodPressure);
+    if (this.bloodPressure.trim() && !bloodPressure) {
+      this.error = 'Blood pressure must use the format systolic/diastolic, e.g. 120/80.';
+      return null;
+    }
+
+    const bodyMeasurement: BodyMeasurementEntry = {
+      measuredAt: this.entryDate,
+      weightKg: this.parseNumber(this.weight),
+      fatPercentage: this.parseNumber(this.bodyFat),
+      muscleMassKg: this.parseNumber(this.muscleMass),
+      boneMassKg: this.parseNumber(this.boneMass),
+      waterPercentage: this.parseNumber(this.waterPercentage),
+      visceralFatLevel: this.parseInteger(this.visceralFat),
+      metabolicAge: this.parseInteger(this.metabolicAge),
+      bmi: this.parseNumber(this.bmi),
+      notes: this.notes.trim() || undefined
+    };
+
+    const hasBodyMeasurementValue = Object.entries(bodyMeasurement)
+      .some(([key, value]) => key !== 'measuredAt' && value !== undefined);
+
+    const restingHeartRate = this.parseInteger(this.restingHeartRate);
+    const sleepData = restingHeartRate !== undefined ? {
+      recordedAt: this.entryDate,
+      restingHeartRate
+    } : undefined;
+    const bloodPressureEntry = bloodPressure ? {
+      measuredAt: this.entryDate,
+      systolicPressure: bloodPressure.systolic,
+      diastolicPressure: bloodPressure.diastolic,
+      pulseAtMeasurement: restingHeartRate,
+      notes: this.notes.trim() || undefined
+    } : undefined;
+
+    if (!hasBodyMeasurementValue && !bloodPressureEntry && !sleepData) {
+      this.error = 'Enter at least one metric before saving.';
+      return null;
+    }
+
+    return {
+      bodyMeasurement: hasBodyMeasurementValue ? bodyMeasurement : undefined,
+      bloodPressure: bloodPressureEntry,
+      sleepData
+    };
+  }
+
+  private parseNumber(value: string): number | undefined {
+    const normalized = value.trim().replace(',', '.');
+    if (!normalized) {
+      return undefined;
+    }
+
+    const parsed = Number(normalized);
+    return Number.isFinite(parsed) ? parsed : undefined;
+  }
+
+  private parseInteger(value: string): number | undefined {
+    const normalized = value.trim();
+    if (!normalized) {
+      return undefined;
+    }
+
+    const parsed = Number(normalized);
+    return Number.isInteger(parsed) ? parsed : undefined;
+  }
+
+  private parseBloodPressure(value: string): { systolic: number; diastolic: number } | null {
+    const normalized = value.trim();
+    if (!normalized) {
+      return null;
+    }
+
+    const match = normalized.match(/^(\d{2,3})\s*\/\s*(\d{2,3})$/);
+    if (!match) {
+      return null;
+    }
+
+    return {
+      systolic: Number(match[1]),
+      diastolic: Number(match[2])
+    };
   }
 }

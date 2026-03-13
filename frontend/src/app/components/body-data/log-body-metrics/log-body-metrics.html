@@ -65,8 +65,8 @@
                 <input [(ngModel)]="metabolicAge" name="metabolicAge" type="text" placeholder="24">
               </label>
               <label class="input-field">
-                <span>Waist Circumference (cm)</span>
-                <input [(ngModel)]="waist" name="waist" type="text" placeholder="82">
+                <span>BMI</span>
+                <input [(ngModel)]="bmi" name="bmi" type="text" placeholder="24.1">
               </label>
             </div>
           </div>
@@ -97,6 +97,16 @@
               placeholder="How did you feel this morning? Any dietary changes or recent heavy training sessions..."
             ></textarea>
           </label>
+        </div>
+
+        <p *ngIf="error" class="error-msg">{{ error }}</p>
+
+        <div class="actions">
+          <button type="button" class="btn-save" (click)="save()" [disabled]="saving">
+            <span *ngIf="!saving">Save Body Metrics</span>
+            <span *ngIf="saving">Saving...</span>
+          </button>
+          <button type="button" class="btn-discard" (click)="discard()" [disabled]="saving">Discard</button>
         </div>
       </section>
 
@@ -162,6 +172,19 @@
 
     <div class="date-dialog__footer">
       <button type="button" class="date-dialog__apply" (click)="closeDatePicker()">Apply Date</button>
+    </div>
+  </dialog>
+
+  <dialog #savedDialog class="saved-dialog" (click)="onSavedDialogBackdropClick($event)">
+    <div class="saved-dialog__inner" (click)="$event.stopPropagation()">
+      <div class="saved-dialog__icon">
+        <span class="material-symbols-outlined">check_circle</span>
+      </div>
+      <h3>Body Metrics Saved</h3>
+      <p>Your entry for {{ entryDate | date:'MMM d, y' }} has been saved successfully.</p>
+      <div class="saved-dialog__actions">
+        <button type="button" class="btn-save" (click)="closeSavedDialog()">Done</button>
+      </div>
     </div>
   </dialog>
 </div>
