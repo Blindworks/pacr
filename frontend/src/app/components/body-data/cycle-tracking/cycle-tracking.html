@@ -114,8 +114,14 @@
         <div *ngFor="let d of calendarDays"
              class="cal-day"
              [ngClass]="[d.day ? phaseClass(d.phase) : 'cal-day--empty', d.isToday ? 'cal-day--today' : '']">
-          <span *ngIf="d.day !== null" class="cal-day-num">{{ d.day }}</span>
+          <div *ngIf="d.isToday" class="cal-today-badge">
+            <span class="material-symbols-outlined">check</span>
+          </div>
+          <span *ngIf="d.day !== null" class="cal-day-num" [class.cal-day-num--today]="d.isToday">{{ d.day }}</span>
           <div *ngIf="d.day !== null && d.phase" class="cal-phase-bar" [ngClass]="phaseClass(d.phase)"></div>
+          <div *ngIf="d.day !== null && d.phase" class="cal-tooltip" [ngClass]="phaseClass(d.phase)">
+            {{ phaseLabels[d.phase] }}
+          </div>
         </div>
       </div>
     </section>
