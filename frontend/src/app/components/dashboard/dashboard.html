@@ -2,20 +2,20 @@
 
   <!-- ── Hero: Readiness Score ── -->
   <section class="readiness-hero"
-           [class.readiness-hero--yellow]="data.readinessScore >= 50 && data.readinessScore < 70"
-           [class.readiness-hero--red]="data.readinessScore < 50">
+           [class.readiness-hero--yellow]="(data?.readinessScore ?? 0) >= 50 && (data?.readinessScore ?? 0) < 70"
+           [class.readiness-hero--red]="(data?.readinessScore ?? 0) < 50">
     <div class="hero-blob"></div>
     <div class="hero-left">
       <h3 class="hero-eyebrow">Readiness Score</h3>
       <div class="hero-score-row">
-        <span class="hero-number">{{ data.readinessScore }}</span>
+        <span class="hero-number">{{ data?.readinessScore ?? 0 }}</span>
         <span class="hero-denom">/100</span>
       </div>
-      <p class="hero-sub">{{ data.readinessRecommendation }}</p>
+      <p class="hero-sub">{{ data?.readinessRecommendation ?? '—' }}</p>
 
       <!-- Reasons List -->
-      <ul class="hero-reasons" *ngIf="data.readinessReasons.length > 0">
-        <li *ngFor="let reason of data.readinessReasons" class="hero-reason-item">
+      <ul class="hero-reasons" *ngIf="(data?.readinessReasons?.length ?? 0) > 0">
+        <li *ngFor="let reason of data?.readinessReasons" class="hero-reason-item">
           <span class="hero-reason-dot"></span>
           {{ reason }}
         </li>
@@ -55,11 +55,11 @@
         <h4>Body Battery</h4>
         <div class="metric-badge">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M7 2v11h3v9l7-12h-4l4-8z"/></svg>
-          <span>{{ data.bodyBattery != null ? data.bodyBattery + '%' : '—' }}</span>
+          <span>{{ data?.bodyBattery != null ? data?.bodyBattery + '%' : '—' }}</span>
         </div>
       </div>
       <div class="strain-wave-wrap">
-        <div class="strain-wave" [style.width.%]="data.bodyBattery ?? 0"></div>
+        <div class="strain-wave" [style.width.%]="data?.bodyBattery ?? 0"></div>
       </div>
       <div class="strain-axis-labels">
         <span>12 AM</span><span>8 AM</span><span>4 PM</span><span>NOW</span>

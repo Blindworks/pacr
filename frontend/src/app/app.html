@@ -1,12 +1,10 @@
-@if (showSidebar()) {
-  <div class="app-shell">
+<div [class]="showSidebar() ? 'app-shell' : ''">
+  @if (showSidebar()) {
     <app-sidebar />
-    <main class="app-main">
-      <router-outlet />
-    </main>
-  </div>
-} @else {
-  <router-outlet />
-}
+  }
+  <main [class]="showSidebar() ? 'app-main' : ''">
+    <router-outlet />
+  </main>
+</div>
 
 <app-pace-calculator-dialog />

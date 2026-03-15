@@ -15,8 +15,12 @@ export class Dashboard implements OnInit {
   data: DashboardData | null = null;
 
   ngOnInit(): void {
+    console.log('ngOnInit called');
     this.dashboardService.getDashboard().subscribe({
-      next: data => this.data = data,
+      next: data => {
+        console.log('data received', data.readinessScore);
+        this.data = data;
+      },
       error: err => console.error('Dashboard load failed', err)
     });
   }
