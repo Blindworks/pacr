@@ -1,15 +1,25 @@
-<div class="pulse-dashboard">
+<div class="pulse-dashboard" *ngIf="data">
 
   <!-- ── Hero: Readiness Score ── -->
-  <section class="readiness-hero">
+  <section class="readiness-hero"
+           [class.readiness-hero--yellow]="data.readinessScore >= 50 && data.readinessScore < 70"
+           [class.readiness-hero--red]="data.readinessScore < 50">
     <div class="hero-blob"></div>
     <div class="hero-left">
       <h3 class="hero-eyebrow">Readiness Score</h3>
       <div class="hero-score-row">
-        <span class="hero-number">85</span>
+        <span class="hero-number">{{ data.readinessScore }}</span>
         <span class="hero-denom">/100</span>
       </div>
-      <p class="hero-sub">Your body is <strong>primed</strong> for a high-intensity run today.</p>
+      <p class="hero-sub">{{ data.readinessRecommendation }}</p>
+
+      <!-- Reasons List -->
+      <ul class="hero-reasons" *ngIf="data.readinessReasons.length > 0">
+        <li *ngFor="let reason of data.readinessReasons" class="hero-reason-item">
+          <span class="hero-reason-dot"></span>
+          {{ reason }}
+        </li>
+      </ul>
     </div>
     <div class="hero-right">
       <div class="go-btn">GO</div>
@@ -26,13 +36,13 @@
         <span class="card-tag">WEEKLY MILEAGE</span>
       </div>
       <div class="bar-chart-wrap">
-        <div class="bar" style="height:60%" title="Mon: 6.2 mi"></div>
-        <div class="bar" style="height:45%" title="Tue: 4.1 mi"></div>
-        <div class="bar" style="height:85%" title="Wed: 8.5 mi"></div>
-        <div class="bar" style="height:30%" title="Thu: 3.0 mi"></div>
-        <div class="bar" style="height:95%" title="Fri: 10.2 mi"></div>
-        <div class="bar" style="height:10%" title="Sat: Rest"></div>
-        <div class="bar bar--active" style="height:70%" title="Sun: Today"></div>
+        <div class="bar" style="height:60%"></div>
+        <div class="bar" style="height:45%"></div>
+        <div class="bar" style="height:85%"></div>
+        <div class="bar" style="height:30%"></div>
+        <div class="bar" style="height:95%"></div>
+        <div class="bar" style="height:10%"></div>
+        <div class="bar bar--active" style="height:70%"></div>
       </div>
       <div class="bar-labels">
         <span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span>
@@ -45,11 +55,11 @@
         <h4>Body Battery</h4>
         <div class="metric-badge">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M7 2v11h3v9l7-12h-4l4-8z"/></svg>
-          <span>72%</span>
+          <span>{{ data.bodyBattery != null ? data.bodyBattery + '%' : '—' }}</span>
         </div>
       </div>
       <div class="strain-wave-wrap">
-        <div class="strain-wave" style="width:72%"></div>
+        <div class="strain-wave" [style.width.%]="data.bodyBattery ?? 0"></div>
       </div>
       <div class="strain-axis-labels">
         <span>12 AM</span><span>8 AM</span><span>4 PM</span><span>NOW</span>

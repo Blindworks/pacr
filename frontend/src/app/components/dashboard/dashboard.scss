@@ -31,6 +31,18 @@
   position: relative;
   overflow: hidden;
   color: #1e2210;
+
+  &--yellow {
+    background: #f2c84b;
+    color: #2e2300;
+    .go-btn { background: #2e2300; color: #f2c84b; }
+  }
+
+  &--red {
+    background: #ff6b6b;
+    color: #2e0000;
+    .go-btn { background: #2e0000; color: #ff6b6b; }
+  }
 }
 
 .hero-blob {
@@ -84,6 +96,33 @@
   line-height: 1.5;
 
   strong { font-weight: 800; text-decoration: underline; text-underline-offset: 3px; }
+}
+
+.hero-reasons {
+  list-style: none;
+  margin: 12px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.hero-reason-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  opacity: 0.75;
+}
+
+.hero-reason-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  flex-shrink: 0;
+  opacity: 0.6;
 }
 
 .hero-right { z-index: 1; flex-shrink: 0; }

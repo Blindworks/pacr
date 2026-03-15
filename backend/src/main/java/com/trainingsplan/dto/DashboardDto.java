@@ -8,6 +8,7 @@ public class DashboardDto {
     private final double strain21;
     private final int readinessScore;
     private final String readinessRecommendation;
+    private final List<String> readinessReasons;
     private final LoadStatusDto loadStatus;
     private final List<LoadTrendPointDto> loadTrend;
     private final List<EfTrendPointDto> efTrend;
@@ -15,22 +16,26 @@ public class DashboardDto {
     private final LastRunDto lastRun;
     private final NextCompetitionDto nextCompetition;
     private final List<TrainingProgressDto> trainingProgress;
+    private final Integer bodyBattery;
 
     public DashboardDto(
             double strain21,
             int readinessScore,
             String readinessRecommendation,
+            List<String> readinessReasons,
             LoadStatusDto loadStatus,
             List<LoadTrendPointDto> loadTrend,
             List<EfTrendPointDto> efTrend,
             List<DriftTrendPointDto> driftTrend,
             LastRunDto lastRun,
             NextCompetitionDto nextCompetition,
-            List<TrainingProgressDto> trainingProgress
+            List<TrainingProgressDto> trainingProgress,
+            Integer bodyBattery
     ) {
         this.strain21 = strain21;
         this.readinessScore = readinessScore;
         this.readinessRecommendation = readinessRecommendation;
+        this.readinessReasons = readinessReasons;
         this.loadStatus = loadStatus;
         this.loadTrend = loadTrend;
         this.efTrend = efTrend;
@@ -38,6 +43,7 @@ public class DashboardDto {
         this.lastRun = lastRun;
         this.nextCompetition = nextCompetition;
         this.trainingProgress = trainingProgress;
+        this.bodyBattery = bodyBattery;
     }
 
     public double getStrain21() {
@@ -50,6 +56,10 @@ public class DashboardDto {
 
     public String getReadinessRecommendation() {
         return readinessRecommendation;
+    }
+
+    public List<String> getReadinessReasons() {
+        return readinessReasons;
     }
 
     public LoadStatusDto getLoadStatus() {
@@ -78,6 +88,10 @@ public class DashboardDto {
 
     public List<TrainingProgressDto> getTrainingProgress() {
         return trainingProgress;
+    }
+
+    public Integer getBodyBattery() {
+        return bodyBattery;
     }
 
     public static class LoadStatusDto {

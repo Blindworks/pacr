@@ -5,8 +5,12 @@ import com.trainingsplan.entity.DailyMetrics;
 import com.trainingsplan.entity.User;
 import com.trainingsplan.repository.ActivityMetricsRepository;
 import com.trainingsplan.repository.DailyMetricsRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -19,6 +23,8 @@ import java.util.List;
 @Service
 public class DailyMetricsService {
 
+    private static final Logger log = LoggerFactory.getLogger(DailyMetricsService.class);
+
     @Autowired
     private ActivityMetricsRepository activityMetricsRepository;
 
@@ -30,6 +36,9 @@ public class DailyMetricsService {
 
     @Autowired
     private ReadinessService readinessService;
+
+    @Autowired
+    private MetricsKernelService metricsKernelService;
 
     /**
      * Recomputes and upserts the daily strain21 and TRIMP aggregates for {@code user} on {@code date}.
@@ -97,10 +106,13 @@ public class DailyMetricsService {
      * Called when the dashboard is loaded to ensure today's status is always current,
      * even on rest days without any training activity.
      */
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void computeToday(User user) {
         LocalDate today = LocalDate.now();
+        log.info("daily_metrics trigger=dashboard_load userId={} date={}", user.getId(), today);
         updateDailyStrain(user, today);
         updateDailyEf(user, today);
+        metricsKernelService.computeForDate(user, today);
     }
 
     /**

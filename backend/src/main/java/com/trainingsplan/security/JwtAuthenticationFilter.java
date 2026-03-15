@@ -43,11 +43,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         final String jwt;
         final String username;
 
-        log.debug("[JWT] {} {} — Authorization header: {}", method, uri,
-                authHeader != null ? (authHeader.startsWith("Bearer ") ? "Bearer ***" : authHeader) : "MISSING");
 
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            log.warn("[JWT] {} {} — no Bearer token, passing through (will be rejected by security if protected)", method, uri);
             filterChain.doFilter(request, response);
             return;
         }
@@ -55,9 +52,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         jwt = authHeader.substring(7);
         try {
             username = jwtService.extractUsername(jwt);
-            log.debug("[JWT] {} {} — extracted username='{}'", method, uri, username);
         } catch (Exception e) {
-            log.warn("[JWT] {} {} — token extraction failed: {}", method, uri, e.getMessage());
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid token");
             return;
         }
@@ -73,14 +68,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     );
                     authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(authToken);
-                    log.debug("[JWT] {} {} — authenticated as '{}'", method, uri, username);
                 } else {
-                    log.warn("[JWT] {} {} — token invalid or expired for user '{}'", method, uri, username);
                     response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Expired or invalid token");
                     return;
                 }
             } catch (UsernameNotFoundException ex) {
-                log.warn("[JWT] {} {} — unknown user '{}'", method, uri, username);
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unknown user");
                 return;
             }

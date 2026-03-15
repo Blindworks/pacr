@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="053-extend-body-metrics-for-daily" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="body_metrics" columnName="string_value"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="body_metrics">
+            <column name="string_value" type="VARCHAR(20)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="reasons_json" type="VARCHAR(500)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="auxiliary_text" type="VARCHAR(100)">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+</databaseChangeLog>

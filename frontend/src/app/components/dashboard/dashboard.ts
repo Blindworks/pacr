@@ -1,9 +1,23 @@
-import { Component } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { DashboardService, DashboardData } from '../../services/dashboard.service';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
+  imports: [CommonModule],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss'
 })
-export class Dashboard {}
+export class Dashboard implements OnInit {
+  private readonly dashboardService = inject(DashboardService);
+
+  data: DashboardData | null = null;
+
+  ngOnInit(): void {
+    this.dashboardService.getDashboard().subscribe({
+      next: data => this.data = data,
+      error: err => console.error('Dashboard load failed', err)
+    });
+  }
+}

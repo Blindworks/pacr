@@ -8,6 +8,8 @@ import com.trainingsplan.service.decoupling.DecouplingResult;
 import com.trainingsplan.service.hrzone.HeartRateZoneConfig;
 import com.trainingsplan.service.hrzone.ZoneTimeResult;
 import com.trainingsplan.service.trimp.TRIMPResult;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +23,8 @@ import java.util.List;
  */
 @Service
 public class ActivityMetricsService {
+
+    private static final Logger log = LoggerFactory.getLogger(ActivityMetricsService.class);
 
     @Autowired
     private ZoneTimeCalculator zoneTimeCalculator;
@@ -36,6 +40,9 @@ public class ActivityMetricsService {
 
     @Autowired
     private DailyMetricsService dailyMetricsService;
+
+    @Autowired
+    private MetricsKernelService metricsKernelService;
 
     @Autowired
     private ActivityMetricsRepository activityMetricsRepository;
@@ -98,13 +105,18 @@ public class ActivityMetricsService {
 
         activityMetricsRepository.save(metrics);
         LocalDate trainingDate = completedTraining.getTrainingDate();
+        log.info("activity_metrics_saved activityId={} userId={} date={} trigger=fit_upload",
+                completedTraining.getId(), user.getId(), trainingDate);
         dailyMetricsService.updateDailyStrain(user, trainingDate);
         dailyMetricsService.updateDailyEf(user, trainingDate);
+        metricsKernelService.computeForDate(user, trainingDate);
         // Also update today's rolling metrics so dashboard always shows current status
         LocalDate today = LocalDate.now();
         if (!trainingDate.equals(today)) {
+            log.debug("activity_metrics trigger=today_update userId={} today={}", user.getId(), today);
             dailyMetricsService.updateDailyStrain(user, today);
             dailyMetricsService.updateDailyEf(user, today);
+            metricsKernelService.computeForDate(user, today);
         }
     }
 
@@ -187,13 +199,18 @@ public class ActivityMetricsService {
 
         activityMetricsRepository.save(metrics);
         LocalDate trainingDate = completedTraining.getTrainingDate();
+        log.info("activity_metrics_saved activityId={} userId={} date={} trigger=strava_stream",
+                completedTraining.getId(), user.getId(), trainingDate);
         dailyMetricsService.updateDailyStrain(user, trainingDate);
         dailyMetricsService.updateDailyEf(user, trainingDate);
+        metricsKernelService.computeForDate(user, trainingDate);
         // Also update today's rolling metrics so dashboard always shows current status
         LocalDate today = LocalDate.now();
         if (!trainingDate.equals(today)) {
+            log.debug("activity_metrics trigger=today_update userId={} today={}", user.getId(), today);
             dailyMetricsService.updateDailyStrain(user, today);
             dailyMetricsService.updateDailyEf(user, today);
+            metricsKernelService.computeForDate(user, today);
         }
     }
 

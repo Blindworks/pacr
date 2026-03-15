@@ -62,6 +62,7 @@ public class StravaService {
     private final ActivityStreamRepository activityStreamRepository;
     private final SecurityUtils securityUtils;
     private final UserProfileValidationService userProfileValidationService;
+    private final MetricsKernelService metricsKernelService;
     private final RestClient restClient;
 
     public StravaService(StravaTokenRepository tokenRepository, ObjectMapper objectMapper,
@@ -70,7 +71,8 @@ public class StravaService {
                          ActivityMetricsRepository activityMetricsRepository,
                          ActivityStreamRepository activityStreamRepository,
                          SecurityUtils securityUtils,
-                         UserProfileValidationService userProfileValidationService) {
+                         UserProfileValidationService userProfileValidationService,
+                         MetricsKernelService metricsKernelService) {
         this.tokenRepository = tokenRepository;
         this.objectMapper = objectMapper;
         this.completedTrainingRepository = completedTrainingRepository;
@@ -79,6 +81,7 @@ public class StravaService {
         this.activityStreamRepository = activityStreamRepository;
         this.securityUtils = securityUtils;
         this.userProfileValidationService = userProfileValidationService;
+        this.metricsKernelService = metricsKernelService;
         SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
         factory.setConnectTimeout(java.time.Duration.ofSeconds(10));
         factory.setReadTimeout(java.time.Duration.ofSeconds(30));
@@ -190,6 +193,18 @@ public class StravaService {
                     currentUser != null ? currentUser.getId() : "null");
             syncActivitiesToDb(activities, token.getAccessToken(), currentUser);
             removeDeletedActivitiesFromDb(activities, currentUser, start, end);
+
+            // Neuberechnung aller Metriken für den gesamten Sync-Zeitraum
+            if (currentUser != null) {
+                log.info("strava_sync_metrics_recalc userId={} from={} to={}", currentUser.getId(), start, end);
+                metricsKernelService.computeForDateRange(currentUser, start, end);
+                // Heute separat aktualisieren, falls außerhalb des Sync-Fensters
+                LocalDate today = LocalDate.now();
+                if (today.isAfter(end)) {
+                    metricsKernelService.computeForDate(currentUser, today);
+                }
+            }
+
             return activities;
         } catch (Exception e) {
             log.error("Strava sync failed: {}", e.getMessage());

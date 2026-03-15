@@ -12,7 +12,10 @@ import com.trainingsplan.entity.DailyMetrics;
 import com.trainingsplan.entity.Recommendation;
 import com.trainingsplan.entity.User;
 import com.trainingsplan.entity.UserTrainingEntry;
+import com.trainingsplan.entity.BodyMetric;
+import com.trainingsplan.entity.MetricType;
 import com.trainingsplan.repository.ActivityMetricsRepository;
+import com.trainingsplan.repository.BodyMetricRepository;
 import com.trainingsplan.repository.CompetitionRegistrationRepository;
 import com.trainingsplan.repository.CompletedTrainingRepository;
 import com.trainingsplan.repository.DailyMetricsRepository;
@@ -44,6 +47,7 @@ public class DashboardService {
     private final ObjectMapper objectMapper;
     private final CompetitionRegistrationRepository competitionRegistrationRepository;
     private final UserTrainingEntryRepository userTrainingEntryRepository;
+    private final BodyMetricRepository bodyMetricRepository;
 
     public DashboardService(
             DailyMetricsRepository dailyMetricsRepository,
@@ -52,7 +56,8 @@ public class DashboardService {
             DailyMetricsService dailyMetricsService,
             ObjectMapper objectMapper,
             CompetitionRegistrationRepository competitionRegistrationRepository,
-            UserTrainingEntryRepository userTrainingEntryRepository
+            UserTrainingEntryRepository userTrainingEntryRepository,
+            BodyMetricRepository bodyMetricRepository
     ) {
         this.dailyMetricsRepository = dailyMetricsRepository;
         this.activityMetricsRepository = activityMetricsRepository;
@@ -61,9 +66,9 @@ public class DashboardService {
         this.objectMapper = objectMapper;
         this.competitionRegistrationRepository = competitionRegistrationRepository;
         this.userTrainingEntryRepository = userTrainingEntryRepository;
+        this.bodyMetricRepository = bodyMetricRepository;
     }
 
-    @Transactional(readOnly = true)
     public DashboardDto getDashboard(User user) {
         LocalDate today = LocalDate.now();
         LocalDate startDate = today.minusDays(DAYS - 1L);
@@ -87,6 +92,19 @@ public class DashboardService {
                 .filter(d -> d.getReadinessScore() != null)
                 .max(Comparator.comparing(DailyMetrics::getDate))
                 .orElse(null);
+
+        // Readiness-Daten aus body_metrics (geschrieben von MetricsKernelService)
+        BodyMetric bmReadiness = bodyMetricRepository
+                .findTopByUserIdAndMetricTypeOrderByRecordedAtDesc(user.getId(), MetricType.READINESS_SCORE)
+                .orElse(null);
+        BodyMetric bmRecommendation = bodyMetricRepository
+                .findTopByUserIdAndMetricTypeOrderByRecordedAtDesc(user.getId(), MetricType.RECOMMENDATION)
+                .orElse(null);
+        BodyMetric bmBodyBattery = bodyMetricRepository
+                .findTopByUserIdAndMetricTypeOrderByRecordedAtDesc(user.getId(), MetricType.BODY_BATTERY)
+                .orElse(null);
+        Integer bodyBattery = bmBodyBattery != null && bmBodyBattery.getValue() != null
+                ? bmBodyBattery.getValue().intValue() : null;
 
         DailyMetrics latestWithAcwr = dailyMetrics.stream()
                 .filter(d -> d.getAcwr() != null)
@@ -147,15 +165,28 @@ public class DashboardService {
                 ? latestWithStrain.getDailyStrain21()
                 : 0.0;
 
-        int readinessScore = latestWithReadiness != null && latestWithReadiness.getReadinessScore() != null
-                ? latestWithReadiness.getReadinessScore()
-                : 0;
+        int readinessScore = bmReadiness != null && bmReadiness.getValue() != null
+                ? bmReadiness.getValue().intValue()
+                : (latestWithReadiness != null && latestWithReadiness.getReadinessScore() != null
+                        ? latestWithReadiness.getReadinessScore() : 0);
 
-        Recommendation recommendation = latestWithReadiness != null
-                ? latestWithReadiness.getRecommendation()
-                : null;
+        String readinessRecommendation = bmRecommendation != null && bmRecommendation.getStringValue() != null
+                ? bmRecommendation.getStringValue()
+                : (latestWithReadiness != null && latestWithReadiness.getRecommendation() != null
+                        ? latestWithReadiness.getRecommendation().name() : "EASY");
 
-        String readinessRecommendation = recommendation != null ? recommendation.name() : "EASY";
+        List<String> readinessReasons = List.of();
+        String reasonsRaw = bmReadiness != null ? bmReadiness.getReasonsJson() : null;
+        if (reasonsRaw == null && latestWithReadiness != null) {
+            reasonsRaw = latestWithReadiness.getReasonsJson();
+        }
+        if (reasonsRaw != null && !reasonsRaw.isBlank()) {
+            try {
+                readinessReasons = objectMapper.readValue(reasonsRaw, STRING_LIST);
+            } catch (Exception ignored) {
+                readinessReasons = List.of();
+            }
+        }
 
         double acwr = latestWithAcwr != null && latestWithAcwr.getAcwr() != null
                 ? latestWithAcwr.getAcwr()
@@ -210,13 +241,15 @@ public class DashboardService {
                 strain21,
                 readinessScore,
                 readinessRecommendation,
+                readinessReasons,
                 loadStatus,
                 loadTrend,
                 efTrend,
                 driftTrend,
                 lastRun,
                 nextCompetition,
-                trainingProgress
+                trainingProgress,
+                bodyBattery
         );
     }
 

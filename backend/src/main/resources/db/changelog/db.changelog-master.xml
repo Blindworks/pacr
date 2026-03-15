@@ -56,5 +56,6 @@
     <include file="db/changelog/changes/050-update-training-step-measurements.xml"/>
     <include file="db/changelog/changes/051-halbmarathon-testdata.xml"/>
     <include file="db/changelog/changes/052-add-cycle-settings.xml"/>
+    <include file="db/changelog/changes/053-extend-body-metrics-for-daily.xml"/>
 
 </databaseChangeLog>

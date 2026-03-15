@@ -6,6 +6,8 @@ import com.trainingsplan.entity.User;
 import com.trainingsplan.repository.BodyMetricRepository;
 import com.trainingsplan.repository.CompletedTrainingRepository;
 import com.trainingsplan.security.SecurityUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,6 +17,8 @@ import java.util.*;
 
 @Service
 public class BodyMetricService {
+
+    private static final Logger log = LoggerFactory.getLogger(BodyMetricService.class);
 
     private static final List<String> METRIC_TYPES = List.of("VO2MAX", "VO2MAX_HR_CORRECTED");
 
@@ -29,6 +33,9 @@ public class BodyMetricService {
 
     @Autowired
     private DailyMetricsService dailyMetricsService;
+
+    @Autowired
+    private MetricsKernelService metricsKernelService;
 
     @Autowired
     private SecurityUtils securityUtils;
@@ -126,6 +133,11 @@ public class BodyMetricService {
         }
 
         dailyMetricsService.recomputeEfForUser(user);
+
+        // Backfill aller Tagesmetriken in body_metrics für die letzten 90 Tage
+        LocalDate today = LocalDate.now();
+        log.info("body_metrics_recalculate trigger=manual userId={} activities={}", user.getId(), total);
+        metricsKernelService.computeForDateRange(user, today.minusDays(89), today);
 
         return total;
     }

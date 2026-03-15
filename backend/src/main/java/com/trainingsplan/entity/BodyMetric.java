@@ -35,6 +35,18 @@ public class BodyMetric {
     @Column(name = "source_activity_id")
     private Long sourceActivityId;
 
+    /** Enum-Werte für ACWR_FLAG ("RED", "GREEN", …) und RECOMMENDATION ("REST", "HARD", …) */
+    @Column(name = "string_value", length = 20)
+    private String stringValue;
+
+    /** JSON-Array der Top-3 Readiness-Gründe oder Coach-Bullets (z.B. ["Grund 1","Grund 2"]) */
+    @Column(name = "reasons_json", length = 500)
+    private String reasonsJson;
+
+    /** Freitext-Ergänzung: ACWR-Meldung oder Coach-Titel */
+    @Column(name = "auxiliary_text", length = 100)
+    private String auxiliaryText;
+
     public BodyMetric() {}
 
     // Getters and setters for all fields
@@ -52,4 +64,10 @@ public class BodyMetric {
     public void setRecordedAt(LocalDate recordedAt) { this.recordedAt = recordedAt; }
     public Long getSourceActivityId() { return sourceActivityId; }
     public void setSourceActivityId(Long sourceActivityId) { this.sourceActivityId = sourceActivityId; }
+    public String getStringValue() { return stringValue; }
+    public void setStringValue(String stringValue) { this.stringValue = stringValue; }
+    public String getReasonsJson() { return reasonsJson; }
+    public void setReasonsJson(String reasonsJson) { this.reasonsJson = reasonsJson; }
+    public String getAuxiliaryText() { return auxiliaryText; }
+    public void setAuxiliaryText(String auxiliaryText) { this.auxiliaryText = auxiliaryText; }
 }

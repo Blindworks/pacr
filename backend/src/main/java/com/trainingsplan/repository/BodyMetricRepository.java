@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,4 +28,24 @@ public interface BodyMetricRepository extends JpaRepository<BodyMetric, Long> {
 
     @Query("SELECT DISTINCT b.metricType FROM BodyMetric b WHERE b.user.id = :userId")
     List<String> findDistinctMetricTypesByUserId(@Param("userId") Long userId);
+
+    // ── Neue Methoden für MetricsKernelService ────────────────────────────
+
+    /** Alle Einträge eines Typs in einem Datumsbereich (für Fenster-Aggregationen wie ACWR). */
+    List<BodyMetric> findByUserIdAndMetricTypeAndRecordedAtBetween(
+            Long userId, String metricType, LocalDate from, LocalDate to);
+
+    /**
+     * Tagesbasierter Upsert-Lookup: findet einen Eintrag ohne sourceActivityId
+     * (d.h. tagesbezogen berechnet, nicht einer Activity zugeordnet).
+     */
+    Optional<BodyMetric> findByUserIdAndMetricTypeAndRecordedAtAndSourceActivityIdIsNull(
+            Long userId, String metricType, LocalDate recordedAt);
+
+    /**
+     * Letzter bekannter Wert eines Typs bis einschließlich {@code date}
+     * (für "Vortageswert"-Abfragen beim Backfill).
+     */
+    Optional<BodyMetric> findTopByUserIdAndMetricTypeAndRecordedAtLessThanEqualOrderByRecordedAtDesc(
+            Long userId, String metricType, LocalDate date);
 }
