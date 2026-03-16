@@ -17,6 +17,7 @@ interface TrainingDay {
   dayShort: string;
   dayNum: number;
   isoDate: string;
+  isToday: boolean;
   status: 'completed' | 'today' | 'upcoming' | 'rest' | 'skipped' | 'mixed';
   sessions: TrainingSession[];
 }
@@ -182,11 +183,14 @@ export class TrainingPlan implements OnInit {
         return (left.training?.name ?? '').localeCompare(right.training?.name ?? '');
       });
 
+      const isToday = day.getTime() === today.getTime();
+
       if (dayEntries.length === 0) {
         this.days.push({
           dayShort: DAY_SHORTS[jsDay],
           dayNum: day.getDate(),
           isoDate,
+          isToday,
           status: 'rest',
           sessions: []
         });
@@ -197,6 +201,7 @@ export class TrainingPlan implements OnInit {
         dayShort: DAY_SHORTS[jsDay],
         dayNum: day.getDate(),
         isoDate,
+        isToday,
         status: this.resolveDayStatus(day, today, dayEntries),
         sessions: dayEntries.map(entry => this.mapSession(entry, day, today))
       });

@@ -35,7 +35,7 @@
 
       <div class="tp-days">
         @for (day of days; track day.isoDate) {
-          <div class="tp-day" [class]="'tp-day--' + day.status">
+          <div class="tp-day" [class]="'tp-day--' + day.status" [class.tp-day--today]="day.isToday">
             <div class="tp-day__date">
               <span class="tp-day__name">{{ day.dayShort }}</span>
               <span class="tp-day__num">{{ day.dayNum }}</span>
