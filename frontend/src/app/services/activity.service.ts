@@ -47,12 +47,16 @@ export interface CompletedTraining {
 export interface ActivityStreamDto {
   completedTrainingId: number;
   distancePoints: number[];
-  heartRate: (number | null)[];
-  altitude: (number | null)[];
-  paceSecondsPerKm: (number | null)[];
+  heartRate: (number | null)[] | null;
+  altitude: (number | null)[] | null;
+  paceSecondsPerKm: (number | null)[] | null;
+  cadence: (number | null)[] | null;
+  power: (number | null)[] | null;
   hasHeartRate: boolean;
   hasAltitude: boolean;
   hasPace: boolean;
+  hasCadence: boolean;
+  hasPower: boolean;
 }
 
 @Injectable({ providedIn: 'root' })
