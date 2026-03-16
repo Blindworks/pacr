@@ -189,36 +189,46 @@
       @if (streams) {
       <section class="perf-chart-section">
 
-        <!-- Legend top-right -->
-        <div class="chart-legend">
-          @for (d of availableStreams; track d.key) {
-            <button
-              class="legend-pill"
-              [class.legend-pill--active]="activeStreams().has(d.key)"
-              [style.--pill-color]="d.color"
-              (click)="toggleStream(d.key)"
-            >
-              <span class="legend-dot"></span>
-              {{ d.key === 'cadence' ? 'Cadence' : d.label }}
-              <span class="legend-unit">{{ d.key === 'cadence' ? cadenceUnit : d.unit }}</span>
-            </button>
-          }
+        <!-- Card Header: title left + legend right -->
+        <div class="chart-card-header">
+          <div class="chart-card-title">
+            <span class="material-symbols-outlined chart-title-icon">bar_chart</span>
+            <span>Multi-Stream Data Overlay</span>
+          </div>
+          <div class="chart-legend">
+            @for (d of availableStreams; track d.key) {
+              <button
+                class="legend-item"
+                [class.legend-item--active]="activeStreams().has(d.key)"
+                [style.--item-color]="d.color"
+                (click)="toggleStream(d.key)"
+              >
+                <span class="legend-dot"></span>
+                <span class="legend-label">{{ d.key === 'cadence' ? (cadenceUnit === 'rpm' ? 'CADENCE RPM' : 'CADENCE') : d.label }}</span>
+              </button>
+            }
+          </div>
         </div>
 
-        <!-- SVG Chart -->
+        <!-- Chart Container -->
         <div class="chart-outer">
           <svg
             class="chart-svg"
-            viewBox="0 0 800 240"
+            viewBox="0 0 960 280"
             preserveAspectRatio="none"
             (mousemove)="onChartMouseMove($event)"
             (mouseleave)="onChartMouseLeave()"
           >
-            <g [attr.transform]="'translate(' + plotOffsetX + ',20)'">
+            <g transform="translate(60, 10)">
 
-              <!-- X-axis baseline -->
-              <line x1="0" [attr.y1]="plotH" [attr.x2]="plotW" [attr.y2]="plotH"
-                    stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+              <!-- Horizontal grid lines -->
+              @for (tick of [0, 0.25, 0.5, 0.75, 1]; track tick) {
+                <line
+                  x1="0" [attr.y1]="plotH * (1 - tick)"
+                  [attr.x2]="plotW" [attr.y2]="plotH * (1 - tick)"
+                  stroke="rgba(255,255,255,0.06)" stroke-width="1"
+                />
+              }
 
               <!-- Stream paths -->
               @for (d of availableActiveStreams; track d.key) {
@@ -229,55 +239,64 @@
                     [attr.d]="buildStreamPath(data, range, plotH, plotW, d.invert)"
                     [attr.stroke]="d.color"
                     fill="none"
-                    stroke-width="1.5"
+                    stroke-width="2"
+                    stroke-linecap="round"
                     stroke-linejoin="round"
+                    [attr.stroke-dasharray]="d.dashed ? '6,4' : 'none'"
                   />
                 }
               }
 
-              <!-- Hover hairline -->
+              <!-- Hover hairline + dot -->
               @if (tooltipIndex !== null) {
                 <line
                   [attr.x1]="hoverX(tooltipIndex)" y1="0"
                   [attr.x2]="hoverX(tooltipIndex)" [attr.y2]="plotH"
-                  stroke="rgba(255,255,255,0.3)" stroke-width="1" stroke-dasharray="4,3"
+                  stroke="#b9f20d" stroke-width="1.5" stroke-opacity="0.8"
                 />
-              }
-
-              <!-- Left Y-axes -->
-              @for (d of leftActiveStreams; track d.key; let i = $index) {
-                @let data = getStreamData(d.key);
-                @let range = data ? streamRange(data) : null;
-                @if (range) {
-                  <g [attr.transform]="'translate(' + (-(i + 1) * 55) + ',0)'">
-                    <line x1="50" y1="0" x2="50" [attr.y2]="plotH"
-                          [attr.stroke]="d.color" stroke-opacity="0.3" stroke-width="1"/>
-                    @for (tick of yAxisTicks(range, plotH, d.invert, d.key === 'paceSecondsPerKm'); track tick.y) {
-                      <text x="46" [attr.y]="tick.y + 4" text-anchor="end"
-                            font-size="10" [attr.fill]="d.color" fill-opacity="0.8">{{ tick.label }}</text>
+                @for (d of availableActiveStreams; track d.key; let first = $first) {
+                  @if (first) {
+                    @let dotY = hoverDotY(d.key, d.invert);
+                    @if (dotY !== null) {
+                      <circle
+                        [attr.cx]="hoverX(tooltipIndex)"
+                        [attr.cy]="dotY"
+                        r="5"
+                        fill="#b9f20d"
+                        style="filter: drop-shadow(0 0 6px rgba(185,242,13,0.9))"
+                      />
                     }
-                    <text x="42" y="-8" text-anchor="middle" font-size="9"
-                          [attr.fill]="d.color" fill-opacity="0.6">{{ d.unit }}</text>
-                  </g>
+                  }
                 }
               }
 
-              <!-- Right Y-axes -->
-              @for (d of rightActiveStreams; track d.key; let i = $index) {
-                @let data = getStreamData(d.key);
-                @let range = data ? streamRange(data) : null;
-                @if (range) {
-                  <g [attr.transform]="'translate(' + (plotW + i * 55) + ',0)'">
-                    <line x1="5" y1="0" x2="5" [attr.y2]="plotH"
-                          [attr.stroke]="d.color" stroke-opacity="0.3" stroke-width="1"/>
-                    @for (tick of yAxisTicks(range, plotH, d.invert, false); track tick.y) {
-                      <text x="9" [attr.y]="tick.y + 4" text-anchor="start"
-                            font-size="10" [attr.fill]="d.color" fill-opacity="0.8">{{ tick.label }}</text>
-                    }
-                    <text x="9" y="-8" text-anchor="start" font-size="9"
-                          [attr.fill]="d.color" fill-opacity="0.6">{{ d.unit }}</text>
-                  </g>
+              <!-- Shared Y-axis labels (left column) -->
+              @for (item of yAxisItems; track item.color) {
+                @for (tick of item.ticks; track tick.y) {
+                  <text
+                    x="-8" [attr.y]="tick.y + 4"
+                    text-anchor="end"
+                    font-size="10"
+                    font-family="Lexend, sans-serif"
+                    [attr.fill]="item.color"
+                    fill-opacity="0.85"
+                  >{{ tick.label }}</text>
                 }
+              }
+
+              <!-- X-axis baseline -->
+              <line x1="0" [attr.y1]="plotH" [attr.x2]="plotW" [attr.y2]="plotH"
+                    stroke="rgba(255,255,255,0.12)" stroke-width="1"/>
+
+              <!-- X-axis distance labels -->
+              @for (tick of xAxisTicks; track tick.x) {
+                <text
+                  [attr.x]="tick.x" [attr.y]="plotH + 18"
+                  text-anchor="middle"
+                  font-size="10"
+                  font-family="Lexend, sans-serif"
+                  fill="#475569"
+                >{{ tick.label }}</text>
               }
 
             </g>
@@ -286,17 +305,19 @@
           <!-- Hover Tooltip -->
           @if (tooltipIndex !== null) {
             <div class="chart-tooltip" [style.left.px]="tooltipPixelX">
-              <div class="tooltip-dist">{{ streams.distancePoints[tooltipIndex].toFixed(2) }} km</div>
+              <div class="tooltip-header">
+                <span class="tooltip-diamond">◇</span>
+                <span class="tooltip-dist-label">Distance: {{ streams.distancePoints[tooltipIndex].toFixed(2) }} KM</span>
+              </div>
               @for (d of availableActiveStreams; track d.key) {
                 @let val = getStreamData(d.key)?.[tooltipIndex];
                 @if (val !== null && val !== undefined) {
                   <div class="tooltip-row">
-                    <span class="tooltip-dot" [style.background]="d.color"></span>
-                    <span class="tooltip-label">{{ d.label }}</span>
-                    <span class="tooltip-val">
+                    <span class="tooltip-stream-label">{{ d.label }}</span>
+                    <span class="tooltip-stream-val" [style.color]="d.color">
                       {{ d.key === 'paceSecondsPerKm' ? formatPace(+val) : val }}
-                      {{ d.key === 'cadence' ? cadenceUnit : d.unit }}
                     </span>
+                    <span class="tooltip-stream-unit">{{ d.key === 'cadence' ? cadenceUnit : d.unit }}</span>
                   </div>
                 }
               }

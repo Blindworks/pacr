@@ -28,11 +28,11 @@ export class ActivityDetail implements OnInit {
 
   // Stream registry — defines each stream's display properties
   readonly streamDescriptors = [
-    { key: 'heartRate',        hasKey: 'hasHeartRate', label: 'HR',       unit: 'bpm', color: '#ef4444', axis: 'left'  as const, invert: false },
-    { key: 'altitude',         hasKey: 'hasAltitude',  label: 'Altitude', unit: 'm',   color: '#60a5fa', axis: 'right' as const, invert: false },
-    { key: 'paceSecondsPerKm', hasKey: 'hasPace',      label: 'Pace',     unit: '/km', color: '#4ade80', axis: 'left'  as const, invert: true  },
-    { key: 'cadence',          hasKey: 'hasCadence',   label: 'Cadence',  unit: 'spm', color: '#fb923c', axis: 'right' as const, invert: false },
-    { key: 'power',            hasKey: 'hasPower',     label: 'Power',    unit: 'W',   color: '#b9f20d', axis: 'left'  as const, invert: false },
+    { key: 'heartRate',        hasKey: 'hasHeartRate', label: 'HEART RATE', unit: 'bpm', color: '#b9f20d', axis: 'left'  as const, invert: false, dashed: false },
+    { key: 'altitude',         hasKey: 'hasAltitude',  label: 'ELEVATION',  unit: 'm',   color: '#94a3b8', axis: 'left'  as const, invert: false, dashed: true  },
+    { key: 'paceSecondsPerKm', hasKey: 'hasPace',      label: 'PACE',       unit: '/km', color: '#22d3ee', axis: 'left'  as const, invert: true,  dashed: false },
+    { key: 'cadence',          hasKey: 'hasCadence',   label: 'CADENCE',    unit: 'spm', color: '#a78bfa', axis: 'left'  as const, invert: false, dashed: false },
+    { key: 'power',            hasKey: 'hasPower',     label: 'POWER',      unit: 'W',   color: '#f97316', axis: 'left'  as const, invert: false, dashed: false },
   ] as const;
 
   // Signal — Angular change detection reacts when .set() is called
@@ -254,7 +254,7 @@ export class ActivityDetail implements OnInit {
     return { min: Math.min(...vals), max: Math.max(...vals) };
   }
 
-  /** Builds SVG path string for one stream. */
+  /** Builds SVG path string for one stream using a smooth cardinal spline. */
   buildStreamPath(
     data: (number | null)[],
     range: { min: number; max: number },
@@ -265,18 +265,33 @@ export class ActivityDetail implements OnInit {
     const dist = this.streams!.distancePoints;
     const maxDist = dist[dist.length - 1] || 1;
     const span = range.max - range.min || 1;
-    const parts: string[] = [];
-    let penUp = true;
+
+    const pts: { x: number; y: number }[] = [];
     for (let i = 0; i < data.length; i++) {
       const v = data[i];
-      if (v === null || v === undefined) { penUp = true; continue; }
+      if (v === null || v === undefined) continue;
       const x = (dist[i] / maxDist) * plotW;
       const norm = invert ? (range.max - v) / span : (v - range.min) / span;
-      const y = plotH - norm * plotH;
-      parts.push(`${penUp ? 'M' : 'L'}${x.toFixed(1)},${y.toFixed(1)}`);
-      penUp = false;
+      pts.push({ x, y: plotH - norm * plotH });
     }
-    return parts.join(' ');
+
+    if (pts.length < 2) return '';
+
+    // Cardinal spline with tension 0.3
+    const t = 0.3;
+    let d = `M${pts[0].x.toFixed(1)},${pts[0].y.toFixed(1)}`;
+    for (let i = 0; i < pts.length - 1; i++) {
+      const p0 = pts[Math.max(0, i - 1)];
+      const p1 = pts[i];
+      const p2 = pts[i + 1];
+      const p3 = pts[Math.min(pts.length - 1, i + 2)];
+      const cp1x = p1.x + (p2.x - p0.x) * t;
+      const cp1y = p1.y + (p2.y - p0.y) * t;
+      const cp2x = p2.x - (p3.x - p1.x) * t;
+      const cp2y = p2.y - (p3.y - p1.y) * t;
+      d += ` C${cp1x.toFixed(1)},${cp1y.toFixed(1)} ${cp2x.toFixed(1)},${cp2y.toFixed(1)} ${p2.x.toFixed(1)},${p2.y.toFixed(1)}`;
+    }
+    return d;
   }
 
   /** Returns 5 tick labels for a Y-axis. */
@@ -319,12 +334,8 @@ export class ActivityDetail implements OnInit {
     return this.availableActiveStreams.filter(d => d.axis === 'right');
   }
 
-  /** SVG plot-area left offset in viewBox units (55 per left axis). */
-  get plotOffsetX(): number { return this.leftActiveStreams.length * 55; }
-
-  /** SVG plot-area width in viewBox units. */
-  get plotW(): number { return 800 - this.plotOffsetX - this.rightActiveStreams.length * 55; }
-
+  readonly plotOffsetX = 60;
+  readonly plotW = 880;
   readonly plotH = 200;
 
   onChartMouseMove(event: MouseEvent): void {
@@ -349,6 +360,54 @@ export class ActivityDetail implements OnInit {
     if (!this.streams) return 0;
     const dist = this.streams.distancePoints;
     return (dist[idx] / (dist[dist.length - 1] || 1)) * this.plotW;
+  }
+
+  get xAxisTicks(): { label: string; x: number }[] {
+    if (!this.streams?.distancePoints?.length) return [];
+    const pts = this.streams.distancePoints;
+    const maxDist = pts[pts.length - 1];
+    const intervals = [0.5, 1, 2, 5, 10, 20, 50];
+    const interval = intervals.find(i => maxDist / i <= 7) ?? 50;
+    const ticks: { label: string; x: number }[] = [];
+    for (let d = 0; d <= maxDist + 0.001; d += interval) {
+      const clamped = Math.min(d, maxDist);
+      ticks.push({ label: `${clamped.toFixed(0)} KM`, x: (clamped / maxDist) * this.plotW });
+    }
+    if (ticks.length > 0 && ticks[ticks.length - 1].x < this.plotW - 10) {
+      ticks.push({ label: `${maxDist.toFixed(2)} KM`, x: this.plotW });
+    }
+    return ticks;
+  }
+
+  get yAxisItems(): { color: string; ticks: { y: number; label: string }[] }[] {
+    return this.availableActiveStreams.map(d => {
+      const data = this.getStreamData(d.key);
+      if (!data) return null;
+      const range = this.streamRange(data);
+      if (!range) return null;
+      const ticks = [0, 0.5, 1].map(frac => {
+        const val = range.min + frac * (range.max - range.min);
+        const y = d.invert
+          ? this.plotH - ((range.max - val) / (range.max - range.min || 1)) * this.plotH
+          : this.plotH - frac * this.plotH;
+        const label = d.key === 'paceSecondsPerKm' ? this.formatPace(Math.round(val)) : Math.round(val).toString();
+        return { y, label };
+      });
+      return { color: d.color, ticks };
+    }).filter(Boolean) as { color: string; ticks: { y: number; label: string }[] }[];
+  }
+
+  hoverDotY(key: string, invert: boolean): number | null {
+    if (this.tooltipIndex === null || !this.streams) return null;
+    const data = this.getStreamData(key);
+    if (!data) return null;
+    const v = data[this.tooltipIndex];
+    if (v === null || v === undefined) return null;
+    const range = this.streamRange(data);
+    if (!range) return null;
+    const span = range.max - range.min || 1;
+    const norm = invert ? (range.max - v) / span : (v - range.min) / span;
+    return this.plotH - norm * this.plotH;
   }
 
   formatPace(seconds: number): string {
