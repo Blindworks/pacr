@@ -49,6 +49,14 @@ public class ActivityStream {
     @Column(name = "latlng_json", columnDefinition = "LONGTEXT")
     private String latlngJson;
 
+    /** Serialized Integer[] of cadence values in spm/rpm (may contain nulls). */
+    @Column(name = "cadence_json", columnDefinition = "LONGTEXT")
+    private String cadenceJson;
+
+    /** Serialized Integer[] of power values in watts (may contain nulls). */
+    @Column(name = "power_json", columnDefinition = "LONGTEXT")
+    private String powerJson;
+
     /** Timestamp of when this stream data was fetched from Strava. */
     @Column(name = "fetched_at")
     private LocalDateTime fetchedAt;
@@ -81,6 +89,12 @@ public class ActivityStream {
 
     public String getLatlngJson() { return latlngJson; }
     public void setLatlngJson(String latlngJson) { this.latlngJson = latlngJson; }
+
+    public String getCadenceJson() { return cadenceJson; }
+    public void setCadenceJson(String cadenceJson) { this.cadenceJson = cadenceJson; }
+
+    public String getPowerJson() { return powerJson; }
+    public void setPowerJson(String powerJson) { this.powerJson = powerJson; }
 
     public LocalDateTime getFetchedAt() { return fetchedAt; }
     public void setFetchedAt(LocalDateTime fetchedAt) { this.fetchedAt = fetchedAt; }
