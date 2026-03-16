@@ -104,20 +104,6 @@ export class ActivityDetail implements OnInit {
     this.cdr.detectChanges();
   }
 
-  get hoverHr(): number | null {
-    if (this.tooltipIndex == null || !this.streams?.hasHeartRate) return null;
-    return this.streams.heartRate[this.tooltipIndex] ?? null;
-  }
-
-  get hoverDist(): number | null {
-    if (this.tooltipIndex == null || !this.streams) return null;
-    return this.streams.distancePoints[this.tooltipIndex];
-  }
-
-  get tooltipLeft(): string {
-    return this.tooltipPixelX != null ? `${this.tooltipPixelX}px` : '50%';
-  }
-
   get isStravaActivity(): boolean {
     return this.activity?.source === 'STRAVA';
   }
@@ -169,54 +155,6 @@ export class ActivityDetail implements OnInit {
 
   get displayLabel(): string {
     return this.activity?.trainingType || this.activity?.sport || '—';
-  }
-
-  get hrPoints(): string {
-    if (this.streams?.hasHeartRate) {
-      return this.buildSvgPath(
-        Array.from(this.streams.distancePoints),
-        this.streams.heartRate
-      );
-    }
-    // Fallback: generate a simple curve using avg and max heart rate
-    const avg = this.activity?.averageHeartRate ?? 150;
-    const max = this.activity?.maxHeartRate ?? avg + 20;
-    const points = [
-      avg - 10, avg - 5, avg, avg + 5, max, max - 5, avg + 10, avg + 5, avg, avg - 5, avg - 8
-    ];
-    const w = 1000, h = 256;
-    const minBpm = Math.max(100, avg - 30);
-    const range = max - minBpm + 10;
-    const coords = points.map((bpm, i) => {
-      const x = (i / (points.length - 1)) * w;
-      const y = h - ((bpm - minBpm) / range) * (h - 20) - 10;
-      return `${x} ${y}`;
-    });
-    return `M ${coords.join(' L ')}`;
-  }
-
-  get elevationPath(): string {
-    if (this.streams?.hasAltitude) {
-      const linePath = this.buildSvgPath(
-        Array.from(this.streams.distancePoints),
-        this.streams.altitude
-      );
-      if (linePath) {
-        const w = 1000, h = 256;
-        return `${linePath} L ${w} ${h} L 0 ${h} Z`;
-      }
-    }
-    // Fallback: generate a simple elevation profile
-    const total = this.activity?.elevationGainM ?? 0;
-    const gains = [0, 0.08, 0.25, 0.45, 0.65, 0.8, 0.95, 1.0, 0.9, 0.75, 0.55].map(f => f * total);
-    const w = 1000, h = 256;
-    const maxGain = Math.max(total, 1);
-    const points = gains.map((g, i) => {
-      const x = (i / (gains.length - 1)) * w;
-      const y = h - (g / maxGain) * (h - 30) - 10;
-      return `${x} ${y}`;
-    });
-    return `M 0 ${h} L ${points.join(' L ')} L ${w} ${h} Z`;
   }
 
   get formattedBestLap(): string {
@@ -420,18 +358,4 @@ export class ActivityDetail implements OnInit {
     return `${m}:${s.toString().padStart(2, '0')}`;
   }
 
-  private buildSvgPath(xValues: number[], yValues: (number | null)[]): string {
-    if (!xValues?.length || !yValues?.length) return '';
-    const validPairs = xValues.map((x, i) => ({ x, y: yValues[i] })).filter(p => p.y != null);
-    if (validPairs.length < 2) return '';
-    const minX = validPairs[0].x;
-    const maxX = validPairs[validPairs.length - 1].x;
-    const minY = Math.min(...validPairs.map(p => p.y!));
-    const maxY = Math.max(...validPairs.map(p => p.y!));
-    const scaleX = (x: number) => ((x - minX) / (maxX - minX || 1)) * 1000;
-    const scaleY = (y: number) => 256 - ((y - minY) / (maxY - minY || 1)) * 216;
-    return validPairs.map((p, i) =>
-      `${i === 0 ? 'M' : 'L'}${scaleX(p.x).toFixed(1)},${scaleY(p.y!).toFixed(1)}`
-    ).join(' ');
-  }
 }
