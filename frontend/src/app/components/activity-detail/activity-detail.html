@@ -164,93 +164,148 @@
     <!-- Content -->
     <div class="content">
 
-      <!-- Performance Chart -->
-      <div class="chart-card">
-        <div class="chart-header">
-          <div>
-            <h3 class="chart-title">Performance Overlay</h3>
-            <p class="chart-subtitle">Herzfrequenz vs. Höhenprofil</p>
-          </div>
-          <div class="chart-legend">
-            <div class="legend-item">
-              <span class="legend-dot legend-dot--hr"></span>
-              <span>Herzfrequenz</span>
-            </div>
-            <div class="legend-item">
-              <span class="legend-dot legend-dot--elev"></span>
-              <span>Höhe</span>
-            </div>
-          </div>
+      <!-- Streams loading indicator -->
+      @if (streamsLoading) {
+        <div class="streams-loading">
+          <span class="material-symbols-outlined spinning">sync</span>
+          <span>Chartdaten werden geladen...</span>
+        </div>
+      }
+
+      <!-- Strava fetch button -->
+      @if (!hasStreams && isStravaActivity && !streamsLoading) {
+        <div class="fetch-streams">
+          <button class="fetch-btn" (click)="fetchStreams()">
+            <span class="material-symbols-outlined">download</span>
+            Chartdaten laden
+          </button>
+          @if (streamsError) {
+            <p class="streams-error">Fehler beim Laden der Chartdaten. Bitte erneut versuchen.</p>
+          }
+        </div>
+      }
+
+      <!-- Unified Multi-Stream Chart -->
+      @if (streams) {
+      <section class="perf-chart-section">
+
+        <!-- Legend top-right -->
+        <div class="chart-legend">
+          @for (d of availableStreams; track d.key) {
+            <button
+              class="legend-pill"
+              [class.legend-pill--active]="activeStreams().has(d.key)"
+              [style.--pill-color]="d.color"
+              (click)="toggleStream(d.key)"
+            >
+              <span class="legend-dot"></span>
+              {{ d.key === 'cadence' ? 'Cadence' : d.label }}
+              <span class="legend-unit">{{ d.key === 'cadence' ? cadenceUnit : d.unit }}</span>
+            </button>
+          }
         </div>
 
-        @if (streamsLoading) {
-          <div class="streams-loading">
-            <span class="material-symbols-outlined spinning">sync</span>
-            <span>Chartdaten werden geladen...</span>
-          </div>
-        }
+        <!-- SVG Chart -->
+        <div class="chart-outer">
+          <svg
+            class="chart-svg"
+            viewBox="0 0 800 240"
+            preserveAspectRatio="none"
+            (mousemove)="onChartMouseMove($event)"
+            (mouseleave)="onChartMouseLeave()"
+          >
+            <g [attr.transform]="'translate(' + plotOffsetX + ',20)'">
 
-        @if (!hasStreams && isStravaActivity && !streamsLoading) {
-          <div class="fetch-streams">
-            <button class="fetch-btn" (click)="fetchStreams()">
-              <span class="material-symbols-outlined">download</span>
-              Chartdaten laden
-            </button>
-            @if (streamsError) {
-              <p class="streams-error">Fehler beim Laden der Chartdaten. Bitte erneut versuchen.</p>
-            }
-          </div>
-        }
+              <!-- X-axis baseline -->
+              <line x1="0" [attr.y1]="plotH" [attr.x2]="plotW" [attr.y2]="plotH"
+                    stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
 
-        @if (hasStreams || !isStravaActivity) {
-          <div class="chart-wrap" (mousemove)="onChartMouseMove($event)" (mouseleave)="onChartMouseLeave()">
-            <svg class="chart-svg" viewBox="0 0 1000 256" preserveAspectRatio="none">
-              <!-- Grid -->
-              <line x1="0" x2="1000" y1="64"  y2="64"  stroke="currentColor" stroke-opacity="0.06"/>
-              <line x1="0" x2="1000" y1="128" y2="128" stroke="currentColor" stroke-opacity="0.06"/>
-              <line x1="0" x2="1000" y1="192" y2="192" stroke="currentColor" stroke-opacity="0.06"/>
-              <!-- Elevation fill -->
-              <path [attr.d]="elevationPath" fill="#7d8590" fill-opacity="0.12" stroke="#7d8590" stroke-opacity="0.3" stroke-width="1.5"/>
-              <!-- HR line -->
-              <path [attr.d]="hrPoints" fill="none" stroke="#b9f20d" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-              <!-- Crosshair: dynamic when hovering, static midpoint otherwise -->
-              @if (hoverSvgX != null) {
-                <line [attr.x1]="hoverSvgX" [attr.x2]="hoverSvgX" y1="0" y2="256"
-                      stroke="#b9f20d" stroke-dasharray="4" stroke-width="1" stroke-opacity="0.6"/>
-                @if (hoverSvgY != null) {
-                  <circle [attr.cx]="hoverSvgX" [attr.cy]="hoverSvgY" r="5" fill="#b9f20d"
-                          style="filter: drop-shadow(0 0 6px rgba(185,242,13,0.8))"/>
+              <!-- Stream paths -->
+              @for (d of availableActiveStreams; track d.key) {
+                @let data = getStreamData(d.key);
+                @let range = data ? streamRange(data) : null;
+                @if (data && range) {
+                  <path
+                    [attr.d]="buildStreamPath(data, range, plotH, plotW, d.invert)"
+                    [attr.stroke]="d.color"
+                    fill="none"
+                    stroke-width="1.5"
+                    stroke-linejoin="round"
+                  />
                 }
-              } @else {
-                <circle cx="500" cy="128" r="4" fill="#b9f20d"/>
-                <line x1="500" x2="500" y1="0" y2="256" stroke="#b9f20d" stroke-dasharray="4" stroke-width="1" stroke-opacity="0.5"/>
               }
-            </svg>
-            @if (activity.averageHeartRate) {
-              <div class="chart-tooltip"
-                   [style.left]="tooltipLeft"
-                   [style.transform]="'translateX(-50%)'">
-                <p class="tooltip-label">{{ hoverHr != null ? 'Herzfrequenz' : 'Ø Herzfrequenz' }}</p>
-                <p class="tooltip-hr">{{ hoverHr ?? activity.averageHeartRate }} BPM</p>
-                @if (hoverDist != null) {
-                  <p class="tooltip-elev">{{ hoverDist.toFixed(2) }} km</p>
-                } @else if (activity.maxHeartRate) {
-                  <p class="tooltip-elev">Max: {{ activity.maxHeartRate }} BPM</p>
+
+              <!-- Hover hairline -->
+              @if (tooltipIndex !== null) {
+                <line
+                  [attr.x1]="hoverX(tooltipIndex)" y1="0"
+                  [attr.x2]="hoverX(tooltipIndex)" [attr.y2]="plotH"
+                  stroke="rgba(255,255,255,0.3)" stroke-width="1" stroke-dasharray="4,3"
+                />
+              }
+
+              <!-- Left Y-axes -->
+              @for (d of leftActiveStreams; track d.key; let i = $index) {
+                @let data = getStreamData(d.key);
+                @let range = data ? streamRange(data) : null;
+                @if (range) {
+                  <g [attr.transform]="'translate(' + (-(i + 1) * 55) + ',0)'">
+                    <line x1="50" y1="0" x2="50" [attr.y2]="plotH"
+                          [attr.stroke]="d.color" stroke-opacity="0.3" stroke-width="1"/>
+                    @for (tick of yAxisTicks(range, plotH, d.invert, d.key === 'paceSecondsPerKm'); track tick.y) {
+                      <text x="46" [attr.y]="tick.y + 4" text-anchor="end"
+                            font-size="10" [attr.fill]="d.color" fill-opacity="0.8">{{ tick.label }}</text>
+                    }
+                    <text x="42" y="-8" text-anchor="middle" font-size="9"
+                          [attr.fill]="d.color" fill-opacity="0.6">{{ d.unit }}</text>
+                  </g>
                 }
-              </div>
-            }
-          </div>
-          <div class="chart-axis">
-            <span>0 km</span>
-            @if (activity.distanceKm) {
-              <span>{{ (activity.distanceKm * 0.25).toFixed(1) }} km</span>
-              <span>{{ (activity.distanceKm * 0.5).toFixed(1) }} km</span>
-              <span>{{ (activity.distanceKm * 0.75).toFixed(1) }} km</span>
-              <span>{{ formattedDistance }} km</span>
-            }
-          </div>
-        }
-      </div>
+              }
+
+              <!-- Right Y-axes -->
+              @for (d of rightActiveStreams; track d.key; let i = $index) {
+                @let data = getStreamData(d.key);
+                @let range = data ? streamRange(data) : null;
+                @if (range) {
+                  <g [attr.transform]="'translate(' + (plotW + i * 55) + ',0)'">
+                    <line x1="5" y1="0" x2="5" [attr.y2]="plotH"
+                          [attr.stroke]="d.color" stroke-opacity="0.3" stroke-width="1"/>
+                    @for (tick of yAxisTicks(range, plotH, d.invert, false); track tick.y) {
+                      <text x="9" [attr.y]="tick.y + 4" text-anchor="start"
+                            font-size="10" [attr.fill]="d.color" fill-opacity="0.8">{{ tick.label }}</text>
+                    }
+                    <text x="9" y="-8" text-anchor="start" font-size="9"
+                          [attr.fill]="d.color" fill-opacity="0.6">{{ d.unit }}</text>
+                  </g>
+                }
+              }
+
+            </g>
+          </svg>
+
+          <!-- Hover Tooltip -->
+          @if (tooltipIndex !== null) {
+            <div class="chart-tooltip" [style.left.px]="tooltipPixelX">
+              <div class="tooltip-dist">{{ streams.distancePoints[tooltipIndex].toFixed(2) }} km</div>
+              @for (d of availableActiveStreams; track d.key) {
+                @let val = getStreamData(d.key)?.[tooltipIndex];
+                @if (val !== null && val !== undefined) {
+                  <div class="tooltip-row">
+                    <span class="tooltip-dot" [style.background]="d.color"></span>
+                    <span class="tooltip-label">{{ d.label }}</span>
+                    <span class="tooltip-val">
+                      {{ d.key === 'paceSecondsPerKm' ? formatPace(+val) : val }}
+                      {{ d.key === 'cadence' ? cadenceUnit : d.unit }}
+                    </span>
+                  </div>
+                }
+              }
+            </div>
+          }
+        </div>
+
+      </section>
+      }
 
       <!-- Secondary Metrics -->
       <div class="metrics-grid">
