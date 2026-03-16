@@ -1,10 +1,15 @@
 package com.trainingsplan.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.garmin.fit.*;
+import com.trainingsplan.entity.ActivityStream;
 import com.trainingsplan.entity.CompletedTraining;
 import com.trainingsplan.entity.User;
+import com.trainingsplan.repository.ActivityStreamRepository;
 import com.trainingsplan.repository.CompletedTrainingRepository;
 import com.trainingsplan.security.SecurityUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -42,6 +47,14 @@ public class CompletedTrainingService {
 
     @Autowired
     private TcxParsingService tcxParsingService;
+
+    @Autowired
+    private ActivityStreamRepository activityStreamRepository;
+
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    private static final Logger log = LoggerFactory.getLogger(CompletedTrainingService.class);
 
     /**
      * Dispatches file upload to the correct parser based on the file extension.
@@ -139,6 +152,8 @@ public class CompletedTrainingService {
         User currentUser = securityUtils.getCurrentUser();
         training.setUser(currentUser);
         CompletedTraining savedTraining = completedTrainingRepository.save(training);
+
+        saveActivityStream(savedTraining, collector);
 
         // Calculate and persist body metrics (VO2Max etc.)
         bodyMetricService.calculateAndStore(savedTraining, currentUser);
@@ -423,6 +438,72 @@ public class CompletedTrainingService {
         public List<Integer> getPowers()     { return powers; }
         public List<Double>  getLatitudes()  { return latitudes; }
         public List<Double>  getLongitudes() { return longitudes; }
+    }
+
+    /**
+     * Serializes a list to JSON. Returns null if the list is null, empty, or contains only nulls
+     * (to avoid storing meaningless [null,null,...] arrays that cause NPE during stream parsing).
+     */
+    private String toJson(List<?> list) {
+        if (list == null || list.isEmpty()) return null;
+        boolean allNull = list.stream().allMatch(Objects::isNull);
+        if (allNull) return null;
+        try {
+            return objectMapper.writeValueAsString(list);
+        } catch (Exception e) {
+            log.warn("Failed to serialize stream list: {}", e.getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * Builds [[lat,lon],...] JSON, skipping pairs where either coordinate is null.
+     */
+    private String buildLatlngJson(List<Double> lats, List<Double> lons) {
+        if (lats == null || lons == null || lats.isEmpty()) return null;
+        java.util.List<double[]> pairs = new java.util.ArrayList<>();
+        for (int i = 0; i < Math.min(lats.size(), lons.size()); i++) {
+            Double lat = lats.get(i);
+            Double lon = lons.get(i);
+            if (lat != null && lon != null) {
+                pairs.add(new double[]{lat, lon});
+            }
+        }
+        if (pairs.isEmpty()) return null;
+        try {
+            return objectMapper.writeValueAsString(pairs);
+        } catch (Exception e) {
+            log.warn("Failed to serialize latlng stream: {}", e.getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * Saves an ActivityStream for the given completed training from FIT collector data.
+     * Skipped if distanceJson would be null (service requires distance as x-axis).
+     */
+    private void saveActivityStream(CompletedTraining savedTraining, FitDataCollector collector) {
+        try {
+            String distanceJson = toJson(collector.getDistances());
+            if (distanceJson == null) {
+                log.debug("No distance stream for activity {}, skipping ActivityStream save", savedTraining.getId());
+                return;
+            }
+            ActivityStream stream = new ActivityStream();
+            stream.setCompletedTraining(savedTraining);
+            stream.setFetchedAt(LocalDateTime.now());
+            stream.setDistanceJson(distanceJson);
+            stream.setTimeSecondsJson(toJson(collector.getTimeSeconds()));
+            stream.setHeartrateJson(toJson(collector.getHeartRates()));
+            stream.setAltitudeJson(toJson(collector.getAltitudes()));
+            stream.setVelocitySmoothJson(toJson(collector.getSpeeds()));
+            stream.setCadenceJson(toJson(collector.getCadences()));
+            stream.setPowerJson(toJson(collector.getPowers()));
+            stream.setLatlngJson(buildLatlngJson(collector.getLatitudes(), collector.getLongitudes()));
+            activityStreamRepository.save(stream);
+        } catch (Exception e) {
+            log.warn("Failed to save ActivityStream for completedTrainingId={}: {}", savedTraining.getId(), e.getMessage());
+        }
     }
 
     public List<CompletedTraining> getCompletedTrainingsByDate(LocalDate date) {
