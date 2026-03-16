@@ -324,16 +324,6 @@ export class ActivityDetail implements OnInit {
     return this.streamDescriptors.filter(d => this.streamAvailable(d.hasKey));
   }
 
-  /** Left-side active streams (for Y-axis rendering). */
-  get leftActiveStreams() {
-    return this.availableActiveStreams.filter(d => d.axis === 'left');
-  }
-
-  /** Right-side active streams (for Y-axis rendering). */
-  get rightActiveStreams() {
-    return this.availableActiveStreams.filter(d => d.axis === 'right');
-  }
-
   readonly plotOffsetX = 60;
   readonly plotW = 880;
   readonly plotH = 200;
