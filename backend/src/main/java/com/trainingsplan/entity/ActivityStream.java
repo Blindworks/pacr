@@ -6,11 +6,12 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 /**
- * Stores raw Strava stream data for a completed training activity.
+ * Stores per-second activity stream data for a completed training.
  * One-to-one with {@link CompletedTraining}.
  *
- * All JSON fields store serialized arrays as returned by the Strava Streams API.
- * Fields are NULL when the corresponding stream was not available for the activity.
+ * JSON fields are serialized arrays populated either from the Strava Streams API
+ * or parsed directly from uploaded FIT files. Fields are NULL when the corresponding
+ * stream was not available for the activity.
  */
 @Entity
 @Table(name = "activity_streams")
