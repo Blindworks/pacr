@@ -44,6 +44,11 @@ export const routes: Routes = [
     loadComponent: () => import('./components/activity-detail/activity-detail').then(m => m.ActivityDetail)
   },
   {
+    path: 'upload',
+    canActivate: [authGuard],
+    loadComponent: () => import('./components/upload/upload').then(m => m.Upload)
+  },
+  {
     path: 'training-plans',
     canActivate: [authGuard],
     loadComponent: () => import('./components/training-plan/training-plan').then(m => m.TrainingPlan)

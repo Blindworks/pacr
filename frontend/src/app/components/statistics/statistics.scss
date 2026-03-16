@@ -64,6 +64,28 @@
   background: var(--panel-soft);
 }
 
+.period-select {
+  border-radius: 0.65rem;
+  border: 1px solid var(--border);
+  color: var(--text);
+  background: var(--panel-soft);
+  padding: 0.65rem 0.9rem;
+  font-weight: 600;
+  font-family: inherit;
+  font-size: 0.9rem;
+  cursor: pointer;
+  outline: none;
+
+  &:focus {
+    border-color: rgba(185, 242, 13, 0.4);
+  }
+
+  option {
+    background: #161b22;
+    color: var(--text);
+  }
+}
+
 .select-pill {
   padding: 0.45rem 0.7rem;
   color: var(--muted);

@@ -1,0 +1,162 @@
+<div class="upload-page">
+
+  <!-- Sticky Header -->
+  <header class="page-header">
+    <div class="header-content">
+      <h2 class="page-title">Upload Training Data</h2>
+      <p class="page-subtitle">Sync your latest activities to update your performance metrics.</p>
+    </div>
+  </header>
+
+  <div class="page-body">
+
+    <!-- Drag and Drop Area -->
+    <section
+      class="drop-zone"
+      [class.drag-over]="isDragOver()"
+      [class.has-file]="selectedFile()"
+      (dragover)="onDragOver($event)"
+      (dragleave)="onDragLeave($event)"
+      (drop)="onDrop($event)"
+    >
+      <div class="drop-glow"></div>
+
+      <input
+        #fileInput
+        type="file"
+        accept=".fit,.gpx,.tcx"
+        class="hidden-input"
+        (change)="onFileSelected($event)"
+      />
+
+      <div class="drop-content">
+        <div class="drop-icon-wrap" [class.drop-icon-wrap--file]="selectedFile()">
+          @if (selectedFile()) {
+            <span class="material-symbols-outlined drop-icon">task</span>
+          } @else {
+            <span class="material-symbols-outlined drop-icon">cloud_upload</span>
+          }
+        </div>
+
+        @if (selectedFile()) {
+          <p class="drop-title">{{ selectedFile()!.name }}</p>
+          <p class="drop-sub">{{ (selectedFile()!.size / 1024).toFixed(1) }} KB — Klicken zum Ändern</p>
+        } @else {
+          <p class="drop-title">Drop your activity files here</p>
+          <p class="drop-sub">.FIT, .GPX, .TCX files supported</p>
+        }
+
+        <div class="drop-divider">
+          <span class="drop-divider-line"></span>
+          <span class="drop-divider-text">or</span>
+          <span class="drop-divider-line"></span>
+        </div>
+
+        <button class="browse-btn" (click)="triggerFilePicker()">
+          <span class="material-symbols-outlined">folder_open</span>
+          Browse Files
+        </button>
+      </div>
+    </section>
+
+    <!-- Alerts -->
+    @if (uploadError()) {
+      <div class="alert alert--error">
+        <span class="material-symbols-outlined">error</span>
+        <span>{{ uploadError() }}</span>
+      </div>
+    }
+
+    @if (uploadSuccess()) {
+      <div class="alert alert--success">
+        <span class="material-symbols-outlined">check_circle</span>
+        <span>Upload erfolgreich! Weiterleitung zu Activities...</span>
+      </div>
+    }
+
+    <!-- Upload Button -->
+    <button
+      class="upload-btn"
+      [disabled]="!selectedFile() || isUploading() || uploadSuccess()"
+      (click)="upload()"
+    >
+      @if (isUploading()) {
+        <span class="material-symbols-outlined spin">sync</span>
+        <span>Wird hochgeladen...</span>
+      } @else {
+        <span class="material-symbols-outlined">upload</span>
+        <span>Activity hochladen</span>
+      }
+    </button>
+
+    <!-- Recent Uploads Table -->
+    <section class="recent-section">
+      <div class="recent-header">
+        <h3 class="recent-title">Recent Uploads</h3>
+        <a routerLink="/activities" class="view-all-link">View All History</a>
+      </div>
+
+      <div class="table-wrap">
+        <table class="uploads-table">
+          <thead>
+            <tr>
+              <th>File / Activity</th>
+              <th>Date</th>
+              <th>Distance</th>
+              <th class="th-right">Source</th>
+            </tr>
+          </thead>
+          <tbody>
+            @if (recentActivities().length === 0) {
+              <tr>
+                <td colspan="4" class="empty-row">Noch keine Aktivitäten vorhanden.</td>
+              </tr>
+            }
+            @for (activity of recentActivities(); track activity.id) {
+              <tr (click)="router.navigate(['/activities', activity.id])" class="table-row">
+                <td>
+                  <div class="activity-name-cell">
+                    <span class="material-symbols-outlined activity-icon">description</span>
+                    <span class="activity-name">{{ activity.activityName || activity.sport || 'Aktivität' }}</span>
+                  </div>
+                </td>
+                <td class="td-muted">{{ formatDate(activity.trainingDate) }}</td>
+                <td class="td-muted">{{ formatDistance(activity.distanceKm) }}</td>
+                <td class="td-right">
+                  <span class="source-badge source-badge--success">
+                    <span class="material-symbols-outlined">check_circle</span>
+                    {{ getSourceLabel(activity.source) }}
+                  </span>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Help Section -->
+    <section class="help-section">
+      <div class="help-card">
+        <div class="help-icon">
+          <span class="material-symbols-outlined">help_outline</span>
+        </div>
+        <div class="help-text">
+          <h4 class="help-title">Need help?</h4>
+          <p class="help-desc">Learn how to export data from your favorite devices including Garmin, Wahoo, and Strava.</p>
+        </div>
+      </div>
+      <div class="help-card">
+        <div class="help-icon">
+          <span class="material-symbols-outlined">sync_alt</span>
+        </div>
+        <div class="help-text">
+          <h4 class="help-title">Auto-Sync</h4>
+          <p class="help-desc">Connect your account directly to Garmin Connect or Strava for automatic seamless uploads.</p>
+          <a routerLink="/settings" class="help-link">Connect Accounts</a>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</div>

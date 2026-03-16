@@ -42,7 +42,24 @@ public class TrainingStatsService {
 
         totalDistanceKm = Math.round(totalDistanceKm * 100.0) / 100.0;
 
-        return new TrainingStatsDto(buckets, totalDistanceKm, totalDurationSeconds, totalActivityCount);
+        long totalZone1Seconds = trainings.stream().mapToLong(ct -> Optional.ofNullable(ct.getTimeInHrZone1Seconds()).orElse(0)).sum();
+        long totalZone2Seconds = trainings.stream().mapToLong(ct -> Optional.ofNullable(ct.getTimeInHrZone2Seconds()).orElse(0)).sum();
+        long totalZone3Seconds = trainings.stream().mapToLong(ct -> Optional.ofNullable(ct.getTimeInHrZone3Seconds()).orElse(0)).sum();
+        long totalZone4Seconds = trainings.stream().mapToLong(ct -> Optional.ofNullable(ct.getTimeInHrZone4Seconds()).orElse(0)).sum();
+        long totalZone5Seconds = trainings.stream().mapToLong(ct -> Optional.ofNullable(ct.getTimeInHrZone5Seconds()).orElse(0)).sum();
+
+        double avgPaceSecondsPerKm = totalDistanceKm > 0
+                ? (double) totalDurationSeconds / totalDistanceKm
+                : 0.0;
+
+        TrainingStatsDto dto = new TrainingStatsDto(buckets, totalDistanceKm, totalDurationSeconds, totalActivityCount);
+        dto.setAvgPaceSecondsPerKm(Math.round(avgPaceSecondsPerKm * 10.0) / 10.0);
+        dto.setTotalZone1Seconds(totalZone1Seconds);
+        dto.setTotalZone2Seconds(totalZone2Seconds);
+        dto.setTotalZone3Seconds(totalZone3Seconds);
+        dto.setTotalZone4Seconds(totalZone4Seconds);
+        dto.setTotalZone5Seconds(totalZone5Seconds);
+        return dto;
     }
 
     private LocalDate resolveFromDate(String period, LocalDate today) {
@@ -53,6 +70,7 @@ public class TrainingStatsService {
             case "day"   -> today.minusDays(29);
             case "week"  -> today.minusWeeks(12);
             case "currentWeek" -> today.minusDays(today.getDayOfWeek().getValue() - 1L);
+            case "lastWeek"    -> today.minusDays(today.getDayOfWeek().getValue() - 1L + 7L);
             case "year"  -> LocalDate.of(2000, 1, 1);
             case "all"   -> LocalDate.of(2000, 1, 1);
             default      -> today.minusMonths(12); // "month" and unknown
@@ -60,7 +78,7 @@ public class TrainingStatsService {
     }
 
     private LocalDate resolveToDate(String period, LocalDate today, LocalDate from) {
-        if ("currentWeek".equals(period)) {
+        if ("currentWeek".equals(period) || "lastWeek".equals(period)) {
             return from.plusDays(6);
         }
         return today;
@@ -91,7 +109,7 @@ public class TrainingStatsService {
         if ("all".equals(period)) {
             return buildAllBucket(trainings, from, to);
         }
-        if ("day".equals(period) || "currentWeek".equals(period)) {
+        if ("day".equals(period) || "currentWeek".equals(period) || "lastWeek".equals(period)) {
             return buildDayBuckets(trainings, from, to);
         }
         if ("week".equals(period)) {

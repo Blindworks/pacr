@@ -87,16 +87,17 @@ public class CompletedTrainingController {
                 return ResponseEntity.badRequest().body("Datei ist leer");
             }
             
-            if (!file.getOriginalFilename().toLowerCase().endsWith(".fit")) {
-                return ResponseEntity.badRequest().body("Nur .FIT-Dateien sind erlaubt");
+            String origName = file.getOriginalFilename() != null ? file.getOriginalFilename().toLowerCase() : "";
+            if (!origName.endsWith(".fit") && !origName.endsWith(".gpx") && !origName.endsWith(".tcx")) {
+                return ResponseEntity.badRequest().body("Nur .fit, .gpx und .tcx-Dateien sind erlaubt");
             }
-            
-            CompletedTraining training = completedTrainingService.uploadAndParseFitFile(file, trainingDate, trainingId);
+
+            CompletedTraining training = completedTrainingService.uploadAndParseFile(file, trainingDate, trainingId);
             return ResponseEntity.ok(training);
             
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Fehler beim Verarbeiten der FIT-Datei: " + e.getMessage());
+                    .body("Fehler beim Verarbeiten der Aktivitätsdatei: " + e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Unerwarteter Fehler: " + e.getMessage());

@@ -9,21 +9,21 @@
         <span class="material-symbols-outlined">file_download</span>
         Export PDF
       </button>
-      <button class="btn-ghost" type="button">
-        <span class="material-symbols-outlined">calendar_month</span>
-        Last 6 Months
-      </button>
+      <select class="period-select" [value]="selectedPeriodLabel()" (change)="setPeriod($any($event.target).value)">
+        @for (period of periods; track period) {
+          <option [value]="period">{{ period }}</option>
+        }
+      </select>
     </div>
   </header>
 
   <div class="top-metrics">
     <article class="metric-card">
       <div class="metric-row">
-        <span class="metric-label">Monthly Volume</span>
-        <span class="metric-chip metric-chip--good">+12%</span>
+        <span class="metric-label">Total Volume</span>
       </div>
       <div class="metric-value-row">
-        <strong>428.5</strong>
+        <strong>{{ stats?.totalDistanceKm | number:'1.0-1' }}</strong>
         <span>KM</span>
       </div>
       <div class="progress-track"><div class="progress-fill" style="width: 78%"></div></div>
@@ -31,55 +31,52 @@
 
     <article class="metric-card">
       <div class="metric-row">
-        <span class="metric-label">Current VO2 Max</span>
-        <span class="metric-chip metric-chip--good">+1.2</span>
+        <span class="metric-label">Activities</span>
       </div>
       <div class="metric-value-row">
-        <strong>62</strong>
-        <span>Elite</span>
+        <strong>{{ stats?.totalActivityCount ?? '--' }}</strong>
+        <span>Total</span>
       </div>
-      <p class="metric-subline"><span class="material-symbols-outlined">trending_up</span>Peak performance zone</p>
+      <p class="metric-subline"><span class="material-symbols-outlined">trending_up</span>{{ selectedPeriodLabel() }}</p>
     </article>
 
     <article class="metric-card">
       <div class="metric-row">
         <span class="metric-label">Avg. Pace</span>
-        <span class="metric-chip metric-chip--primary">-5s/km</span>
       </div>
       <div class="metric-value-row">
-        <strong>4:42</strong>
+        <strong>{{ formatPace(stats?.avgPaceSecondsPerKm ?? 0) }}</strong>
         <span>MIN/KM</span>
       </div>
-      <p class="metric-subline"><span class="material-symbols-outlined">speed</span>Improving consistency</p>
+      <p class="metric-subline"><span class="material-symbols-outlined">speed</span>Distance-weighted average</p>
     </article>
 
     <article class="metric-card">
       <div class="metric-row">
-        <span class="metric-label">Training Load</span>
-        <span class="metric-chip metric-chip--warn">Productive</span>
+        <span class="metric-label">Total Time</span>
       </div>
       <div class="metric-value-row">
-        <strong>754</strong>
-        <span>Score</span>
+        <strong>{{ formatDuration(stats?.totalDurationSeconds ?? 0) }}</strong>
       </div>
-      <p class="metric-subline"><span class="material-symbols-outlined">bolt</span>Recovery recommended in 12h</p>
+      <p class="metric-subline"><span class="material-symbols-outlined">bolt</span>{{ selectedPeriodLabel() }}</p>
     </article>
   </div>
 
   <div class="chart-grid">
     <article class="panel">
       <div class="panel-head">
-        <h2>Monthly Volume</h2>
+        <h2>Volume per Period</h2>
         <div class="legend">
-          <span><i class="dot dot--primary"></i>2024</span>
-          <span><i class="dot dot--muted"></i>2023</span>
+          <span><i class="dot dot--primary"></i>Distance (km)</span>
         </div>
       </div>
       <div class="bar-chart">
+        @if (monthlyBars.length === 0) {
+          <p class="no-data">No data available</p>
+        }
         @for (bar of monthlyBars; track bar.month) {
           <div class="bar-col">
-            <div class="bar-stack" [style.height.%]="bar.currentHeight">
-              <div class="bar-prev" [style.height.%]="bar.previousHeight"></div>
+            <div class="bar-stack" [style.height.%]="bar.heightPct" [title]="bar.distanceKm + ' km'">
             </div>
             <span>{{ bar.month }}</span>
           </div>

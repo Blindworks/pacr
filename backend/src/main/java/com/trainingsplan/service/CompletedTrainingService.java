@@ -13,6 +13,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -35,13 +36,89 @@ public class CompletedTrainingService {
     @Autowired
     private SecurityUtils securityUtils;
 
+    @Autowired
+    private GpxParsingService gpxParsingService;
+
+    @Autowired
+    private TcxParsingService tcxParsingService;
+
+    /**
+     * Dispatches file upload to the correct parser based on the file extension.
+     * Supported formats: .fit, .gpx, .tcx
+     */
+    public CompletedTraining uploadAndParseFile(MultipartFile file, LocalDate trainingDate, Long trainingId) throws IOException {
+        String filename = file.getOriginalFilename() != null ? file.getOriginalFilename().toLowerCase() : "";
+        if (filename.endsWith(".fit")) {
+            return uploadAndParseFitFile(file, trainingDate, trainingId);
+        } else if (filename.endsWith(".gpx")) {
+            return uploadAndParseGpxFile(file, trainingDate, trainingId);
+        } else if (filename.endsWith(".tcx")) {
+            return uploadAndParseTcxFile(file, trainingDate, trainingId);
+        } else {
+            throw new IOException("Nicht unterstütztes Dateiformat. Erlaubt: .fit, .gpx, .tcx");
+        }
+    }
+
+    private CompletedTraining uploadAndParseGpxFile(MultipartFile file, LocalDate trainingDate, Long trainingId) throws IOException {
+        ParsedActivityData data;
+        try {
+            data = gpxParsingService.parse(file.getBytes());
+        } catch (Exception e) {
+            throw new IOException("Fehler beim Parsen der GPX-Datei: " + e.getMessage(), e);
+        }
+        CompletedTraining training = data.training;
+        // File date has priority; use parameter only if the file contained no date
+        if (training.getTrainingDate() == null) training.setTrainingDate(trainingDate);
+        training.setOriginalFilename(file.getOriginalFilename());
+        training.setUploadDate(LocalDateTime.now());
+
+        User currentUser = securityUtils.getCurrentUser();
+        training.setUser(currentUser);
+        CompletedTraining savedTraining = completedTrainingRepository.save(training);
+
+        bodyMetricService.calculateAndStore(savedTraining, currentUser);
+        activityMetricsService.calculateAndPersist(savedTraining, data.timeSeconds, data.heartRates, currentUser);
+
+        if (trainingId != null) {
+            try { userTrainingScheduleService.updateCompletion(trainingId, true, "completed"); }
+            catch (Exception ignored) {}
+        }
+        return savedTraining;
+    }
+
+    private CompletedTraining uploadAndParseTcxFile(MultipartFile file, LocalDate trainingDate, Long trainingId) throws IOException {
+        ParsedActivityData data;
+        try {
+            data = tcxParsingService.parse(file.getBytes());
+        } catch (Exception e) {
+            throw new IOException("Fehler beim Parsen der TCX-Datei: " + e.getMessage(), e);
+        }
+        CompletedTraining training = data.training;
+        // File date has priority; use parameter only if the file contained no date
+        if (training.getTrainingDate() == null) training.setTrainingDate(trainingDate);
+        training.setOriginalFilename(file.getOriginalFilename());
+        training.setUploadDate(LocalDateTime.now());
+
+        User currentUser = securityUtils.getCurrentUser();
+        training.setUser(currentUser);
+        CompletedTraining savedTraining = completedTrainingRepository.save(training);
+
+        bodyMetricService.calculateAndStore(savedTraining, currentUser);
+        activityMetricsService.calculateAndPersist(savedTraining, data.timeSeconds, data.heartRates, currentUser);
+
+        if (trainingId != null) {
+            try { userTrainingScheduleService.updateCompletion(trainingId, true, "completed"); }
+            catch (Exception ignored) {}
+        }
+        return savedTraining;
+    }
+
     public CompletedTraining uploadAndParseFitFile(MultipartFile file, LocalDate trainingDate) throws IOException {
         return uploadAndParseFitFile(file, trainingDate, null);
     }
 
     public CompletedTraining uploadAndParseFitFile(MultipartFile file, LocalDate trainingDate, Long trainingId) throws IOException {
         CompletedTraining training = new CompletedTraining();
-        training.setTrainingDate(trainingDate);
         training.setOriginalFilename(file.getOriginalFilename());
         training.setUploadDate(LocalDateTime.now());
 
@@ -51,6 +128,12 @@ public class CompletedTrainingService {
         } catch (Exception e) {
             throw new IOException("Fehler beim Parsen der FIT-Datei: " + e.getMessage(), e);
         }
+
+        // Prefer the date extracted from the FIT file; fall back to the request parameter
+        LocalDate effectiveDate = collector.getParsedStartDate() != null
+                ? collector.getParsedStartDate()
+                : trainingDate;
+        training.setTrainingDate(effectiveDate);
 
         User currentUser = securityUtils.getCurrentUser();
         training.setUser(currentUser);
@@ -113,6 +196,12 @@ public class CompletedTrainingService {
         private List<Integer> timeSeconds = new ArrayList<>();
         private List<Integer> heartRates = new ArrayList<>();
 
+        /** Activity start date parsed from the FIT file (may be null if not present). */
+        private LocalDate parsedStartDate = null;
+
+        /** FIT epoch offset: seconds between 1989-12-31T00:00:00Z and 1970-01-01T00:00:00Z. */
+        private static final long FIT_EPOCH_OFFSET = 631065600L;
+
         public FitDataCollector(CompletedTraining training) {
             this.training = training;
         }
@@ -157,6 +246,18 @@ public class CompletedTrainingService {
         }
 
         private void handleSession(Mesg mesg) {
+            // Extract activity start date from the session's start_time field
+            Field startTimeField = mesg.getField("start_time");
+            if (startTimeField != null && startTimeField.getValue() != null) {
+                Long fitTs = startTimeField.getLongValue();
+                if (fitTs != null && fitTs > 0) {
+                    long unixSeconds = fitTs + FIT_EPOCH_OFFSET;
+                    parsedStartDate = LocalDateTime
+                            .ofEpochSecond(unixSeconds, 0, ZoneOffset.UTC)
+                            .toLocalDate();
+                }
+            }
+
             setFieldString(mesg, "sport",     val -> training.setSport(val.toLowerCase()));
             setFieldString(mesg, "sub_sport", val -> training.setSubSport(val.toLowerCase()));
 
@@ -238,6 +339,9 @@ public class CompletedTrainingService {
 
         /** HR in bpm per sample; entries may be null for GPS-only ticks. */
         public List<Integer> getHeartRates()  { return heartRates; }
+
+        /** Start date from the FIT file's session message, or {@code null} if not present. */
+        public LocalDate getParsedStartDate() { return parsedStartDate; }
     }
 
     public List<CompletedTraining> getCompletedTrainingsByDate(LocalDate date) {

@@ -8,6 +8,12 @@ public class TrainingStatsDto {
     private double totalDistanceKm;
     private int totalDurationSeconds;
     private int totalActivityCount;
+    private double avgPaceSecondsPerKm;
+    private long totalZone1Seconds;
+    private long totalZone2Seconds;
+    private long totalZone3Seconds;
+    private long totalZone4Seconds;
+    private long totalZone5Seconds;
 
     public TrainingStatsDto() {}
 
@@ -48,6 +54,54 @@ public class TrainingStatsDto {
 
     public void setTotalActivityCount(int totalActivityCount) {
         this.totalActivityCount = totalActivityCount;
+    }
+
+    public double getAvgPaceSecondsPerKm() {
+        return avgPaceSecondsPerKm;
+    }
+
+    public void setAvgPaceSecondsPerKm(double avgPaceSecondsPerKm) {
+        this.avgPaceSecondsPerKm = avgPaceSecondsPerKm;
+    }
+
+    public long getTotalZone1Seconds() {
+        return totalZone1Seconds;
+    }
+
+    public void setTotalZone1Seconds(long totalZone1Seconds) {
+        this.totalZone1Seconds = totalZone1Seconds;
+    }
+
+    public long getTotalZone2Seconds() {
+        return totalZone2Seconds;
+    }
+
+    public void setTotalZone2Seconds(long totalZone2Seconds) {
+        this.totalZone2Seconds = totalZone2Seconds;
+    }
+
+    public long getTotalZone3Seconds() {
+        return totalZone3Seconds;
+    }
+
+    public void setTotalZone3Seconds(long totalZone3Seconds) {
+        this.totalZone3Seconds = totalZone3Seconds;
+    }
+
+    public long getTotalZone4Seconds() {
+        return totalZone4Seconds;
+    }
+
+    public void setTotalZone4Seconds(long totalZone4Seconds) {
+        this.totalZone4Seconds = totalZone4Seconds;
+    }
+
+    public long getTotalZone5Seconds() {
+        return totalZone5Seconds;
+    }
+
+    public void setTotalZone5Seconds(long totalZone5Seconds) {
+        this.totalZone5Seconds = totalZone5Seconds;
     }
 
     // -------------------------------------------------------------------------
