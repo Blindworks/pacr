@@ -36,89 +36,106 @@
         <svg class="route-svg" viewBox="0 0 800 400" preserveAspectRatio="xMidYMid slice">
           @switch (mapVariant) {
             @case (0) {
-              <!-- Variante 0: Bergterrain -->
+              <!-- Variante 0: Orthogonales Raster (US-Grid) -->
               <g class="map-bg">
-                <line class="map-grid" x1="0" y1="80" x2="800" y2="80"/>
-                <line class="map-grid" x1="0" y1="160" x2="800" y2="160"/>
-                <line class="map-grid" x1="0" y1="240" x2="800" y2="240"/>
-                <line class="map-grid" x1="0" y1="320" x2="800" y2="320"/>
-                <line class="map-grid" x1="160" y1="0" x2="160" y2="400"/>
-                <line class="map-grid" x1="320" y1="0" x2="320" y2="400"/>
-                <line class="map-grid" x1="480" y1="0" x2="480" y2="400"/>
-                <line class="map-grid" x1="640" y1="0" x2="640" y2="400"/>
-                <path class="map-contour" d="M80 350 C100 220 180 110 360 100 C540 90 660 170 700 280 C740 380 640 410 440 415 C240 420 60 460 80 350Z"/>
-                <path class="map-contour" d="M120 330 C140 218 210 128 370 120 C530 112 635 188 668 286 C700 370 610 398 420 402 C230 406 100 432 120 330Z"/>
-                <path class="map-contour" d="M175 305 C192 215 248 152 380 146 C512 140 600 200 628 284 C655 355 578 380 405 383 C232 386 158 395 175 305Z"/>
-                <path class="map-contour" d="M235 278 C248 210 292 168 390 164 C488 160 555 212 575 278 C595 338 540 358 420 360 C300 362 222 346 235 278Z"/>
-                <path class="map-contour" d="M300 250 C310 205 342 178 400 176 C458 174 496 206 508 254 C520 300 485 316 428 317 C370 318 290 295 300 250Z"/>
+                <!-- Nebenstraßen horizontal -->
+                <line class="map-grid" x1="0" y1="40" x2="800" y2="40" stroke-opacity="0.15"/>
+                <line class="map-grid" x1="0" y1="80" x2="800" y2="80" stroke-opacity="0.15"/>
+                <line class="map-grid" x1="0" y1="120" x2="800" y2="120" stroke-opacity="0.15"/>
+                <line class="map-grid" x1="0" y1="200" x2="800" y2="200" stroke-opacity="0.15"/>
+                <line class="map-grid" x1="0" y1="240" x2="800" y2="240" stroke-opacity="0.15"/>
+                <line class="map-grid" x1="0" y1="280" x2="800" y2="280" stroke-opacity="0.15"/>
+                <line class="map-grid" x1="0" y1="360" x2="800" y2="360" stroke-opacity="0.15"/>
+                <!-- Nebenstraßen vertikal -->
+                <line class="map-grid" x1="80" y1="0" x2="80" y2="400" stroke-opacity="0.15"/>
+                <line class="map-grid" x1="160" y1="0" x2="160" y2="400" stroke-opacity="0.15"/>
+                <line class="map-grid" x1="320" y1="0" x2="320" y2="400" stroke-opacity="0.15"/>
+                <line class="map-grid" x1="400" y1="0" x2="400" y2="400" stroke-opacity="0.15"/>
+                <line class="map-grid" x1="480" y1="0" x2="480" y2="400" stroke-opacity="0.15"/>
+                <line class="map-grid" x1="640" y1="0" x2="640" y2="400" stroke-opacity="0.15"/>
+                <line class="map-grid" x1="720" y1="0" x2="720" y2="400" stroke-opacity="0.15"/>
+                <!-- Hauptstraßen horizontal -->
+                <line x1="0" y1="160" x2="800" y2="160" stroke="#7d8590" stroke-width="1.5" stroke-opacity="0.35"/>
+                <line x1="0" y1="320" x2="800" y2="320" stroke="#7d8590" stroke-width="1.5" stroke-opacity="0.35"/>
+                <!-- Hauptstraßen vertikal -->
+                <line x1="240" y1="0" x2="240" y2="400" stroke="#7d8590" stroke-width="1.5" stroke-opacity="0.35"/>
+                <line x1="560" y1="0" x2="560" y2="400" stroke="#7d8590" stroke-width="1.5" stroke-opacity="0.35"/>
               </g>
+              <!-- Route -->
+              <path
+                d="M80 340 L80 320 L160 320 L160 240 L240 240 L240 160 L400 160 L400 80 L560 80 L560 40 L720 40"
+                stroke="#b9f20d" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" fill="none"
+                style="filter: drop-shadow(0 0 8px rgba(185,242,13,0.7))"
+              />
+              <circle cx="80" cy="340" r="6" fill="white" stroke="#b9f20d" stroke-width="2"/>
+              <circle cx="720" cy="40" r="6" fill="#0d1117" stroke="#b9f20d" stroke-width="2"/>
             }
             @case (1) {
-              <!-- Variante 1: Küste/Fluss -->
+              <!-- Variante 1: Europäische Innenstadt (unregelmäßiges Raster + Diagonalen) -->
               <g class="map-bg">
-                <line class="map-grid" x1="0" y1="80" x2="800" y2="80"/>
-                <line class="map-grid" x1="0" y1="160" x2="800" y2="160"/>
-                <line class="map-grid" x1="0" y1="240" x2="800" y2="240"/>
-                <line class="map-grid" x1="0" y1="320" x2="800" y2="320"/>
-                <line class="map-grid" x1="160" y1="0" x2="160" y2="400"/>
-                <line class="map-grid" x1="320" y1="0" x2="320" y2="400"/>
-                <line class="map-grid" x1="480" y1="0" x2="480" y2="400"/>
-                <line class="map-grid" x1="640" y1="0" x2="640" y2="400"/>
-                <path class="map-contour" d="M0 100 C60 85 120 115 180 100 C240 85 300 115 360 100 C420 85 480 115 540 100 C600 85 660 115 720 100 C760 90 800 104 800 100"/>
-                <path class="map-contour" d="M0 160 C55 142 110 178 170 160 C230 142 290 180 350 162 C410 144 470 176 530 158 C590 140 650 178 710 162 C750 150 800 164 800 160"/>
-                <path class="map-contour" d="M0 230 C50 212 105 248 165 230 C225 212 280 252 340 232 C400 212 460 248 520 230 C580 212 640 248 700 230 C745 216 800 232 800 230"/>
-                <path class="map-contour" d="M0 300 C45 283 95 318 155 300 C215 283 270 320 330 302 C390 284 450 318 510 300 C570 282 630 318 690 300 C740 285 800 302 800 300"/>
-                <path class="map-contour" d="M0 365 C42 350 90 382 148 366 C206 350 262 384 318 368 C374 352 432 382 490 366 C548 350 608 380 664 366 C720 352 780 368 800 365"/>
+                <!-- Nebenstraßen horizontal (unregelmäßige Abstände) -->
+                <line class="map-grid" x1="0" y1="55" x2="800" y2="55" stroke-opacity="0.15"/>
+                <line class="map-grid" x1="0" y1="130" x2="800" y2="130" stroke-opacity="0.15"/>
+                <line class="map-grid" x1="0" y1="195" x2="800" y2="195" stroke-opacity="0.15"/>
+                <line class="map-grid" x1="0" y1="275" x2="800" y2="275" stroke-opacity="0.15"/>
+                <line class="map-grid" x1="0" y1="345" x2="800" y2="345" stroke-opacity="0.15"/>
+                <!-- Nebenstraßen vertikal (unregelmäßig) -->
+                <line class="map-grid" x1="70" y1="0" x2="70" y2="400" stroke-opacity="0.15"/>
+                <line class="map-grid" x1="155" y1="0" x2="155" y2="400" stroke-opacity="0.15"/>
+                <line class="map-grid" x1="260" y1="0" x2="260" y2="400" stroke-opacity="0.15"/>
+                <line class="map-grid" x1="370" y1="0" x2="370" y2="400" stroke-opacity="0.15"/>
+                <line class="map-grid" x1="510" y1="0" x2="510" y2="400" stroke-opacity="0.15"/>
+                <line class="map-grid" x1="620" y1="0" x2="620" y2="400" stroke-opacity="0.15"/>
+                <line class="map-grid" x1="720" y1="0" x2="720" y2="400" stroke-opacity="0.15"/>
+                <!-- Diagonalstraßen -->
+                <line x1="0" y1="400" x2="220" y2="0" stroke="#7d8590" stroke-width="1" stroke-opacity="0.2"/>
+                <line x1="120" y1="400" x2="440" y2="0" stroke="#7d8590" stroke-width="1" stroke-opacity="0.2"/>
+                <line x1="420" y1="400" x2="760" y2="0" stroke="#7d8590" stroke-width="1" stroke-opacity="0.2"/>
+                <line x1="600" y1="400" x2="800" y2="70" stroke="#7d8590" stroke-width="1" stroke-opacity="0.2"/>
+                <line x1="0" y1="180" x2="350" y2="400" stroke="#7d8590" stroke-width="1" stroke-opacity="0.2"/>
+                <!-- Hauptstraße -->
+                <line x1="0" y1="195" x2="800" y2="195" stroke="#7d8590" stroke-width="1.5" stroke-opacity="0.35"/>
+                <line x1="370" y1="0" x2="370" y2="400" stroke="#7d8590" stroke-width="1.5" stroke-opacity="0.35"/>
               </g>
+              <!-- Route: entlang Diagonale, dann auf Querstraßen -->
+              <path
+                d="M60 370 C100 320 140 270 190 220 C240 170 280 155 370 150 L510 150 C560 150 590 170 620 195 L720 195"
+                stroke="#b9f20d" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" fill="none"
+                style="filter: drop-shadow(0 0 8px rgba(185,242,13,0.7))"
+              />
+              <circle cx="60" cy="370" r="6" fill="white" stroke="#b9f20d" stroke-width="2"/>
+              <circle cx="720" cy="195" r="6" fill="#0d1117" stroke="#b9f20d" stroke-width="2"/>
             }
             @default {
-              <!-- Variante 2: Stadtplan -->
+              <!-- Variante 2: Organisches Netz (Altstadt / Hangviertel) -->
               <g class="map-bg">
-                <line class="map-grid" x1="0" y1="80" x2="800" y2="80"/>
-                <line class="map-grid" x1="0" y1="160" x2="800" y2="160"/>
-                <line class="map-grid" x1="0" y1="240" x2="800" y2="240"/>
-                <line class="map-grid" x1="0" y1="320" x2="800" y2="320"/>
-                <line class="map-grid" x1="80" y1="0" x2="80" y2="400"/>
-                <line class="map-grid" x1="160" y1="0" x2="160" y2="400"/>
-                <line class="map-grid" x1="240" y1="0" x2="240" y2="400"/>
-                <line class="map-grid" x1="320" y1="0" x2="320" y2="400"/>
-                <line class="map-grid" x1="400" y1="0" x2="400" y2="400"/>
-                <line class="map-grid" x1="480" y1="0" x2="480" y2="400"/>
-                <line class="map-grid" x1="560" y1="0" x2="560" y2="400"/>
-                <line class="map-grid" x1="640" y1="0" x2="640" y2="400"/>
-                <line class="map-grid" x1="720" y1="0" x2="720" y2="400"/>
-                <rect class="map-block" x="40" y="30" width="110" height="70" rx="3"/>
-                <rect class="map-block" x="170" y="20" width="90" height="55" rx="3"/>
-                <rect class="map-block" x="280" y="40" width="130" height="60" rx="3"/>
-                <rect class="map-block" x="440" y="25" width="100" height="80" rx="3"/>
-                <rect class="map-block" x="560" y="35" width="80" height="55" rx="3"/>
-                <rect class="map-block" x="670" y="20" width="110" height="65" rx="3"/>
-                <rect class="map-block" x="50" y="140" width="80" height="90" rx="3"/>
-                <rect class="map-block" x="155" y="125" width="120" height="70" rx="3"/>
-                <rect class="map-block" x="310" y="130" width="90" height="85" rx="3"/>
-                <rect class="map-block" x="430" y="140" width="115" height="65" rx="3"/>
-                <rect class="map-block" x="570" y="120" width="95" height="95" rx="3"/>
-                <rect class="map-block" x="690" y="135" width="85" height="70" rx="3"/>
-                <rect class="map-block" x="30" y="255" width="100" height="75" rx="3"/>
-                <rect class="map-block" x="160" y="245" width="85" height="90" rx="3"/>
-                <rect class="map-block" x="280" y="260" width="110" height="65" rx="3"/>
-                <rect class="map-block" x="420" y="250" width="95" height="80" rx="3"/>
-                <rect class="map-block" x="545" y="255" width="120" height="70" rx="3"/>
-                <rect class="map-block" x="695" y="245" width="80" height="85" rx="3"/>
+                <!-- Leicht geschwungene Straßen horizontal -->
+                <path class="map-grid" d="M0 60 C200 55 400 68 600 60 C700 56 750 62 800 60" fill="none" stroke-opacity="0.18"/>
+                <path class="map-grid" d="M0 130 C150 122 350 138 550 128 C680 122 740 134 800 130" fill="none" stroke-opacity="0.18"/>
+                <path class="map-grid" d="M0 200 C180 192 380 210 560 198 C680 190 740 205 800 200" fill="none" stroke-opacity="0.18"/>
+                <path class="map-grid" d="M0 275 C160 266 340 284 540 270 C670 262 740 278 800 275" fill="none" stroke-opacity="0.18"/>
+                <path class="map-grid" d="M0 345 C140 338 320 358 520 344 C660 334 740 350 800 345" fill="none" stroke-opacity="0.18"/>
+                <!-- Leicht geschwungene Straßen vertikal -->
+                <path class="map-grid" d="M90 0 C85 100 92 200 88 300 C86 350 90 380 90 400" fill="none" stroke-opacity="0.18"/>
+                <path class="map-grid" d="M200 0 C195 80 205 180 198 280 C194 340 200 370 200 400" fill="none" stroke-opacity="0.18"/>
+                <path class="map-grid" d="M320 0 C315 90 325 200 318 300 C314 350 320 375 320 400" fill="none" stroke-opacity="0.18"/>
+                <path class="map-grid" d="M450 0 C444 85 454 190 446 295 C442 345 450 372 450 400" fill="none" stroke-opacity="0.18"/>
+                <path class="map-grid" d="M580 0 C574 80 586 185 578 288 C574 340 580 368 580 400" fill="none" stroke-opacity="0.18"/>
+                <path class="map-grid" d="M700 0 C695 75 706 170 698 275 C694 332 700 365 700 400" fill="none" stroke-opacity="0.18"/>
+                <!-- Etwas hellere Hauptstraße -->
+                <path d="M0 200 C180 192 380 210 560 198 C680 190 740 205 800 200" fill="none" stroke="#7d8590" stroke-width="1.8" stroke-opacity="0.4"/>
+                <path d="M450 0 C444 85 454 190 446 295 C442 345 450 372 450 400" fill="none" stroke="#7d8590" stroke-width="1.8" stroke-opacity="0.4"/>
               </g>
+              <!-- Route: wellenförmig, viele Kurven -->
+              <path
+                d="M55 355 C100 330 130 290 180 260 C230 230 270 250 320 220 C370 190 390 155 450 140 C510 125 545 160 600 150 C655 140 690 110 750 90"
+                stroke="#b9f20d" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" fill="none"
+                style="filter: drop-shadow(0 0 8px rgba(185,242,13,0.7))"
+              />
+              <circle cx="55" cy="355" r="6" fill="white" stroke="#b9f20d" stroke-width="2"/>
+              <circle cx="750" cy="90" r="6" fill="#0d1117" stroke="#b9f20d" stroke-width="2"/>
             }
           }
-          <path
-            d="M80 320 C140 270 210 340 310 295 C410 250 470 155 560 185 C650 215 700 110 750 130"
-            stroke="#b9f20d"
-            stroke-width="3.5"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            fill="none"
-            style="filter: drop-shadow(0 0 8px rgba(185,242,13,0.7))"
-          />
-          <circle cx="80" cy="320" r="6" fill="white" stroke="#b9f20d" stroke-width="2"/>
-          <circle cx="750" cy="130" r="6" fill="#0d1117" stroke="#b9f20d" stroke-width="2"/>
         </svg>
       </div>
       <div class="hero-content">

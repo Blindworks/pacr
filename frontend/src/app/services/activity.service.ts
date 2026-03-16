@@ -78,4 +78,11 @@ export class ActivityService {
   fetchStreams(id: number): Observable<ActivityStreamDto> {
     return this.http.post<ActivityStreamDto>(`${BASE}/${id}/fetch-streams`, null);
   }
+
+  uploadActivity(file: File, date: string): Observable<any> {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('date', date);
+    return this.http.post(`${BASE}/upload`, formData);
+  }
 }
