@@ -16,6 +16,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -192,9 +193,28 @@ public class CompletedTrainingService {
         private final List<Long> rawTimestamps = new ArrayList<>();
         private final List<Integer> rawHeartRates = new ArrayList<>();
 
+        // Additional per-record streams — parallel to rawTimestamps (null where field absent)
+        private final List<Double>  rawDistances = new ArrayList<>();
+        private final List<Double>  rawAltitudes = new ArrayList<>();
+        private final List<Double>  rawSpeeds    = new ArrayList<>();  // m/s
+        private final List<Integer> rawCadences  = new ArrayList<>();
+        private final List<Integer> rawPowers    = new ArrayList<>();
+        private final List<Double>  rawLats      = new ArrayList<>();  // degrees
+        private final List<Double>  rawLons      = new ArrayList<>();  // degrees
+
+        // Semicircle → degree conversion factor
+        private static final double SEMICIRCLE_TO_DEG = 180.0 / Math.pow(2, 31);
+
         // Computed after finalizeData()
         private List<Integer> timeSeconds = new ArrayList<>();
         private List<Integer> heartRates = new ArrayList<>();
+        private List<Double>  distances  = new ArrayList<>();
+        private List<Double>  altitudes  = new ArrayList<>();
+        private List<Double>  speeds     = new ArrayList<>();
+        private List<Integer> cadences   = new ArrayList<>();
+        private List<Integer> powers     = new ArrayList<>();
+        private List<Double>  latitudes  = new ArrayList<>();
+        private List<Double>  longitudes = new ArrayList<>();
 
         /** Activity start date parsed from the FIT file (may be null if not present). */
         private LocalDate parsedStartDate = null;
@@ -217,23 +237,48 @@ public class CompletedTrainingService {
         }
 
         private void handleRecord(Mesg mesg) {
-            // Timestamp: raw seconds since Garmin FIT epoch (Dec 31, 1989)
             Field tsField = mesg.getField("timestamp");
             if (tsField == null || tsField.getValue() == null) return;
-
             Long ts = tsField.getLongValue();
             if (ts == null) return;
 
-            // Heart rate may be absent in some record messages (GPS-only ticks)
-            Field hrField = mesg.getField("heart_rate");
-            Integer hr = null;
-            if (hrField != null && hrField.getValue() != null) {
-                Double hrVal = hrField.getDoubleValue();
-                if (hrVal != null) hr = hrVal.intValue();
-            }
-
             rawTimestamps.add(ts);
-            rawHeartRates.add(hr); // may be null
+
+            // Heart rate
+            rawHeartRates.add(extractInt(mesg, "heart_rate"));
+
+            // Distance (meters cumulative)
+            rawDistances.add(extractDouble(mesg, "distance"));
+
+            // Altitude (meters)
+            rawAltitudes.add(extractDouble(mesg, "altitude"));
+
+            // Speed (m/s)
+            rawSpeeds.add(extractDouble(mesg, "speed"));
+
+            // Cadence (spm/rpm)
+            rawCadences.add(extractInt(mesg, "cadence"));
+
+            // Power (watts)
+            rawPowers.add(extractInt(mesg, "power"));
+
+            // GPS coordinates (semicircles → degrees)
+            Double latSc = extractDouble(mesg, "position_lat");
+            Double lonSc = extractDouble(mesg, "position_long");
+            rawLats.add(latSc != null ? latSc * SEMICIRCLE_TO_DEG : null);
+            rawLons.add(lonSc != null ? lonSc * SEMICIRCLE_TO_DEG : null);
+        }
+
+        private Double extractDouble(Mesg mesg, String fieldName) {
+            Field f = mesg.getField(fieldName);
+            return (f != null && f.getValue() != null) ? f.getDoubleValue() : null;
+        }
+
+        private Integer extractInt(Mesg mesg, String fieldName) {
+            Field f = mesg.getField(fieldName);
+            if (f == null || f.getValue() == null) return null;
+            Double v = f.getDoubleValue();
+            return v != null ? v.intValue() : null;
         }
 
         private void handleActivity(Mesg mesg) {
@@ -332,6 +377,34 @@ public class CompletedTrainingService {
                     heartRates.add(rawHeartRates.get(i)); // may be null
                 }
             }
+
+            // Build output lists aligned with timeSeconds
+            distances  = new ArrayList<>(rawDistances);
+            altitudes  = new ArrayList<>(rawAltitudes);
+            speeds     = new ArrayList<>(rawSpeeds);
+            cadences   = new ArrayList<>(rawCadences);
+            powers     = new ArrayList<>(rawPowers);
+            latitudes  = new ArrayList<>(rawLats);
+            longitudes = new ArrayList<>(rawLons);
+
+            // Distance fallback for indoor/treadmill FIT files (no GPS distance)
+            boolean distanceAllNull = distances.stream().allMatch(Objects::isNull);
+            if (distanceAllNull) {
+                // Derive cumulative distance from speed × Δt
+                boolean hasAnySpeed = speeds.stream().anyMatch(Objects::nonNull);
+                if (hasAnySpeed) {
+                    double cumulative = 0.0;
+                    for (int i = 0; i < rawTimestamps.size(); i++) {
+                        Double spd = speeds.get(i);
+                        if (spd != null && i > 0) {
+                            long dt = rawTimestamps.get(i) - rawTimestamps.get(i - 1);
+                            cumulative += spd * dt;
+                        }
+                        distances.set(i, cumulative);  // 0.0 at i=0 is valid (start of activity)
+                    }
+                }
+                // If no speed either, distances remains all-null → ActivityStream will not be saved
+            }
         }
 
         /** Relative seconds since activity start (same indices as {@link #getHeartRates()}). */
@@ -342,6 +415,14 @@ public class CompletedTrainingService {
 
         /** Start date from the FIT file's session message, or {@code null} if not present. */
         public LocalDate getParsedStartDate() { return parsedStartDate; }
+
+        public List<Double>  getDistances()  { return distances; }
+        public List<Double>  getAltitudes()  { return altitudes; }
+        public List<Double>  getSpeeds()     { return speeds; }
+        public List<Integer> getCadences()   { return cadences; }
+        public List<Integer> getPowers()     { return powers; }
+        public List<Double>  getLatitudes()  { return latitudes; }
+        public List<Double>  getLongitudes() { return longitudes; }
     }
 
     public List<CompletedTraining> getCompletedTrainingsByDate(LocalDate date) {
