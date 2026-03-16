@@ -229,12 +229,83 @@ export class ActivityDetail implements OnInit {
     return `M 0 ${h} L ${points.join(' L ')} L ${w} ${h} Z`;
   }
 
+  get formattedBestLap(): string {
+    const s = this.activity?.bestLapTimeSeconds;
+    if (s == null) return '—';
+    const m = Math.floor(s / 60);
+    const sec = Math.round(s % 60);
+    return `${m}:${String(sec).padStart(2, '0')}`;
+  }
+
+  get formattedMaxPace(): string {
+    const speed = this.activity?.maxSpeedKmh;
+    if (speed == null || speed === 0) return '—';
+    const paceSeconds = 3600 / speed;
+    const m = Math.floor(paceSeconds / 60);
+    const s = Math.round(paceSeconds % 60);
+    return `${m}:${String(s).padStart(2, '0')}`;
+  }
+
+  get totalZoneSeconds(): number {
+    const a = this.activity;
+    if (!a) return 0;
+    return (a.timeInHrZone1Seconds ?? 0)
+      + (a.timeInHrZone2Seconds ?? 0)
+      + (a.timeInHrZone3Seconds ?? 0)
+      + (a.timeInHrZone4Seconds ?? 0)
+      + (a.timeInHrZone5Seconds ?? 0);
+  }
+
+  zonePercentage(zone: number): number {
+    const total = this.totalZoneSeconds;
+    if (total === 0) return 0;
+    const a = this.activity!;
+    const zoneMap: Record<number, number | null> = {
+      1: a.timeInHrZone1Seconds,
+      2: a.timeInHrZone2Seconds,
+      3: a.timeInHrZone3Seconds,
+      4: a.timeInHrZone4Seconds,
+      5: a.timeInHrZone5Seconds,
+    };
+    return ((zoneMap[zone] ?? 0) / total) * 100;
+  }
+
+  formattedZoneTime(zone: number): string {
+    const a = this.activity;
+    if (!a) return '—';
+    const zoneMap: Record<number, number | null> = {
+      1: a.timeInHrZone1Seconds,
+      2: a.timeInHrZone2Seconds,
+      3: a.timeInHrZone3Seconds,
+      4: a.timeInHrZone4Seconds,
+      5: a.timeInHrZone5Seconds,
+    };
+    const s = zoneMap[zone] ?? 0;
+    const m = Math.floor(s / 60);
+    const sec = Math.round(s % 60);
+    return `${m}:${String(sec).padStart(2, '0')}`;
+  }
+
+  get hasHrZones(): boolean {
+    const a = this.activity;
+    if (!a) return false;
+    return (a.timeInHrZone1Seconds ?? 0) > 0
+      || (a.timeInHrZone2Seconds ?? 0) > 0
+      || (a.timeInHrZone3Seconds ?? 0) > 0
+      || (a.timeInHrZone4Seconds ?? 0) > 0
+      || (a.timeInHrZone5Seconds ?? 0) > 0;
+  }
+
   get midpointHr(): number {
     return this.activity?.averageHeartRate ?? 0;
   }
 
   get midpointElev(): number {
     return Math.round((this.activity?.elevationGainM ?? 0) * 0.8);
+  }
+
+  get mapVariant(): number {
+    return (this.activity?.id ?? 0) % 3;
   }
 
   private buildSvgPath(xValues: number[], yValues: (number | null)[]): string {

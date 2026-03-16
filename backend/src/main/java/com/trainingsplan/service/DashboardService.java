@@ -106,6 +106,13 @@ public class DashboardService {
         Integer bodyBattery = bmBodyBattery != null && bmBodyBattery.getValue() != null
                 ? bmBodyBattery.getValue().intValue() : null;
 
+        BodyMetric bmVo2max = bodyMetricRepository
+                .findTopByUserIdAndMetricTypeOrderByRecordedAtDesc(user.getId(), MetricType.VO2MAX_HR_CORRECTED)
+                .orElseGet(() -> bodyMetricRepository
+                        .findTopByUserIdAndMetricTypeOrderByRecordedAtDesc(user.getId(), MetricType.VO2MAX)
+                        .orElse(null));
+        Double vo2max = bmVo2max != null ? bmVo2max.getValue() : null;
+
         DailyMetrics latestWithAcwr = dailyMetrics.stream()
                 .filter(d -> d.getAcwr() != null)
                 .max(Comparator.comparing(DailyMetrics::getDate))
@@ -249,7 +256,8 @@ public class DashboardService {
                 lastRun,
                 nextCompetition,
                 trainingProgress,
-                bodyBattery
+                bodyBattery,
+                vo2max
         );
     }
 

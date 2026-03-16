@@ -132,7 +132,7 @@ export class Competitions implements OnInit {
       name: c.name,
       distance: this.typeToDistance(c.type),
       location: c.location ?? '',
-      image: this.typeToImage(c.type),
+      image: this.typeToImage(c.type, c.id),
       registered: c.registered ?? false,
       trainingPlanId: c.trainingPlanId,
       trainingPlanName: c.trainingPlanName
@@ -155,20 +155,48 @@ export class Competitions implements OnInit {
     }
   }
 
-  private typeToImage(type?: string): string {
-    const marathon = 'https://lh3.googleusercontent.com/aida-public/AB6AXuCY0ob1wpMOeP6zfuLA-xzjVtIckonf1GuCS_vGNUyyaacDNeAeBAcVGWSPihwW0E5Y3I6KnQudalx5St9WOeVKQHfpL83DsrKqMhdRgiOVftcCzliFs_aUf_DgHpwryCGJ1EVblEq5skgr3OmkcR-R97nHWGy45KTvb95LVqrOkqO4cWsk0cGDmvBeHubPRM9V99muuux592kQFfw-SIrSrUH5m2deE_S5-B2ZxdEedfsgOK5asUM5jpyNLohwm5uC0_61hsPN89o';
-    const cityRun = 'https://lh3.googleusercontent.com/aida-public/AB6AXuAeGUUGllRX4y_Jje09V_m_xnoRUjjpbMdcEP5Ra4R7uhJkaHsDmVreDqcwBbLdWWLp6MorUC-5F2MVBleoQcuyEGO12w--fUN3MrAha3DpIYUuvGoMC0m3WEQ6XrhOoUhsin4xzv0HEqeQ-5FUnqUswmSk-zfj9D1cA12wL9eWiv98Mlwt0VJUfP9WvTrRRUTyaWrlCKsHV220-W46K2ekA8fmzqdD8p3patR_OoDa2sFdvug9lCL4vOQRP0sYfO3Sz2aKRas5aqk';
-    const map: Record<string, string> = {
-      'Marathon': marathon,
-      'Halbmarathon': marathon,
-      '10K': cityRun,
-      '5K': cityRun,
-      '50K': marathon,
-      '100K': marathon,
-      'Backyard Ultra': marathon,
-      'Catcher car': marathon
+  private typeToImage(type?: string, id: number = 0): string {
+    const w = 'w=800&q=80';
+    const u = (photoId: string) => `https://images.unsplash.com/photo-${photoId}?${w}`;
+
+    const marathonImages = [
+      u('1452626038306-9aae5e071dd3'), // Massenstart Marathon
+      u('1530137073521-c10668e264d3'), // Straßenrennen große Gruppe
+      u('1476480862126-209bfaa8edc8'), // Stadtmarathon Brücke
+      u('1571008887538-b36bb32f4571'), // Läufer Nahaufnahme Beine
+      u('1461897104016-0b3b00cc81ee'), // Marathonläufer Startnummer
+    ];
+
+    const cityRunImages = [
+      u('1541534741688-6078c6bfb5c5'), // Laufbahn Sprint
+      u('1552674605-db6ffd4facb5'),     // Nachtlauf Stadt
+      u('1502904550040-7534597429ae'), // Laufschuhe Asphalt
+      u('1546483875-ad9aa773783f'),     // Läufer Stadtpark
+      u('1594737625785-a6cbdabd333c'), // Zieleinlauf Finisher
+    ];
+
+    const ultraImages = [
+      u('1483721310020-03333e577078'), // Trailrunning Berge
+      u('1551698618-1dfe5d97d256'),     // Trail Bergpfad
+      u('1504021831741-f2cd878daa4a'), // Querfeld-/Crosslauf
+      u('1490127252417-7c393f993ee4'), // Ultra Berglandschaft
+      u('1446057032654-9d8885db76c6'), // Trailrunner Panorama
+    ];
+
+    const pick = (arr: string[]) => arr[Math.abs(id) % arr.length];
+
+    const map: Record<string, string[]> = {
+      'Marathon':       marathonImages,
+      'Halbmarathon':   marathonImages,
+      '10K':            cityRunImages,
+      '5K':             cityRunImages,
+      '50K':            ultraImages,
+      '100K':           ultraImages,
+      'Backyard Ultra': ultraImages,
+      'Catcher car':    ultraImages,
     };
-    return map[type ?? ''] ?? cityRun;
+
+    return pick(map[type ?? ''] ?? cityRunImages);
   }
 
   getImageStyle(imageUrl: string): SafeStyle {

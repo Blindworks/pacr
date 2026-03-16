@@ -24,6 +24,24 @@ export interface CompletedTraining {
   calories: number | null;
   averageCadence: number | null;
   averagePowerWatts: number | null;
+  minHeartRate: number | null;
+  maxSpeedKmh: number | null;
+  maxPowerWatts: number | null;
+  normalizedPowerWatts: number | null;
+  maxCadence: number | null;
+  elevationLossM: number | null;
+  minElevationM: number | null;
+  maxElevationM: number | null;
+  temperatureCelsius: number | null;
+  totalLaps: number | null;
+  bestLapTimeSeconds: number | null;
+  timeInHrZone1Seconds: number | null;
+  timeInHrZone2Seconds: number | null;
+  timeInHrZone3Seconds: number | null;
+  timeInHrZone4Seconds: number | null;
+  timeInHrZone5Seconds: number | null;
+  deviceManufacturer: string | null;
+  deviceProduct: string | null;
 }
 
 export interface ActivityStreamDto {

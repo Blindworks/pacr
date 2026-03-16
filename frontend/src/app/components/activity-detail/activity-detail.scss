@@ -88,8 +88,27 @@
   position: absolute;
   inset: 0;
   background: linear-gradient(135deg, #1a2332 0%, #0d1117 100%);
-  background-size: cover;
-  background-position: center;
+  background-image: radial-gradient(circle, rgba(255,255,255,0.04) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+// ── Map Background SVG ────────────────────────────────────────────
+.map-grid {
+  stroke: rgba(255, 255, 255, 0.06);
+  stroke-width: 0.8;
+  fill: none;
+}
+
+.map-contour {
+  stroke: rgba(100, 180, 150, 0.18);
+  stroke-width: 1.2;
+  fill: none;
+}
+
+.map-block {
+  fill: none;
+  stroke: rgba(100, 160, 200, 0.12);
+  stroke-width: 1;
 }
 
 .hero-overlay {
@@ -465,6 +484,71 @@
   font-size: 0.85rem;
   font-weight: 400;
   color: var(--text-muted);
+}
+
+// ── HR Zones ──────────────────────────────────────────────────────
+.hr-zones-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 24px;
+
+  .chart-title { margin: 0 0 20px; }
+}
+
+.hr-zones-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.zone-row {
+  display: grid;
+  grid-template-columns: 28px 100px 1fr 52px;
+  align-items: center;
+  gap: 12px;
+}
+
+.zone-label {
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+}
+
+.zone-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.zone-bar-track {
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 4px;
+  height: 10px;
+  overflow: hidden;
+}
+
+.zone-bar {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.4s ease;
+  min-width: 2px;
+
+  &.zone-1 { background: #58a6ff; }
+  &.zone-2 { background: #3fb950; }
+  &.zone-3 { background: #d29922; }
+  &.zone-4 { background: #f0883e; }
+  &.zone-5 { background: #f85149; }
+}
+
+.zone-time {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
 }
 
 // ── Source Info ───────────────────────────────────────────────────

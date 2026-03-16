@@ -1,3 +1,5 @@
+@use 'sass:color';
+
 $primary: #b9f20d;
 $bg: #0d1117;
 $surface: #161b22;
@@ -478,22 +480,22 @@ $luteal: #fb923c;
   &.phase-menstrual {
     background: linear-gradient(135deg, rgba($menstrual, 0.28) 0%, rgba($menstrual, 0.18) 100%);
     border-color: rgba($menstrual, 0.45);
-    .cal-day-num { color: lighten($menstrual, 15%); }
+    .cal-day-num { color: color.adjust($menstrual, $lightness: 15%); }
   }
   &.phase-follicular {
     background: linear-gradient(135deg, rgba($follicular, 0.28) 0%, rgba($follicular, 0.18) 100%);
     border-color: rgba($follicular, 0.45);
-    .cal-day-num { color: lighten($follicular, 10%); }
+    .cal-day-num { color: color.adjust($follicular, $lightness: 10%); }
   }
   &.phase-ovulation {
     background: linear-gradient(135deg, rgba($ovulation, 0.32) 0%, rgba($ovulation, 0.20) 100%);
     border-color: rgba($ovulation, 0.5);
-    .cal-day-num { color: lighten($ovulation, 10%); }
+    .cal-day-num { color: color.adjust($ovulation, $lightness: 10%); }
   }
   &.phase-luteal {
     background: linear-gradient(135deg, rgba($luteal, 0.28) 0%, rgba($luteal, 0.18) 100%);
     border-color: rgba($luteal, 0.45);
-    .cal-day-num { color: lighten($luteal, 12%); }
+    .cal-day-num { color: color.adjust($luteal, $lightness: 12%); }
   }
 
   &--empty {

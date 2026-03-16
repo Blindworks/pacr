@@ -17,6 +17,7 @@ public class DashboardDto {
     private final NextCompetitionDto nextCompetition;
     private final List<TrainingProgressDto> trainingProgress;
     private final Integer bodyBattery;
+    private final Double vo2max;
 
     public DashboardDto(
             double strain21,
@@ -30,7 +31,8 @@ public class DashboardDto {
             LastRunDto lastRun,
             NextCompetitionDto nextCompetition,
             List<TrainingProgressDto> trainingProgress,
-            Integer bodyBattery
+            Integer bodyBattery,
+            Double vo2max
     ) {
         this.strain21 = strain21;
         this.readinessScore = readinessScore;
@@ -44,6 +46,7 @@ public class DashboardDto {
         this.nextCompetition = nextCompetition;
         this.trainingProgress = trainingProgress;
         this.bodyBattery = bodyBattery;
+        this.vo2max = vo2max;
     }
 
     public double getStrain21() {
@@ -92,6 +95,10 @@ public class DashboardDto {
 
     public Integer getBodyBattery() {
         return bodyBattery;
+    }
+
+    public Double getVo2max() {
+        return vo2max;
     }
 
     public static class LoadStatusDto {

@@ -61,6 +61,7 @@ export interface DashboardData {
   nextCompetition: NextCompetition | null;
   trainingProgress: TrainingProgress[];
   bodyBattery?: number;
+  vo2max?: number;
 }
 
 @Injectable({ providedIn: 'root' })
