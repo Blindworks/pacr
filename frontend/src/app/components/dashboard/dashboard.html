@@ -92,6 +92,7 @@
           </div>
         </div>
         <p class="gauge-footer">ml/kg/min</p>
+        <p class="gauge-date" *ngIf="data.vo2maxDate">{{ formatDate(data.vo2maxDate) }}</p>
       </ng-container>
       <ng-template #noVo2>
         <div class="no-data-hint">Noch kein Lauf hochgeladen</div>

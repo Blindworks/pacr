@@ -310,6 +310,14 @@
   text-align: center;
 }
 
+.gauge-date {
+  margin: 2px 0 0;
+  font-size: 11px;
+  color: var(--text-muted);
+  text-align: center;
+  opacity: 0.6;
+}
+
 // ── Stats Row ────────────────────────────────────────────────────
 .stats-row {
   display: grid;

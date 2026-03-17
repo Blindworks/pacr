@@ -112,6 +112,15 @@ public class BodyMetricService {
     }
 
     /**
+     * Returns all body metrics linked to a specific activity for the current user.
+     */
+    public List<BodyMetric> getMetricsForActivity(Long activityId) {
+        Long userId = securityUtils.getCurrentUserId();
+        if (userId == null) return Collections.emptyList();
+        return bodyMetricRepository.findByUserIdAndSourceActivityId(userId, activityId);
+    }
+
+    /**
      * Recalculates all body metrics for the current user from their existing
      * CompletedTraining records. Also claims activities that have no user assigned
      * (uploaded before authentication was introduced). Deletes previous metrics first.

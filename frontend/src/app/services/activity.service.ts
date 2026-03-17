@@ -59,6 +59,33 @@ export interface ActivityStreamDto {
   hasPower: boolean;
 }
 
+export interface ActivityVo2Max {
+  metricType: string;
+  label: string;
+  value: number;
+  unit: string;
+  recordedAt: string | null;
+}
+
+export interface ActivityMetrics {
+  id: number;
+  zonesUnknown: boolean;
+  z1Min: number | null;
+  z2Min: number | null;
+  z3Min: number | null;
+  z4Min: number | null;
+  z5Min: number | null;
+  hrDataCoverage: number | null;
+  rawLoad: number | null;
+  strain21: number | null;
+  trimp: number | null;
+  trimpQuality: string | null;
+  decouplingPct: number | null;
+  decouplingEligible: boolean | null;
+  decouplingReason: string | null;
+  efficiencyFactor: number | null;
+}
+
 @Injectable({ providedIn: 'root' })
 export class ActivityService {
   private readonly http = inject(HttpClient);
@@ -77,6 +104,14 @@ export class ActivityService {
 
   getStreams(id: number): Observable<ActivityStreamDto> {
     return this.http.get<ActivityStreamDto>(`${BASE}/${id}/streams`);
+  }
+
+  getMetrics(id: number): Observable<ActivityMetrics> {
+    return this.http.get<ActivityMetrics>(`${BASE}/${id}/metrics`);
+  }
+
+  getVo2MaxByActivity(id: number): Observable<ActivityVo2Max[]> {
+    return this.http.get<ActivityVo2Max[]>(`http://localhost:8080/api/body-metrics/by-activity/${id}`);
   }
 
   fetchStreams(id: number): Observable<ActivityStreamDto> {

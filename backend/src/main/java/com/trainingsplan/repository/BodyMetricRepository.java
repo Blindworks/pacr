@@ -22,6 +22,8 @@ public interface BodyMetricRepository extends JpaRepository<BodyMetric, Long> {
 
     Optional<BodyMetric> findByUserIdAndMetricTypeAndSourceActivityId(Long userId, String metricType, Long sourceActivityId);
 
+    List<BodyMetric> findByUserIdAndSourceActivityId(Long userId, Long sourceActivityId);
+
     @Modifying
     @Query("DELETE FROM BodyMetric b WHERE b.user.id = :userId")
     void deleteByUserId(@Param("userId") Long userId);

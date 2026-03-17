@@ -62,6 +62,7 @@ export interface DashboardData {
   trainingProgress: TrainingProgress[];
   bodyBattery?: number;
   vo2max?: number;
+  vo2maxDate?: string;
 }
 
 @Injectable({ providedIn: 'root' })

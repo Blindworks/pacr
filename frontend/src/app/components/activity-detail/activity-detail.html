@@ -446,10 +446,104 @@
         }
       </div>
 
+      <!-- Trainingsbelastung -->
+      @if (metrics) {
+        <div class="load-card">
+          <h3 class="chart-title">Trainingsbelastung</h3>
+          <div class="load-metrics">
+
+            @if (metrics.strain21 != null) {
+              <div class="load-metric">
+                <div class="load-metric-header">
+                  <span class="load-metric-label">Strain (21-Tage)</span>
+                  <span class="load-metric-value">{{ metrics.strain21.toFixed(1) }}</span>
+                </div>
+                <div class="strain-bar-track">
+                  <div class="strain-bar" [class]="strain21Class" [style.width.%]="strain21Pct"></div>
+                </div>
+              </div>
+            }
+
+            @if (metrics.rawLoad != null) {
+              <div class="load-metric load-metric-inline">
+                <span class="load-metric-label">Raw Load</span>
+                <span class="load-metric-value">{{ metrics.rawLoad.toFixed(0) }}</span>
+              </div>
+            }
+
+            @if (metrics.trimp != null) {
+              <div class="load-metric load-metric-inline">
+                <span class="load-metric-label">TRIMP</span>
+                <span class="load-metric-value">
+                  {{ metrics.trimp.toFixed(1) }}
+                  @if (metrics.trimpQuality === 'LOW') {
+                    <span class="trimp-badge trimp-badge--low">LOW</span>
+                  } @else if (metrics.trimpQuality === 'OK') {
+                    <span class="trimp-badge">OK</span>
+                  }
+                </span>
+              </div>
+            }
+
+            @if (metrics.efficiencyFactor != null) {
+              <div class="load-metric load-metric-inline">
+                <span class="load-metric-label">Efficiency Factor</span>
+                <span class="load-metric-value">{{ efficiencyFactorFormatted }}</span>
+              </div>
+            }
+
+          </div>
+        </div>
+      }
+
+      <!-- VO2Max -->
+      @if (vo2maxMetrics.length > 0) {
+        <div class="vo2max-card">
+          <h3 class="chart-title">VO₂max</h3>
+          <div class="vo2max-values">
+            @if (vo2maxPace) {
+              <div class="vo2max-item">
+                <span class="vo2max-label">Pace-basiert</span>
+                <span class="vo2max-value">{{ vo2maxPace.value.toFixed(1) }}</span>
+                <span class="vo2max-unit">ml/kg/min</span>
+              </div>
+            }
+            @if (vo2maxHr) {
+              <div class="vo2max-item">
+                <span class="vo2max-label">HF-korrigiert</span>
+                <span class="vo2max-value vo2max-value--hr">{{ vo2maxHr.value.toFixed(1) }}</span>
+                <span class="vo2max-unit">ml/kg/min</span>
+              </div>
+            }
+          </div>
+        </div>
+      }
+
+      <!-- Aerobic Decoupling -->
+      @if (metrics?.decouplingEligible === true && metrics?.decouplingPct != null) {
+        <div class="decoupling-card">
+          <h3 class="chart-title">Aerobic Decoupling</h3>
+          <div class="decoupling-body">
+            <span class="decoupling-value" [class]="decouplingClass">
+              {{ metrics!.decouplingPct!.toFixed(1) }} %
+            </span>
+            <span class="decoupling-judgement" [class]="decouplingClass">
+              {{ metrics!.decouplingPct! <= 5 ? 'Aerob entkoppelt' : 'Erhöhte Entkopplung' }}
+            </span>
+            @if (metrics!.decouplingReason) {
+              <span class="reason-badge">{{ decouplingReasonLabel(metrics!.decouplingReason) }}</span>
+            }
+          </div>
+        </div>
+      }
+
       <!-- HR Zones -->
       @if (hasHrZones) {
         <div class="hr-zones-card">
           <h3 class="chart-title">Herzfrequenz-Zonen</h3>
+          @if (metrics?.zonesUnknown) {
+            <p class="zones-unknown-hint">Zonengrenzen unbekannt — Verteilung kann ungenau sein.</p>
+          }
           <div class="hr-zones-list">
             @for (zone of [1, 2, 3, 4, 5]; track zone) {
               <div class="zone-row">
@@ -462,6 +556,15 @@
               </div>
             }
           </div>
+          @if (metrics?.hrDataCoverage != null) {
+            <div class="hr-coverage-row">
+              <span class="hr-coverage-label">HF-Abdeckung</span>
+              <div class="hr-coverage-bar-track">
+                <div class="hr-coverage-bar" [style.width.%]="(metrics!.hrDataCoverage! * 100)"></div>
+              </div>
+              <span class="hr-coverage-pct">{{ hrCoverageFormatted }}</span>
+            </div>
+          }
         </div>
       }
 

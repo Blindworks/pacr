@@ -94,24 +94,26 @@ public class DashboardService {
                 .orElse(null);
 
         // Readiness-Daten aus body_metrics (geschrieben von MetricsKernelService)
+        // Bewusst auf <= today begrenzt, damit zukünftige Einträge (z.B. durch Strava-Sync-Range) ignoriert werden.
         BodyMetric bmReadiness = bodyMetricRepository
-                .findTopByUserIdAndMetricTypeOrderByRecordedAtDesc(user.getId(), MetricType.READINESS_SCORE)
+                .findTopByUserIdAndMetricTypeAndRecordedAtLessThanEqualOrderByRecordedAtDesc(user.getId(), MetricType.READINESS_SCORE, today)
                 .orElse(null);
         BodyMetric bmRecommendation = bodyMetricRepository
-                .findTopByUserIdAndMetricTypeOrderByRecordedAtDesc(user.getId(), MetricType.RECOMMENDATION)
+                .findTopByUserIdAndMetricTypeAndRecordedAtLessThanEqualOrderByRecordedAtDesc(user.getId(), MetricType.RECOMMENDATION, today)
                 .orElse(null);
         BodyMetric bmBodyBattery = bodyMetricRepository
-                .findTopByUserIdAndMetricTypeOrderByRecordedAtDesc(user.getId(), MetricType.BODY_BATTERY)
+                .findTopByUserIdAndMetricTypeAndRecordedAtLessThanEqualOrderByRecordedAtDesc(user.getId(), MetricType.BODY_BATTERY, today)
                 .orElse(null);
         Integer bodyBattery = bmBodyBattery != null && bmBodyBattery.getValue() != null
                 ? bmBodyBattery.getValue().intValue() : null;
 
         BodyMetric bmVo2max = bodyMetricRepository
-                .findTopByUserIdAndMetricTypeOrderByRecordedAtDesc(user.getId(), MetricType.VO2MAX_HR_CORRECTED)
+                .findTopByUserIdAndMetricTypeAndRecordedAtLessThanEqualOrderByRecordedAtDesc(user.getId(), MetricType.VO2MAX_HR_CORRECTED, today)
                 .orElseGet(() -> bodyMetricRepository
-                        .findTopByUserIdAndMetricTypeOrderByRecordedAtDesc(user.getId(), MetricType.VO2MAX)
+                        .findTopByUserIdAndMetricTypeAndRecordedAtLessThanEqualOrderByRecordedAtDesc(user.getId(), MetricType.VO2MAX, today)
                         .orElse(null));
         Double vo2max = bmVo2max != null ? bmVo2max.getValue() : null;
+        LocalDate vo2maxDate = bmVo2max != null ? bmVo2max.getRecordedAt() : null;
 
         DailyMetrics latestWithAcwr = dailyMetrics.stream()
                 .filter(d -> d.getAcwr() != null)
@@ -257,7 +259,8 @@ public class DashboardService {
                 nextCompetition,
                 trainingProgress,
                 bodyBattery,
-                vo2max
+                vo2max,
+                vo2maxDate
         );
     }
 

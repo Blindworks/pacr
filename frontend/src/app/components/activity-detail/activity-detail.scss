@@ -577,6 +577,238 @@
   cursor: crosshair;
 }
 
+// ── Trainingsbelastung ─────────────────────────────────────────────
+.load-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 24px;
+
+  .chart-title { margin: 0 0 20px; }
+}
+
+.load-metrics {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.load-metric {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.load-metric-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.load-metric-inline {
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.load-metric-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+}
+
+.load-metric-value {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.strain-bar-track {
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 4px;
+  height: 8px;
+  overflow: hidden;
+}
+
+.strain-bar {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.4s ease;
+  min-width: 2px;
+
+  &.load-low    { background: #3fb950; }
+  &.load-medium { background: #d29922; }
+  &.load-high   { background: #f85149; }
+}
+
+.trimp-badge {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: rgba(63, 185, 80, 0.18);
+  color: #3fb950;
+  border: 1px solid rgba(63, 185, 80, 0.3);
+
+  &--low {
+    background: rgba(210, 153, 34, 0.18);
+    color: #d29922;
+    border-color: rgba(210, 153, 34, 0.3);
+  }
+}
+
+// ── VO2Max ────────────────────────────────────────────────────────
+.vo2max-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 24px;
+
+  .chart-title { margin: 0 0 20px; }
+}
+
+.vo2max-values {
+  display: flex;
+  gap: 32px;
+  flex-wrap: wrap;
+}
+
+.vo2max-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.vo2max-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+}
+
+.vo2max-value {
+  font-size: 2.4rem;
+  font-weight: 900;
+  color: var(--pp);
+  line-height: 1;
+
+  &--hr { color: #22d3ee; }
+}
+
+.vo2max-unit {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+// ── Aerobic Decoupling ─────────────────────────────────────────────
+.decoupling-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 24px;
+
+  .chart-title { margin: 0 0 16px; }
+}
+
+.decoupling-body {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.decoupling-value {
+  font-size: 2rem;
+  font-weight: 900;
+
+  &.coupling-good { color: #3fb950; }
+  &.coupling-bad  { color: #f85149; }
+}
+
+.decoupling-judgement {
+  font-size: 13px;
+  font-weight: 600;
+
+  &.coupling-good { color: #3fb950; }
+  &.coupling-bad  { color: #f85149; }
+}
+
+.reason-badge {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+}
+
+// ── HR Zones extras ────────────────────────────────────────────────
+.zones-unknown-hint {
+  margin: 0 0 14px;
+  font-size: 12px;
+  color: #d29922;
+  background: rgba(210, 153, 34, 0.1);
+  border: 1px solid rgba(210, 153, 34, 0.25);
+  border-radius: 8px;
+  padding: 8px 12px;
+}
+
+.hr-coverage-row {
+  display: grid;
+  grid-template-columns: 100px 1fr 52px;
+  align-items: center;
+  gap: 12px;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+
+.hr-coverage-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+}
+
+.hr-coverage-bar-track {
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 4px;
+  height: 8px;
+  overflow: hidden;
+}
+
+.hr-coverage-bar {
+  height: 100%;
+  border-radius: 4px;
+  background: #58a6ff;
+  transition: width 0.4s ease;
+}
+
+.hr-coverage-pct {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+// ────────────────────────────────────────────────────────────────────
+
 .chart-tooltip {
   position: absolute;
   top: 20px;

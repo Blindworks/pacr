@@ -1,7 +1,7 @@
 import { Component, OnInit, inject, ChangeDetectorRef, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { ActivityService, ActivityStreamDto, CompletedTraining } from '../../services/activity.service';
+import { ActivityService, ActivityStreamDto, CompletedTraining, ActivityMetrics, ActivityVo2Max } from '../../services/activity.service';
 
 @Component({
   selector: 'app-activity-detail',
@@ -23,6 +23,9 @@ export class ActivityDetail implements OnInit {
   streams: ActivityStreamDto | null = null;
   streamsLoading = false;
   streamsError = false;
+
+  metrics: ActivityMetrics | null = null;
+  vo2maxMetrics: ActivityVo2Max[] = [];
 
   private activityId = 0;
 
@@ -66,6 +69,14 @@ export class ActivityDetail implements OnInit {
             this.streams = s;
             this.cdr.detectChanges();
           },
+          error: () => {}
+        });
+        this.activityService.getMetrics(this.activityId).subscribe({
+          next: (m) => { this.metrics = m; this.cdr.detectChanges(); },
+          error: () => {}
+        });
+        this.activityService.getVo2MaxByActivity(this.activityId).subscribe({
+          next: (v) => { this.vo2maxMetrics = v; this.cdr.detectChanges(); },
           error: () => {}
         });
       },
@@ -222,6 +233,57 @@ export class ActivityDetail implements OnInit {
       || (a.timeInHrZone3Seconds ?? 0) > 0
       || (a.timeInHrZone4Seconds ?? 0) > 0
       || (a.timeInHrZone5Seconds ?? 0) > 0;
+  }
+
+  get vo2maxPace(): ActivityVo2Max | null {
+    return this.vo2maxMetrics.find(m => m.metricType === 'VO2MAX') ?? null;
+  }
+
+  get vo2maxHr(): ActivityVo2Max | null {
+    return this.vo2maxMetrics.find(m => m.metricType === 'VO2MAX_HR_CORRECTED') ?? null;
+  }
+
+  get strain21Pct(): number {
+    const v = this.metrics?.strain21;
+    if (v == null) return 0;
+    return Math.min((v / 21) * 100, 100);
+  }
+
+  get strain21Class(): string {
+    const v = this.metrics?.strain21;
+    if (v == null) return 'load-low';
+    if (v < 7) return 'load-low';
+    if (v < 14) return 'load-medium';
+    return 'load-high';
+  }
+
+  get decouplingClass(): string {
+    const v = this.metrics?.decouplingPct;
+    if (v == null) return 'coupling-good';
+    return v <= 5 ? 'coupling-good' : 'coupling-bad';
+  }
+
+  get hrCoverageFormatted(): string {
+    const v = this.metrics?.hrDataCoverage;
+    if (v == null) return '—';
+    return `${Math.round(v * 100)} %`;
+  }
+
+  get efficiencyFactorFormatted(): string {
+    const v = this.metrics?.efficiencyFactor;
+    if (v == null) return '—';
+    return v.toFixed(4);
+  }
+
+  decouplingReasonLabel(reason: string | null): string {
+    const map: Record<string, string> = {
+      OK: 'Berechnet',
+      TOO_SHORT: 'Zu kurz',
+      NO_HR: 'Kein HF',
+      NO_PACE: 'Kein Pace',
+      NO_STREAMS: 'Keine Streams',
+    };
+    return reason ? (map[reason] ?? reason) : '—';
   }
 
   get midpointHr(): number {

@@ -70,6 +70,19 @@ public class BodyMetricController {
     }
 
     /**
+     * Returns all body metrics (VO2MAX, VO2MAX_HR_CORRECTED) for a specific activity.
+     * Returns 204 if no metrics exist for the given activity.
+     */
+    @GetMapping("/by-activity/{activityId}")
+    public ResponseEntity<List<Map<String, Object>>> getByActivity(@PathVariable Long activityId) {
+        List<BodyMetric> metrics = bodyMetricService.getMetricsForActivity(activityId);
+        if (metrics.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(metrics.stream().map(this::toDto).toList());
+    }
+
+    /**
      * Recalculates all body metrics for the current user from their stored
      * CompletedTraining records. Use this to populate metrics for activities
      * uploaded before this feature existed.

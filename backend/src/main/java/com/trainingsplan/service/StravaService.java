@@ -63,6 +63,7 @@ public class StravaService {
     private final SecurityUtils securityUtils;
     private final UserProfileValidationService userProfileValidationService;
     private final MetricsKernelService metricsKernelService;
+    private final BodyMetricService bodyMetricService;
     private final RestClient restClient;
 
     public StravaService(StravaTokenRepository tokenRepository, ObjectMapper objectMapper,
@@ -72,7 +73,8 @@ public class StravaService {
                          ActivityStreamRepository activityStreamRepository,
                          SecurityUtils securityUtils,
                          UserProfileValidationService userProfileValidationService,
-                         MetricsKernelService metricsKernelService) {
+                         MetricsKernelService metricsKernelService,
+                         BodyMetricService bodyMetricService) {
         this.tokenRepository = tokenRepository;
         this.objectMapper = objectMapper;
         this.completedTrainingRepository = completedTrainingRepository;
@@ -82,6 +84,7 @@ public class StravaService {
         this.securityUtils = securityUtils;
         this.userProfileValidationService = userProfileValidationService;
         this.metricsKernelService = metricsKernelService;
+        this.bodyMetricService = bodyMetricService;
         SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
         factory.setConnectTimeout(java.time.Duration.ofSeconds(10));
         factory.setReadTimeout(java.time.Duration.ofSeconds(30));
@@ -369,6 +372,7 @@ public class StravaService {
 
             activityMetricsService.calculateAndPersist(ct, timeSeconds, heartRates, velocities, distances, user);
             persistActivityStreams(ct, timeSeconds, heartRates, velocities, altitudes, latlngJson, distances);
+            bodyMetricService.calculateAndStore(ct, user);
         } catch (Exception e) {
             log.warn("Could not fetch/compute streams for Strava activity {}: {}", stravaActivityId, e.getMessage());
         }
