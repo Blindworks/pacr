@@ -12,6 +12,7 @@ interface Race {
   tag: string;
   tagClass: string;
   date: string;
+  rawDate: string;
   name: string;
   distance: string;
   location: string;
@@ -50,6 +51,7 @@ export class Competitions implements OnInit {
   private cdr = inject(ChangeDetectorRef);
 
   activeFilter = 'All Races';
+  showPastRaces = false;
   selectedRace: Race | null = null;
   selectedPlan: PlanCard | null = null;
   highlightedPlanId: number | null = null;
@@ -129,6 +131,7 @@ export class Competitions implements OnInit {
       tag: c.type ?? 'Race',
       tagClass: this.typeToTagClass(c.type),
       date: this.formatDate(c.date),
+      rawDate: c.date ?? '',
       name: c.name,
       distance: this.typeToDistance(c.type),
       location: c.location ?? '',
@@ -238,7 +241,14 @@ export class Competitions implements OnInit {
   }
 
   get filteredRaces(): Race[] {
-    if (this.activeFilter === 'All Races') return this.races;
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    let races = this.races;
+    if (!this.showPastRaces) {
+      races = races.filter(r => !r.rawDate || new Date(r.rawDate) >= today);
+    }
+    if (this.activeFilter === 'All Races') return races;
     const filterMap: Record<string, string[]> = {
       'Marathon': ['Marathon'],
       'Half Marathon': ['Halbmarathon'],
@@ -247,7 +257,13 @@ export class Competitions implements OnInit {
       'Ultra': ['50K', '100K', 'Backyard Ultra', 'Catcher car']
     };
     const allowed = filterMap[this.activeFilter] ?? [];
-    return this.races.filter(r => allowed.includes(r.tag));
+    return races.filter(r => allowed.includes(r.tag));
+  }
+
+  get hasPastRaces(): boolean {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return this.races.some(r => r.rawDate && new Date(r.rawDate) < today);
   }
 
   get filteredPlans(): PlanCard[] {

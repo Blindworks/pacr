@@ -69,6 +69,31 @@ $text-muted: #8b949e;
       background: $primary;
       color: $bg-dark;
     }
+
+    &--past {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      margin-left: auto;
+      color: $text-muted;
+      background: transparent;
+      border: 1px solid #30363d;
+
+      .material-symbols-outlined {
+        font-size: 1rem;
+      }
+
+      &:hover {
+        background: #21262d;
+        color: #c9d1d9;
+      }
+
+      &.active {
+        background: #21262d;
+        color: #c9d1d9;
+        border-color: $text-muted;
+      }
+    }
   }
 }
 

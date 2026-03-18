@@ -14,6 +14,14 @@
       (click)="setFilter(filter)">
       {{ filter }}
     </button>
+    <button
+      *ngIf="hasPastRaces"
+      class="filter-btn filter-btn--past"
+      [class.active]="showPastRaces"
+      (click)="showPastRaces = !showPastRaces">
+      <span class="material-symbols-outlined">history</span>
+      {{ showPastRaces ? 'Hide Past Races' : 'Show Past Races' }}
+    </button>
   </div>
 
   <!-- Loading State -->
