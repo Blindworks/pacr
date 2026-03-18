@@ -109,6 +109,11 @@ export const routes: Routes = [
     loadComponent: () => import('./components/body-data/asthma-tracking/asthma-tracking').then(m => m.AsthmaTracking)
   },
   {
+    path: 'ai-trainer',
+    canActivate: [authGuard],
+    loadComponent: () => import('./components/ai-trainer/ai-trainer.component').then(m => m.AiTrainerComponent)
+  },
+  {
     path: 'admin',
     canActivate: [authGuard],
     loadChildren: () => import('./components/admin/admin.routes').then(m => m.adminRoutes)

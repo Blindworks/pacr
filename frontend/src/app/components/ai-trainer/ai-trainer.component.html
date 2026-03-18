@@ -1,0 +1,317 @@
+<div class="ai-trainer-container">
+
+  <!-- Page Header with Date Navigation -->
+  <header class="page-header">
+    <div class="page-header__left">
+      <span class="page-eyebrow">
+        <span class="material-symbols-outlined">psychology</span>
+        AI Trainer
+      </span>
+      <h2 class="page-title">Dein täglicher Coach</h2>
+    </div>
+    <div class="date-nav">
+      <button class="date-btn" (click)="changeDay(-1)" aria-label="Vorheriger Tag">
+        <span class="material-symbols-outlined">chevron_left</span>
+      </button>
+      <div class="date-display">
+        <span class="date-display__text">{{ formattedDateDisplay }}</span>
+        <span class="date-display__today-badge" *ngIf="isToday">Heute</span>
+      </div>
+      <button class="date-btn" (click)="changeDay(1)" aria-label="Nächster Tag">
+        <span class="material-symbols-outlined">chevron_right</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- AI Disabled State -->
+  <div class="info-box info-box--warn" *ngIf="aiDisabled">
+    <span class="material-symbols-outlined">warning</span>
+    <div>
+      <strong>AI Trainer nicht verfügbar.</strong>
+      <p>Bitte AI-Modul im Backend aktivieren.</p>
+    </div>
+  </div>
+
+  <!-- Error State -->
+  <div class="info-box info-box--error" *ngIf="error && !loading">
+    <span class="material-symbols-outlined">error</span>
+    <span>{{ error }}</span>
+  </div>
+
+  <!-- Loading Spinner -->
+  <div class="spinner-wrap" *ngIf="loading">
+    <span class="material-symbols-outlined spin">progress_activity</span>
+    <span class="spinner-label">Wird geladen…</span>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- PHASE 1: Context + Feeling Input                               -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <div class="phase-content" *ngIf="phase === 'context' && !loading && !aiDisabled">
+
+    <!-- No trainings planned -->
+    <div class="section-card section-card--empty" *ngIf="context && context.plannedEntries.length === 0">
+      <span class="material-symbols-outlined empty-icon">event_available</span>
+      <p class="empty-title">Kein Training geplant</p>
+      <p class="empty-sub">Für diesen Tag ist kein Training in deinem Plan vorgesehen.</p>
+    </div>
+
+    <!-- Planned Trainings -->
+    <section class="section-card" *ngIf="context && context.plannedEntries.length > 0">
+      <div class="section-card__head">
+        <span class="material-symbols-outlined section-icon">calendar_today</span>
+        <h3 class="section-card__title">Geplante Einheiten</h3>
+        <span class="session-count-badge">{{ context.plannedEntries.length }}</span>
+      </div>
+      <div class="training-list">
+        <div class="training-item" *ngFor="let entry of context.plannedEntries; trackBy: trackById">
+          <div class="training-item__icon-wrap">
+            <span class="material-symbols-outlined training-item__icon">directions_run</span>
+          </div>
+          <div class="training-item__body">
+            <div class="training-item__header">
+              <span class="training-item__name">{{ entry.training.name }}</span>
+              <div class="training-item__badges">
+                <span class="type-badge">{{ entry.training.type }}</span>
+                <span class="intensity-badge"
+                  [class.intensity-badge--high]="entry.training.intensity === 'high'"
+                  [class.intensity-badge--medium]="entry.training.intensity === 'medium'"
+                  [class.intensity-badge--low]="entry.training.intensity === 'low' || entry.training.intensity === 'recovery'">
+                  {{ entry.training.intensity }}
+                </span>
+              </div>
+            </div>
+            <div class="training-item__meta">
+              <span *ngIf="entry.training.duration">
+                <span class="material-symbols-outlined meta-icon">schedule</span>
+                {{ entry.training.duration }} min
+              </span>
+              <span class="training-item__competition">{{ entry.competitionName }}</span>
+            </div>
+            <p class="training-item__desc" *ngIf="entry.training.description">
+              {{ entry.training.description }}
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Wellbeing Factors -->
+    <div class="wellbeing-grid" *ngIf="context">
+
+      <!-- Asthma Risk Card -->
+      <section class="section-card wellbeing-card" *ngIf="context.asthmaRisk">
+        <div class="section-card__head">
+          <span class="material-symbols-outlined section-icon">pulmonology</span>
+          <h3 class="section-card__title">Asthma-Risiko</h3>
+          <span class="risk-badge" [class]="getAsthmaLevelClass()">{{ getAsthmaLevelText() }}</span>
+        </div>
+        <div class="risk-bar-wrap">
+          <div class="risk-bar">
+            <div class="risk-bar__fill" [class]="getAsthmaLevelClass()"
+              [style.width.%]="context.asthmaRisk.riskIndex"></div>
+          </div>
+          <span class="risk-bar__value">{{ context.asthmaRisk.riskIndex }}/100</span>
+        </div>
+        <p class="wellbeing-detail">{{ context.asthmaRisk.pollenSummary }}</p>
+      </section>
+
+      <!-- Cycle Phase Card -->
+      <section class="section-card wellbeing-card" *ngIf="context.cyclePhase">
+        <div class="section-card__head">
+          <span class="material-symbols-outlined section-icon">favorite</span>
+          <h3 class="section-card__title">Zyklusphase</h3>
+          <span class="phase-badge">{{ context.cyclePhase.phase }}</span>
+        </div>
+        <div class="energy-bar-wrap">
+          <span class="energy-label">Energie</span>
+          <div class="energy-bar">
+            <div class="energy-bar__fill"
+              [style.width.%]="(context.cyclePhase.energyLevel / 10) * 100"></div>
+          </div>
+          <span class="energy-value">{{ context.cyclePhase.energyLevel }}/10</span>
+        </div>
+        <p class="wellbeing-detail">{{ context.cyclePhase.recommendation }}</p>
+      </section>
+
+    </div>
+
+    <!-- Existing Session Info (already decided, but phase not yet set to confirmed) -->
+    <div class="info-box info-box--info" *ngIf="context?.existingSession && !context?.existingSession?.userDecision">
+      <span class="material-symbols-outlined">info</span>
+      <div>
+        <strong>Frühere KI-Empfehlung vorhanden</strong>
+        <p>{{ context!.existingSession!.aiRecommendation }}</p>
+      </div>
+    </div>
+
+    <!-- Feeling Selector -->
+    <section class="section-card feeling-card" *ngIf="context">
+      <div class="section-card__head">
+        <span class="material-symbols-outlined section-icon">sentiment_satisfied</span>
+        <h3 class="section-card__title">Dein Wohlbefinden</h3>
+      </div>
+
+      <div class="feeling-selector">
+        <button
+          class="feeling-btn"
+          *ngFor="let emoji of feelingEmojis; let i = index"
+          [class.feeling-btn--active]="feelingScore === i + 1"
+          (click)="selectFeeling(i + 1)"
+          [attr.aria-label]="feelingLabels[i]"
+          [title]="feelingLabels[i]">
+          <span class="feeling-emoji">{{ emoji }}</span>
+          <span class="feeling-label">{{ feelingLabels[i] }}</span>
+        </button>
+      </div>
+
+      <div class="feeling-notes">
+        <label class="notes-label" for="feelingText">Anmerkungen (optional)</label>
+        <textarea
+          id="feelingText"
+          class="notes-textarea"
+          [(ngModel)]="feelingText"
+          placeholder="Wie fühlst du dich heute? Schlafqualität, Muskelkater, besondere Umstände…"
+          rows="3">
+        </textarea>
+      </div>
+
+      <button class="ask-btn" (click)="askAI()" [disabled]="loading">
+        <span class="material-symbols-outlined">psychology</span>
+        KI fragen
+      </button>
+    </section>
+
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- PHASE 2: AI Recommendation                                    -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <div class="phase-content" *ngIf="phase === 'recommendation' && !loading && recommendation">
+
+    <section class="section-card">
+      <div class="section-card__head">
+        <span class="material-symbols-outlined section-icon">psychology</span>
+        <h3 class="section-card__title">KI-Empfehlung</h3>
+      </div>
+
+      <!-- Recommendation Text -->
+      <div class="recommendation-box">
+        <div class="recommendation-box__icon">
+          <span class="material-symbols-outlined">smart_toy</span>
+        </div>
+        <p class="recommendation-box__text">{{ recommendation!.recommendationText }}</p>
+      </div>
+
+      <!-- Restructuring Preview -->
+      <div class="restructuring-preview" *ngIf="recommendation!.restructuringPreview">
+        <div class="restructuring-preview__head">
+          <span class="material-symbols-outlined">preview</span>
+          <span>Vorschau: Planänderungen</span>
+        </div>
+        <p class="restructuring-preview__text">{{ recommendation!.restructuringPreview }}</p>
+      </div>
+    </section>
+
+    <!-- Decision Buttons -->
+    <section class="section-card decision-card">
+      <h3 class="decision-title">Was möchtest du tun?</h3>
+      <p class="decision-sub">Empfehlung: <strong>{{ recommendation!.suggestedAction }}</strong></p>
+
+      <div class="decision-buttons">
+        <button class="decision-btn btn-proceed" (click)="decide('PROCEED')" [disabled]="executing">
+          <span class="material-symbols-outlined">check_circle</span>
+          <span class="decision-btn__label">Training durchführen</span>
+          <span class="decision-btn__sub">Plan wie geplant</span>
+        </button>
+
+        <button class="decision-btn btn-modify" (click)="decide('MODIFY')" [disabled]="executing">
+          <span class="material-symbols-outlined">tune</span>
+          <span class="decision-btn__label">Angepasst durchführen</span>
+          <span class="decision-btn__sub">KI-Anpassung anwenden</span>
+        </button>
+
+        <button class="decision-btn btn-skip" (click)="decide('SKIP')" [disabled]="executing">
+          <span class="material-symbols-outlined">cancel</span>
+          <span class="decision-btn__label">Ausfallen lassen</span>
+          <span class="decision-btn__sub">Einheit überspringen</span>
+        </button>
+      </div>
+
+      <div class="executing-hint" *ngIf="executing">
+        <span class="material-symbols-outlined spin">progress_activity</span>
+        Wird ausgeführt…
+      </div>
+    </section>
+
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- PHASE 3: Confirmed                                            -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <div class="phase-content" *ngIf="phase === 'confirmed'">
+
+    <!-- Already decided from existing session -->
+    <div class="success-box" *ngIf="context?.existingSession?.userDecision && !result">
+      <div class="success-box__icon">
+        <span class="material-symbols-outlined">check_circle</span>
+      </div>
+      <div class="success-box__body">
+        <h3 class="success-box__title">Entscheidung bereits getroffen</h3>
+        <p class="success-box__sub">
+          Deine Entscheidung für diesen Tag: <strong>{{ context!.existingSession!.userDecision }}</strong>
+        </p>
+        <p class="success-box__rec" *ngIf="context?.existingSession?.aiRecommendation">
+          {{ context!.existingSession!.aiRecommendation }}
+        </p>
+      </div>
+    </div>
+
+    <!-- Fresh execution result -->
+    <div class="success-box" *ngIf="result">
+      <div class="success-box__icon">
+        <span class="material-symbols-outlined">check_circle</span>
+      </div>
+      <div class="success-box__body">
+        <h3 class="success-box__title">Plan wurde angepasst</h3>
+        <p class="success-box__sub">{{ result!.message }}</p>
+      </div>
+    </div>
+
+    <!-- Changes List -->
+    <section class="section-card changes-card" *ngIf="result && result!.changes && result!.changes.length > 0">
+      <div class="section-card__head">
+        <span class="material-symbols-outlined section-icon">list_alt</span>
+        <h3 class="section-card__title">Vorgenommene Änderungen</h3>
+      </div>
+
+      <div class="changes-list">
+        <div class="change-item" *ngFor="let change of result!.changes; trackBy: trackByEntryId"
+          [class.change-item--moved]="change.action === 'MOVED'"
+          [class.change-item--skipped]="change.action === 'SKIPPED'"
+          [class.change-item--unchanged]="change.action === 'UNCHANGED'">
+          <span class="material-symbols-outlined change-item__icon">{{ getActionIcon(change.action) }}</span>
+          <div class="change-item__body">
+            <span class="change-item__action">{{ getActionLabel(change.action) }}</span>
+            <span class="change-item__date" *ngIf="change.newDate">→ {{ change.newDate }}</span>
+            <span class="change-item__id">Eintrag #{{ change.entryId }}</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Navigation -->
+    <div class="confirmed-actions">
+      <a routerLink="/training-plans" class="nav-btn">
+        <span class="material-symbols-outlined">calendar_today</span>
+        Zum Trainingsplan
+      </a>
+      <button class="secondary-btn" (click)="changeDay(0)">
+        <span class="material-symbols-outlined">refresh</span>
+        Neu laden
+      </button>
+    </div>
+
+  </div>
+
+</div>
