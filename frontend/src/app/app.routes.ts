@@ -104,6 +104,11 @@ export const routes: Routes = [
     loadComponent: () => import('./components/body-data/log-body-metrics/log-body-metrics').then(m => m.LogBodyMetrics)
   },
   {
+    path: 'body-data/asthma-tracking',
+    canActivate: [authGuard],
+    loadComponent: () => import('./components/body-data/asthma-tracking/asthma-tracking').then(m => m.AsthmaTracking)
+  },
+  {
     path: 'admin',
     canActivate: [authGuard],
     loadChildren: () => import('./components/admin/admin.routes').then(m => m.adminRoutes)

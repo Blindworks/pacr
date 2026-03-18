@@ -45,9 +45,28 @@ export class Settings implements OnInit, OnDestroy {
   protected imageUploading = signal(false);
   protected imageError = signal('');
 
+  protected dwdRegionId = signal<number | null>(null);
+
   protected stravaLoading = signal(false);
   protected saving = signal(false);
   protected saveError = signal('');
+
+  protected readonly dwdRegions = [
+    { id: 10,  name: 'Schleswig-Holstein und Hamburg' },
+    { id: 20,  name: 'Mecklenburg-Vorpommern' },
+    { id: 30,  name: 'Niedersachsen und Bremen' },
+    { id: 40,  name: 'Nordrhein-Westfalen' },
+    { id: 50,  name: 'Brandenburg und Berlin' },
+    { id: 60,  name: 'Sachsen-Anhalt' },
+    { id: 70,  name: 'Thüringen' },
+    { id: 80,  name: 'Sachsen' },
+    { id: 90,  name: 'Bayern – Alpen' },
+    { id: 91,  name: 'Bayern – Süd (ohne Alpen)' },
+    { id: 92,  name: 'Bayern – Nord' },
+    { id: 100, name: 'Baden-Württemberg' },
+    { id: 110, name: 'Rheinland-Pfalz und Saarland' },
+    { id: 120, name: 'Hessen' },
+  ] as const;
 
   protected readonly integrations: Integration[] = [
     {
@@ -89,6 +108,7 @@ export class Settings implements OnInit, OnDestroy {
         this.restingHr.set(user.hrRest != null ? String(user.hrRest) : '');
         this.maxHr.set(user.maxHeartRate != null ? String(user.maxHeartRate) : '');
         this.dateOfBirth.set(user.dateOfBirth ?? '');
+        this.dwdRegionId.set(user.dwdRegionId ?? null);
         this.loadProfileImage();
       },
       error: () => { /* keep defaults if backend unreachable */ }
@@ -197,7 +217,8 @@ export class Settings implements OnInit, OnDestroy {
       maxHeartRate: this.maxHr() ? parseInt(this.maxHr(), 10) : null,
       hrRest: this.restingHr() ? parseInt(this.restingHr(), 10) : null,
       gender: this.gender(),
-      status: this.currentUser.status
+      status: this.currentUser.status,
+      dwdRegionId: this.dwdRegionId()
     }).subscribe({
       next: updated => {
         this.currentUser = updated;

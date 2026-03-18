@@ -18,6 +18,7 @@ export interface UserProfile {
   hrRest: number | null;
   gender: string | null;
   status: string | null;
+  dwdRegionId: number | null;
 }
 
 export interface UpdateUserRequest {
@@ -32,6 +33,7 @@ export interface UpdateUserRequest {
   hrRest?: number | null;
   gender?: string | null;
   status?: string | null;
+  dwdRegionId?: number | null;
 }
 
 @Injectable({ providedIn: 'root' })

@@ -58,5 +58,7 @@
     <include file="db/changelog/changes/052-add-cycle-settings.xml"/>
     <include file="db/changelog/changes/053-extend-body-metrics-for-daily.xml"/>
     <include file="db/changelog/changes/054-add-activity-stream-cadence-power.xml"/>
+    <include file="db/changelog/changes/055-add-asthma-entries.xml"/>
+    <include file="db/changelog/changes/056-add-user-dwd-region.xml"/>
 
 </databaseChangeLog>

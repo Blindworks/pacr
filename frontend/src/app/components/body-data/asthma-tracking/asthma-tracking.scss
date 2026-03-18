@@ -1,0 +1,731 @@
+// ── Tokens ──────────────────────────────────────────
+$bg:       #191919;
+$card:     #242424;
+$card-alt: #2a2a2a;
+$border:   rgba(255, 255, 255, 0.08);
+$text:     #e8e8e8;
+$muted:    #7a7a7a;
+$lime:     #b9f20d;
+$orange:   #f97316;
+$yellow:   #eab308;
+$green:    #4ade80;
+$red:      #f87171;
+
+// ── Host ────────────────────────────────────────────
+:host {
+  display: block;
+  height: 100%;
+  overflow-y: auto;
+  background: $bg;
+  color: $text;
+  font-family: inherit;
+}
+
+// ── Page wrapper ─────────────────────────────────────
+.asthma-page {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem 2rem 3rem;
+}
+
+// ── Page Header ──────────────────────────────────────
+.page-header {
+  margin-bottom: 1.75rem;
+}
+
+.page-title {
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: $text;
+  margin: 0 0 0.375rem;
+  letter-spacing: -0.02em;
+
+  .lime { color: $lime; }
+}
+
+.page-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  font-size: 0.8125rem;
+  color: $muted;
+}
+
+.meta-item {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+
+  svg { opacity: 0.6; }
+}
+
+.meta-sep { color: rgba(255,255,255,0.15); }
+
+// ── Main grid: 65/35 ─────────────────────────────────
+.main-grid {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 1.25rem;
+  align-items: start;
+}
+
+.left-col {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+// ── Shared: section heading with lime bar ─────────────
+.section-heading {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+}
+
+.heading-bar {
+  display: block;
+  width: 3px;
+  height: 18px;
+  background: $lime;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.heading-text {
+  font-size: 1rem;
+  font-weight: 600;
+  color: $text;
+}
+
+// ── Risk Badge ────────────────────────────────────────
+.risk-badge {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  border: 1.5px solid;
+
+  &.risk-elevated { color: $orange; border-color: $orange; }
+  &.risk-moderate { color: $yellow; border-color: $yellow; }
+  &.risk-low      { color: $green;  border-color: $green;  }
+}
+
+// ══ ENV CARD ═════════════════════════════════════════
+.env-card {
+  background: $card;
+  border: 1px solid $border;
+  border-radius: 12px;
+  padding: 1.5rem;
+}
+
+.env-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
+
+.env-body {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 0;
+  align-items: start;
+}
+
+// Left: AQI / UV
+.env-left {
+  padding-right: 2rem;
+}
+
+.aqi-block {
+  margin-bottom: 1.5rem;
+}
+
+.aqi-label {
+  display: block;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: $muted;
+  margin-bottom: 0.375rem;
+}
+
+// Number + level on same row
+.aqi-number-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.aqi-value {
+  font-size: 3rem;
+  font-weight: 700;
+  color: $yellow;
+  line-height: 1;
+
+  &.no-data {
+    font-size: 1.5rem;
+    color: $muted;
+    font-weight: 400;
+  }
+}
+
+.aqi-level-inline {
+  font-size: 0.9375rem;
+  font-weight: 600;
+}
+
+// Bar spanning full width of left section
+.aqi-track {
+  width: 100%;
+  height: 5px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.aqi-fill {
+  height: 100%;
+  border-radius: 3px;
+  background: $yellow;
+  transition: width 0.4s ease;
+}
+
+// Reuse pollen label colours
+.lbl-none   { color: $muted; }
+.lbl-low    { color: $green; }
+.lbl-medium { color: $yellow; }
+.lbl-high   { color: $orange; }
+
+.env-secondary-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.25rem;
+}
+
+.sec-metric {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.sec-label {
+  font-size: 0.625rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: $muted;
+  text-transform: uppercase;
+}
+
+.sec-value {
+  font-size: 1rem;
+  font-weight: 700;
+  color: $text;
+}
+
+// Vertical divider
+.env-vdivider {
+  width: 1px;
+  background: $border;
+  align-self: stretch;
+  margin: 0 2rem;
+}
+
+// Right: Pollen
+.env-right {
+  padding-left: 0;
+}
+
+.pollen-header {
+  display: block;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: $muted;
+  margin-bottom: 1rem;
+}
+
+.pollen-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+}
+
+// Each pollen row: label+level on top, bar below
+.pollen-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.pollen-row-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.pollen-name {
+  font-size: 0.9rem;
+  color: $text;
+}
+
+.pollen-track {
+  width: 100%;
+  height: 7px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.pollen-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.4s ease;
+  min-width: 0;
+
+  &.bar-none   { background: rgba(255,255,255,0.18); }
+  &.bar-low    { background: $green; }
+  &.bar-medium { background: $yellow; }
+  &.bar-high   { background: $orange; }
+}
+
+.pollen-level {
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+// Loading state
+.env-loading {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  color: $muted;
+  font-size: 0.875rem;
+  padding: 1rem 0;
+}
+
+.loading-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: $lime;
+  animation: blink 1.4s ease-in-out infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.2; }
+}
+
+// ══ LOG CARD ══════════════════════════════════════════
+.log-card {
+  background: $card;
+  border: 1px solid $border;
+  border-radius: 12px;
+  padding: 1.5rem;
+}
+
+.field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+
+  &:last-child { margin-bottom: 0; }
+}
+
+.field-label {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: $muted;
+}
+
+// 4-column symptom grid
+.symptom-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.5rem;
+}
+
+.symptom-btn {
+  padding: 0.6875rem 0.5rem;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid $border;
+  border-radius: 8px;
+  color: $text;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  cursor: pointer;
+  text-align: center;
+  transition: border-color 0.18s, background 0.18s, color 0.18s;
+
+  &:hover {
+    border-color: rgba(185, 242, 13, 0.35);
+  }
+
+  &.active {
+    border-color: $lime;
+    background: rgba(185, 242, 13, 0.08);
+    color: $lime;
+    font-weight: 600;
+  }
+}
+
+// 2-col row
+.form-row-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+  margin-bottom: 1.25rem;
+}
+
+// Severity
+.severity-label-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.severity-display {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: $lime;
+}
+
+.severity-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 5px;
+  border-radius: 3px;
+  background: rgba(255,255,255,0.1);
+  outline: none;
+  cursor: pointer;
+  margin-top: 0.5rem;
+
+  &::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: $lime;
+    cursor: pointer;
+    box-shadow: 0 0 0 3px rgba(185,242,13,0.2);
+  }
+
+  &::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: $lime;
+    cursor: pointer;
+    border: none;
+    box-shadow: 0 0 0 3px rgba(185,242,13,0.2);
+  }
+}
+
+// Input / Textarea
+.field-input,
+.field-textarea {
+  padding: 0.6875rem 0.875rem;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid $border;
+  border-radius: 8px;
+  color: $text;
+  font-size: 0.9375rem;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.18s;
+  width: 100%;
+  box-sizing: border-box;
+
+  &:focus { border-color: rgba(185,242,13,0.5); }
+  &::placeholder { color: rgba(255,255,255,0.2); }
+}
+
+.field-textarea {
+  resize: vertical;
+  line-height: 1.5;
+}
+
+// Inhaler toggle group
+.inhaler-group {
+  display: flex;
+  border: 1px solid $border;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.inhaler-btn {
+  flex: 1;
+  padding: 0.625rem 0.5rem;
+  background: transparent;
+  border: none;
+  color: $muted;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.18s, color 0.18s;
+  text-align: center;
+
+  & + & { border-left: 1px solid $border; }
+
+  &:hover { color: $text; }
+
+  &.active {
+    background: rgba(185,242,13,0.1);
+    color: $lime;
+    font-weight: 600;
+  }
+}
+
+// Submit button
+.submit-btn {
+  width: 100%;
+  margin-top: 0.25rem;
+  padding: 1rem;
+  background: $lime;
+  color: #0d0d0d;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  transition: opacity 0.2s;
+
+  &:disabled { opacity: 0.55; cursor: not-allowed; }
+  &:hover:not(:disabled) { opacity: 0.88; }
+}
+
+// ══ RIGHT CARD ════════════════════════════════════════
+.right-col { position: sticky; top: 0; }
+
+.right-card {
+  background: $card;
+  border: 1px solid $border;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.right-divider {
+  height: 1px;
+  background: $border;
+}
+
+// 7-Day Trends section
+.trends-section {
+  padding: 1.25rem 1.25rem 1rem;
+}
+
+.trends-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.25rem;
+}
+
+.right-section-title {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: $text;
+}
+
+.full-report-link {
+  font-size: 0.8125rem;
+  color: $lime;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.avg-peak-label {
+  display: block;
+  font-size: 0.625rem;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  color: $muted;
+  margin-bottom: 0.875rem;
+}
+
+// Bar chart
+.bar-chart {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.bars-area {
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
+  height: 80px;
+}
+
+.chart-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  height: 100%;
+}
+
+.chart-bar-wrap {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: flex-end;
+}
+
+.chart-bar {
+  width: 100%;
+  background: $lime;
+  border-radius: 3px 3px 0 0;
+  min-height: 3px;
+  opacity: 0.8;
+  transition: height 0.3s ease, opacity 0.2s;
+
+  &:hover { opacity: 1; }
+}
+
+.bars-x {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 2px;
+
+  span {
+    flex: 1;
+    text-align: center;
+    font-size: 0.625rem;
+    color: $muted;
+  }
+
+  .today-lbl {
+    color: $text;
+    font-weight: 600;
+  }
+}
+
+// Recent Entries section
+.recent-section {
+  padding: 1.25rem;
+}
+
+.right-section-label {
+  display: block;
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: $muted;
+  margin-bottom: 1rem;
+}
+
+.recent-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+}
+
+.recent-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.recent-left {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1875rem;
+}
+
+.recent-title {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: $text;
+}
+
+.recent-date {
+  font-size: 0.6875rem;
+  color: $muted;
+}
+
+.recent-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.1875rem;
+  flex-shrink: 0;
+}
+
+.recent-flow {
+  font-size: 0.9375rem;
+  font-weight: 700;
+
+  &.flow-lime { color: $lime; }
+  &.flow-red  { color: $red;  }
+}
+
+.recent-sev {
+  font-size: 0.6875rem;
+  color: $muted;
+}
+
+.empty-note {
+  font-size: 0.8125rem;
+  color: $muted;
+  padding: 0.5rem 0;
+}
+
+// Weekly Insight section
+.insight-section {
+  padding: 1.25rem;
+  background: rgba(185,242,13,0.03);
+}
+
+.insight-label {
+  display: block;
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: $lime;
+  margin-bottom: 0.5rem;
+}
+
+.insight-text {
+  font-size: 0.8125rem;
+  color: $muted;
+  line-height: 1.55;
+  margin: 0;
+}
+
+// ── Responsive ────────────────────────────────────────
+@media (max-width: 1100px) {
+  .main-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .right-col {
+    position: static;
+  }
+}
+
+@media (max-width: 700px) {
+  .symptom-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .form-row-2 {
+    grid-template-columns: 1fr;
+  }
+
+  .env-body {
+    grid-template-columns: 1fr;
+  }
+
+  .env-vdivider {
+    display: none;
+  }
+}

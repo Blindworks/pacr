@@ -1,0 +1,285 @@
+<div class="asthma-page">
+
+  <!-- ── Page Header ── -->
+  <div class="page-header">
+    <h1 class="page-title">Asthma Tracking &amp; <span class="lime">Bio-Weather</span></h1>
+    <div class="page-meta">
+      <span class="meta-item">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>
+        {{ bioWeather()?.regionName || 'Bayern-Nord' }}
+      </span>
+      <span class="meta-sep">|</span>
+      <span class="meta-item">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        {{ todayFormatted }}
+      </span>
+    </div>
+  </div>
+
+  <div class="main-grid">
+
+    <!-- ══ LEFT COLUMN ══ -->
+    <div class="left-col">
+
+      <!-- ── Card: Live Environmental Conditions ── -->
+      <div class="env-card">
+        <div class="env-card-top">
+          <div class="section-heading">
+            <span class="heading-bar"></span>
+            <span class="heading-text">Live Environmental Conditions</span>
+          </div>
+          <span class="risk-badge" [ngClass]="riskBadgeClass" *ngIf="bioWeather()">{{ riskBadge }}</span>
+        </div>
+
+        <div class="env-body" *ngIf="bioWeather(); else envLoading">
+
+          <!-- Left: Asthma-Risk-Index als Hauptmetrik -->
+          <div class="env-left">
+            <div class="aqi-block">
+              <span class="aqi-label">ASTHMA-RISK-INDEX</span>
+              <div class="aqi-number-row">
+                <span class="aqi-value" [class.no-data]="bioWeather()!.asthmaRiskIndex == null">
+                  {{ bioWeather()!.asthmaRiskIndex != null ? bioWeather()!.asthmaRiskIndex : '—' }}
+                </span>
+                <span class="aqi-level-inline" [ngClass]="riskIndexLabelClass">
+                  {{ riskIndexLabel }}
+                </span>
+              </div>
+              <div class="aqi-track">
+                <div class="aqi-fill" [style.width.%]="riskIndexBarWidth"></div>
+              </div>
+            </div>
+
+            <div class="env-secondary-row">
+              <div class="sec-metric">
+                <span class="sec-label">FEINSTAUB PM2.5</span>
+                <span class="sec-value" [ngClass]="pm25LabelClass">{{ pm25Label }}</span>
+              </div>
+              <div class="sec-metric">
+                <span class="sec-label">OZON</span>
+                <span class="sec-value" [ngClass]="ozoneLabelClass">{{ ozoneLabel }}</span>
+              </div>
+              <div class="sec-metric">
+                <span class="sec-label">LUFTFEUCHTE</span>
+                <span class="sec-value" [ngClass]="humidityLabelClass">{{ humidityLabel }}</span>
+              </div>
+              <div class="sec-metric">
+                <span class="sec-label">TEMPERATUR</span>
+                <span class="sec-value" [ngClass]="temperatureLabelClass">{{ temperatureLabel }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Vertical divider -->
+          <div class="env-vdivider"></div>
+
+          <!-- Right: Pollen Count — alle 3 Zeilen immer anzeigen -->
+          <div class="env-right">
+            <span class="pollen-header">POLLEN COUNT</span>
+            <div class="pollen-rows">
+
+              <div class="pollen-row">
+                <div class="pollen-row-top">
+                  <span class="pollen-name">Grasses</span>
+                  <span class="pollen-level" [ngClass]="pollenLabelClass(bioWeather()!.pollenGrasses)">
+                    {{ pollenLabel(bioWeather()!.pollenGrasses) }}
+                  </span>
+                </div>
+                <div class="pollen-track">
+                  <div class="pollen-fill"
+                    [ngClass]="pollenBarClass(bioWeather()!.pollenGrasses)"
+                    [style.width.%]="pollenBarWidth(bioWeather()!.pollenGrasses)">
+                  </div>
+                </div>
+              </div>
+
+              <div class="pollen-row">
+                <div class="pollen-row-top">
+                  <span class="pollen-name">Trees</span>
+                  <span class="pollen-level" [ngClass]="pollenLabelClass(bioWeather()!.pollenBirch)">
+                    {{ pollenLabel(bioWeather()!.pollenBirch) }}
+                  </span>
+                </div>
+                <div class="pollen-track">
+                  <div class="pollen-fill"
+                    [ngClass]="pollenBarClass(bioWeather()!.pollenBirch)"
+                    [style.width.%]="pollenBarWidth(bioWeather()!.pollenBirch)">
+                  </div>
+                </div>
+              </div>
+
+              <div class="pollen-row">
+                <div class="pollen-row-top">
+                  <span class="pollen-name">Weeds</span>
+                  <span class="pollen-level" [ngClass]="pollenLabelClass(bioWeather()!.pollenMugwort)">
+                    {{ pollenLabel(bioWeather()!.pollenMugwort) }}
+                  </span>
+                </div>
+                <div class="pollen-track">
+                  <div class="pollen-fill"
+                    [ngClass]="pollenBarClass(bioWeather()!.pollenMugwort)"
+                    [style.width.%]="pollenBarWidth(bioWeather()!.pollenMugwort)">
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+        <ng-template #envLoading>
+          <div class="env-loading">
+            <span class="loading-dot"></span>
+            <span>Loading environmental data...</span>
+          </div>
+        </ng-template>
+      </div>
+
+      <!-- ── Card: Log Current Symptoms ── -->
+      <div class="log-card">
+        <div class="section-heading" style="margin-bottom: 1.5rem;">
+          <span class="heading-bar"></span>
+          <span class="heading-text">Log Current Symptoms</span>
+        </div>
+
+        <form (ngSubmit)="onSubmit()">
+
+          <!-- Symptom toggles -->
+          <div class="field-group">
+            <span class="field-label">Symptoms Felt Today</span>
+            <div class="symptom-grid">
+              <button
+                type="button"
+                *ngFor="let s of symptomOptions"
+                class="symptom-btn"
+                [class.active]="isSymptomSelected(s.key)"
+                (click)="toggleSymptom(s.key)">
+                {{ s.label }}
+              </button>
+            </div>
+          </div>
+
+          <!-- Severity + Peak Flow -->
+          <div class="form-row-2">
+            <div class="field-group">
+              <div class="severity-label-row">
+                <span class="field-label">Severity Score</span>
+                <span class="severity-display">{{ severityScore }}/10</span>
+              </div>
+              <input
+                type="range" min="1" max="10"
+                [(ngModel)]="severityScore" name="severityScore"
+                class="severity-slider">
+            </div>
+            <div class="field-group">
+              <span class="field-label">Peak Flow Meter (L/min)</span>
+              <input
+                type="number"
+                [(ngModel)]="peakFlow" name="peakFlow"
+                placeholder="450"
+                class="field-input"
+                min="50" max="900">
+            </div>
+          </div>
+
+          <!-- Inhaler + Notes -->
+          <div class="form-row-2">
+            <div class="field-group">
+              <span class="field-label">Inhaler Usage</span>
+              <div class="inhaler-group">
+                <button
+                  type="button"
+                  *ngFor="let opt of inhalerOptions"
+                  class="inhaler-btn"
+                  [class.active]="inhalerUsage === opt.value"
+                  (click)="setInhaler(opt.value)">
+                  {{ opt.label }}
+                </button>
+              </div>
+            </div>
+            <div class="field-group">
+              <span class="field-label">Optional Notes</span>
+              <textarea
+                [(ngModel)]="notes" name="notes"
+                placeholder="Post-workout, dusty environment..."
+                class="field-textarea"
+                rows="3"></textarea>
+            </div>
+          </div>
+
+          <button type="submit" class="submit-btn" [disabled]="saving">
+            {{ saving ? 'SAVING...' : 'UPDATE HEALTH LOG' }}
+          </button>
+
+        </form>
+      </div>
+    </div>
+
+    <!-- ══ RIGHT COLUMN ══ -->
+    <aside class="right-col">
+      <div class="right-card">
+
+        <!-- ── 7-Day Trends ── -->
+        <div class="trends-section">
+          <div class="trends-top">
+            <span class="right-section-title">7-Day Trends</span>
+            <span class="full-report-link">Full Report</span>
+          </div>
+          <span class="avg-peak-label">AVG. PEAK FLOW (L/MIN)</span>
+          <div class="bar-chart">
+            <div class="bars-area">
+              <div class="chart-col" *ngFor="let slot of chart7DaySlots">
+                <div class="chart-bar-wrap">
+                  <div class="chart-bar" [style.height.%]="slot.height"></div>
+                </div>
+              </div>
+            </div>
+            <div class="bars-x">
+              <span
+                *ngFor="let slot of chart7DaySlots"
+                [class.today-lbl]="slot.label === 'Today'">
+                {{ slot.label }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="right-divider"></div>
+
+        <!-- ── Recent Entries ── -->
+        <div class="recent-section">
+          <span class="right-section-label">RECENT ENTRIES</span>
+
+          <div class="recent-list" *ngIf="entries().length > 0; else noEntries">
+            <div class="recent-row" *ngFor="let entry of entries().slice(0, 5)">
+              <div class="recent-left">
+                <span class="recent-title">{{ getEntryLabel(entry) }}</span>
+                <span class="recent-date">{{ formatEntryDate(entry.loggedAt) }}</span>
+              </div>
+              <div class="recent-right">
+                <span class="recent-flow" [ngClass]="peakFlowColorClass(entry)">
+                  {{ entry.peakFlowLMin != null ? (entry.peakFlowLMin + ' L/min') : '— L/min' }}
+                </span>
+                <span class="recent-sev">Severity: {{ entry.severityScore }}</span>
+              </div>
+            </div>
+          </div>
+
+          <ng-template #noEntries>
+            <div class="empty-note">No entries yet. Start logging your symptoms.</div>
+          </ng-template>
+        </div>
+
+        <div class="right-divider"></div>
+
+        <!-- ── Weekly Insight ── -->
+        <div class="insight-section">
+          <span class="insight-label">WEEKLY INSIGHT</span>
+          <p class="insight-text">{{ weeklyInsightText }}</p>
+        </div>
+
+      </div>
+    </aside>
+
+  </div>
+</div>

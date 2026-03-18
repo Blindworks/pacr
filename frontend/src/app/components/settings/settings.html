@@ -179,6 +179,29 @@
       </div>
     </article>
 
+    <!-- Bio-Wetter & Asthma -->
+    <article class="section">
+      <div class="section-head">
+        <span class="material-symbols-outlined">air</span>
+        <h2>Bio-Wetter &amp; Asthma</h2>
+      </div>
+      <p class="section-desc">
+        Wähle deine DWD-Wetterregion für Pollenflug-, UV- und Biowetter-Daten.
+        Diese werden im Asthma-Tracking zur Trainingsempfehlung genutzt.
+      </p>
+      <div class="metrics-grid">
+        <div class="field" style="grid-column: 1 / -1">
+          <label>DWD-Wetterregion</label>
+          <select [ngModel]="dwdRegionId()" (ngModelChange)="dwdRegionId.set($event ? +$event : null)">
+            <option [ngValue]="null">-- Keine Auswahl --</option>
+            @for (r of dwdRegions; track r.id) {
+              <option [ngValue]="r.id">{{ r.name }}</option>
+            }
+          </select>
+        </div>
+      </div>
+    </article>
+
     <!-- Footer Actions -->
     <div class="footer-actions">
       <button class="btn-save" type="button" (click)="saveChanges()" [disabled]="saving()">

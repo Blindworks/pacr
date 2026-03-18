@@ -93,6 +93,10 @@ public class User implements UserDetails {
     @Column(name = "threshold_pace_sec_per_km")
     private Integer thresholdPaceSecPerKm;
 
+    /** DWD region ID for bio-weather and pollen data (default: 50 = Bayern-Nord). */
+    @Column(name = "dwd_region_id")
+    private Integer dwdRegionId;
+
     @JsonIgnore
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY, optional = true)
     private StravaToken stravaToken;
@@ -316,4 +320,7 @@ public class User implements UserDetails {
     public void setThresholdPaceSecPerKm(Integer thresholdPaceSecPerKm) {
         this.thresholdPaceSecPerKm = thresholdPaceSecPerKm;
     }
+
+    public Integer getDwdRegionId() { return dwdRegionId; }
+    public void setDwdRegionId(Integer dwdRegionId) { this.dwdRegionId = dwdRegionId; }
 }
