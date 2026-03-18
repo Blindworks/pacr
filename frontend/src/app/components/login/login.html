@@ -15,6 +15,13 @@
         <p>Push your limits. Track your progress.</p>
       </div>
 
+      @if (verifiedSuccess()) {
+        <div class="verified-banner">
+          <span class="material-symbols-outlined">check_circle</span>
+          E-Mail erfolgreich bestätigt. Bitte einloggen.
+        </div>
+      }
+
       <form (ngSubmit)="onSubmit()" class="login-form">
         <div class="field-group">
           <label>Email Address</label>

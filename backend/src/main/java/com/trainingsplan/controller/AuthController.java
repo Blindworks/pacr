@@ -5,6 +5,7 @@ import com.trainingsplan.dto.AuthResponse;
 import com.trainingsplan.dto.EmailVerificationRequest;
 import com.trainingsplan.dto.MessageResponse;
 import com.trainingsplan.dto.RegisterRequest;
+import com.trainingsplan.dto.ResendVerificationRequest;
 import com.trainingsplan.entity.User;
 import com.trainingsplan.entity.UserRole;
 import com.trainingsplan.entity.UserStatus;
@@ -101,6 +102,29 @@ public class AuthController {
         userRepository.save(user);
 
         return ResponseEntity.ok(new MessageResponse("E-Mail bestaetigt. Registrierung abgeschlossen."));
+    }
+
+    @PostMapping("/resend-verification")
+    public ResponseEntity<?> resendVerification(@RequestBody ResendVerificationRequest request) {
+        User user = userRepository.findByEmail(request.email()).orElse(null);
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MessageResponse("Kein Benutzer mit dieser E-Mail gefunden"));
+        }
+        if (user.getStatus() != UserStatus.EMAIL_VERIFICATION_PENDING) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MessageResponse("E-Mail ist bereits bestaetigt"));
+        }
+
+        user.setEmailVerificationCode(generateVerificationCode());
+        user.setEmailVerificationExpiresAt(LocalDateTime.now().plusMinutes(15));
+        userRepository.save(user);
+
+        emailService.sendSimpleMessage(
+                user.getEmail(),
+                "Dein Verifizierungscode",
+                "Dein neuer Code lautet: " + user.getEmailVerificationCode() + "\n\nDer Code ist 15 Minuten gueltig."
+        );
+
+        return ResponseEntity.ok(new MessageResponse("Verifizierungscode erneut gesendet."));
     }
 
     @PostMapping("/login")

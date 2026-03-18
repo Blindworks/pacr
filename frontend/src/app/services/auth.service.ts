@@ -1,6 +1,7 @@
 import { Injectable, inject, signal } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpContext } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
+import { SKIP_AUTH_LOGOUT } from '../interceptors/auth.interceptor';
 
 const TOKEN_KEY = 'auth_token';
 const BASE = 'http://localhost:8080/api/auth';
@@ -12,6 +13,10 @@ export interface AuthResponse {
   email: string;
   role: string;
   status: string;
+}
+
+export interface MessageResponse {
+  message: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -30,6 +35,22 @@ export class AuthService {
         this._isLoggedIn.set(true);
       })
     );
+  }
+
+  register(username: string, email: string, password: string): Observable<AuthResponse> {
+    return this.http.post<AuthResponse>(`${BASE}/register`, { username, email, password });
+  }
+
+  verifyEmail(email: string, code: string): Observable<MessageResponse> {
+    return this.http.post<MessageResponse>(`${BASE}/verify-email`, { email, code }, {
+      context: new HttpContext().set(SKIP_AUTH_LOGOUT, true)
+    });
+  }
+
+  resendVerification(email: string): Observable<MessageResponse> {
+    return this.http.post<MessageResponse>(`${BASE}/resend-verification`, { email }, {
+      context: new HttpContext().set(SKIP_AUTH_LOGOUT, true)
+    });
   }
 
   logout() {

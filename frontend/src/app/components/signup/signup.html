@@ -72,7 +72,12 @@
             </div>
           </div>
 
-          <button type="submit" class="btn-join">JOIN PACR</button>
+          @if (error()) {
+            <p class="signup-error">{{ error() }}</p>
+          }
+          <button type="submit" class="btn-join" [disabled]="loading()">
+            {{ loading() ? 'LOADING...' : 'JOIN PACR' }}
+          </button>
         </form>
 
         <div class="divider">

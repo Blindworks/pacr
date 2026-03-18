@@ -28,6 +28,11 @@ export const routes: Routes = [
     data: { fullPage: true }
   },
   {
+    path: 'verify-email',
+    loadComponent: () => import('./components/verify-email/verify-email').then(m => m.VerifyEmail),
+    data: { fullPage: true }
+  },
+  {
     path: '',
     pathMatch: 'full',
     canActivate: [authGuard],

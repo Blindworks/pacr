@@ -280,3 +280,18 @@
   text-align: center;
   margin-bottom: 0.5rem;
 }
+
+.verified-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(34, 197, 94, 0.1);
+  border: 1px solid rgba(34, 197, 94, 0.3);
+  border-radius: 0.5rem;
+  color: #4ade80;
+  font-size: 0.875rem;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+
+  .material-symbols-outlined { font-size: 1.125rem; }
+}

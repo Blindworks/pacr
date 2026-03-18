@@ -1,0 +1,70 @@
+<div class="verify-page">
+  <div class="bg-overlay"></div>
+
+  <div class="verify-wrapper">
+    <header class="page-header">
+      <div class="brand">
+        <div class="brand-icon">
+          <svg fill="currentColor" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+            <path clip-rule="evenodd" d="M24 4H42V17.3333V30.6667H24V44H6V30.6667V17.3333H24V4Z" fill-rule="evenodd"></path>
+          </svg>
+        </div>
+        <span class="brand-name">PACR</span>
+      </div>
+    </header>
+
+    <main class="verify-main">
+      <div class="verify-container">
+        <div class="verify-icon">
+          <span class="material-symbols-outlined">mark_email_unread</span>
+        </div>
+
+        <div class="verify-heading">
+          <h1>E-Mail bestätigen</h1>
+          <p>Wir haben einen 6-stelligen Code an <strong>{{ email() }}</strong> gesendet.</p>
+        </div>
+
+        <div class="digits-row">
+          @for (digit of digits; track $index) {
+            <input
+              [id]="'digit-' + $index"
+              class="digit-input"
+              type="text"
+              inputmode="numeric"
+              maxlength="6"
+              [value]="digit"
+              (input)="onDigitInput($index, $event)"
+              (keydown)="onDigitKeydown($index, $event)"
+              (paste)="onDigitPaste($index, $event)"
+              autocomplete="one-time-code"
+            />
+          }
+        </div>
+
+        @if (error()) {
+          <p class="verify-error">{{ error() }}</p>
+        }
+
+        <button class="btn-verify" [disabled]="loading() || code.length < 6" (click)="onVerify()">
+          {{ loading() ? 'WIRD GEPRÜFT...' : 'BESTÄTIGEN' }}
+        </button>
+
+        <div class="resend-section">
+          <span class="resend-hint">Code nicht erhalten?</span>
+          @if (resendCooldown() > 0) {
+            <span class="resend-cooldown">Erneut senden in {{ resendCooldown() }}s</span>
+          } @else {
+            <button class="btn-resend" [disabled]="resendLoading()" (click)="onResend()">
+              {{ resendLoading() ? 'Wird gesendet...' : 'Erneut senden' }}
+            </button>
+          }
+        </div>
+
+        <a routerLink="/signup" class="back-link">
+          <span class="material-symbols-outlined">arrow_back</span>
+          Zurück zur Registrierung
+        </a>
+      </div>
+    </main>
+  </div>
+</div>
