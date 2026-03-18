@@ -129,5 +129,20 @@
 - Liquibase 022: adds coach_title, coach_bullets_json to daily_metrics
 - Test: `CoachCardServiceTest.java` — 28 tests, no Spring context (service is stateless)
 
+## AI Trainer / Daily Coach (added 2026-03, migration 058)
+- Liquibase 058: creates `daily_coach_sessions` table (user_id FK, session_date, feeling_score/text, ai fields, decision, restructuring_summary_json)
+- `entity/DailyCoachSession.java` — stores one coaching session per user per day
+- `entity/CoachDecision.java` — enum: PROCEED, MODIFY, SKIP
+- `repository/DailyCoachSessionRepository.java` — findByUserIdAndSessionDate(), findByUserIdAndSessionDateBetween()
+- All AI Trainer beans are `@ConditionalOnProperty(name="pacr.ai.enabled", havingValue="true")`
+- `DailyCoachDisabledController` catches all 4 endpoints and returns 503 when AI disabled
+- `Training.trainingType` and `Training.intensityLevel` are the correct field names (NOT type/intensity)
+- `DailyCoachContextService` — builds context: entries for date, asthma risk (if asthmaTrackingEnabled+dwdRegionId), cycle phase, existing session
+- `DailyCoachPromptBuilder` — loads `classpath:prompts/daily_coaching_prompt.txt` via ResourceLoader+@PostConstruct (same pattern as PromptBuilder)
+- `TrainingRestructureService` — key trainings (trainingType in [speed,race,fartlek] OR intensityLevel=high) → MOVED to next free day; others → SKIPPED
+- `DailyCoachService` — orchestrates: context → prompt → LLM → JSON parse with fallback → persist session → restructure on execute
+- API endpoints: GET /api/ai-trainer/context, POST /api/ai-trainer/recommendation, POST /api/ai-trainer/execute, GET /api/ai-trainer/sessions
+- Controller uses `@Autowired SecurityUtils` + `securityUtils.getCurrentUserId()` (follows UserTrainingEntryController pattern)
+
 ## Compilation
 - `mvn compile -q -f /path/to/pom.xml` (clean output = success; use Unix paths in bash)
