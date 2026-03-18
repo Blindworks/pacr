@@ -103,10 +103,18 @@
 
       <!-- Profile trigger card -->
       <div class="user-profile">
-        <div class="user-avatar"></div>
+        <div class="user-avatar">
+          @if (profileImageUrl()) {
+            <img [src]="profileImageUrl()" alt="Profile" />
+          } @else {
+            <span class="user-avatar-initials">
+              {{ (userService.currentUser()?.firstName ?? '?')[0] }}{{ (userService.currentUser()?.lastName ?? '')[0] }}
+            </span>
+          }
+        </div>
         <div class="user-info">
-          <span class="user-name">Alex Runner</span>
-          <span class="user-role">Pro Member</span>
+          <span class="user-name">{{ userService.currentUser()?.firstName }} {{ userService.currentUser()?.lastName }}</span>
+          <span class="user-role">{{ membershipLabel() }}</span>
         </div>
         <span class="material-symbols-outlined user-expand-icon">expand_less</span>
       </div>

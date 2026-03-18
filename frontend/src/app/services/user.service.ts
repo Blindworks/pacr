@@ -20,6 +20,7 @@ export interface UserProfile {
   status: string | null;
   dwdRegionId: number | null;
   asthmaTrackingEnabled: boolean;
+  role: string | null;
 }
 
 export interface UpdateUserRequest {
