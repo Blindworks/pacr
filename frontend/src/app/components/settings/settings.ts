@@ -46,6 +46,7 @@ export class Settings implements OnInit, OnDestroy {
   protected imageError = signal('');
 
   protected dwdRegionId = signal<number | null>(null);
+  protected asthmaTrackingEnabled = signal(false);
 
   protected stravaLoading = signal(false);
   protected saving = signal(false);
@@ -109,6 +110,7 @@ export class Settings implements OnInit, OnDestroy {
         this.maxHr.set(user.maxHeartRate != null ? String(user.maxHeartRate) : '');
         this.dateOfBirth.set(user.dateOfBirth ?? '');
         this.dwdRegionId.set(user.dwdRegionId ?? null);
+        this.asthmaTrackingEnabled.set(user.asthmaTrackingEnabled ?? false);
         this.loadProfileImage();
       },
       error: () => { /* keep defaults if backend unreachable */ }
@@ -218,7 +220,8 @@ export class Settings implements OnInit, OnDestroy {
       hrRest: this.restingHr() ? parseInt(this.restingHr(), 10) : null,
       gender: this.gender(),
       status: this.currentUser.status,
-      dwdRegionId: this.dwdRegionId()
+      dwdRegionId: this.dwdRegionId(),
+      asthmaTrackingEnabled: this.asthmaTrackingEnabled()
     }).subscribe({
       next: updated => {
         this.currentUser = updated;

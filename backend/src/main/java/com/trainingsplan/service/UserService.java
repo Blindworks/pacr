@@ -54,7 +54,7 @@ public class UserService {
                            String firstName, String lastName,
                            LocalDate dateOfBirth, Integer heightCm, Double weightKg,
                            Integer maxHeartRate, Integer hrRest, String gender, String status,
-                           Integer dwdRegionId) {
+                           Integer dwdRegionId, boolean asthmaTrackingEnabled) {
         User user = findById(id);
         user.setUsername(username);
         user.setEmail(email);
@@ -70,6 +70,7 @@ public class UserService {
             user.setStatus(UserStatus.valueOf(status));
         }
         user.setDwdRegionId(dwdRegionId);
+        user.setAsthmaTrackingEnabled(asthmaTrackingEnabled);
         return userRepository.save(user);
     }
 

@@ -185,21 +185,34 @@
         <span class="material-symbols-outlined">air</span>
         <h2>Bio-Wetter &amp; Asthma</h2>
       </div>
-      <p class="section-desc">
-        Wähle deine DWD-Wetterregion für Pollenflug-, UV- und Biowetter-Daten.
-        Diese werden im Asthma-Tracking zur Trainingsempfehlung genutzt.
-      </p>
-      <div class="metrics-grid">
-        <div class="field" style="grid-column: 1 / -1">
-          <label>DWD-Wetterregion</label>
-          <select [ngModel]="dwdRegionId()" (ngModelChange)="dwdRegionId.set($event ? +$event : null)">
-            <option [ngValue]="null">-- Keine Auswahl --</option>
-            @for (r of dwdRegions; track r.id) {
-              <option [ngValue]="r.id">{{ r.name }}</option>
-            }
-          </select>
+      <div class="toggles">
+        <div class="toggle-row">
+          <div class="toggle-info">
+            <span class="toggle-title">Asthma-Auswertung aktivieren</span>
+            <span class="toggle-sub">Pollenflug, Feinstaub, Ozon und Biowetter-Risiko im Training berücksichtigen</span>
+          </div>
+          <label class="switch">
+            <input type="checkbox" [ngModel]="asthmaTrackingEnabled()" (ngModelChange)="asthmaTrackingEnabled.set($event)" />
+            <span class="track"></span>
+          </label>
         </div>
       </div>
+      @if (asthmaTrackingEnabled()) {
+        <p class="section-desc" style="margin-top: 1rem;">
+          Wähle deine DWD-Wetterregion für Pollenflug-, Feinstaub- und Biowetter-Daten.
+        </p>
+        <div class="metrics-grid">
+          <div class="field" style="grid-column: 1 / -1">
+            <label>DWD-Wetterregion</label>
+            <select [ngModel]="dwdRegionId()" (ngModelChange)="dwdRegionId.set($event ? +$event : null)">
+              <option [ngValue]="null">-- Keine Auswahl --</option>
+              @for (r of dwdRegions; track r.id) {
+                <option [ngValue]="r.id">{{ r.name }}</option>
+              }
+            </select>
+          </div>
+        </div>
+      }
     </article>
 
     <!-- Footer Actions -->

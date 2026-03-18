@@ -55,7 +55,8 @@ public class UserController {
             Integer hrRest,
             String gender,
             String status,
-            Integer dwdRegionId
+            Integer dwdRegionId,
+            Boolean asthmaTrackingEnabled
     ) {}
 
     @GetMapping("/me")
@@ -103,7 +104,7 @@ public class UserController {
                     request.firstName(), request.lastName(),
                     request.dateOfBirth(), request.heightCm(), request.weightKg(),
                     request.maxHeartRate(), request.hrRest(), request.gender(), request.status(),
-                    request.dwdRegionId());
+                    request.dwdRegionId(), Boolean.TRUE.equals(request.asthmaTrackingEnabled()));
             return ResponseEntity.ok(updated);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().build();

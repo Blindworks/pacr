@@ -1,6 +1,6 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient, HttpContext } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, tap } from 'rxjs';
 import { SKIP_AUTH_LOGOUT } from '../interceptors/auth.interceptor';
 
 const BASE = 'http://localhost:8080/api/users';
@@ -19,6 +19,7 @@ export interface UserProfile {
   gender: string | null;
   status: string | null;
   dwdRegionId: number | null;
+  asthmaTrackingEnabled: boolean;
 }
 
 export interface UpdateUserRequest {
@@ -34,18 +35,26 @@ export interface UpdateUserRequest {
   gender?: string | null;
   status?: string | null;
   dwdRegionId?: number | null;
+  asthmaTrackingEnabled?: boolean;
 }
 
 @Injectable({ providedIn: 'root' })
 export class UserService {
   private readonly http = inject(HttpClient);
 
+  /** Shared reactive user state — updated after getMe() and updateUser(). */
+  readonly currentUser = signal<UserProfile | null>(null);
+
   getMe(): Observable<UserProfile> {
-    return this.http.get<UserProfile>(`${BASE}/me`);
+    return this.http.get<UserProfile>(`${BASE}/me`).pipe(
+      tap(user => this.currentUser.set(user))
+    );
   }
 
   updateUser(id: number, request: UpdateUserRequest): Observable<UserProfile> {
-    return this.http.put<UserProfile>(`${BASE}/${id}`, request);
+    return this.http.put<UserProfile>(`${BASE}/${id}`, request).pipe(
+      tap(user => this.currentUser.set(user))
+    );
   }
 
   uploadProfileImage(id: number, file: File): Observable<void> {

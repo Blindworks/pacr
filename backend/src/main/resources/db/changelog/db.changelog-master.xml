@@ -60,5 +60,6 @@
     <include file="db/changelog/changes/054-add-activity-stream-cadence-power.xml"/>
     <include file="db/changelog/changes/055-add-asthma-entries.xml"/>
     <include file="db/changelog/changes/056-add-user-dwd-region.xml"/>
+    <include file="db/changelog/changes/057-add-user-asthma-enabled.xml"/>
 
 </databaseChangeLog>

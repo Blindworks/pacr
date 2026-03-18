@@ -97,6 +97,10 @@ public class User implements UserDetails {
     @Column(name = "dwd_region_id")
     private Integer dwdRegionId;
 
+    /** Whether asthma tracking and bio-weather features are enabled for this user. */
+    @Column(name = "asthma_tracking_enabled", nullable = false)
+    private boolean asthmaTrackingEnabled = false;
+
     @JsonIgnore
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY, optional = true)
     private StravaToken stravaToken;
@@ -323,4 +327,7 @@ public class User implements UserDetails {
 
     public Integer getDwdRegionId() { return dwdRegionId; }
     public void setDwdRegionId(Integer dwdRegionId) { this.dwdRegionId = dwdRegionId; }
+
+    public boolean isAsthmaTrackingEnabled() { return asthmaTrackingEnabled; }
+    public void setAsthmaTrackingEnabled(boolean asthmaTrackingEnabled) { this.asthmaTrackingEnabled = asthmaTrackingEnabled; }
 }
