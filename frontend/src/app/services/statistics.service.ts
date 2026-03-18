@@ -19,6 +19,8 @@ export interface TrainingStatsDto {
   totalDurationSeconds: number;
   totalActivityCount: number;
   avgPaceSecondsPerKm: number;
+  avgHeartRate?: number;
+  totalElevationGainM?: number;
   totalZone1Seconds: number;
   totalZone2Seconds: number;
   totalZone3Seconds: number;
@@ -33,6 +35,11 @@ export class StatisticsService {
 
   getStats(period: string = 'month'): Observable<TrainingStatsDto> {
     const params = new HttpParams().set('period', period);
+    return this.http.get<TrainingStatsDto>(`${BASE}/stats`, { params });
+  }
+
+  getStatsForDateRange(from: string, to: string): Observable<TrainingStatsDto> {
+    const params = new HttpParams().set('from', from).set('to', to);
     return this.http.get<TrainingStatsDto>(`${BASE}/stats`, { params });
   }
 }

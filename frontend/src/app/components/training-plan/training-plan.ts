@@ -1,7 +1,9 @@
 import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { forkJoin } from 'rxjs';
 import { UserTrainingEntry, UserTrainingEntryService } from '../../services/user-training-entry.service';
+import { StatisticsService, TrainingStatsDto } from '../../services/statistics.service';
 
 interface TrainingSession {
   id: number;
@@ -45,6 +47,7 @@ const DAY_SHORTS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 export class TrainingPlan implements OnInit {
   private router = inject(Router);
   private entryService = inject(UserTrainingEntryService);
+  private statsService = inject(StatisticsService);
   private cdr = inject(ChangeDetectorRef);
 
   planName = '—';
@@ -106,9 +109,15 @@ export class TrainingPlan implements OnInit {
     this.hasPlan = false;
 
     const { monday, sunday } = this.getWeekRange(this.weekOffset);
-    this.entryService.getCalendar(this.toIso(monday), this.toIso(sunday)).subscribe({
-      next: (entries) => {
+    forkJoin({
+      entries: this.entryService.getCalendar(this.toIso(monday), this.toIso(sunday)),
+      stats:   this.statsService.getStatsForDateRange(this.toIso(monday), this.toIso(sunday))
+    }).subscribe({
+      next: ({ entries, stats }) => {
         this.buildWeek(entries, monday);
+        const completed = entries.filter(e => e.completed).length;
+        const skipped   = entries.filter(e => e.completionStatus === 'skipped').length;
+        this.populateStats(stats, entries.length, completed, skipped);
 
         if (entries.length > 0) {
           this.hasPlan = true;
@@ -156,6 +165,27 @@ export class TrainingPlan implements OnInit {
     this.completedSessions = 0;
     this.totalSessions = 0;
     this.progressPercent = 0;
+  }
+
+  private populateStats(dto: TrainingStatsDto, total: number, completed: number, skipped: number): void {
+    const distance = dto.totalDistanceKm > 0
+      ? dto.totalDistanceKm.toFixed(1) : '—';
+    const hours = dto.totalDurationSeconds > 0
+      ? (dto.totalDurationSeconds / 3600).toFixed(1) : '—';
+    const hr = (dto.avgHeartRate != null && dto.avgHeartRate > 0)
+      ? Math.round(dto.avgHeartRate).toString() : '—';
+    const elevation = (dto.totalElevationGainM != null && dto.totalElevationGainM > 0)
+      ? Math.round(dto.totalElevationGainM).toString() : '—';
+
+    this.stats = [
+      { label: 'Weekly Distance', value: distance,                    unit: 'km'  },
+      { label: 'Time on Feet',    value: hours,                       unit: 'h'   },
+      { label: 'Avg. HR',         value: hr,                          unit: 'bpm' },
+      { label: 'Elevation',       value: elevation,                   unit: 'm'   },
+      { label: 'Geplant',         value: total > 0 ? String(total) : '—',     unit: 'Einheiten' },
+      { label: 'Erledigt',        value: total > 0 ? String(completed) : '—', unit: 'Einheiten' },
+      { label: 'Skipped',         value: total > 0 ? String(skipped) : '—',   unit: 'Einheiten' }
+    ];
   }
 
   private buildWeek(entries: UserTrainingEntry[], monday: Date): void {

@@ -322,13 +322,15 @@ public class CompletedTrainingController {
     @GetMapping("/stats")
     public ResponseEntity<TrainingStatsDto> getStats(
             @RequestParam(required = false) String period,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to,
             @RequestParam(required = false) String trainingType,
             @RequestParam(required = false) String sport) {
         User user = securityUtils.getCurrentUser();
         if (user == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        TrainingStatsDto stats = trainingStatsService.getStats(user.getId(), period, trainingType, sport);
+        TrainingStatsDto stats = trainingStatsService.getStats(user.getId(), period, from, to, trainingType, sport);
         return ResponseEntity.ok(stats);
     }
 

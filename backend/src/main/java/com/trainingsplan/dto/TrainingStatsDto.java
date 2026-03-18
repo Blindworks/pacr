@@ -9,6 +9,8 @@ public class TrainingStatsDto {
     private int totalDurationSeconds;
     private int totalActivityCount;
     private double avgPaceSecondsPerKm;
+    private Double avgHeartRate;
+    private int totalElevationGainM;
     private long totalZone1Seconds;
     private long totalZone2Seconds;
     private long totalZone3Seconds;
@@ -62,6 +64,22 @@ public class TrainingStatsDto {
 
     public void setAvgPaceSecondsPerKm(double avgPaceSecondsPerKm) {
         this.avgPaceSecondsPerKm = avgPaceSecondsPerKm;
+    }
+
+    public Double getAvgHeartRate() {
+        return avgHeartRate;
+    }
+
+    public void setAvgHeartRate(Double avgHeartRate) {
+        this.avgHeartRate = avgHeartRate;
+    }
+
+    public int getTotalElevationGainM() {
+        return totalElevationGainM;
+    }
+
+    public void setTotalElevationGainM(int totalElevationGainM) {
+        this.totalElevationGainM = totalElevationGainM;
     }
 
     public long getTotalZone1Seconds() {

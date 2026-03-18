@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.OptionalDouble;
 
 @Service
 public class TrainingStatsService {
@@ -24,10 +25,14 @@ public class TrainingStatsService {
     @Autowired
     private CompletedTrainingRepository completedTrainingRepository;
 
-    public TrainingStatsDto getStats(Long userId, String period, String trainingType, String sport) {
+    public TrainingStatsDto getStats(Long userId, String period, LocalDate from, LocalDate to, String trainingType, String sport) {
         LocalDate today = LocalDate.now();
-        LocalDate from = resolveFromDate(period, today);
-        LocalDate to = resolveToDate(period, today, from);
+        if (from == null) {
+            from = resolveFromDate(period, today);
+        }
+        if (to == null) {
+            to = resolveToDate(period, today, from);
+        }
 
         List<CompletedTraining> trainings = completedTrainingRepository
                 .findByUserIdAndTrainingDateBetweenOrderByTrainingDate(userId, from, to);
@@ -48,6 +53,18 @@ public class TrainingStatsService {
         long totalZone4Seconds = trainings.stream().mapToLong(ct -> Optional.ofNullable(ct.getTimeInHrZone4Seconds()).orElse(0)).sum();
         long totalZone5Seconds = trainings.stream().mapToLong(ct -> Optional.ofNullable(ct.getTimeInHrZone5Seconds()).orElse(0)).sum();
 
+        int totalElevationGainM = trainings.stream()
+                .mapToInt(ct -> Optional.ofNullable(ct.getElevationGainM()).orElse(0))
+                .sum();
+
+        OptionalDouble avgHrOpt = trainings.stream()
+                .filter(ct -> ct.getAverageHeartRate() != null)
+                .mapToInt(CompletedTraining::getAverageHeartRate)
+                .average();
+        Double avgHeartRate = avgHrOpt.isPresent()
+                ? Math.round(avgHrOpt.getAsDouble() * 10.0) / 10.0
+                : null;
+
         double avgPaceSecondsPerKm = totalDistanceKm > 0
                 ? (double) totalDurationSeconds / totalDistanceKm
                 : 0.0;
@@ -59,6 +76,8 @@ public class TrainingStatsService {
         dto.setTotalZone3Seconds(totalZone3Seconds);
         dto.setTotalZone4Seconds(totalZone4Seconds);
         dto.setTotalZone5Seconds(totalZone5Seconds);
+        dto.setTotalElevationGainM(totalElevationGainM);
+        dto.setAvgHeartRate(avgHeartRate);
         return dto;
     }
 
