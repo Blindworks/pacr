@@ -74,7 +74,7 @@
             <span class="material-symbols-outlined" *ngIf="race.registered">check_circle</span>
             {{ race.registered ? 'Selected' : 'Select Race' }}
           </button>
-          <button class="btn-info">
+          <button class="btn-info" (click)="openInfo(race)">
             <span class="material-symbols-outlined">info</span>
           </button>
         </div>
@@ -305,6 +305,39 @@
         <p *ngIf="assignError" style="color:#ff5555;font-size:.8rem;margin:.5rem 0 0;">Fehler beim Speichern. Bitte erneut versuchen.</p>
         <button class="action-card__schedule-btn">View Full Schedule</button>
         <button class="action-card__change-btn" (click)="deselectPlan()">Change Plan</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="info-overlay" *ngIf="infoRace" (click)="closeInfo()">
+  <div class="info-dialog" (click)="$event.stopPropagation()">
+    <div class="info-dialog__image" [style.background-image]="getImageStyle(infoRace.image)">
+      <button class="info-dialog__close" (click)="closeInfo()">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+    <div class="info-dialog__body">
+      <span class="tag" [class]="infoRace.tagClass">{{ infoRace.tag }}</span>
+      <h2 class="info-dialog__title">{{ infoRace.name }}</h2>
+      <div class="info-dialog__meta">
+        <div class="info-meta-row">
+          <span class="material-symbols-outlined">calendar_today</span>
+          <span>{{ infoRace.date }}</span>
+        </div>
+        <div class="info-meta-row">
+          <span class="material-symbols-outlined">location_on</span>
+          <span>{{ infoRace.location || '—' }}</span>
+        </div>
+        <div class="info-meta-row">
+          <span class="material-symbols-outlined">straighten</span>
+          <span>{{ infoRace.distance }}</span>
+        </div>
+      </div>
+      <p class="info-dialog__desc" *ngIf="infoRace.description">{{ infoRace.description }}</p>
+      <div class="info-dialog__plan" *ngIf="infoRace.trainingPlanName">
+        <span class="material-symbols-outlined">fitness_center</span>
+        <span>{{ infoRace.trainingPlanName }}</span>
       </div>
     </div>
   </div>

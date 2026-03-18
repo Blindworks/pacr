@@ -20,6 +20,7 @@ interface Race {
   registered: boolean;
   trainingPlanId?: number;
   trainingPlanName?: string;
+  description?: string;
 }
 
 interface PlanCard {
@@ -61,6 +62,7 @@ export class Competitions implements OnInit {
   isAssigning = false;
   assignError = false;
   showPlanChangeConfirm = false;
+  infoRace: Race | null = null;
 
   filters = ['All Races', 'Marathon', 'Half Marathon', '10K', '5K', 'Ultra'];
   targetTimes = ['Sub 3:30', 'Sub 4:00', 'Sub 4:30', 'Just Finish'];
@@ -138,7 +140,8 @@ export class Competitions implements OnInit {
       image: this.typeToImage(c.type, c.id),
       registered: c.registered ?? false,
       trainingPlanId: c.trainingPlanId,
-      trainingPlanName: c.trainingPlanName
+      trainingPlanName: c.trainingPlanName,
+      description: c.description
     };
   }
 
@@ -333,6 +336,9 @@ export class Competitions implements OnInit {
   cancelPlanChange(): void {
     this.showPlanChangeConfirm = false;
   }
+
+  openInfo(race: Race): void { this.infoRace = race; }
+  closeInfo(): void { this.infoRace = null; }
 
   private requiresPlanChangeConfirmation(): boolean {
     return !!this.selectedRace?.trainingPlanId && this.selectedRace.trainingPlanId !== this.selectedPlan?.id;

@@ -1189,6 +1189,119 @@ $text-muted: #8b949e;
   }
 }
 
+// ─── Info Dialog ─────────────────────────────────────────────────────────────
+
+.info-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(13, 17, 23, 0.7);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+}
+
+.info-dialog {
+  width: min(100%, 30rem);
+  background: $card-bg;
+  border: 1px solid #30363d;
+  border-radius: 1rem;
+  overflow: hidden;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+
+  &__image {
+    position: relative;
+    height: 200px;
+    background-size: cover;
+    background-position: center;
+  }
+
+  &__close {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 9999px;
+    border: none;
+    background: rgba(13, 17, 23, 0.6);
+    color: #f0f6fc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    backdrop-filter: blur(4px);
+    transition: background 0.15s;
+
+    &:hover {
+      background: rgba(13, 17, 23, 0.85);
+    }
+
+    .material-symbols-outlined {
+      font-size: 1rem;
+    }
+  }
+
+  &__body {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.875rem;
+  }
+
+  &__title {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #f0f6fc;
+    margin: 0;
+    line-height: 1.2;
+  }
+
+  &__meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  &__desc {
+    font-size: 0.9375rem;
+    color: $text-muted;
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  &__plan {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: $primary;
+    font-size: 0.875rem;
+    font-weight: 600;
+    padding-top: 0.5rem;
+    border-top: 1px solid #21262d;
+
+    .material-symbols-outlined {
+      font-size: 1rem;
+    }
+  }
+}
+
+.info-meta-row {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  color: $text-muted;
+  font-size: 0.875rem;
+
+  .material-symbols-outlined {
+    font-size: 1rem;
+    color: $text-muted;
+    flex-shrink: 0;
+  }
+}
+
 .cta-banner {
   padding: 2rem;
   border-radius: 1rem;
