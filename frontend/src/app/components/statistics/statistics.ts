@@ -1,6 +1,6 @@
 import { CommonModule, DecimalPipe } from '@angular/common';
 import { Component, OnInit, signal, computed, inject } from '@angular/core';
-import { StatisticsService, TrainingStatsDto, StatsBucket } from '../../services/statistics.service';
+import { StatisticsService, TrainingStatsDto, StatsBucket, Vo2MaxPoint } from '../../services/statistics.service';
 
 type MonthlyBar = {
   month: string;
@@ -49,6 +49,10 @@ export class Statistics implements OnInit {
   protected monthlyBars: MonthlyBar[] = [];
   protected intensityZones: IntensityZone[] = [];
 
+  protected fitnessTrendPath = '';
+  protected fitnessTrendArea = '';
+  protected fitnessTrendLabels: string[] = [];
+
   protected readonly personalBests: Best[] = [
     { label: '5 Kilometers', value: '18:42' },
     { label: '10 Kilometers', value: '39:15' },
@@ -58,6 +62,10 @@ export class Statistics implements OnInit {
 
   ngOnInit(): void {
     this.loadStats();
+    this.statisticsService.getVo2MaxHistory().subscribe({
+      next: data => this.buildFitnessTrend(data),
+      error: () => {},
+    });
   }
 
   protected setPeriod(label: string): void {
@@ -107,6 +115,58 @@ export class Statistics implements OnInit {
       heightPct: Math.round((b.distanceKm / maxDistance) * 100),
       distanceKm: b.distanceKm,
     }));
+  }
+
+  private buildFitnessTrend(points: Vo2MaxPoint[]): void {
+    if (points.length <= 1) {
+      this.fitnessTrendPath = '';
+      this.fitnessTrendArea = '';
+      this.fitnessTrendLabels = [];
+      return;
+    }
+
+    const W = 400;
+    const H = 150;
+    const PAD_TOP = 10;
+    const PAD_BOT = 10;
+    const yRange = H - PAD_TOP - PAD_BOT;
+
+    const minV = Math.min(...points.map(p => p.vo2max));
+    const maxV = Math.max(...points.map(p => p.vo2max));
+    const vSpan = maxV - minV || 1;
+
+    const coords: [number, number][] = points.map((p, i) => {
+      const x = (i / (points.length - 1)) * W;
+      const y = PAD_TOP + (1 - (p.vo2max - minV) / vSpan) * yRange;
+      return [x, y];
+    });
+
+    // Catmull-Rom → Cubic Bézier
+    const tension = 0.5;
+    let linePath = `M${coords[0][0]},${coords[0][1]}`;
+    for (let i = 0; i < coords.length - 1; i++) {
+      const p0 = coords[Math.max(i - 1, 0)];
+      const p1 = coords[i];
+      const p2 = coords[i + 1];
+      const p3 = coords[Math.min(i + 2, coords.length - 1)];
+      const cp1x = p1[0] + (p2[0] - p0[0]) * tension / 3;
+      const cp1y = p1[1] + (p2[1] - p0[1]) * tension / 3;
+      const cp2x = p2[0] - (p3[0] - p1[0]) * tension / 3;
+      const cp2y = p2[1] - (p3[1] - p1[1]) * tension / 3;
+      linePath += ` C${cp1x},${cp1y} ${cp2x},${cp2y} ${p2[0]},${p2[1]}`;
+    }
+
+    this.fitnessTrendPath = linePath;
+    this.fitnessTrendArea = `${linePath} L${W},${H} L0,${H} Z`;
+
+    // Labels: max 6, gleichmäßig verteilt
+    const MONTH_NAMES = ['Jan', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dez'];
+    const labelCount = Math.min(6, points.length);
+    this.fitnessTrendLabels = Array.from({ length: labelCount }, (_, i) => {
+      const idx = Math.round(i * (points.length - 1) / (labelCount - 1));
+      const d = new Date(points[idx].date);
+      return `${MONTH_NAMES[d.getMonth()]} ${d.getFullYear()}`;
+    });
   }
 
   private buildIntensityZones(data: TrainingStatsDto): IntensityZone[] {

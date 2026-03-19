@@ -90,18 +90,24 @@
         <button class="select-pill" type="button">VO2 Max</button>
       </div>
       <div class="trend-chart">
-        <svg viewBox="0 0 400 150" preserveAspectRatio="none">
-          <defs>
-            <linearGradient id="trend-fill" x1="0%" x2="0%" y1="0%" y2="100%">
-              <stop offset="0%" stop-color="#b9f20d" stop-opacity="0.25" />
-              <stop offset="100%" stop-color="#b9f20d" stop-opacity="0" />
-            </linearGradient>
-          </defs>
-          <path d="M0,120 Q50,110 80,90 T160,70 T240,80 T320,40 T400,20 L400,150 L0,150 Z" fill="url(#trend-fill)"></path>
-          <path d="M0,120 Q50,110 80,90 T160,70 T240,80 T320,40 T400,20" fill="none" stroke="#b9f20d" stroke-width="4" stroke-linecap="round"></path>
-        </svg>
+        @if (fitnessTrendPath) {
+          <svg viewBox="0 0 400 150" preserveAspectRatio="none">
+            <defs>
+              <linearGradient id="trend-fill" x1="0%" x2="0%" y1="0%" y2="100%">
+                <stop offset="0%" stop-color="#b9f20d" stop-opacity="0.25" />
+                <stop offset="100%" stop-color="#b9f20d" stop-opacity="0" />
+              </linearGradient>
+            </defs>
+            <path [attr.d]="fitnessTrendArea" fill="url(#trend-fill)"></path>
+            <path [attr.d]="fitnessTrendPath" fill="none" stroke="#b9f20d" stroke-width="4" stroke-linecap="round"></path>
+          </svg>
+        } @else {
+          <p class="no-data">Keine VO2Max-Daten verfügbar</p>
+        }
         <div class="months">
-          <span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span><span>May</span><span>Jun</span>
+          @for (label of fitnessTrendLabels; track label) {
+            <span>{{ label }}</span>
+          }
         </div>
       </div>
     </article>

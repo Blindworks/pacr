@@ -3,6 +3,12 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 const BASE = 'http://localhost:8080/api/completed-trainings';
+const BODY_METRICS_BASE = 'http://localhost:8080/api/body-metrics';
+
+export interface Vo2MaxPoint {
+  date: string;
+  vo2max: number;
+}
 
 export interface StatsBucket {
   label: string;
@@ -41,5 +47,9 @@ export class StatisticsService {
   getStatsForDateRange(from: string, to: string): Observable<TrainingStatsDto> {
     const params = new HttpParams().set('from', from).set('to', to);
     return this.http.get<TrainingStatsDto>(`${BASE}/stats`, { params });
+  }
+
+  getVo2MaxHistory(): Observable<Vo2MaxPoint[]> {
+    return this.http.get<Vo2MaxPoint[]>(`${BODY_METRICS_BASE}/vo2max-history`);
   }
 }
