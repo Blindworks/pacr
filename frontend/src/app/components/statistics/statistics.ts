@@ -53,6 +53,15 @@ export class Statistics implements OnInit {
   protected fitnessTrendArea = '';
   protected fitnessTrendLabels: string[] = [];
 
+  protected trendMarkerVisible = false;
+  protected trendMarkerX = 0;       // 0–100 %, für CSS left
+  protected trendMarkerSvgX = 0;    // 0–400, für SVG-Linie
+  protected trendMarkerSvgY: number | null = null;
+  protected trendMarkerValue = '';
+  protected trendMarkerDate = '';
+
+  private fitnessTrendDots: { x: number; y: number; vo2max: number; timestamp: number }[] = [];
+
   protected readonly personalBests: Best[] = [
     { label: '5 Kilometers', value: '18:42' },
     { label: '10 Kilometers', value: '39:15' },
@@ -117,6 +126,72 @@ export class Statistics implements OnInit {
     }));
   }
 
+  protected onTrendMouseMove(event: MouseEvent): void {
+    const target = event.currentTarget as HTMLElement;
+    const rect = target.getBoundingClientRect();
+    const pct = ((event.clientX - rect.left) / rect.width) * 100;
+    if (pct < 0 || pct > 100 || !this.fitnessTrendDots.length) {
+      this.trendMarkerVisible = false;
+      return;
+    }
+    this.trendMarkerX = pct;
+    this.trendMarkerSvgX = pct * 4;
+    this.trendMarkerVisible = true;
+    this.trendMarkerSvgY = this.interpolateTrendY(this.trendMarkerSvgX);
+    const rawVal = this.interpolateTrendValue(this.trendMarkerSvgX);
+    this.trendMarkerValue = rawVal != null ? rawVal.toFixed(1) : '';
+    const ts = this.interpolateTrendTimestamp(this.trendMarkerSvgX);
+    this.trendMarkerDate = ts != null
+      ? new Date(ts).toLocaleDateString('de-DE', { day: '2-digit', month: 'short', year: 'numeric' })
+      : '';
+  }
+
+  protected onTrendMouseLeave(): void {
+    this.trendMarkerVisible = false;
+  }
+
+  private interpolateTrendY(svgX: number): number | null {
+    const pts = this.fitnessTrendDots;
+    if (!pts.length) return null;
+    if (svgX <= pts[0].x) return pts[0].y;
+    if (svgX >= pts[pts.length - 1].x) return pts[pts.length - 1].y;
+    for (let i = 1; i < pts.length; i++) {
+      if (svgX <= pts[i].x) {
+        const t = (svgX - pts[i - 1].x) / (pts[i].x - pts[i - 1].x);
+        return pts[i - 1].y + (pts[i].y - pts[i - 1].y) * t;
+      }
+    }
+    return pts[pts.length - 1].y;
+  }
+
+  private interpolateTrendValue(svgX: number): number | null {
+    const pts = this.fitnessTrendDots;
+    if (!pts.length) return null;
+    if (svgX <= pts[0].x) return pts[0].vo2max;
+    if (svgX >= pts[pts.length - 1].x) return pts[pts.length - 1].vo2max;
+    for (let i = 1; i < pts.length; i++) {
+      if (svgX <= pts[i].x) {
+        const t = (svgX - pts[i - 1].x) / (pts[i].x - pts[i - 1].x);
+        return pts[i - 1].vo2max + (pts[i].vo2max - pts[i - 1].vo2max) * t;
+      }
+    }
+    return pts[pts.length - 1].vo2max;
+  }
+
+  private interpolateTrendTimestamp(svgX: number): number | null {
+    const pts = this.fitnessTrendDots;
+    if (!pts.length) return null;
+    if (svgX <= pts[0].x) return pts[0].timestamp;
+    if (svgX >= pts[pts.length - 1].x) return pts[pts.length - 1].timestamp;
+    for (let i = 1; i < pts.length; i++) {
+      if (svgX <= pts[i].x) {
+        const t = (svgX - pts[i - 1].x) / (pts[i].x - pts[i - 1].x);
+        return pts[i - 1].timestamp + (pts[i].timestamp - pts[i - 1].timestamp) * t;
+      }
+    }
+    return pts[pts.length - 1].timestamp;
+  }
+
   private buildFitnessTrend(points: Vo2MaxPoint[]): void {
     if (points.length <= 1) {
       this.fitnessTrendPath = '';
@@ -158,6 +233,12 @@ export class Statistics implements OnInit {
 
     this.fitnessTrendPath = linePath;
     this.fitnessTrendArea = `${linePath} L${W},${H} L0,${H} Z`;
+    this.fitnessTrendDots = coords.map((c, i) => ({
+      x: c[0],
+      y: c[1],
+      vo2max: points[i].vo2max,
+      timestamp: new Date(points[i].date).getTime(),
+    }));
 
     // Labels: max 6, gleichmäßig verteilt
     const MONTH_NAMES = ['Jan', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dez'];

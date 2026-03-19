@@ -91,16 +91,44 @@
       </div>
       <div class="trend-chart">
         @if (fitnessTrendPath) {
-          <svg viewBox="0 0 400 150" preserveAspectRatio="none">
-            <defs>
-              <linearGradient id="trend-fill" x1="0%" x2="0%" y1="0%" y2="100%">
-                <stop offset="0%" stop-color="#b9f20d" stop-opacity="0.25" />
-                <stop offset="100%" stop-color="#b9f20d" stop-opacity="0" />
-              </linearGradient>
-            </defs>
-            <path [attr.d]="fitnessTrendArea" fill="url(#trend-fill)"></path>
-            <path [attr.d]="fitnessTrendPath" fill="none" stroke="#b9f20d" stroke-width="4" stroke-linecap="round"></path>
-          </svg>
+          <div class="trend-wrapper"
+               (mousemove)="onTrendMouseMove($event)"
+               (mouseleave)="onTrendMouseLeave()">
+            <svg viewBox="0 0 400 150" preserveAspectRatio="none">
+              <defs>
+                <linearGradient id="trend-fill" x1="0%" x2="0%" y1="0%" y2="100%">
+                  <stop offset="0%" stop-color="#b9f20d" stop-opacity="0.25" />
+                  <stop offset="100%" stop-color="#b9f20d" stop-opacity="0" />
+                </linearGradient>
+              </defs>
+              <path [attr.d]="fitnessTrendArea" fill="url(#trend-fill)"></path>
+              <path [attr.d]="fitnessTrendPath" fill="none" stroke="#b9f20d" stroke-width="4" stroke-linecap="round"></path>
+              @if (trendMarkerVisible) {
+                <g class="trend-marker">
+                  <line class="trend-marker__line"
+                        [attr.x1]="trendMarkerSvgX" y1="0"
+                        [attr.x2]="trendMarkerSvgX" y2="150"></line>
+                  @if (trendMarkerSvgY != null) {
+                    <circle class="trend-marker__dot"
+                            [attr.cx]="trendMarkerSvgX"
+                            [attr.cy]="trendMarkerSvgY"
+                            r="5"></circle>
+                  }
+                </g>
+              }
+            </svg>
+            @if (trendMarkerVisible && trendMarkerValue) {
+              <div class="trend-tooltip"
+                   [style.left.%]="trendMarkerX"
+                   [class.trend-tooltip--flip]="trendMarkerX > 70">
+                <div class="trend-tooltip__date">{{ trendMarkerDate }}</div>
+                <div class="trend-tooltip__row">
+                  <span class="trend-tooltip__dot"></span>
+                  <span>{{ trendMarkerValue }} ml/kg/min</span>
+                </div>
+              </div>
+            }
+          </div>
         } @else {
           <p class="no-data">Keine VO2Max-Daten verfügbar</p>
         }
