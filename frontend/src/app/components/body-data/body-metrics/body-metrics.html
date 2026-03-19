@@ -46,32 +46,78 @@
               <p>Weight &amp; Body Fat Analysis</p>
             </div>
             <div class="legend">
-              <div class="legend__item">
+              <button type="button" class="legend__item" [class.legend__item--off]="!visibleLines.weight" (click)="toggleLine('weight')">
                 <span class="legend__dot legend__dot--primary"></span>
                 <span>Weight</span>
-              </div>
-              <div class="legend__item">
+              </button>
+              <button type="button" class="legend__item" [class.legend__item--off]="!visibleLines.fat" (click)="toggleLine('fat')">
                 <span class="legend__dot legend__dot--muted"></span>
                 <span>Body Fat</span>
-              </div>
+              </button>
+              <button type="button" class="legend__item" [class.legend__item--off]="!visibleLines.muscle" (click)="toggleLine('muscle')">
+                <span class="legend__dot legend__dot--muscle"></span>
+                <span>Muscle</span>
+              </button>
             </div>
           </div>
 
-          <div class="chart-area">
+          <div class="chart-area"
+               (mousemove)="onChartMouseMove($event)"
+               (mouseleave)="onChartMouseLeave()">
             <svg viewBox="0 0 100 40" preserveAspectRatio="none">
               <line x1="0" y1="10" x2="100" y2="10"></line>
               <line x1="0" y1="20" x2="100" y2="20"></line>
               <line x1="0" y1="30" x2="100" y2="30"></line>
-              <path class="chart-area__line chart-area__line--primary" d="M0,35 Q10,32 20,34 T40,28 T60,25 T80,20 T100,18"></path>
-              <path class="chart-area__fill" d="M0,35 Q10,32 20,34 T40,28 T60,25 T80,20 T100,18 L100,40 L0,40 Z"></path>
-              <path class="chart-area__line chart-area__line--secondary" d="M0,25 Q15,28 30,24 T60,26 T90,22 T100,23"></path>
+
+              <ng-container *ngIf="hasChartData; else noDataLines">
+                <path *ngIf="weightFillPath && visibleLines.weight" class="chart-area__fill" [attr.d]="weightFillPath"></path>
+                <path *ngIf="weightPath && visibleLines.weight" class="chart-area__line chart-area__line--primary" [attr.d]="weightPath"></path>
+                <path *ngIf="fatPath && visibleLines.fat" class="chart-area__line chart-area__line--secondary" [attr.d]="fatPath"></path>
+                <path *ngIf="musclePath && visibleLines.muscle" class="chart-area__line chart-area__line--muscle" [attr.d]="musclePath"></path>
+              </ng-container>
+
+              <ng-template #noDataLines>
+                <text class="chart-no-data" x="50" y="22" text-anchor="middle">No data yet</text>
+              </ng-template>
+
+              <!-- Interactive marker -->
+              <g *ngIf="markerVisible && hasChartData" class="chart-marker">
+                <line class="chart-marker__line"
+                      [attr.x1]="markerX" y1="0"
+                      [attr.x2]="markerX" y2="40"></line>
+                <circle *ngIf="markerWeightY != null && visibleLines.weight"
+                        class="chart-marker__dot chart-marker__dot--primary"
+                        [attr.cx]="markerX" [attr.cy]="markerWeightY" r="1.4"></circle>
+                <circle *ngIf="markerFatY != null && visibleLines.fat"
+                        class="chart-marker__dot chart-marker__dot--secondary"
+                        [attr.cx]="markerX" [attr.cy]="markerFatY" r="1.4"></circle>
+                <circle *ngIf="markerMuscleY != null && visibleLines.muscle"
+                        class="chart-marker__dot chart-marker__dot--muscle"
+                        [attr.cx]="markerX" [attr.cy]="markerMuscleY" r="1.4"></circle>
+              </g>
             </svg>
 
+            <!-- HTML tooltip overlay -->
+            <div class="chart-tooltip"
+                 *ngIf="markerVisible && hasChartData && (markerWeightValue || markerFatValue)"
+                 [style.left.%]="markerX"
+                 [class.chart-tooltip--flip]="markerX > 70">
+              <div class="chart-tooltip__row chart-tooltip__row--weight" *ngIf="markerWeightValue">
+                <span class="chart-tooltip__dot chart-tooltip__dot--primary"></span>
+                <span>{{ markerWeightValue }}</span>
+              </div>
+              <div class="chart-tooltip__row chart-tooltip__row--fat" *ngIf="markerFatValue && visibleLines.fat">
+                <span class="chart-tooltip__dot chart-tooltip__dot--secondary"></span>
+                <span>{{ markerFatValue }}</span>
+              </div>
+              <div class="chart-tooltip__row chart-tooltip__row--muscle" *ngIf="markerMuscleValue && visibleLines.muscle">
+                <span class="chart-tooltip__dot chart-tooltip__dot--muscle"></span>
+                <span>{{ markerMuscleValue }}</span>
+              </div>
+            </div>
+
             <div class="chart-axis">
-              <span>OCT</span>
-              <span>NOV</span>
-              <span>DEC</span>
-              <span>TODAY</span>
+              <span *ngFor="let label of axisLabels">{{ label }}</span>
             </div>
           </div>
         </section>

@@ -32,18 +32,39 @@ $primary:#b9f20d;$bg:#0d1117;$panel:#161b22;$panel-soft:rgba(255,255,255,.04);$b
 .panel__header h4,.history-panel__header h4{margin:0;font-size:1.05rem}
 .panel__header p{margin:.25rem 0 0;font-size:.875rem;color:$muted}
 .legend{gap:.8rem;color:$muted;font-size:.72rem;font-weight:600}
-.legend__item{gap:.25rem}
+.legend__item{gap:.25rem;border:0;background:none;font:inherit;font-size:.72rem;font-weight:600;color:$muted;cursor:pointer;padding:.2rem .4rem;border-radius:.4rem;transition:opacity .15s,background .15s}
+.legend__item:hover{background:rgba(255,255,255,.06)}
+.legend__item--off{opacity:.35}
+.legend__item--off .legend__dot{filter:grayscale(1)}
 .legend__dot{width:.5rem;height:.5rem;border-radius:999px}
 .legend__dot--primary{background:$primary}
 .legend__dot--muted{background:rgba(255,255,255,.3)}
+.legend__dot--muscle{background:#60a5fa}
 .chart-area{position:relative;height:14rem}
 .chart-area svg{width:100%;height:calc(100% - 1.5rem)}
 .chart-area line{stroke:rgba(255,255,255,.08);stroke-width:.1}
 .chart-area__line{fill:none}
 .chart-area__line--primary{stroke:$primary;stroke-width:.8}
 .chart-area__line--secondary{stroke:rgba(255,255,255,.3);stroke-width:.5}
+.chart-area__line--muscle{stroke:#60a5fa;stroke-width:.6}
 .chart-area__fill{fill:rgba(185,242,13,.08)}
 .chart-axis{display:flex;justify-content:space-between;color:$muted;font-weight:700;font-size:.72rem}
+.chart-marker__line{stroke:rgba(255,255,255,.25);stroke-width:.3;stroke-dasharray:1.5 1}
+.chart-marker__dot{transition:none}
+.chart-marker__dot--primary{fill:$primary;stroke:$bg;stroke-width:.5}
+.chart-marker__dot--secondary{fill:rgba(255,255,255,.55);stroke:$bg;stroke-width:.5}
+.chart-marker__dot--muscle{fill:#60a5fa;stroke:$bg;stroke-width:.5}
+.chart-no-data{fill:$muted;font-size:4px;font-weight:600}
+.chart-tooltip{position:absolute;top:.4rem;transform:translateX(4px);background:rgba(13,17,23,.95);border:1px solid rgba(255,255,255,.12);border-radius:.5rem;padding:.35rem .55rem;pointer-events:none;z-index:10;min-width:5rem;white-space:nowrap}
+.chart-tooltip--flip{transform:translateX(calc(-100% - 4px))}
+.chart-tooltip__row{display:flex;align-items:center;gap:.35rem;font-size:.75rem;font-weight:700;line-height:1.5}
+.chart-tooltip__dot{width:.4rem;height:.4rem;border-radius:50%;flex-shrink:0}
+.chart-tooltip__dot--primary{background:$primary}
+.chart-tooltip__dot--secondary{background:rgba(255,255,255,.5)}
+.chart-tooltip__row--weight{color:$primary}
+.chart-tooltip__row--fat{color:rgba(255,255,255,.7)}
+.chart-tooltip__row--muscle{color:#60a5fa}
+.chart-tooltip__dot--muscle{background:#60a5fa}
 
 .detail-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1rem}
 .detail-card{padding:1rem;background:$panel}
