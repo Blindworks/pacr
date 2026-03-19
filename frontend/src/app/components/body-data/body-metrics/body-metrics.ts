@@ -34,6 +34,7 @@ interface ChartPoint {
   x: number;
   y: number;
   rawValue: number;
+  timestamp: number;
 }
 
 @Component({
@@ -90,6 +91,7 @@ export class BodyMetrics implements OnInit {
   markerWeightValue = '';
   markerFatValue = '';
   markerMuscleValue = '';
+  markerDate = '';
 
   private chartWeightPoints: ChartPoint[] = [];
   private chartFatPoints: ChartPoint[] = [];
@@ -164,6 +166,12 @@ export class BodyMetrics implements OnInit {
     this.markerWeightValue = weightVal != null ? `${this.formatNumber(weightVal)} kg` : '';
     this.markerFatValue = fatVal != null ? `${this.formatNumber(fatVal)}%` : '';
     this.markerMuscleValue = muscleVal != null ? `${this.formatNumber(muscleVal)} kg` : '';
+
+    const refPoints = this.chartWeightPoints.length > 0 ? this.chartWeightPoints
+      : this.chartFatPoints.length > 0 ? this.chartFatPoints
+      : this.chartMusclePoints;
+    const ts = this.interpolateTimestamp(refPoints, svgX);
+    this.markerDate = ts != null ? new Date(ts).toLocaleDateString('de-DE', { day: '2-digit', month: 'short', year: 'numeric' }) : '';
   }
 
   onChartMouseLeave(): void {
@@ -216,15 +224,15 @@ export class BodyMetrics implements OnInit {
 
     this.chartWeightPoints = sorted
       .filter(m => m.weightKg != null)
-      .map(m => ({ x: toX(new Date(m.measuredAt).getTime()), y: toY(m.weightKg!), rawValue: m.weightKg! }));
+      .map(m => { const ts = new Date(m.measuredAt).getTime(); return { x: toX(ts), y: toY(m.weightKg!), rawValue: m.weightKg!, timestamp: ts }; });
 
     this.chartFatPoints = sorted
       .filter(m => m.fatPercentage != null)
-      .map(m => ({ x: toX(new Date(m.measuredAt).getTime()), y: toY(m.fatPercentage!), rawValue: m.fatPercentage! }));
+      .map(m => { const ts = new Date(m.measuredAt).getTime(); return { x: toX(ts), y: toY(m.fatPercentage!), rawValue: m.fatPercentage!, timestamp: ts }; });
 
     this.chartMusclePoints = sorted
       .filter(m => m.muscleMassKg != null)
-      .map(m => ({ x: toX(new Date(m.measuredAt).getTime()), y: toY(m.muscleMassKg!), rawValue: m.muscleMassKg! }));
+      .map(m => { const ts = new Date(m.measuredAt).getTime(); return { x: toX(ts), y: toY(m.muscleMassKg!), rawValue: m.muscleMassKg!, timestamp: ts }; });
 
     if (this.chartWeightPoints.length > 0) {
       this.weightPath = this.buildSvgPath(this.chartWeightPoints);
@@ -317,6 +325,23 @@ export class BodyMetrics implements OnInit {
       }
     }
     return points[points.length - 1].rawValue;
+  }
+
+  private interpolateTimestamp(points: ChartPoint[], svgX: number): number | null {
+    if (points.length === 0) return null;
+    if (points.length === 1) return points[0].timestamp;
+    if (svgX <= points[0].x) return points[0].timestamp;
+    if (svgX >= points[points.length - 1].x) return points[points.length - 1].timestamp;
+
+    for (let i = 1; i < points.length; i++) {
+      if (svgX <= points[i].x) {
+        const p0 = points[i - 1];
+        const p1 = points[i];
+        const t = (svgX - p0.x) / (p1.x - p0.x);
+        return p0.timestamp + (p1.timestamp - p0.timestamp) * t;
+      }
+    }
+    return points[points.length - 1].timestamp;
   }
 
   private buildSummaryCards(latestMeasurement: BodyMeasurementEntry | null): SummaryCard[] {

@@ -99,9 +99,10 @@
 
             <!-- HTML tooltip overlay -->
             <div class="chart-tooltip"
-                 *ngIf="markerVisible && hasChartData && (markerWeightValue || markerFatValue)"
+                 *ngIf="markerVisible && hasChartData && (markerWeightValue || markerFatValue || markerMuscleValue)"
                  [style.left.%]="markerX"
                  [class.chart-tooltip--flip]="markerX > 70">
+              <div class="chart-tooltip__date" *ngIf="markerDate">{{ markerDate }}</div>
               <div class="chart-tooltip__row chart-tooltip__row--weight" *ngIf="markerWeightValue">
                 <span class="chart-tooltip__dot chart-tooltip__dot--primary"></span>
                 <span>{{ markerWeightValue }}</span>

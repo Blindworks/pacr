@@ -57,6 +57,7 @@ $primary:#b9f20d;$bg:#0d1117;$panel:#161b22;$panel-soft:rgba(255,255,255,.04);$b
 .chart-no-data{fill:$muted;font-size:4px;font-weight:600}
 .chart-tooltip{position:absolute;top:.4rem;transform:translateX(4px);background:rgba(13,17,23,.95);border:1px solid rgba(255,255,255,.12);border-radius:.5rem;padding:.35rem .55rem;pointer-events:none;z-index:10;min-width:5rem;white-space:nowrap}
 .chart-tooltip--flip{transform:translateX(calc(-100% - 4px))}
+.chart-tooltip__date{font-size:.65rem;font-weight:600;color:$muted;margin-bottom:.25rem;padding-bottom:.25rem;border-bottom:1px solid rgba(255,255,255,.08)}
 .chart-tooltip__row{display:flex;align-items:center;gap:.35rem;font-size:.75rem;font-weight:700;line-height:1.5}
 .chart-tooltip__dot{width:.4rem;height:.4rem;border-radius:50%;flex-shrink:0}
 .chart-tooltip__dot--primary{background:$primary}
