@@ -37,6 +37,7 @@ export interface UpdateUserRequest {
   status?: string | null;
   dwdRegionId?: number | null;
   asthmaTrackingEnabled?: boolean;
+  role?: string | null;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -56,6 +57,18 @@ export class UserService {
     return this.http.put<UserProfile>(`${BASE}/${id}`, request).pipe(
       tap(user => this.currentUser.set(user))
     );
+  }
+
+  getAllUsers(): Observable<UserProfile[]> {
+    return this.http.get<UserProfile[]>(BASE);
+  }
+
+  getUserById(id: number): Observable<UserProfile> {
+    return this.http.get<UserProfile>(`${BASE}/${id}`);
+  }
+
+  updateUserAsAdmin(id: number, request: UpdateUserRequest): Observable<UserProfile> {
+    return this.http.put<UserProfile>(`${BASE}/${id}`, request);
   }
 
   uploadProfileImage(id: number, file: File): Observable<void> {

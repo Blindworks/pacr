@@ -1,0 +1,71 @@
+<div class="list-page">
+  <div class="toolbar">
+    <div class="toolbar-left">
+      <h2>Users</h2>
+      @if (!isLoading()) {
+        <span class="count-badge">{{ users().length }}</span>
+      }
+    </div>
+  </div>
+
+  @if (isLoading()) {
+    <div class="state-box">
+      <span class="material-symbols-outlined spin">progress_activity</span>
+      <span>Loading users…</span>
+    </div>
+  }
+
+  @if (hasError() && !isLoading()) {
+    <div class="state-box state-box--error">
+      <span class="material-symbols-outlined">error</span>
+      <span>Failed to load users.</span>
+      <button class="btn-ghost" (click)="load()">Retry</button>
+    </div>
+  }
+
+  @if (!isLoading() && !hasError() && users().length === 0) {
+    <div class="state-box">
+      <span class="material-symbols-outlined">group</span>
+      <span>No users found.</span>
+    </div>
+  }
+
+  @if (!isLoading() && users().length > 0) {
+    <div class="table-wrap">
+      <table class="user-table">
+        <thead>
+          <tr>
+            <th>Username</th>
+            <th>Email</th>
+            <th>Name</th>
+            <th>Role</th>
+            <th>Status</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (user of users(); track user.id) {
+            <tr>
+              <td class="cell-username">{{ user.username }}</td>
+              <td class="cell-email">{{ user.email }}</td>
+              <td>{{ fullName(user) }}</td>
+              <td>
+                <span class="role-badge">{{ roleLabel(user.role) }}</span>
+              </td>
+              <td>
+                <span class="status-badge" [class]="statusClass(user.status)">
+                  {{ statusLabel(user.status) }}
+                </span>
+              </td>
+              <td class="cell-actions">
+                <button class="icon-btn" title="Edit user" (click)="navigateEdit(user.id)">
+                  <span class="material-symbols-outlined">edit</span>
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

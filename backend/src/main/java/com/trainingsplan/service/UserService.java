@@ -54,7 +54,7 @@ public class UserService {
                            String firstName, String lastName,
                            LocalDate dateOfBirth, Integer heightCm, Double weightKg,
                            Integer maxHeartRate, Integer hrRest, String gender, String status,
-                           Integer dwdRegionId, boolean asthmaTrackingEnabled) {
+                           Integer dwdRegionId, boolean asthmaTrackingEnabled, String role) {
         User user = findById(id);
         user.setUsername(username);
         user.setEmail(email);
@@ -68,6 +68,9 @@ public class UserService {
         user.setGender(gender);
         if (status != null && !status.isBlank()) {
             user.setStatus(UserStatus.valueOf(status));
+        }
+        if (role != null && !role.isBlank()) {
+            user.setRole(UserRole.valueOf(role));
         }
         user.setDwdRegionId(dwdRegionId);
         user.setAsthmaTrackingEnabled(asthmaTrackingEnabled);
