@@ -67,7 +67,7 @@ public class DailyCoachContextService {
         });
 
         // 5. Existing session for today
-        sessionRepository.findByUserIdAndSessionDate(userId, date)
+        sessionRepository.findFirstByUserIdAndSessionDateOrderByIdDesc(userId, date)
                 .ifPresent(session -> ctx.setExistingSession(buildExistingSessionDto(session)));
 
         return ctx;

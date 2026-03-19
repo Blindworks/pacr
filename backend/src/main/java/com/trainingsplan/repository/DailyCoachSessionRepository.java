@@ -11,7 +11,7 @@ import java.util.Optional;
 @Repository
 public interface DailyCoachSessionRepository extends JpaRepository<DailyCoachSession, Long> {
 
-    Optional<DailyCoachSession> findByUserIdAndSessionDate(Long userId, LocalDate date);
+    Optional<DailyCoachSession> findFirstByUserIdAndSessionDateOrderByIdDesc(Long userId, LocalDate date);
 
     List<DailyCoachSession> findByUserIdAndSessionDateBetween(Long userId, LocalDate from, LocalDate to);
 }
