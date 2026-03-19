@@ -20,11 +20,14 @@ type Best = {
 };
 
 const PERIOD_MAP: Record<string, string> = {
-  'Letzte Woche': 'lastWeek',
-  'Letzte 30 Tage': 'day',
-  'Letzte 12 Wochen': 'week',
-  'Letzte 12 Monate': 'month',
-  'Alle Zeit': 'all',
+  'Diese Woche':     'currentWeek',
+  'Letzte Woche':    'lastWeek',
+  'Dieser Monat':    'currentMonth',
+  'Letzte 30 Tage':  'day',
+  'Letzte 12 Wochen':'week',
+  'Dieses Jahr':     'currentYear',
+  'Letzte 12 Monate':'month',
+  'Alle Zeit':       'all',
 };
 
 @Component({
@@ -38,7 +41,7 @@ export class Statistics implements OnInit {
   private readonly statisticsService = inject(StatisticsService);
 
   protected readonly periods = Object.keys(PERIOD_MAP);
-  protected readonly selectedPeriodLabel = signal('Letzte 12 Monate');
+  protected readonly selectedPeriodLabel = signal('Letzte Woche');
 
   protected stats: TrainingStatsDto | null = null;
   protected loading = false;

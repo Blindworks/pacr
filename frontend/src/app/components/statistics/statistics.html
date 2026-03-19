@@ -9,9 +9,9 @@
         <span class="material-symbols-outlined">file_download</span>
         Export PDF
       </button>
-      <select class="period-select" [value]="selectedPeriodLabel()" (change)="setPeriod($any($event.target).value)">
+      <select class="period-select" (change)="setPeriod($any($event.target).value)">
         @for (period of periods; track period) {
-          <option [value]="period">{{ period }}</option>
+          <option [value]="period" [selected]="period === selectedPeriodLabel()">{{ period }}</option>
         }
       </select>
     </div>

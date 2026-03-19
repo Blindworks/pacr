@@ -106,13 +106,15 @@ public class TrainingStatsService {
             return today.minusMonths(12);
         }
         return switch (period) {
-            case "day"   -> today.minusDays(29);
-            case "week"  -> today.minusWeeks(12);
-            case "currentWeek" -> today.minusDays(today.getDayOfWeek().getValue() - 1L);
-            case "lastWeek"    -> today.minusDays(today.getDayOfWeek().getValue() - 1L + 7L);
-            case "year"  -> LocalDate.of(2000, 1, 1);
-            case "all"   -> LocalDate.of(2000, 1, 1);
-            default      -> today.minusMonths(12); // "month" and unknown
+            case "day"          -> today.minusDays(29);
+            case "week"         -> today.minusWeeks(12);
+            case "currentWeek"  -> today.minusDays(today.getDayOfWeek().getValue() - 1L);
+            case "lastWeek"     -> today.minusDays(today.getDayOfWeek().getValue() - 1L + 7L);
+            case "currentMonth" -> today.withDayOfMonth(1);
+            case "currentYear"  -> today.withDayOfYear(1);
+            case "year"         -> LocalDate.of(2000, 1, 1);
+            case "all"          -> LocalDate.of(2000, 1, 1);
+            default             -> today.minusMonths(12); // "month" and unknown
         };
     }
 
@@ -148,13 +150,13 @@ public class TrainingStatsService {
         if ("all".equals(period)) {
             return buildAllBucket(trainings, from, to);
         }
-        if ("day".equals(period) || "currentWeek".equals(period) || "lastWeek".equals(period)) {
+        if ("day".equals(period) || "currentWeek".equals(period) || "lastWeek".equals(period) || "currentMonth".equals(period)) {
             return buildDayBuckets(trainings, from, to);
         }
         if ("week".equals(period)) {
             return buildWeekBuckets(trainings, from, to);
         }
-        if ("year".equals(period)) {
+        if ("year".equals(period) || "currentYear".equals(period)) {
             return buildYearBuckets(trainings, from, to);
         }
         // default: month
