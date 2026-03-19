@@ -1,7 +1,9 @@
 package com.trainingsplan.service;
 
 import com.trainingsplan.dto.TrainingStatsDto;
+import com.trainingsplan.entity.ActivityMetrics;
 import com.trainingsplan.entity.CompletedTraining;
+import com.trainingsplan.repository.ActivityMetricsRepository;
 import com.trainingsplan.repository.CompletedTrainingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,6 +27,9 @@ public class TrainingStatsService {
     @Autowired
     private CompletedTrainingRepository completedTrainingRepository;
 
+    @Autowired
+    private ActivityMetricsRepository activityMetricsRepository;
+
     public TrainingStatsDto getStats(Long userId, String period, LocalDate from, LocalDate to, String trainingType, String sport) {
         LocalDate today = LocalDate.now();
         if (from == null) {
@@ -47,11 +52,26 @@ public class TrainingStatsService {
 
         totalDistanceKm = Math.round(totalDistanceKm * 100.0) / 100.0;
 
-        long totalZone1Seconds = trainings.stream().mapToLong(ct -> Optional.ofNullable(ct.getTimeInHrZone1Seconds()).orElse(0)).sum();
-        long totalZone2Seconds = trainings.stream().mapToLong(ct -> Optional.ofNullable(ct.getTimeInHrZone2Seconds()).orElse(0)).sum();
-        long totalZone3Seconds = trainings.stream().mapToLong(ct -> Optional.ofNullable(ct.getTimeInHrZone3Seconds()).orElse(0)).sum();
-        long totalZone4Seconds = trainings.stream().mapToLong(ct -> Optional.ofNullable(ct.getTimeInHrZone4Seconds()).orElse(0)).sum();
-        long totalZone5Seconds = trainings.stream().mapToLong(ct -> Optional.ofNullable(ct.getTimeInHrZone5Seconds()).orElse(0)).sum();
+        List<Long> trainingIds = trainings.stream().map(CompletedTraining::getId).toList();
+        List<ActivityMetrics> metricsList = trainingIds.isEmpty()
+            ? List.of()
+            : activityMetricsRepository.findByCompletedTrainingIdIn(trainingIds);
+
+        long totalZone1Seconds = Math.round(metricsList.stream()
+            .filter(am -> !Boolean.TRUE.equals(am.getZonesUnknown()) && am.getZ1Min() != null)
+            .mapToDouble(ActivityMetrics::getZ1Min).sum() * 60);
+        long totalZone2Seconds = Math.round(metricsList.stream()
+            .filter(am -> !Boolean.TRUE.equals(am.getZonesUnknown()) && am.getZ2Min() != null)
+            .mapToDouble(ActivityMetrics::getZ2Min).sum() * 60);
+        long totalZone3Seconds = Math.round(metricsList.stream()
+            .filter(am -> !Boolean.TRUE.equals(am.getZonesUnknown()) && am.getZ3Min() != null)
+            .mapToDouble(ActivityMetrics::getZ3Min).sum() * 60);
+        long totalZone4Seconds = Math.round(metricsList.stream()
+            .filter(am -> !Boolean.TRUE.equals(am.getZonesUnknown()) && am.getZ4Min() != null)
+            .mapToDouble(ActivityMetrics::getZ4Min).sum() * 60);
+        long totalZone5Seconds = Math.round(metricsList.stream()
+            .filter(am -> !Boolean.TRUE.equals(am.getZonesUnknown()) && am.getZ5Min() != null)
+            .mapToDouble(ActivityMetrics::getZ5Min).sum() * 60);
 
         int totalElevationGainM = trainings.stream()
                 .mapToInt(ct -> Optional.ofNullable(ct.getElevationGainM()).orElse(0))
