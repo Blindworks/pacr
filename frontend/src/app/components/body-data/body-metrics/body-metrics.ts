@@ -119,7 +119,8 @@ export class BodyMetrics implements OnInit {
       const effectiveLatestMeasurement = latestMeasurement ?? measurements[0] ?? null;
       this.bloodPressures = bloodPressures;
 
-      this.summaryCards = this.buildSummaryCards(effectiveLatestMeasurement);
+      const previousMeasurement = measurements[1] ?? null;
+      this.summaryCards = this.buildSummaryCards(effectiveLatestMeasurement, previousMeasurement);
       this.detailMetrics = this.buildDetailMetrics(
         effectiveLatestMeasurement,
         this.resolveBloodPressureForMeasurement(effectiveLatestMeasurement, latestBloodPressure)
@@ -136,7 +137,9 @@ export class BodyMetrics implements OnInit {
 
   loadHistoryItem(item: HistoryItem): void {
     const matchingBloodPressure = this.resolveBloodPressureForMeasurement(item.measurement, null);
-    this.summaryCards = this.buildSummaryCards(item.measurement);
+    const idx = this.historyItems.indexOf(item);
+    const prev = idx >= 0 && idx + 1 < this.historyItems.length ? this.historyItems[idx + 1].measurement : null;
+    this.summaryCards = this.buildSummaryCards(item.measurement, prev);
     this.detailMetrics = this.buildDetailMetrics(item.measurement, matchingBloodPressure);
     this.lastUpdatedText = this.resolveLastUpdated(item.measurement, matchingBloodPressure);
     this.cdr.detectChanges();
@@ -344,12 +347,12 @@ export class BodyMetrics implements OnInit {
     return points[points.length - 1].timestamp;
   }
 
-  private buildSummaryCards(latestMeasurement: BodyMeasurementEntry | null): SummaryCard[] {
+  private buildSummaryCards(latest: BodyMeasurementEntry | null, previous: BodyMeasurementEntry | null): SummaryCard[] {
     return [
-      this.createSummaryCard('Weight', latestMeasurement?.weightKg, 'kg'),
-      this.createSummaryCard('Body Fat', latestMeasurement?.fatPercentage, '%'),
-      this.createSummaryCard('Muscle Mass', latestMeasurement?.muscleMassKg, 'kg'),
-      this.createSummaryCard('BMI', latestMeasurement?.bmi)
+      this.createSummaryCard('Weight', latest?.weightKg, 'kg', previous?.weightKg),
+      this.createSummaryCard('Body Fat', latest?.fatPercentage, '%', previous?.fatPercentage),
+      this.createSummaryCard('Muscle Mass', latest?.muscleMassKg, 'kg', previous?.muscleMassKg),
+      this.createSummaryCard('BMI', latest?.bmi, '', previous?.bmi),
     ];
   }
 
@@ -446,13 +449,28 @@ export class BodyMetrics implements OnInit {
     return `${this.formatLongDate(latest)}, 08:00 AM`;
   }
 
-  private createSummaryCard(label: string, value: number | undefined, unit = ''): SummaryCard {
+  private createSummaryCard(label: string, value: number | undefined, unit = '', previous?: number): SummaryCard {
+    let change = 'No prev.';
+    let trend: 'up' | 'down' | 'flat' = 'flat';
+
+    if (value != null && previous != null) {
+      const delta = value - previous;
+      const sign = delta > 0 ? '+' : '';
+      change = `${sign}${this.formatNumber(delta)}${unit ? ' ' + unit : ''}`;
+      if (Math.abs(delta) < 0.05) {
+        change = 'Stable';
+        trend = 'flat';
+      } else {
+        trend = delta > 0 ? 'up' : 'down';
+      }
+    }
+
     return {
       label,
       value: value != null ? this.formatNumber(value) : '-',
       unit,
-      change: 'Stable',
-      trend: 'flat'
+      change,
+      trend
     };
   }
 
