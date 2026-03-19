@@ -78,6 +78,16 @@
             <span class="material-symbols-outlined">info</span>
           </button>
         </div>
+        <button
+          *ngIf="race.registered"
+          class="btn-organizer"
+          [class.btn-organizer--active]="race.registeredWithOrganizer"
+          (click)="toggleOrganizerRegistration(race, $event)">
+          <span class="material-symbols-outlined">
+            {{ race.registeredWithOrganizer ? 'how_to_reg' : 'person_add' }}
+          </span>
+          {{ race.registeredWithOrganizer ? 'Beim Veranstalter angemeldet' : 'Beim Veranstalter anmelden' }}
+        </button>
       </div>
     </div>
   </section>
@@ -333,6 +343,12 @@
           <span class="material-symbols-outlined">straighten</span>
           <span>{{ infoRace.distance }}</span>
         </div>
+      </div>
+      <div class="info-meta-row" *ngIf="infoRace.registered">
+        <span class="material-symbols-outlined">
+          {{ infoRace.registeredWithOrganizer ? 'how_to_reg' : 'person_add' }}
+        </span>
+        <span>{{ infoRace.registeredWithOrganizer ? 'Beim Veranstalter angemeldet' : 'Noch nicht beim Veranstalter angemeldet' }}</span>
       </div>
       <p class="info-dialog__desc" *ngIf="infoRace.description">{{ infoRace.description }}</p>
       <div class="info-dialog__plan" *ngIf="infoRace.trainingPlanName">

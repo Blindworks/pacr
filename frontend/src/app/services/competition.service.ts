@@ -10,6 +10,7 @@ export interface Competition {
   type?: string;
   location?: string;
   registered?: boolean;
+  registeredWithOrganizer?: boolean;
   trainingPlanId?: number;
   trainingPlanName?: string;
 }
@@ -37,5 +38,9 @@ export class CompetitionService {
 
   delete(id: number): Observable<void> {
     return this.http.delete<void>(`${this.base}/${id}`);
+  }
+
+  updateRegistration(id: number, registeredWithOrganizer: boolean): Observable<unknown> {
+    return this.http.put(`${this.base}/${id}/register`, { registeredWithOrganizer });
   }
 }

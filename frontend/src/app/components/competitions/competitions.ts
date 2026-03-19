@@ -18,6 +18,7 @@ interface Race {
   location: string;
   image: string;
   registered: boolean;
+  registeredWithOrganizer: boolean;
   trainingPlanId?: number;
   trainingPlanName?: string;
   description?: string;
@@ -139,6 +140,7 @@ export class Competitions implements OnInit {
       location: c.location ?? '',
       image: this.typeToImage(c.type, c.id),
       registered: c.registered ?? false,
+      registeredWithOrganizer: c.registeredWithOrganizer ?? false,
       trainingPlanId: c.trainingPlanId,
       trainingPlanName: c.trainingPlanName,
       description: c.description
@@ -339,6 +341,18 @@ export class Competitions implements OnInit {
 
   openInfo(race: Race): void { this.infoRace = race; }
   closeInfo(): void { this.infoRace = null; }
+
+  toggleOrganizerRegistration(race: Race, event: Event): void {
+    event.stopPropagation();
+    if (!race.registered) return;
+    const newValue = !race.registeredWithOrganizer;
+    this.competitionService.updateRegistration(race.id, newValue).subscribe({
+      next: () => {
+        race.registeredWithOrganizer = newValue;
+        this.cdr.detectChanges();
+      }
+    });
+  }
 
   private requiresPlanChangeConfirmation(): boolean {
     return !!this.selectedRace?.trainingPlanId && this.selectedRace.trainingPlanId !== this.selectedPlan?.id;
