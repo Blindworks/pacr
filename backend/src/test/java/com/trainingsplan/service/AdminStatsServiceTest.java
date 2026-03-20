@@ -45,5 +45,11 @@ class AdminStatsServiceTest {
         assertEquals(1L, stats.inactiveUsers());
         assertEquals(2L, stats.blockedUsers());
         assertEquals(3L, stats.pendingVerification());
+        assertEquals(4L, stats.newUsersThisWeek());
+        assertEquals(8L, stats.newUsersThisMonth());
+        assertEquals(6L, stats.stravaConnected());
+        assertEquals(7L, stats.asthmaTrackingEnabled());
+        assertEquals(9L, stats.cycleTrackingEnabled());
+        assertEquals(10L, stats.paceZonesConfigured());
     }
 }
