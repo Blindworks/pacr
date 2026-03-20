@@ -14,7 +14,6 @@ import com.trainingsplan.repository.TrainingRepository;
 import com.trainingsplan.security.SecurityUtils;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -29,28 +28,32 @@ import java.util.stream.Collectors;
 @Service
 public class TrainingPlanService {
 
-    @Autowired
-    private TrainingPlanRepository trainingPlanRepository;
+    private final TrainingPlanRepository trainingPlanRepository;
+    private final CompetitionRepository competitionRepository;
+    private final TrainingRepository trainingRepository;
+    private final CompetitionRegistrationRepository registrationRepository;
+    private final SecurityUtils securityUtils;
+    private final UserTrainingScheduleService userTrainingScheduleService;
+    private final AuditLogService auditLogService;
+    private final ObjectMapper objectMapper;
 
-    @Autowired
-    private CompetitionRepository competitionRepository;
-
-    @Autowired
-    private TrainingRepository trainingRepository;
-
-    @Autowired
-    private CompetitionRegistrationRepository registrationRepository;
-
-    @Autowired
-    private SecurityUtils securityUtils;
-
-    @Autowired
-    private UserTrainingScheduleService userTrainingScheduleService;
-
-    @Autowired
-    private AuditLogService auditLogService;
-
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    public TrainingPlanService(TrainingPlanRepository trainingPlanRepository,
+                               CompetitionRepository competitionRepository,
+                               TrainingRepository trainingRepository,
+                               CompetitionRegistrationRepository registrationRepository,
+                               SecurityUtils securityUtils,
+                               UserTrainingScheduleService userTrainingScheduleService,
+                               AuditLogService auditLogService,
+                               ObjectMapper objectMapper) {
+        this.trainingPlanRepository = trainingPlanRepository;
+        this.competitionRepository = competitionRepository;
+        this.trainingRepository = trainingRepository;
+        this.registrationRepository = registrationRepository;
+        this.securityUtils = securityUtils;
+        this.userTrainingScheduleService = userTrainingScheduleService;
+        this.auditLogService = auditLogService;
+        this.objectMapper = objectMapper;
+    }
 
     // -------------------------------------------------------------------------
     // Basic CRUD

@@ -10,7 +10,6 @@ import com.trainingsplan.repository.CompetitionRepository;
 import com.trainingsplan.security.SecurityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,17 +21,20 @@ public class CompetitionService {
 
     private static final Logger log = LoggerFactory.getLogger(CompetitionService.class);
 
-    @Autowired
-    private CompetitionRepository competitionRepository;
+    private final CompetitionRepository competitionRepository;
+    private final CompetitionRegistrationRepository registrationRepository;
+    private final SecurityUtils securityUtils;
+    private final AuditLogService auditLogService;
 
-    @Autowired
-    private CompetitionRegistrationRepository registrationRepository;
-
-    @Autowired
-    private SecurityUtils securityUtils;
-
-    @Autowired
-    private AuditLogService auditLogService;
+    public CompetitionService(CompetitionRepository competitionRepository,
+                              CompetitionRegistrationRepository registrationRepository,
+                              SecurityUtils securityUtils,
+                              AuditLogService auditLogService) {
+        this.competitionRepository = competitionRepository;
+        this.registrationRepository = registrationRepository;
+        this.securityUtils = securityUtils;
+        this.auditLogService = auditLogService;
+    }
 
     public List<CompetitionDto> findAll() {
         Long userId = securityUtils.getCurrentUserId();
@@ -73,14 +75,17 @@ public class CompetitionService {
     }
 
     public CompetitionDto save(Competition competition) {
+        boolean isNew = competition.getId() == null;
         Competition saved = competitionRepository.save(competition);
         Long userId = securityUtils.getCurrentUserId();
         CompetitionRegistration reg = userId != null
                 ? registrationRepository.findByCompetitionIdAndUserId(saved.getId(), userId).orElse(null)
                 : null;
-        User currentUser = securityUtils.getCurrentUser();
-        auditLogService.log(currentUser, AuditAction.COMPETITION_CREATED, "COMPETITION",
-                String.valueOf(saved.getId()), null);
+        if (isNew) {
+            User currentUser = securityUtils.getCurrentUser();
+            auditLogService.log(currentUser, AuditAction.COMPETITION_CREATED, "COMPETITION",
+                    String.valueOf(saved.getId()), null);
+        }
         return new CompetitionDto(saved, reg);
     }
 

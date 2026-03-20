@@ -11,7 +11,6 @@ import com.trainingsplan.repository.CompletedTrainingRepository;
 import com.trainingsplan.security.SecurityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -28,40 +27,43 @@ import java.util.Optional;
 @Service
 public class CompletedTrainingService {
 
-    @Autowired
-    private CompletedTrainingRepository completedTrainingRepository;
-
-    @Autowired
-    private UserTrainingScheduleService userTrainingScheduleService;
-
-    @Autowired
-    private BodyMetricService bodyMetricService;
-
-    @Autowired
-    private ActivityMetricsService activityMetricsService;
-
-    @Autowired
-    private SecurityUtils securityUtils;
-
-    @Autowired
-    private GpxParsingService gpxParsingService;
-
-    @Autowired
-    private TcxParsingService tcxParsingService;
-
-    @Autowired
-    private ActivityStreamRepository activityStreamRepository;
-
-    @Autowired
-    private PersonalRecordService personalRecordService;
-
-    @Autowired
-    private ObjectMapper objectMapper;
-
-    @Autowired
-    private AuditLogService auditLogService;
-
     private static final Logger log = LoggerFactory.getLogger(CompletedTrainingService.class);
+
+    private final CompletedTrainingRepository completedTrainingRepository;
+    private final UserTrainingScheduleService userTrainingScheduleService;
+    private final BodyMetricService bodyMetricService;
+    private final ActivityMetricsService activityMetricsService;
+    private final SecurityUtils securityUtils;
+    private final GpxParsingService gpxParsingService;
+    private final TcxParsingService tcxParsingService;
+    private final ActivityStreamRepository activityStreamRepository;
+    private final PersonalRecordService personalRecordService;
+    private final ObjectMapper objectMapper;
+    private final AuditLogService auditLogService;
+
+    public CompletedTrainingService(CompletedTrainingRepository completedTrainingRepository,
+                                    UserTrainingScheduleService userTrainingScheduleService,
+                                    BodyMetricService bodyMetricService,
+                                    ActivityMetricsService activityMetricsService,
+                                    SecurityUtils securityUtils,
+                                    GpxParsingService gpxParsingService,
+                                    TcxParsingService tcxParsingService,
+                                    ActivityStreamRepository activityStreamRepository,
+                                    PersonalRecordService personalRecordService,
+                                    ObjectMapper objectMapper,
+                                    AuditLogService auditLogService) {
+        this.completedTrainingRepository = completedTrainingRepository;
+        this.userTrainingScheduleService = userTrainingScheduleService;
+        this.bodyMetricService = bodyMetricService;
+        this.activityMetricsService = activityMetricsService;
+        this.securityUtils = securityUtils;
+        this.gpxParsingService = gpxParsingService;
+        this.tcxParsingService = tcxParsingService;
+        this.activityStreamRepository = activityStreamRepository;
+        this.personalRecordService = personalRecordService;
+        this.objectMapper = objectMapper;
+        this.auditLogService = auditLogService;
+    }
 
     /**
      * Dispatches file upload to the correct parser based on the file extension.
