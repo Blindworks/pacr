@@ -1,0 +1,95 @@
+<dialog #dialog class="apr-dialog" (click)="onBackdropClick($event)">
+  <div class="apr-inner" (click)="$event.stopPropagation()">
+
+    <header class="apr-header">
+      <div class="apr-header-title">
+        <span class="material-symbols-outlined apr-icon">emoji_events</span>
+        <span>Neue Distanz hinzufügen</span>
+      </div>
+      <button class="apr-close" type="button" (click)="onCancel()" aria-label="Schließen">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </header>
+
+    <div class="apr-body">
+
+      <!-- Distance select -->
+      <div class="apr-field-group">
+        <label class="apr-label" for="distanceSelect">DISTANZ AUSWÄHLEN</label>
+        <div class="apr-select-wrapper">
+          <select
+            id="distanceSelect"
+            class="apr-select"
+            [(ngModel)]="selectedOption"
+            [compareWith]="compareOptions"
+          >
+            <option [ngValue]="null" disabled hidden>Distanz wählen …</option>
+            <option *ngFor="let opt of distanceOptions" [ngValue]="opt">{{ opt.label }}</option>
+          </select>
+          <span class="material-symbols-outlined apr-select-icon">expand_more</span>
+        </div>
+      </div>
+
+      <!-- Custom distance fields -->
+      <div class="apr-custom-row" *ngIf="isCustomDistance">
+        <div class="apr-field-group">
+          <label class="apr-label" for="customKm">DISTANZ IN KM</label>
+          <input
+            id="customKm"
+            class="apr-input"
+            type="number"
+            inputmode="decimal"
+            min="0.1"
+            step="0.1"
+            placeholder="z.B. 15"
+            [(ngModel)]="customDistanceKm"
+          />
+        </div>
+        <div class="apr-field-group">
+          <label class="apr-label" for="customLabel">BEZEICHNUNG</label>
+          <input
+            id="customLabel"
+            class="apr-input"
+            type="text"
+            placeholder="z.B. 15K"
+            [(ngModel)]="customDistanceLabel"
+          />
+        </div>
+      </div>
+
+      <!-- Goal time (optional) -->
+      <div class="apr-field-group">
+        <label class="apr-label" for="goalTime">ZIELZEIT <span class="apr-optional">(optional)</span></label>
+        <input
+          id="goalTime"
+          class="apr-input"
+          type="text"
+          inputmode="numeric"
+          placeholder="z.B. 1:45:00 oder 25:30"
+          [(ngModel)]="goalTimeInput"
+        />
+        <span class="apr-hint">Format: H:MM:SS oder MM:SS</span>
+      </div>
+
+      <!-- Error message -->
+      <p class="apr-error" *ngIf="error">{{ error }}</p>
+
+    </div>
+
+    <footer class="apr-actions">
+      <button class="apr-btn apr-btn--ghost" type="button" (click)="onCancel()">
+        Abbrechen
+      </button>
+      <button
+        class="apr-btn apr-btn--primary"
+        type="button"
+        [disabled]="!canSave || saving"
+        (click)="onSave()"
+      >
+        <span *ngIf="!saving">Speichern</span>
+        <span *ngIf="saving">Wird gespeichert …</span>
+      </button>
+    </footer>
+
+  </div>
+</dialog>

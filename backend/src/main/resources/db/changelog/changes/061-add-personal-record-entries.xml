@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="061-create-personal-record-entries" author="dev">
+        <preConditions onFail="MARK_RAN">
+            <not><tableExists tableName="personal_record_entries"/></not>
+        </preConditions>
+        <createTable tableName="personal_record_entries">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="personal_record_id" type="BIGINT">
+                <constraints nullable="false" foreignKeyName="fk_pr_entry_personal_record" references="personal_records(id)" deleteCascade="true"/>
+            </column>
+            <column name="time_seconds" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="achieved_date" type="DATE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_manual" type="BOOLEAN" defaultValueBoolean="false"/>
+            <column name="completed_training_id" type="BIGINT"/>
+            <column name="created_at" type="DATETIME" defaultValueComputed="CURRENT_TIMESTAMP"/>
+        </createTable>
+    </changeSet>
+
+</databaseChangeLog>

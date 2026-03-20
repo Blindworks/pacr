@@ -63,5 +63,7 @@
     <include file="db/changelog/changes/057-add-user-asthma-enabled.xml"/>
     <include file="db/changelog/changes/058-daily-coach-session.xml"/>
     <include file="db/changelog/changes/059-add-original-training-date.xml"/>
+    <include file="db/changelog/changes/060-add-personal-records.xml"/>
+    <include file="db/changelog/changes/061-add-personal-record-entries.xml"/>
 
 </databaseChangeLog>

@@ -168,17 +168,33 @@
         <h2>Personal Bests</h2>
       </div>
       <div class="bests">
-        @for (best of personalBests; track best.label) {
-          <button class="best-item" type="button">
+        @for (record of personalBests; track record.id) {
+          <button class="best-item" type="button" (click)="openDetail(record)">
             <div>
-              <p>{{ best.label }}</p>
-              <strong>{{ best.value }}</strong>
+              <p>{{ record.distanceLabel }}</p>
+              <strong>{{ record.bestTimeSeconds ? formatTime(record.bestTimeSeconds) : '—' }}</strong>
+              @if (record.goalTimeSeconds) {
+                <span class="goal-time">Ziel: {{ formatTime(record.goalTimeSeconds) }}</span>
+              }
             </div>
             <span class="material-symbols-outlined">arrow_forward_ios</span>
           </button>
         }
       </div>
-      <button class="add-goal" type="button">Add New Goal</button>
+      <button class="add-goal" type="button" (click)="openAddGoal()">Add New Goal</button>
     </article>
   </div>
+
+  @if (selectedRecord) {
+    <app-personal-record-detail-dialog
+      #detailDialog
+      [record]="selectedRecord"
+      (closed)="onDetailClosed($event)"
+    />
+  }
+
+  <app-add-personal-record-dialog
+    #addDialog
+    (saved)="onRecordSaved()"
+  />
 </section>

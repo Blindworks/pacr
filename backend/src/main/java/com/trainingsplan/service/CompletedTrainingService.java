@@ -52,6 +52,9 @@ public class CompletedTrainingService {
     private ActivityStreamRepository activityStreamRepository;
 
     @Autowired
+    private PersonalRecordService personalRecordService;
+
+    @Autowired
     private ObjectMapper objectMapper;
 
     private static final Logger log = LoggerFactory.getLogger(CompletedTrainingService.class);
@@ -93,6 +96,12 @@ public class CompletedTrainingService {
         bodyMetricService.calculateAndStore(savedTraining, currentUser);
         activityMetricsService.calculateAndPersist(savedTraining, data.timeSeconds, data.heartRates, currentUser);
 
+        try {
+            personalRecordService.checkAndUpdateFromActivity(currentUser, savedTraining);
+        } catch (Exception e) {
+            log.warn("Could not check personal records: {}", e.getMessage());
+        }
+
         if (trainingId != null) {
             try { userTrainingScheduleService.updateCompletion(trainingId, true, "completed"); }
             catch (Exception ignored) {}
@@ -119,6 +128,12 @@ public class CompletedTrainingService {
 
         bodyMetricService.calculateAndStore(savedTraining, currentUser);
         activityMetricsService.calculateAndPersist(savedTraining, data.timeSeconds, data.heartRates, currentUser);
+
+        try {
+            personalRecordService.checkAndUpdateFromActivity(currentUser, savedTraining);
+        } catch (Exception e) {
+            log.warn("Could not check personal records: {}", e.getMessage());
+        }
 
         if (trainingId != null) {
             try { userTrainingScheduleService.updateCompletion(trainingId, true, "completed"); }
@@ -164,6 +179,12 @@ public class CompletedTrainingService {
                 collector.getTimeSeconds(),
                 collector.getHeartRates(),
                 currentUser);
+
+        try {
+            personalRecordService.checkAndUpdateFromActivity(currentUser, savedTraining);
+        } catch (Exception e) {
+            log.warn("Could not check personal records: {}", e.getMessage());
+        }
 
         // If trainingId is provided, mark the UserTrainingEntry as completed
         if (trainingId != null) {

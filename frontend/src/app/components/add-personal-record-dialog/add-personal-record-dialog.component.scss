@@ -1,0 +1,259 @@
+$primary: #b9f20d;
+$bg: #0d1117;
+$surface: #161b22;
+$surface2: #1c2128;
+$border: rgba(#b9f20d, 0.1);
+$text: #e6edf3;
+$muted: #8b949e;
+$danger: #f85149;
+
+/* ── Dialog backdrop & container ── */
+.apr-dialog {
+  margin: auto;
+  padding: 0;
+  border: 1px solid $border;
+  border-radius: 16px;
+  background: $surface;
+  color: $text;
+  width: min(480px, 96vw);
+  overflow: hidden;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.6);
+
+  &::backdrop {
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(4px);
+  }
+}
+
+/* ── Inner container ── */
+.apr-inner {
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Header ── */
+.apr-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid $border;
+}
+
+.apr-header-title {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: $text;
+
+  .apr-icon {
+    font-size: 20px;
+    color: $primary;
+  }
+}
+
+.apr-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  color: $muted;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+
+  .material-symbols-outlined {
+    font-size: 20px;
+  }
+
+  &:hover {
+    background: rgba($primary, 0.08);
+    color: $text;
+  }
+}
+
+/* ── Body ── */
+.apr-body {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+/* ── Field group ── */
+.apr-field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.apr-label {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: $muted;
+}
+
+.apr-optional {
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
+  color: $muted;
+  opacity: 0.7;
+}
+
+.apr-hint {
+  font-size: 0.75rem;
+  color: $muted;
+  opacity: 0.7;
+  margin-top: 0.125rem;
+}
+
+/* ── Input ── */
+.apr-input {
+  background: $surface2;
+  border: 1px solid $border;
+  border-radius: 10px;
+  padding: 0.625rem 0.875rem;
+  color: $text;
+  font-size: 0.9375rem;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.15s;
+  width: 100%;
+  box-sizing: border-box;
+
+  &::placeholder {
+    color: rgba($muted, 0.5);
+  }
+
+  &:focus {
+    border-color: rgba($primary, 0.5);
+  }
+
+  /* Remove native number spinner arrows */
+  &[type='number'] {
+    -moz-appearance: textfield;
+
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+  }
+}
+
+/* ── Select ── */
+.apr-select-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.apr-select {
+  appearance: none;
+  -webkit-appearance: none;
+  background: $surface2;
+  border: 1px solid $border;
+  border-radius: 10px;
+  padding: 0.625rem 2.5rem 0.625rem 0.875rem;
+  color: $text;
+  font-size: 0.9375rem;
+  font-family: inherit;
+  outline: none;
+  cursor: pointer;
+  width: 100%;
+  box-sizing: border-box;
+  transition: border-color 0.15s;
+
+  &:focus {
+    border-color: rgba($primary, 0.5);
+  }
+
+  option {
+    background: $surface2;
+    color: $text;
+  }
+}
+
+.apr-select-icon {
+  position: absolute;
+  right: 0.75rem;
+  font-size: 20px;
+  color: $muted;
+  pointer-events: none;
+}
+
+/* ── Custom distance row (two columns) ── */
+.apr-custom-row {
+  display: flex;
+  gap: 0.75rem;
+
+  .apr-field-group {
+    flex: 1;
+  }
+}
+
+/* ── Error ── */
+.apr-error {
+  font-size: 0.8125rem;
+  color: $danger;
+  margin: 0;
+  padding: 0.5rem 0.75rem;
+  background: rgba($danger, 0.08);
+  border: 1px solid rgba($danger, 0.2);
+  border-radius: 8px;
+}
+
+/* ── Actions footer ── */
+.apr-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  padding: 1rem 1.5rem 1.25rem;
+  border-top: 1px solid $border;
+}
+
+/* ── Buttons ── */
+.apr-btn {
+  padding: 0.5625rem 1.25rem;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s, opacity 0.15s;
+  border: 1px solid transparent;
+
+  &--ghost {
+    background: transparent;
+    border-color: $border;
+    color: $muted;
+
+    &:hover {
+      background: rgba($primary, 0.06);
+      color: $text;
+      border-color: rgba($primary, 0.25);
+    }
+  }
+
+  &--primary {
+    background: $primary;
+    color: #0d1117;
+    border-color: $primary;
+
+    &:hover:not(:disabled) {
+      background: lighten($primary, 8%);
+    }
+
+    &:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+    }
+  }
+}

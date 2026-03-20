@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="060-create-personal-records" author="dev">
+        <preConditions onFail="MARK_RAN">
+            <not><tableExists tableName="personal_records"/></not>
+        </preConditions>
+        <createTable tableName="personal_records">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="user_id" type="BIGINT">
+                <constraints nullable="false" foreignKeyName="fk_personal_record_user" references="users(id)" deleteCascade="true"/>
+            </column>
+            <column name="distance_km" type="DOUBLE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="distance_label" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="goal_time_seconds" type="INT"/>
+            <column name="created_at" type="DATETIME" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" type="DATETIME" defaultValueComputed="CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"/>
+        </createTable>
+        <addUniqueConstraint
+            tableName="personal_records"
+            columnNames="user_id, distance_km"
+            constraintName="uq_personal_record_user_distance"/>
+    </changeSet>
+
+</databaseChangeLog>

@@ -1,6 +1,9 @@
 import { CommonModule, DecimalPipe } from '@angular/common';
-import { Component, OnInit, signal, computed, inject } from '@angular/core';
+import { Component, OnInit, signal, computed, inject, ViewChild } from '@angular/core';
 import { StatisticsService, TrainingStatsDto, StatsBucket, Vo2MaxPoint } from '../../services/statistics.service';
+import { PersonalRecordService, PersonalRecord } from '../../services/personal-record.service';
+import { PersonalRecordDetailDialogComponent } from '../personal-record-detail-dialog/personal-record-detail-dialog.component';
+import { AddPersonalRecordDialogComponent } from '../add-personal-record-dialog/add-personal-record-dialog.component';
 
 type MonthlyBar = {
   month: string;
@@ -12,11 +15,6 @@ type IntensityZone = {
   label: string;
   value: number;
   colorClass: string;
-};
-
-type Best = {
-  label: string;
-  value: string;
 };
 
 const PERIOD_MAP: Record<string, string> = {
@@ -33,12 +31,16 @@ const PERIOD_MAP: Record<string, string> = {
 @Component({
   selector: 'app-statistics',
   standalone: true,
-  imports: [CommonModule, DecimalPipe],
+  imports: [CommonModule, DecimalPipe, PersonalRecordDetailDialogComponent, AddPersonalRecordDialogComponent],
   templateUrl: './statistics.html',
   styleUrl: './statistics.scss'
 })
 export class Statistics implements OnInit {
   private readonly statisticsService = inject(StatisticsService);
+  private readonly personalRecordService = inject(PersonalRecordService);
+
+  @ViewChild('detailDialog') private detailDialog!: PersonalRecordDetailDialogComponent;
+  @ViewChild('addDialog') private addDialog!: AddPersonalRecordDialogComponent;
 
   protected readonly periods = Object.keys(PERIOD_MAP);
   protected readonly selectedPeriodLabel = signal('Letzte Woche');
@@ -62,19 +64,52 @@ export class Statistics implements OnInit {
 
   private fitnessTrendDots: { x: number; y: number; vo2max: number; timestamp: number }[] = [];
 
-  protected readonly personalBests: Best[] = [
-    { label: '5 Kilometers', value: '18:42' },
-    { label: '10 Kilometers', value: '39:15' },
-    { label: 'Half Marathon', value: '1:24:08' },
-    { label: 'Full Marathon', value: '2:58:33' },
-  ];
+  protected personalBests: PersonalRecord[] = [];
+  protected selectedRecord: PersonalRecord | null = null;
 
   ngOnInit(): void {
     this.loadStats();
+    this.loadPersonalRecords();
     this.statisticsService.getVo2MaxHistory().subscribe({
       next: data => this.buildFitnessTrend(data),
       error: () => {},
     });
+  }
+
+  private loadPersonalRecords(): void {
+    this.personalRecordService.getPersonalRecords().subscribe({
+      next: data => (this.personalBests = data),
+      error: () => {},
+    });
+  }
+
+  protected openDetail(record: PersonalRecord): void {
+    this.selectedRecord = record;
+    // Warten bis Angular den neuen Input rendert, dann Dialog öffnen
+    setTimeout(() => this.detailDialog.open(), 0);
+  }
+
+  protected openAddGoal(): void {
+    this.addDialog.open();
+  }
+
+  protected onDetailClosed(dirty: boolean): void {
+    if (dirty) {
+      this.loadPersonalRecords();
+    }
+  }
+
+  protected onRecordSaved(): void {
+    this.loadPersonalRecords();
+  }
+
+  protected formatTime(seconds: number): string {
+    const h = Math.floor(seconds / 3600);
+    const m = Math.floor((seconds % 3600) / 60);
+    const s = Math.floor(seconds % 60);
+    const mm = m.toString().padStart(2, '0');
+    const ss = s.toString().padStart(2, '0');
+    return h > 0 ? `${h}:${mm}:${ss}` : `${mm}:${ss}`;
   }
 
   protected setPeriod(label: string): void {

@@ -1,0 +1,196 @@
+<dialog #dialog class="prd-dialog" (click)="onBackdropClick($event)">
+  <div class="prd-inner" (click)="$event.stopPropagation()">
+
+    <!-- ── Header ── -->
+    <header class="prd-header">
+      <div class="prd-header-title">
+        <span class="material-symbols-outlined prd-icon">emoji_events</span>
+        <div class="prd-header-text">
+          <span class="prd-title">{{ record?.distanceLabel }}</span>
+          <span class="prd-subtitle" *ngIf="record?.bestTimeSeconds">
+            Bestzeit: {{ formatTime(record.bestTimeSeconds!) }}
+          </span>
+        </div>
+      </div>
+      <button class="prd-close" type="button" (click)="close()" aria-label="Schließen">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </header>
+
+    <!-- ── Tab bar ── -->
+    <nav class="prd-tabs" role="tablist">
+      <button
+        class="prd-tab"
+        [class.prd-tab--active]="activeTab === 'history'"
+        role="tab"
+        type="button"
+        (click)="selectTab('history')"
+      >
+        <span class="material-symbols-outlined">history</span>
+        Verlauf
+      </button>
+      <button
+        class="prd-tab"
+        [class.prd-tab--active]="activeTab === 'edit'"
+        role="tab"
+        type="button"
+        (click)="selectTab('edit')"
+      >
+        <span class="material-symbols-outlined">edit</span>
+        Bearbeiten
+      </button>
+    </nav>
+
+    <!-- ── Tab: History ── -->
+    <div class="prd-body" *ngIf="activeTab === 'history'">
+
+      <div class="prd-loading" *ngIf="loadingEntries">
+        <span class="material-symbols-outlined prd-spin">refresh</span>
+        Wird geladen …
+      </div>
+
+      <p class="prd-error" *ngIf="entriesError">{{ entriesError }}</p>
+
+      <div class="prd-empty" *ngIf="!loadingEntries && !entriesError && entries.length === 0">
+        <span class="material-symbols-outlined">inbox</span>
+        <p>Noch keine Einträge vorhanden.</p>
+      </div>
+
+      <div class="prd-table-wrapper" *ngIf="!loadingEntries && entries.length > 0">
+        <table class="prd-table">
+          <thead>
+            <tr>
+              <th>Datum</th>
+              <th>Zeit</th>
+              <th>Typ</th>
+              <th class="prd-th-actions"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let entry of entries; trackBy: trackEntry">
+              <td>{{ entry.achievedDate | date:'dd.MM.yyyy' }}</td>
+              <td class="prd-td-time">{{ formatTime(entry.timeSeconds) }}</td>
+              <td>
+                <span
+                  class="prd-badge"
+                  [class.prd-badge--manual]="entry.isManual"
+                  [class.prd-badge--activity]="!entry.isManual"
+                >
+                  {{ entryType(entry) }}
+                </span>
+              </td>
+              <td class="prd-td-actions">
+                <button
+                  class="prd-icon-btn prd-icon-btn--danger"
+                  type="button"
+                  [disabled]="deletingEntryId === entry.id"
+                  (click)="deleteEntry(entry)"
+                  aria-label="Eintrag löschen"
+                >
+                  <span class="material-symbols-outlined">delete</span>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ── Tab: Edit ── -->
+    <div class="prd-body" *ngIf="activeTab === 'edit'">
+
+      <!-- Goal time form -->
+      <section class="prd-section">
+        <h3 class="prd-section-title">
+          <span class="material-symbols-outlined">flag</span>
+          Zielzeit
+        </h3>
+
+        <div class="prd-field-group">
+          <label class="prd-label" for="goalTimeInput">ZIELZEIT</label>
+          <input
+            id="goalTimeInput"
+            class="prd-input"
+            type="text"
+            inputmode="numeric"
+            placeholder="z.B. 1:45:00 oder 25:30"
+            [(ngModel)]="goalTimeInput"
+          />
+          <span class="prd-hint">Format: H:MM:SS oder MM:SS</span>
+        </div>
+
+        <p class="prd-error" *ngIf="goalError">{{ goalError }}</p>
+        <p class="prd-success" *ngIf="goalSuccess">Zielzeit gespeichert.</p>
+
+        <div class="prd-form-actions">
+          <button
+            class="prd-btn prd-btn--primary"
+            type="button"
+            [disabled]="savingGoal"
+            (click)="saveGoal()"
+          >
+            <span *ngIf="!savingGoal">Speichern</span>
+            <span *ngIf="savingGoal">Wird gespeichert …</span>
+          </button>
+        </div>
+      </section>
+
+      <div class="prd-divider"></div>
+
+      <!-- Manual entry form -->
+      <section class="prd-section">
+        <h3 class="prd-section-title">
+          <span class="material-symbols-outlined">add_circle</span>
+          Manuell eintragen
+        </h3>
+
+        <div class="prd-row">
+          <div class="prd-field-group">
+            <label class="prd-label" for="manualDate">DATUM</label>
+            <input
+              id="manualDate"
+              class="prd-input"
+              type="date"
+              [(ngModel)]="manualDateInput"
+            />
+          </div>
+          <div class="prd-field-group">
+            <label class="prd-label" for="manualTime">ZEIT</label>
+            <input
+              id="manualTime"
+              class="prd-input"
+              type="text"
+              inputmode="numeric"
+              placeholder="z.B. 25:30 oder 1:45:00"
+              [(ngModel)]="manualTimeInput"
+            />
+            <span class="prd-hint">Format: MM:SS oder H:MM:SS</span>
+          </div>
+        </div>
+
+        <p class="prd-error" *ngIf="addEntryError">{{ addEntryError }}</p>
+
+        <div class="prd-form-actions">
+          <button
+            class="prd-btn prd-btn--primary"
+            type="button"
+            [disabled]="!canAddEntry || addingEntry"
+            (click)="addEntry()"
+          >
+            <span *ngIf="!addingEntry">Hinzufügen</span>
+            <span *ngIf="addingEntry">Wird gespeichert …</span>
+          </button>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- ── Footer ── -->
+    <footer class="prd-footer">
+      <button class="prd-btn prd-btn--ghost" type="button" (click)="close()">
+        Schließen
+      </button>
+    </footer>
+
+  </div>
+</dialog>
