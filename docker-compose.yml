@@ -16,6 +16,7 @@ services:
       UPLOAD_PATH: /app/uploads
       MAIL_PASSWORD: ${MAIL_PASSWORD}
       MAIL_USERNAME: ${MAIL_USERNAME}
+      PACR_AI_API_KEY: ${PACR_AI_API_KEY}
     ports:
       - "8081:8080"
 
