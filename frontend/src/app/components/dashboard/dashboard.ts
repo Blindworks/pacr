@@ -1,5 +1,6 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
 import { DashboardService, DashboardData } from '../../services/dashboard.service';
 
 const DAYS_DE = ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'];
@@ -7,7 +8,7 @@ const DAYS_DE = ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'];
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss'
 })
@@ -15,11 +16,33 @@ export class Dashboard implements OnInit {
   private readonly dashboardService = inject(DashboardService);
 
   data: DashboardData | null = null;
+  profileError = signal<string | null>(null);
+  missingFields = signal<string[]>([]);
+
+  private readonly FIELD_LABELS: Record<string, string> = {
+    firstName: 'Vorname',
+    lastName: 'Nachname',
+    dateOfBirth: 'Geburtsdatum',
+    heightCm: 'Körpergröße',
+    weightKg: 'Gewicht',
+    maxHeartRate: 'Maximale Herzfrequenz',
+    hrRest: 'Ruhepuls',
+    gender: 'Geschlecht'
+  };
 
   ngOnInit(): void {
     this.dashboardService.getDashboard().subscribe({
       next: data => { this.data = data; },
-      error: err => console.error('Dashboard load failed', err)
+      error: err => {
+        if (err.status === 400 && err.error?.missingFields) {
+          this.missingFields.set(
+            (err.error.missingFields as string[]).map(f => this.FIELD_LABELS[f] ?? f)
+          );
+          this.profileError.set('Profil unvollständig');
+        } else {
+          console.error('Dashboard load failed', err);
+        }
+      }
     });
   }
 

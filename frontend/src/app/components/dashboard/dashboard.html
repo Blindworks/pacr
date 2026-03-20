@@ -1,3 +1,13 @@
+<div class="profile-incomplete-card" *ngIf="profileError()">
+  <div class="profile-incomplete-icon">&#9888;&#65039;</div>
+  <h3>Profil unvollständig</h3>
+  <p>Damit das Dashboard berechnet werden kann, müssen folgende Felder gepflegt sein:</p>
+  <ul>
+    <li *ngFor="let field of missingFields()">{{ field }}</li>
+  </ul>
+  <a routerLink="/settings" class="btn-settings">Zu den Einstellungen</a>
+</div>
+
 <div class="pulse-dashboard" *ngIf="data">
 
   <!-- ── Hero: Readiness Score ── -->
