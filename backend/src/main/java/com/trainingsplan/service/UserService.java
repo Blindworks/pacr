@@ -1,5 +1,6 @@
 package com.trainingsplan.service;
 
+import com.trainingsplan.entity.AuditAction;
 import com.trainingsplan.entity.UserRole;
 import com.trainingsplan.entity.User;
 import com.trainingsplan.entity.UserStatus;
@@ -18,6 +19,7 @@ import java.nio.file.Files;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -26,16 +28,20 @@ public class UserService {
     private final UserRepository userRepository;
     private final SecurityUtils securityUtils;
     private final ImageStoragePort imageStoragePort;
+    private final AuditLogService auditLogService;
 
-    public UserService(UserRepository userRepository, SecurityUtils securityUtils, ImageStoragePort imageStoragePort) {
+    public UserService(UserRepository userRepository, SecurityUtils securityUtils, ImageStoragePort imageStoragePort, AuditLogService auditLogService) {
         this.userRepository = userRepository;
         this.securityUtils = securityUtils;
         this.imageStoragePort = imageStoragePort;
+        this.auditLogService = auditLogService;
     }
 
     public User createUser(String username, String email) {
         User user = new User(username, email, LocalDateTime.now());
-        return userRepository.save(user);
+        User saved = userRepository.save(user);
+        auditLogService.log(null, AuditAction.USER_CREATED, "USER", String.valueOf(saved.getId()), null);
+        return saved;
     }
 
     public Optional<User> findByEmail(String email) {
@@ -59,6 +65,8 @@ public class UserService {
                            boolean cycleTrackingEnabled, String role,
                            String subscriptionPlan, LocalDateTime subscriptionExpiresAt) {
         User user = findById(id);
+        UserStatus oldStatus = user.getStatus();
+        SubscriptionPlan oldPlan = user.getSubscriptionPlan();
         user.setUsername(username);
         user.setEmail(email);
         user.setFirstName(firstName);
@@ -82,7 +90,20 @@ public class UserService {
             user.setSubscriptionPlan(SubscriptionPlan.valueOf(subscriptionPlan));
         }
         user.setSubscriptionExpiresAt(subscriptionExpiresAt);
-        return userRepository.save(user);
+        User saved = userRepository.save(user);
+        User caller = securityUtils.getCurrentUser();
+        auditLogService.log(caller, AuditAction.USER_UPDATED, "USER", String.valueOf(id), null);
+
+        if (status != null && !status.isBlank() && !UserStatus.valueOf(status).equals(oldStatus)) {
+            auditLogService.log(caller, AuditAction.USER_STATUS_CHANGED, "USER", String.valueOf(id),
+                    Map.of("from", oldStatus.name(), "to", status));
+        }
+        if (subscriptionPlan != null && !subscriptionPlan.isBlank()
+                && !SubscriptionPlan.valueOf(subscriptionPlan).equals(oldPlan)) {
+            auditLogService.log(caller, AuditAction.SUBSCRIPTION_CHANGED, "USER", String.valueOf(id),
+                    Map.of("from", oldPlan != null ? oldPlan.name() : "NONE", "to", subscriptionPlan));
+        }
+        return saved;
     }
 
     public User updatePaceZoneReference(Long userId, Double distanceM, Integer timeSeconds,
