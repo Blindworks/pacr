@@ -3,6 +3,7 @@ import { Component, OnInit, OnDestroy, signal, inject, ViewChild, ElementRef } f
 import { FormsModule } from '@angular/forms';
 import { StravaService } from '../../services/strava.service';
 import { UserService, UserProfile } from '../../services/user.service';
+import { NotificationPreferencesService } from '../../services/notification-preferences.service';
 
 type Integration = {
   id: string;
@@ -24,6 +25,7 @@ export class Settings implements OnInit, OnDestroy {
 
   private readonly stravaService = inject(StravaService);
   private readonly userService = inject(UserService);
+  private readonly notifPrefsService = inject(NotificationPreferencesService);
 
   private userId = 0;
   private currentUser: UserProfile | null = null;
@@ -38,8 +40,10 @@ export class Settings implements OnInit, OnDestroy {
 
   protected unit = signal<'metric' | 'imperial'>('metric');
   protected theme = signal<'light' | 'dark' | 'auto'>('dark');
-  protected pushNotifications = signal(true);
-  protected emailDigest = signal(false);
+
+  protected emailReminderEnabled = signal(false);
+  protected emailReminderTime = signal('18:00');
+  protected emailNewsEnabled = signal(false);
 
   protected profileImageUrl = signal<string | null>(null);
   protected imageUploading = signal(false);
@@ -52,6 +56,12 @@ export class Settings implements OnInit, OnDestroy {
   protected stravaLoading = signal(false);
   protected saving = signal(false);
   protected saveError = signal('');
+
+  protected readonly reminderTimes = [
+    '06:00', '07:00', '08:00', '09:00', '10:00', '11:00',
+    '12:00', '13:00', '14:00', '15:00', '16:00', '17:00',
+    '18:00', '19:00', '20:00', '21:00', '22:00'
+  ];
 
   protected readonly dwdRegions = [
     { id: 10,  name: 'Schleswig-Holstein und Hamburg' },
@@ -97,6 +107,7 @@ export class Settings implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.loadStravaStatus();
     this.loadUserProfile();
+    this.loadNotificationPreferences();
   }
 
   private loadUserProfile(): void {
@@ -116,6 +127,17 @@ export class Settings implements OnInit, OnDestroy {
         this.loadProfileImage();
       },
       error: () => { /* keep defaults if backend unreachable */ }
+    });
+  }
+
+  private loadNotificationPreferences(): void {
+    this.notifPrefsService.getPreferences().subscribe({
+      next: prefs => {
+        this.emailReminderEnabled.set(prefs.emailReminderEnabled);
+        this.emailReminderTime.set(prefs.emailReminderTime);
+        this.emailNewsEnabled.set(prefs.emailNewsEnabled);
+      },
+      error: () => { /* keep defaults */ }
     });
   }
 
@@ -239,11 +261,20 @@ export class Settings implements OnInit, OnDestroy {
       next: updated => {
         this.currentUser = updated;
         this.saving.set(false);
+        this.saveNotificationPreferences();
       },
       error: () => {
         this.saveError.set('Failed to save. Please try again.');
         this.saving.set(false);
       }
     });
+  }
+
+  private saveNotificationPreferences(): void {
+    this.notifPrefsService.updatePreferences({
+      emailReminderEnabled: this.emailReminderEnabled(),
+      emailReminderTime: this.emailReminderTime(),
+      emailNewsEnabled: this.emailNewsEnabled()
+    }).subscribe({ error: () => { /* ignore, non-critical */ } });
   }
 }

@@ -107,28 +107,6 @@
         </div>
       </div>
 
-      <div class="toggles">
-        <div class="toggle-row">
-          <div class="toggle-info">
-            <span class="toggle-title">Push Notifications</span>
-            <span class="toggle-sub">Alerts for runs, training plans and social</span>
-          </div>
-          <label class="switch">
-            <input type="checkbox" [ngModel]="pushNotifications()" (ngModelChange)="pushNotifications.set($event)" />
-            <span class="track"></span>
-          </label>
-        </div>
-        <div class="toggle-row">
-          <div class="toggle-info">
-            <span class="toggle-title">Email Digest</span>
-            <span class="toggle-sub">Weekly summary of your activity performance</span>
-          </div>
-          <label class="switch">
-            <input type="checkbox" [ngModel]="emailDigest()" (ngModelChange)="emailDigest.set($event)" />
-            <span class="track"></span>
-          </label>
-        </div>
-      </div>
     </article>
 
     <!-- Integrations -->
@@ -229,6 +207,46 @@
           </div>
           <label class="switch">
             <input type="checkbox" [ngModel]="cycleTrackingEnabled()" (ngModelChange)="onCycleTrackingChange($event)" />
+            <span class="track"></span>
+          </label>
+        </div>
+      </div>
+    </article>
+
+    <!-- E-Mail-Einstellungen -->
+    <article class="section">
+      <div class="section-head">
+        <span class="material-symbols-outlined">email</span>
+        <h2>E-Mail-Einstellungen</h2>
+      </div>
+      <div class="toggles">
+        <div class="toggle-row">
+          <div class="toggle-info">
+            <span class="toggle-title">Training-Erinnerung</span>
+            <span class="toggle-sub">Erinnerung am Vorabend mit dem morgigen Training</span>
+          </div>
+          <label class="switch">
+            <input type="checkbox" [ngModel]="emailReminderEnabled()" (ngModelChange)="emailReminderEnabled.set($event)" />
+            <span class="track"></span>
+          </label>
+        </div>
+        @if (emailReminderEnabled()) {
+          <div class="field" style="margin: 0.75rem 1rem 0.5rem">
+            <label>Erinnerungszeit</label>
+            <select [ngModel]="emailReminderTime()" (ngModelChange)="emailReminderTime.set($event)">
+              @for (t of reminderTimes; track t) {
+                <option [value]="t">{{ t }} Uhr</option>
+              }
+            </select>
+          </div>
+        }
+        <div class="toggle-row">
+          <div class="toggle-info">
+            <span class="toggle-title">News &amp; App-Updates</span>
+            <span class="toggle-sub">Benachrichtigung bei neuen Features und wichtigen Änderungen</span>
+          </div>
+          <label class="switch">
+            <input type="checkbox" [ngModel]="emailNewsEnabled()" (ngModelChange)="emailNewsEnabled.set($event)" />
             <span class="track"></span>
           </label>
         </div>

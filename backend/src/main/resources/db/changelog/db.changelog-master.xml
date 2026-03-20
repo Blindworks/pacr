@@ -69,5 +69,8 @@
     <include file="db/changelog/changes/063-add-user-subscription.xml"/>
     <include file="db/changelog/changes/064-add-user-last-login.xml"/>
     <include file="db/changelog/changes/065-add-audit-logs.xml"/>
+    <include file="db/changelog/changes/066-add-user-notification-preferences.xml"/>
+    <include file="db/changelog/changes/067-add-app-news.xml"/>
+    <include file="db/changelog/changes/068-add-app-news-sent-log.xml"/>
 
 </databaseChangeLog>

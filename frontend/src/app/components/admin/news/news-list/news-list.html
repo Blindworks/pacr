@@ -1,0 +1,51 @@
+<div class="list-page">
+  <div class="list-header">
+    <h2>App-News</h2>
+    <button class="btn-primary" (click)="goNew()">+ Neue News</button>
+  </div>
+
+  @if (isLoading()) {
+    <p class="loading">Wird geladen…</p>
+  } @else if (news().length === 0) {
+    <p class="empty">Noch keine News vorhanden.</p>
+  } @else {
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Titel</th>
+          <th>Status</th>
+          <th>Erstellt</th>
+          <th>Veröffentlicht</th>
+          <th>Aktionen</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (item of news(); track item.id) {
+          <tr>
+            <td>{{ item.title }}</td>
+            <td>
+              <span class="badge" [class.badge--published]="item.isPublished">
+                {{ item.isPublished ? 'Veröffentlicht' : 'Entwurf' }}
+              </span>
+            </td>
+            <td>{{ item.createdAt | date:'dd.MM.yyyy HH:mm' }}</td>
+            <td>{{ item.publishedAt ? (item.publishedAt | date:'dd.MM.yyyy HH:mm') : '—' }}</td>
+            <td class="actions">
+              <button class="btn-icon" (click)="edit(item)" title="Bearbeiten">
+                <span class="material-symbols-outlined">edit</span>
+              </button>
+              @if (!item.isPublished) {
+                <button class="btn-icon btn-icon--publish" (click)="publish(item)" title="Veröffentlichen">
+                  <span class="material-symbols-outlined">publish</span>
+                </button>
+              }
+              <button class="btn-icon btn-icon--danger" (click)="delete(item)" title="Löschen">
+                <span class="material-symbols-outlined">delete</span>
+              </button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+</div>

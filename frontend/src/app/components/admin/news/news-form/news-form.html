@@ -1,0 +1,30 @@
+<div class="form-page">
+  <div class="form-header">
+    <h2>{{ newsId() ? 'News bearbeiten' : 'Neue News' }}</h2>
+  </div>
+
+  <form class="form-body" (ngSubmit)="save()">
+    <div class="field">
+      <label for="title">Titel</label>
+      <input id="title" type="text" [ngModel]="title()" (ngModelChange)="title.set($event)"
+             name="title" placeholder="News-Titel" />
+    </div>
+
+    <div class="field">
+      <label for="content">Inhalt</label>
+      <textarea id="content" [ngModel]="content()" (ngModelChange)="content.set($event)"
+                name="content" rows="8" placeholder="Beschreibe die Neuigkeit…"></textarea>
+    </div>
+
+    @if (error()) {
+      <p class="form-error">{{ error() }}</p>
+    }
+
+    <div class="form-actions">
+      <button type="submit" class="btn-primary" [disabled]="saving()">
+        {{ saving() ? 'Wird gespeichert…' : 'Speichern' }}
+      </button>
+      <button type="button" class="btn-secondary" (click)="cancel()">Abbrechen</button>
+    </div>
+  </form>
+</div>
