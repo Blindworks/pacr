@@ -34,6 +34,9 @@ public class UserTrainingEntry {
     @Column(name = "completion_status")
     private String completionStatus;
 
+    @Column(name = "original_training_date")
+    private LocalDate originalTrainingDate;
+
     public UserTrainingEntry() {}
 
     public Long getId() { return id; }
@@ -58,6 +61,9 @@ public class UserTrainingEntry {
 
     public String getCompletionStatus() { return completionStatus; }
     public void setCompletionStatus(String completionStatus) { this.completionStatus = completionStatus; }
+
+    public LocalDate getOriginalTrainingDate() { return originalTrainingDate; }
+    public void setOriginalTrainingDate(LocalDate originalTrainingDate) { this.originalTrainingDate = originalTrainingDate; }
 
     @JsonProperty("registrationId")
     public Long getRegistrationId() {

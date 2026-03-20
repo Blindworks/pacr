@@ -22,6 +22,7 @@ export interface UserTrainingEntry {
   registrationId: number;
   competitionId: number;
   competitionName?: string;
+  originalTrainingDate?: string;
 }
 
 export interface TrainingFeedbackPayload {

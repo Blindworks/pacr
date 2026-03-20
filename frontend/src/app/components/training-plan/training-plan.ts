@@ -13,6 +13,10 @@ interface TrainingSession {
   status: 'completed' | 'today' | 'upcoming' | 'skipped';
   icon?: string;
   competitionName?: string;
+  originalDate?: string;
+  isAiMoved?: boolean;
+  isGhost?: boolean;
+  movedToDate?: string;
 }
 
 interface TrainingDay {
@@ -236,6 +240,31 @@ export class TrainingPlan implements OnInit {
         sessions: dayEntries.map(entry => this.mapSession(entry, day, today))
       });
     }
+
+    // Ghost-Einträge für KI-verschobene Trainings auf dem Original-Datum
+    for (const entry of entries) {
+      if (!entry.originalTrainingDate) continue;
+      const origDay = this.days.find(d => d.isoDate === entry.originalTrainingDate);
+      if (!origDay) continue;
+      const ghostSession: TrainingSession = {
+        id: entry.training.id,
+        entryId: entry.id,
+        title: entry.training?.name ?? 'Training',
+        subtitle: 'Verschoben auf ' + this.formatShortDate(entry.trainingDate),
+        status: 'upcoming',
+        icon: this.typeToIcon(entry.training?.trainingType),
+        competitionName: entry.competitionName,
+        isGhost: true,
+        movedToDate: entry.trainingDate
+      };
+      origDay.sessions.push(ghostSession);
+    }
+  }
+
+  formatShortDate(isoDate: string): string {
+    const d = new Date(isoDate);
+    const days = ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'];
+    return `${days[d.getDay()]}, ${d.getDate()}.${d.getMonth() + 1}.`;
   }
 
   private mapSession(entry: UserTrainingEntry, day: Date, today: Date): TrainingSession {
@@ -246,7 +275,9 @@ export class TrainingPlan implements OnInit {
       subtitle: this.buildSubtitle(entry),
       status: this.resolveSessionStatus(entry, day, today),
       icon: this.typeToIcon(entry.training?.trainingType),
-      competitionName: entry.competitionName
+      competitionName: entry.competitionName,
+      isAiMoved: !!entry.originalTrainingDate,
+      originalDate: entry.originalTrainingDate ?? undefined
     };
   }
 

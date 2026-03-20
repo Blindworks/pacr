@@ -32,6 +32,7 @@ public class TrainingRestructureService {
         for (UserTrainingEntry entry : entries) {
             if (isKeyTraining(entry)) {
                 LocalDate newDate = findNextFreeDay(userId, date.plusDays(1));
+                entry.setOriginalTrainingDate(entry.getTrainingDate());
                 entry.setTrainingDate(newDate);
                 entryRepository.save(entry);
 
@@ -41,7 +42,7 @@ public class TrainingRestructureService {
                 change.setNewDate(newDate.toString());
                 changes.add(change);
             } else {
-                entry.setCompletionStatus("SKIPPED");
+                entry.setCompletionStatus("skipped");
                 entryRepository.save(entry);
 
                 DailyCoachExecuteResponse.RestructuringChange change = new DailyCoachExecuteResponse.RestructuringChange();
@@ -69,7 +70,7 @@ public class TrainingRestructureService {
             LocalDate candidate = from.plusDays(i);
             List<UserTrainingEntry> existing = entryRepository.findEntriesForUserByDate(userId, candidate);
             boolean hasActiveTraining = existing.stream()
-                    .anyMatch(e -> !"SKIPPED".equals(e.getCompletionStatus()));
+                    .anyMatch(e -> !"skipped".equalsIgnoreCase(e.getCompletionStatus()));
             if (!hasActiveTraining) {
                 return candidate;
             }

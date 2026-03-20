@@ -53,6 +53,17 @@
               } @else {
                 <div class="tp-session-list">
                   @for (session of day.sessions; track session.entryId ?? session.id) {
+                    @if (session.isGhost) {
+                      <div class="tp-session tp-session--ghost">
+                        <span class="material-symbols-outlined tp-session__icon">event</span>
+                        <div class="tp-session__info">
+                          <div class="tp-day__title-row">
+                            <h4>{{ session.title }}</h4>
+                          </div>
+                          <p class="tp-day__sub ai-note">{{ session.subtitle }}</p>
+                        </div>
+                      </div>
+                    } @else {
                     <div class="tp-session" [class]="'tp-session--' + session.status">
                       <div
                         class="tp-session__main"
@@ -75,6 +86,12 @@
                             }
                           </div>
                           <p class="tp-day__sub">{{ session.subtitle }}</p>
+                          @if (session.isAiMoved) {
+                            <span class="ai-badge">
+                              <span class="material-symbols-outlined">smart_toy</span>
+                              KI Coach: von {{ formatShortDate(session.originalDate!) }}
+                            </span>
+                          }
                         </div>
                       </div>
 
@@ -101,6 +118,7 @@
                         }
                       </div>
                     </div>
+                    }
                   }
                 </div>
               }
