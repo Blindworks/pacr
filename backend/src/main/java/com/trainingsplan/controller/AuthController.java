@@ -6,11 +6,13 @@ import com.trainingsplan.dto.EmailVerificationRequest;
 import com.trainingsplan.dto.MessageResponse;
 import com.trainingsplan.dto.RegisterRequest;
 import com.trainingsplan.dto.ResendVerificationRequest;
+import com.trainingsplan.entity.AuditAction;
 import com.trainingsplan.entity.User;
 import com.trainingsplan.entity.UserRole;
 import com.trainingsplan.entity.UserStatus;
 import com.trainingsplan.repository.UserRepository;
 import com.trainingsplan.security.JwtService;
+import com.trainingsplan.service.AuditLogService;
 import com.trainingsplan.service.EmailService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,16 +35,18 @@ public class AuthController {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
     private final EmailService emailService;
+    private final AuditLogService auditLogService;
     private final SecureRandom secureRandom = new SecureRandom();
 
     public AuthController(UserRepository userRepository, PasswordEncoder passwordEncoder,
                           JwtService jwtService, AuthenticationManager authenticationManager,
-                          EmailService emailService) {
+                          EmailService emailService, AuditLogService auditLogService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
         this.authenticationManager = authenticationManager;
         this.emailService = emailService;
+        this.auditLogService = auditLogService;
     }
 
     @PostMapping("/register")
@@ -146,6 +150,7 @@ public class AuthController {
         User authenticatedUser = (User) authentication.getPrincipal();
         authenticatedUser.setLastLoginAt(LocalDateTime.now());
         userRepository.save(authenticatedUser);
+        auditLogService.log(authenticatedUser, AuditAction.LOGIN, null, null, null);
         String token = jwtService.generateToken(authenticatedUser);
 
         return ResponseEntity.ok(new AuthResponse(token, authenticatedUser.getId(), authenticatedUser.getUsername(),
