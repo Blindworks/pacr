@@ -28,7 +28,7 @@ services:
 
   frontend:
     build:
-      context: ./angular-frontend
+      context: ./frontend
     container_name: pacr-frontend
     ports:
       - "4201:80"
