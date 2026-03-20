@@ -6,7 +6,11 @@ export const adminRoutes: Routes = [
     path: '',
     component: AdminShell,
     children: [
-      { path: '', redirectTo: 'plans', pathMatch: 'full' },
+      { path: '', redirectTo: 'overview', pathMatch: 'full' },
+      {
+        path: 'overview',
+        loadComponent: () => import('./overview/admin-overview').then(m => m.AdminOverview)
+      },
       {
         path: 'plans',
         loadComponent: () => import('./plans/plan-list/plan-list').then(m => m.PlanList)
@@ -50,6 +54,18 @@ export const adminRoutes: Routes = [
       {
         path: 'users/:id/edit',
         loadComponent: () => import('./users/user-form/user-form').then(m => m.UserForm)
+      },
+      {
+        path: 'news',
+        loadComponent: () => import('./news/news-list/news-list').then(m => m.NewsList)
+      },
+      {
+        path: 'news/new',
+        loadComponent: () => import('./news/news-form/news-form').then(m => m.NewsForm)
+      },
+      {
+        path: 'news/:id/edit',
+        loadComponent: () => import('./news/news-form/news-form').then(m => m.NewsForm)
       }
     ]
   }
