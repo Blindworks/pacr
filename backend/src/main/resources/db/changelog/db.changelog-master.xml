@@ -65,5 +65,6 @@
     <include file="db/changelog/changes/059-add-original-training-date.xml"/>
     <include file="db/changelog/changes/060-add-personal-records.xml"/>
     <include file="db/changelog/changes/061-add-personal-record-entries.xml"/>
+    <include file="db/changelog/changes/062-add-user-cycle-tracking-enabled.xml"/>
 
 </databaseChangeLog>

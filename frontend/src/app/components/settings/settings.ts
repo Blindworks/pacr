@@ -47,6 +47,7 @@ export class Settings implements OnInit, OnDestroy {
 
   protected dwdRegionId = signal<number | null>(null);
   protected asthmaTrackingEnabled = signal(false);
+  protected cycleTrackingEnabled = signal(false);
 
   protected stravaLoading = signal(false);
   protected saving = signal(false);
@@ -111,6 +112,7 @@ export class Settings implements OnInit, OnDestroy {
         this.dateOfBirth.set(user.dateOfBirth ?? '');
         this.dwdRegionId.set(user.dwdRegionId ?? null);
         this.asthmaTrackingEnabled.set(user.asthmaTrackingEnabled ?? false);
+        this.cycleTrackingEnabled.set(user.cycleTrackingEnabled ?? false);
         this.loadProfileImage();
       },
       error: () => { /* keep defaults if backend unreachable */ }
@@ -173,6 +175,16 @@ export class Settings implements OnInit, OnDestroy {
     });
   }
 
+  protected onAsthmaTrackingChange(value: boolean): void {
+    this.asthmaTrackingEnabled.set(value);
+    this.userService.currentUser.update(u => u ? { ...u, asthmaTrackingEnabled: value } : null);
+  }
+
+  protected onCycleTrackingChange(value: boolean): void {
+    this.cycleTrackingEnabled.set(value);
+    this.userService.currentUser.update(u => u ? { ...u, cycleTrackingEnabled: value } : null);
+  }
+
   protected setUnit(value: 'metric' | 'imperial'): void {
     this.unit.set(value);
   }
@@ -221,7 +233,8 @@ export class Settings implements OnInit, OnDestroy {
       gender: this.gender(),
       status: this.currentUser.status,
       dwdRegionId: this.dwdRegionId(),
-      asthmaTrackingEnabled: this.asthmaTrackingEnabled()
+      asthmaTrackingEnabled: this.asthmaTrackingEnabled(),
+      cycleTrackingEnabled: this.cycleTrackingEnabled()
     }).subscribe({
       next: updated => {
         this.currentUser = updated;

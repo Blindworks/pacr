@@ -57,6 +57,7 @@ public class UserController {
             String status,
             Integer dwdRegionId,
             Boolean asthmaTrackingEnabled,
+            Boolean cycleTrackingEnabled,
             String role
     ) {}
 
@@ -106,6 +107,7 @@ public class UserController {
                     request.dateOfBirth(), request.heightCm(), request.weightKg(),
                     request.maxHeartRate(), request.hrRest(), request.gender(), request.status(),
                     request.dwdRegionId(), Boolean.TRUE.equals(request.asthmaTrackingEnabled()),
+                    Boolean.TRUE.equals(request.cycleTrackingEnabled()),
                     request.role());
             return ResponseEntity.ok(updated);
         } catch (IllegalArgumentException e) {

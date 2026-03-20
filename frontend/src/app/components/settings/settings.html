@@ -192,7 +192,7 @@
             <span class="toggle-sub">Pollenflug, Feinstaub, Ozon und Biowetter-Risiko im Training berücksichtigen</span>
           </div>
           <label class="switch">
-            <input type="checkbox" [ngModel]="asthmaTrackingEnabled()" (ngModelChange)="asthmaTrackingEnabled.set($event)" />
+            <input type="checkbox" [ngModel]="asthmaTrackingEnabled()" (ngModelChange)="onAsthmaTrackingChange($event)" />
             <span class="track"></span>
           </label>
         </div>
@@ -213,6 +213,26 @@
           </div>
         </div>
       }
+    </article>
+
+    <!-- Zyklus-Tracking -->
+    <article class="section">
+      <div class="section-head">
+        <span class="material-symbols-outlined">favorite</span>
+        <h2>Zyklus-Tracking</h2>
+      </div>
+      <div class="toggles">
+        <div class="toggle-row">
+          <div class="toggle-info">
+            <span class="toggle-title">Zyklus-Tracking aktivieren</span>
+            <span class="toggle-sub">Zyklusphase im Wohlbefinden und Training berücksichtigen</span>
+          </div>
+          <label class="switch">
+            <input type="checkbox" [ngModel]="cycleTrackingEnabled()" (ngModelChange)="onCycleTrackingChange($event)" />
+            <span class="track"></span>
+          </label>
+        </div>
+      </div>
     </article>
 
     <!-- Footer Actions -->

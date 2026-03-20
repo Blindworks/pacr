@@ -20,6 +20,7 @@ export interface UserProfile {
   status: string | null;
   dwdRegionId: number | null;
   asthmaTrackingEnabled: boolean;
+  cycleTrackingEnabled: boolean;
   role: string | null;
 }
 
@@ -37,6 +38,7 @@ export interface UpdateUserRequest {
   status?: string | null;
   dwdRegionId?: number | null;
   asthmaTrackingEnabled?: boolean;
+  cycleTrackingEnabled?: boolean;
   role?: string | null;
 }
 

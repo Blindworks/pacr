@@ -60,11 +60,13 @@ public class DailyCoachContextService {
             }
         }
 
-        // 4. Cycle phase (optional feature, available regardless of asthma setting)
-        cycleSettingsService.getSettings(userId).ifPresent(settings -> {
-            Optional<CycleStatusDto> statusOpt = cycleSettingsService.getCycleStatus(userId);
-            statusOpt.ifPresent(status -> ctx.setCyclePhase(buildCyclePhaseDto(status)));
-        });
+        // 4. Cycle phase (only when cycle tracking is enabled)
+        if (userOpt.isPresent() && userOpt.get().isCycleTrackingEnabled()) {
+            cycleSettingsService.getSettings(userId).ifPresent(settings -> {
+                Optional<CycleStatusDto> statusOpt = cycleSettingsService.getCycleStatus(userId);
+                statusOpt.ifPresent(status -> ctx.setCyclePhase(buildCyclePhaseDto(status)));
+            });
+        }
 
         // 5. Existing session for today
         sessionRepository.findFirstByUserIdAndSessionDateOrderByIdDesc(userId, date)

@@ -101,6 +101,10 @@ public class User implements UserDetails {
     @Column(name = "asthma_tracking_enabled", nullable = false)
     private boolean asthmaTrackingEnabled = false;
 
+    /** Whether cycle tracking is enabled for this user. */
+    @Column(name = "cycle_tracking_enabled", nullable = false)
+    private boolean cycleTrackingEnabled = false;
+
     @JsonIgnore
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY, optional = true)
     private StravaToken stravaToken;
@@ -330,4 +334,7 @@ public class User implements UserDetails {
 
     public boolean isAsthmaTrackingEnabled() { return asthmaTrackingEnabled; }
     public void setAsthmaTrackingEnabled(boolean asthmaTrackingEnabled) { this.asthmaTrackingEnabled = asthmaTrackingEnabled; }
+
+    public boolean isCycleTrackingEnabled() { return cycleTrackingEnabled; }
+    public void setCycleTrackingEnabled(boolean cycleTrackingEnabled) { this.cycleTrackingEnabled = cycleTrackingEnabled; }
 }

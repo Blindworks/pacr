@@ -43,10 +43,12 @@
           <span class="material-symbols-outlined">monitor_weight</span>
           <span>Body Metrics</span>
         </a>
-        <a routerLink="/body-data/cycle-tracking" routerLinkActive="active" class="nav-item nav-item--sub">
-          <span class="material-symbols-outlined">favorite</span>
-          <span>Cycle Tracking</span>
-        </a>
+        @if (userService.currentUser()?.cycleTrackingEnabled) {
+          <a routerLink="/body-data/cycle-tracking" routerLinkActive="active" class="nav-item nav-item--sub">
+            <span class="material-symbols-outlined">favorite</span>
+            <span>Cycle Tracking</span>
+          </a>
+        }
         @if (userService.currentUser()?.asthmaTrackingEnabled) {
           <a routerLink="/body-data/asthma-tracking" routerLinkActive="active" class="nav-item nav-item--sub">
             <span class="material-symbols-outlined">pulmonology</span>
