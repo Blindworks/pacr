@@ -3,6 +3,7 @@ package com.trainingsplan.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.garmin.fit.*;
 import com.trainingsplan.entity.ActivityStream;
+import com.trainingsplan.entity.AuditAction;
 import com.trainingsplan.entity.CompletedTraining;
 import com.trainingsplan.entity.User;
 import com.trainingsplan.repository.ActivityStreamRepository;
@@ -57,6 +58,9 @@ public class CompletedTrainingService {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @Autowired
+    private AuditLogService auditLogService;
+
     private static final Logger log = LoggerFactory.getLogger(CompletedTrainingService.class);
 
     /**
@@ -93,6 +97,9 @@ public class CompletedTrainingService {
         training.setUser(currentUser);
         CompletedTraining savedTraining = completedTrainingRepository.save(training);
 
+        auditLogService.log(currentUser, AuditAction.FIT_UPLOADED, "COMPLETED_TRAINING",
+                String.valueOf(savedTraining.getId()), null);
+
         bodyMetricService.calculateAndStore(savedTraining, currentUser);
         activityMetricsService.calculateAndPersist(savedTraining, data.timeSeconds, data.heartRates, currentUser);
 
@@ -125,6 +132,9 @@ public class CompletedTrainingService {
         User currentUser = securityUtils.getCurrentUser();
         training.setUser(currentUser);
         CompletedTraining savedTraining = completedTrainingRepository.save(training);
+
+        auditLogService.log(currentUser, AuditAction.FIT_UPLOADED, "COMPLETED_TRAINING",
+                String.valueOf(savedTraining.getId()), null);
 
         bodyMetricService.calculateAndStore(savedTraining, currentUser);
         activityMetricsService.calculateAndPersist(savedTraining, data.timeSeconds, data.heartRates, currentUser);
@@ -167,6 +177,9 @@ public class CompletedTrainingService {
         User currentUser = securityUtils.getCurrentUser();
         training.setUser(currentUser);
         CompletedTraining savedTraining = completedTrainingRepository.save(training);
+
+        auditLogService.log(currentUser, AuditAction.FIT_UPLOADED, "COMPLETED_TRAINING",
+                String.valueOf(savedTraining.getId()), null);
 
         saveActivityStream(savedTraining, collector);
 

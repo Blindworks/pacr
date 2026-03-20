@@ -1,8 +1,10 @@
 package com.trainingsplan.service;
 
 import com.trainingsplan.dto.CompetitionDto;
+import com.trainingsplan.entity.AuditAction;
 import com.trainingsplan.entity.Competition;
 import com.trainingsplan.entity.CompetitionRegistration;
+import com.trainingsplan.entity.User;
 import com.trainingsplan.repository.CompetitionRegistrationRepository;
 import com.trainingsplan.repository.CompetitionRepository;
 import com.trainingsplan.security.SecurityUtils;
@@ -28,6 +30,9 @@ public class CompetitionService {
 
     @Autowired
     private SecurityUtils securityUtils;
+
+    @Autowired
+    private AuditLogService auditLogService;
 
     public List<CompetitionDto> findAll() {
         Long userId = securityUtils.getCurrentUserId();
@@ -73,11 +78,17 @@ public class CompetitionService {
         CompetitionRegistration reg = userId != null
                 ? registrationRepository.findByCompetitionIdAndUserId(saved.getId(), userId).orElse(null)
                 : null;
+        User currentUser = securityUtils.getCurrentUser();
+        auditLogService.log(currentUser, AuditAction.COMPETITION_CREATED, "COMPETITION",
+                String.valueOf(saved.getId()), null);
         return new CompetitionDto(saved, reg);
     }
 
     public void deleteById(Long id) {
         competitionRepository.deleteById(id);
+        User currentUser = securityUtils.getCurrentUser();
+        auditLogService.log(currentUser, AuditAction.COMPETITION_DELETED, "COMPETITION",
+                String.valueOf(id), null);
     }
 
     public CompetitionRegistration updateRegistration(Long competitionId, String ranking,

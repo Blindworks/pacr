@@ -1,10 +1,12 @@
 package com.trainingsplan.service;
 
 import com.trainingsplan.dto.TrainingPlanDto;
+import com.trainingsplan.entity.AuditAction;
 import com.trainingsplan.entity.Competition;
 import com.trainingsplan.entity.CompetitionRegistration;
 import com.trainingsplan.entity.Training;
 import com.trainingsplan.entity.TrainingPlan;
+import com.trainingsplan.entity.User;
 import com.trainingsplan.repository.CompetitionRegistrationRepository;
 import com.trainingsplan.repository.CompetitionRepository;
 import com.trainingsplan.repository.TrainingPlanRepository;
@@ -45,6 +47,9 @@ public class TrainingPlanService {
     @Autowired
     private UserTrainingScheduleService userTrainingScheduleService;
 
+    @Autowired
+    private AuditLogService auditLogService;
+
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     // -------------------------------------------------------------------------
@@ -65,6 +70,9 @@ public class TrainingPlanService {
 
     public void deleteById(Long id) {
         trainingPlanRepository.deleteById(id);
+        User currentUser = securityUtils.getCurrentUser();
+        auditLogService.log(currentUser, AuditAction.PLAN_DELETED, "TRAINING_PLAN",
+                String.valueOf(id), null);
     }
 
     // -------------------------------------------------------------------------
@@ -80,6 +88,10 @@ public class TrainingPlanService {
         TrainingPlan trainingPlan = new TrainingPlan(name, description, jsonContent);
         trainingPlan.setTrainingCount(countTrainingsInJson(jsonContent));
         TrainingPlan savedPlan = trainingPlanRepository.save(trainingPlan);
+
+        User currentUser = securityUtils.getCurrentUser();
+        auditLogService.log(currentUser, AuditAction.PLAN_CREATED, "TRAINING_PLAN",
+                String.valueOf(savedPlan.getId()), null);
 
         // Create training templates
         parseAndCreateTemplates(savedPlan, jsonContent);
@@ -109,6 +121,10 @@ public class TrainingPlanService {
         TrainingPlan template = new TrainingPlan(name, description, jsonContent);
         template.setTrainingCount(countTrainingsInJson(jsonContent));
         TrainingPlan saved = trainingPlanRepository.save(template);
+
+        User currentUser = securityUtils.getCurrentUser();
+        auditLogService.log(currentUser, AuditAction.PLAN_CREATED, "TRAINING_PLAN",
+                String.valueOf(saved.getId()), null);
 
         parseAndCreateTemplates(saved, jsonContent);
 

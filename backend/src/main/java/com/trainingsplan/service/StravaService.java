@@ -8,6 +8,7 @@ import com.trainingsplan.dto.ProfileCompletionDto;
 import com.trainingsplan.dto.StravaStatusDto;
 import com.trainingsplan.entity.ActivityMetrics;
 import com.trainingsplan.entity.ActivityStream;
+import com.trainingsplan.entity.AuditAction;
 import com.trainingsplan.entity.CompletedTraining;
 import com.trainingsplan.entity.StravaToken;
 import com.trainingsplan.entity.User;
@@ -64,6 +65,7 @@ public class StravaService {
     private final UserProfileValidationService userProfileValidationService;
     private final MetricsKernelService metricsKernelService;
     private final BodyMetricService bodyMetricService;
+    private final AuditLogService auditLogService;
     private final RestClient restClient;
 
     public StravaService(StravaTokenRepository tokenRepository, ObjectMapper objectMapper,
@@ -74,7 +76,8 @@ public class StravaService {
                          SecurityUtils securityUtils,
                          UserProfileValidationService userProfileValidationService,
                          MetricsKernelService metricsKernelService,
-                         BodyMetricService bodyMetricService) {
+                         BodyMetricService bodyMetricService,
+                         AuditLogService auditLogService) {
         this.tokenRepository = tokenRepository;
         this.objectMapper = objectMapper;
         this.completedTrainingRepository = completedTrainingRepository;
@@ -85,6 +88,7 @@ public class StravaService {
         this.userProfileValidationService = userProfileValidationService;
         this.metricsKernelService = metricsKernelService;
         this.bodyMetricService = bodyMetricService;
+        this.auditLogService = auditLogService;
         SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
         factory.setConnectTimeout(java.time.Duration.ofSeconds(10));
         factory.setReadTimeout(java.time.Duration.ofSeconds(30));
@@ -131,6 +135,10 @@ public class StravaService {
 
             tokenRepository.save(token);
             log.info("Strava connected: athlete='{}', city='{}'", token.getAthleteName(), token.getAthleteCity());
+
+            User user = securityUtils.getCurrentUser();
+            auditLogService.log(user, AuditAction.STRAVA_CONNECTED, "USER",
+                    user != null ? String.valueOf(user.getId()) : null, null);
         } catch (Exception e) {
             log.error("Strava token exchange failed: {}", e.getMessage());
             throw new RuntimeException("Failed to exchange Strava code for token", e);
@@ -522,6 +530,9 @@ public class StravaService {
     }
 
     public void disconnect() {
+        User user = securityUtils.getCurrentUser();
         tokenRepository.deleteAll();
+        auditLogService.log(user, AuditAction.STRAVA_DISCONNECTED, "USER",
+                user != null ? String.valueOf(user.getId()) : null, null);
     }
 }
