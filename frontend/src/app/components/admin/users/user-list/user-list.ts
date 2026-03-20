@@ -82,4 +82,9 @@ export class UserList implements OnInit {
   subscriptionClass(plan: string | null): string {
     return plan === 'PRO' ? 'sub-pro' : 'sub-free';
   }
+
+  formatDate(dt: string | null): string {
+    if (!dt) return '—';
+    return new Date(dt).toLocaleString('de-DE', { dateStyle: 'short', timeStyle: 'short' });
+  }
 }

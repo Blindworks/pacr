@@ -24,6 +24,7 @@ export interface UserProfile {
   role: string | null;
   subscriptionPlan: string | null;
   subscriptionExpiresAt: string | null;
+  lastLoginAt: string | null;
 }
 
 export interface UpdateUserRequest {

@@ -144,6 +144,8 @@ public class AuthController {
         );
 
         User authenticatedUser = (User) authentication.getPrincipal();
+        authenticatedUser.setLastLoginAt(LocalDateTime.now());
+        userRepository.save(authenticatedUser);
         String token = jwtService.generateToken(authenticatedUser);
 
         return ResponseEntity.ok(new AuthResponse(token, authenticatedUser.getId(), authenticatedUser.getUsername(),
