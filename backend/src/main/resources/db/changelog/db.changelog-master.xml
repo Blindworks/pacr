@@ -68,5 +68,6 @@
     <include file="db/changelog/changes/062-add-user-cycle-tracking-enabled.xml"/>
     <include file="db/changelog/changes/063-add-user-subscription.xml"/>
     <include file="db/changelog/changes/064-add-user-last-login.xml"/>
+    <include file="db/changelog/changes/065-add-audit-logs.xml"/>
 
 </databaseChangeLog>

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="065-add-audit-logs" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not><tableExists tableName="audit_logs"/></not>
+        </preConditions>
+
+        <createTable tableName="audit_logs">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="timestamp" type="DATETIME">
+                <constraints nullable="false"/>
+            </column>
+            <column name="actor_id" type="BIGINT"/>
+            <column name="actor_username" type="VARCHAR(100)"/>
+            <column name="action" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="target_type" type="VARCHAR(50)"/>
+            <column name="target_id" type="VARCHAR(50)"/>
+            <column name="details" type="TEXT"/>
+        </createTable>
+
+        <createIndex tableName="audit_logs" indexName="idx_audit_logs_timestamp">
+            <column name="timestamp"/>
+        </createIndex>
+
+        <createIndex tableName="audit_logs" indexName="idx_audit_logs_actor_id">
+            <column name="actor_id"/>
+        </createIndex>
+
+        <createIndex tableName="audit_logs" indexName="idx_audit_logs_action">
+            <column name="action"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>
