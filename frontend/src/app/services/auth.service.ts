@@ -4,6 +4,7 @@ import { Observable, tap } from 'rxjs';
 import { SKIP_AUTH_LOGOUT } from '../interceptors/auth.interceptor';
 
 const TOKEN_KEY = 'auth_token';
+const ROLE_KEY = 'auth_role';
 const BASE = 'http://localhost:8080/api/auth';
 
 export interface AuthResponse {
@@ -32,6 +33,7 @@ export class AuthService {
     return this.http.post<AuthResponse>(`${BASE}/login`, { username: email, password }).pipe(
       tap(res => {
         localStorage.setItem(TOKEN_KEY, res.token);
+        localStorage.setItem(ROLE_KEY, res.role);
         this._isLoggedIn.set(true);
       })
     );
@@ -55,10 +57,15 @@ export class AuthService {
 
   logout() {
     localStorage.removeItem(TOKEN_KEY);
+    localStorage.removeItem(ROLE_KEY);
     this._isLoggedIn.set(false);
   }
 
   getToken(): string | null {
     return localStorage.getItem(TOKEN_KEY);
+  }
+
+  getRole(): string | null {
+    return localStorage.getItem(ROLE_KEY);
   }
 }
