@@ -1,12 +1,13 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
+import { SlicePipe } from '@angular/common';
 
 import { UserService, UserProfile } from '../../../../services/user.service';
 
 @Component({
   selector: 'app-user-list',
   standalone: true,
-  imports: [],
+  imports: [SlicePipe],
   templateUrl: './user-list.html',
   styleUrl: './user-list.scss'
 })
@@ -68,5 +69,17 @@ export class UserList implements OnInit {
   fullName(user: UserProfile): string {
     const parts = [user.firstName, user.lastName].filter(Boolean);
     return parts.length > 0 ? parts.join(' ') : '—';
+  }
+
+  subscriptionLabel(plan: string | null): string {
+    switch (plan) {
+      case 'PRO': return 'Pro';
+      case 'FREE': return 'Free';
+      default: return plan ?? 'Free';
+    }
+  }
+
+  subscriptionClass(plan: string | null): string {
+    return plan === 'PRO' ? 'sub-pro' : 'sub-free';
   }
 }

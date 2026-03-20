@@ -105,6 +105,13 @@ public class User implements UserDetails {
     @Column(name = "cycle_tracking_enabled", nullable = false)
     private boolean cycleTrackingEnabled = false;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "subscription_plan", nullable = false, length = 20)
+    private SubscriptionPlan subscriptionPlan = SubscriptionPlan.FREE;
+
+    @Column(name = "subscription_expires_at")
+    private LocalDateTime subscriptionExpiresAt;
+
     @JsonIgnore
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY, optional = true)
     private StravaToken stravaToken;
@@ -337,4 +344,12 @@ public class User implements UserDetails {
 
     public boolean isCycleTrackingEnabled() { return cycleTrackingEnabled; }
     public void setCycleTrackingEnabled(boolean cycleTrackingEnabled) { this.cycleTrackingEnabled = cycleTrackingEnabled; }
+
+    public SubscriptionPlan getSubscriptionPlan() { return subscriptionPlan; }
+    public void setSubscriptionPlan(SubscriptionPlan subscriptionPlan) {
+        this.subscriptionPlan = subscriptionPlan == null ? SubscriptionPlan.FREE : subscriptionPlan;
+    }
+
+    public LocalDateTime getSubscriptionExpiresAt() { return subscriptionExpiresAt; }
+    public void setSubscriptionExpiresAt(LocalDateTime subscriptionExpiresAt) { this.subscriptionExpiresAt = subscriptionExpiresAt; }
 }

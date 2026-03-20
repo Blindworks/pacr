@@ -62,6 +62,20 @@
           </div>
 
           <div class="field">
+            <label>Abo</label>
+            <select formControlName="subscriptionPlan" class="input">
+              @for (p of subscriptionPlans; track p.value) {
+                <option [value]="p.value">{{ p.label }}</option>
+              }
+            </select>
+          </div>
+
+          <div class="field">
+            <label>Abo läuft ab</label>
+            <input formControlName="subscriptionExpiresAt" type="date" class="input" />
+          </div>
+
+          <div class="field">
             <label>Username <span class="required">*</span></label>
             <input formControlName="username" type="text" class="input"
               [class.invalid]="form.get('username')?.invalid && form.get('username')?.touched" />

@@ -3,6 +3,7 @@ package com.trainingsplan.service;
 import com.trainingsplan.entity.UserRole;
 import com.trainingsplan.entity.User;
 import com.trainingsplan.entity.UserStatus;
+import com.trainingsplan.entity.SubscriptionPlan;
 import com.trainingsplan.port.ImageStoragePort;
 import com.trainingsplan.repository.UserRepository;
 import com.trainingsplan.security.SecurityUtils;
@@ -55,7 +56,8 @@ public class UserService {
                            LocalDate dateOfBirth, Integer heightCm, Double weightKg,
                            Integer maxHeartRate, Integer hrRest, String gender, String status,
                            Integer dwdRegionId, boolean asthmaTrackingEnabled,
-                           boolean cycleTrackingEnabled, String role) {
+                           boolean cycleTrackingEnabled, String role,
+                           String subscriptionPlan, LocalDateTime subscriptionExpiresAt) {
         User user = findById(id);
         user.setUsername(username);
         user.setEmail(email);
@@ -76,6 +78,10 @@ public class UserService {
         user.setDwdRegionId(dwdRegionId);
         user.setAsthmaTrackingEnabled(asthmaTrackingEnabled);
         user.setCycleTrackingEnabled(cycleTrackingEnabled);
+        if (subscriptionPlan != null && !subscriptionPlan.isBlank()) {
+            user.setSubscriptionPlan(SubscriptionPlan.valueOf(subscriptionPlan));
+        }
+        user.setSubscriptionExpiresAt(subscriptionExpiresAt);
         return userRepository.save(user);
     }
 

@@ -22,6 +22,8 @@ export interface UserProfile {
   asthmaTrackingEnabled: boolean;
   cycleTrackingEnabled: boolean;
   role: string | null;
+  subscriptionPlan: string | null;
+  subscriptionExpiresAt: string | null;
 }
 
 export interface UpdateUserRequest {
@@ -40,6 +42,8 @@ export interface UpdateUserRequest {
   asthmaTrackingEnabled?: boolean;
   cycleTrackingEnabled?: boolean;
   role?: string | null;
+  subscriptionPlan?: string | null;
+  subscriptionExpiresAt?: string | null;
 }
 
 @Injectable({ providedIn: 'root' })

@@ -36,6 +36,11 @@ export class UserForm implements OnInit {
     { value: 'ADMIN', label: 'Admin' }
   ];
 
+  readonly subscriptionPlans = [
+    { value: 'FREE', label: 'Free' },
+    { value: 'PRO', label: 'Pro' }
+  ];
+
   form = this.fb.group({
     username: ['', Validators.required],
     email: ['', [Validators.required, Validators.email]],
@@ -44,7 +49,9 @@ export class UserForm implements OnInit {
     status: [''],
     role: [''],
     maxHeartRate: [null as number | null],
-    hrRest: [null as number | null]
+    hrRest: [null as number | null],
+    subscriptionPlan: ['FREE'],
+    subscriptionExpiresAt: [null as string | null]
   });
 
   displayId(): number | null { return this.userId(); }
@@ -71,7 +78,9 @@ export class UserForm implements OnInit {
           status: u.status ?? '',
           role: u.role ?? '',
           maxHeartRate: u.maxHeartRate,
-          hrRest: u.hrRest
+          hrRest: u.hrRest,
+          subscriptionPlan: u.subscriptionPlan ?? 'FREE',
+          subscriptionExpiresAt: u.subscriptionExpiresAt ? u.subscriptionExpiresAt.slice(0, 10) : null
         });
       },
       error: () => { this.hasError.set(true); this.isLoading.set(false); },
@@ -90,7 +99,9 @@ export class UserForm implements OnInit {
       status: v.status || undefined,
       role: v.role || undefined,
       maxHeartRate: v.maxHeartRate ?? null,
-      hrRest: v.hrRest ?? null
+      hrRest: v.hrRest ?? null,
+      subscriptionPlan: v.subscriptionPlan || 'FREE',
+      subscriptionExpiresAt: v.subscriptionExpiresAt ? v.subscriptionExpiresAt + 'T00:00:00' : null
     };
     this.isSaving.set(true);
     this.userService.updateUserAsAdmin(this.userId()!, payload).subscribe({

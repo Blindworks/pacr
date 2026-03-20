@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import java.util.List;
 
@@ -58,7 +59,9 @@ public class UserController {
             Integer dwdRegionId,
             Boolean asthmaTrackingEnabled,
             Boolean cycleTrackingEnabled,
-            String role
+            String role,
+            String subscriptionPlan,
+            LocalDateTime subscriptionExpiresAt
     ) {}
 
     @GetMapping("/me")
@@ -108,7 +111,7 @@ public class UserController {
                     request.maxHeartRate(), request.hrRest(), request.gender(), request.status(),
                     request.dwdRegionId(), Boolean.TRUE.equals(request.asthmaTrackingEnabled()),
                     Boolean.TRUE.equals(request.cycleTrackingEnabled()),
-                    request.role());
+                    request.role(), request.subscriptionPlan(), request.subscriptionExpiresAt());
             return ResponseEntity.ok(updated);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().build();
