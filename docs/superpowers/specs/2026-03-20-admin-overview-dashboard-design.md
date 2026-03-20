@@ -17,7 +17,7 @@ Ein neuer Admin-Screen unter `/admin/overview` bietet einen vollständigen Über
 | `id` | BIGINT PK AUTO_INCREMENT | Primärschlüssel |
 | `timestamp` | DATETIME NOT NULL | Zeitpunkt des Ereignisses |
 | `actor_id` | BIGINT NULL (FK → users) | Auslöser (null = System) |
-| `actor_username` | VARCHAR(100) | Denormalisiert für historische Korrektheit |
+| `actor_username` | VARCHAR(100) NULL | Denormalisiert für historische Korrektheit |
 | `action` | VARCHAR(100) NOT NULL | Enum-Wert der Aktion |
 | `target_type` | VARCHAR(50) NULL | Typ des betroffenen Objekts |
 | `target_id` | VARCHAR(50) NULL | ID des betroffenen Objekts |
@@ -30,7 +30,7 @@ Ein neuer Admin-Screen unter `/admin/overview` bietet einen vollständigen Über
 ```java
 public enum AuditAction {
     // Auth
-    LOGIN, LOGOUT, PASSWORD_CHANGED, EMAIL_VERIFIED,
+    LOGIN, PASSWORD_CHANGED, EMAIL_VERIFIED,
     // Admin
     USER_CREATED, USER_UPDATED, USER_STATUS_CHANGED, SUBSCRIPTION_CHANGED,
     // User
@@ -41,9 +41,18 @@ public enum AuditAction {
 }
 ```
 
+**Hinweis:** `LOGOUT` wurde aus dem Enum entfernt, da kein Logout-Endpoint im System existiert. Kann später ergänzt werden wenn ein Logout-Mechanismus implementiert wird.
+
 ---
 
 ## 2. Backend-Architektur
+
+### Spring-Konfiguration (Pflicht-Ergänzungen)
+
+Beide folgenden Annotationen müssen zu `SecurityConfig` (oder einer dedizierten `AsyncConfig`-Klasse) hinzugefügt werden, **bevor** der Feature-Branch gemergt wird:
+
+- `@EnableAsync` — ohne diese Annotation führt `@Async` auf `AuditLogService.log()` nichts aus; die Methode läuft synchron ohne Fehler oder Warnung
+- `@EnableMethodSecurity(prePostEnabled = true)` — ohne diese Annotation werden `@PreAuthorize`-Annotationen ignoriert und Admin-Endpoints sind für alle authentifizierten User erreichbar
 
 ### Neue Klassen
 
@@ -74,8 +83,9 @@ GET /api/admin/audit-log?page=0&size=50&action=LOGIN&from=2026-01-01&to=2026-03-
 {
   "totalUsers": 42,
   "activeUsers": 38,
-  "inactiveUsers": 3,
+  "inactiveUsers": 2,
   "blockedUsers": 1,
+  "pendingVerification": 1,
   "newUsersThisWeek": 5,
   "newUsersThisMonth": 12,
   "stravaConnected": 15,
@@ -85,37 +95,71 @@ GET /api/admin/audit-log?page=0&size=50&action=LOGIN&from=2026-01-01&to=2026-03-
 }
 ```
 
+**KPI-Definitionen:**
+- `activeUsers` — `UserStatus.ACTIVE`
+- `inactiveUsers` — `UserStatus.INACTIVE`
+- `blockedUsers` — `UserStatus.BLOCKED`
+- `pendingVerification` — `UserStatus.EMAIL_VERIFICATION_PENDING` + `UserStatus.ADMIN_APPROVAL_PENDING` (bewusst aggregiert für v1; beide Status erfordern Admin-Aufmerksamkeit, aber unterschiedliche Aktionen — kann später in zwei Felder aufgeteilt werden)
+- `paceZonesConfigured` — Anzahl User wo `thresholdPaceSecPerKm IS NOT NULL`
+
+### AuditLogDto — Felder
+
+```json
+{
+  "id": 123,
+  "timestamp": "2026-03-20T14:32:10",
+  "actorId": 5,
+  "actorUsername": "admin",
+  "action": "USER_UPDATED",
+  "targetType": "USER",
+  "targetId": "12",
+  "details": "{\"changedFields\": [\"status\", \"subscriptionPlan\"]}"
+}
+```
+
+`details` wird als roher JSON-String zurückgegeben. Das Frontend rendert ihn als formatierten Text in einem Tooltip oder Dialog.
+
 ### AuditLogService
 
 - Methode: `log(User actor, AuditAction action, String targetType, String targetId, Map<String, Object> details)`
-- Läuft mit `@Async` um die Performance der auslösenden Aktion nicht zu beeinträchtigen
-- `actor` darf null sein (System-Events)
-- `details` wird als JSON-String serialisiert und in `details`-Feld gespeichert
+- Annotiert mit `@Async` — läuft in einem separaten Thread-Pool-Thread
+- `actor` darf null sein (System-Events) — dann bleiben `actor_id` und `actor_username` null
+- `details` wird per `ObjectMapper` als JSON-String serialisiert
+
+**Wichtig:** Der Async-Thread erbt den `SecurityContext` NICHT (Spring's Default ist `MODE_THREADLOCAL`). `AuditLogService.log()` darf deshalb nie `SecurityContextHolder.getContext()` aufrufen. Der Actor wird immer explizit als Parameter übergeben — nie aus dem Security-Context gelesen.
 
 ### Integration in bestehende Services
 
 Explizite `auditLogService.log(...)` Aufrufe (kein AOP), damit klar ist was getrackt wird:
 
-| Service | Methode | Action |
+| Service / Controller | Methode | Action |
 |---|---|---|
-| `AuthService` / Login-Filter | `login()` | `LOGIN` |
+| `AuthController` | `login()` | `LOGIN` |
 | `UserService` | `createUser()` | `USER_CREATED` |
 | `UserService` | `updateUser()` | `USER_UPDATED` |
-| `UserService` | `updateUser()` (Status-Änderung) | `USER_STATUS_CHANGED` |
-| `UserService` | `updateUser()` (Subscription-Änderung) | `SUBSCRIPTION_CHANGED` |
-| `CompletedTrainingService` | `upload()` | `FIT_UPLOADED` |
-| `StravaService` | `connect()` / `disconnect()` | `STRAVA_CONNECTED` / `STRAVA_DISCONNECTED` |
-| `TrainingPlanService` | `create()` / `delete()` | `PLAN_CREATED` / `PLAN_DELETED` |
-| `CompetitionService` | `create()` / `delete()` | `COMPETITION_CREATED` / `COMPETITION_DELETED` |
+| `UserService` | `updateUser()` wenn Status sich ändert | `USER_STATUS_CHANGED` |
+| `UserService` | `updateUser()` wenn Subscription sich ändert | `SUBSCRIPTION_CHANGED` |
+| `CompletedTrainingService` | Upload-Methode | `FIT_UPLOADED` |
+| `StravaService` | connect / disconnect | `STRAVA_CONNECTED` / `STRAVA_DISCONNECTED` |
+| `TrainingPlanService` | create / delete | `PLAN_CREATED` / `PLAN_DELETED` |
+| `CompetitionService` | create / delete | `COMPETITION_CREATED` / `COMPETITION_DELETED` |
 
 ### Liquibase-Migration
 
-Neue Datei: `changes/064-add-audit-logs.xml`
-Mit `<preConditions onFail="MARK_RAN">` wie im Projekt-Standard.
+Neue Datei: `changes/065-add-audit-logs.xml`
+Mit `<preConditions onFail="MARK_RAN">` wie im Projekt-Standard. Include in `db.changelog-master.xml` anfügen.
 
 ---
 
 ## 3. Frontend-Architektur
+
+### Sicherheit: Admin-Route Guard (Pflicht)
+
+Der bestehende `authGuard` prüft nur ob ein User eingeloggt ist, nicht ob er die ADMIN-Rolle hat. Es muss ein `adminGuard` erstellt werden, der die ADMIN-Rolle prüft und bei Fehler auf `/` umleitet.
+
+**Implementierung der Rollenprüfung:** Die `AuthResponse` beim Login enthält bereits ein `role`-Feld. `AuthService.login()` speichert die Rolle zusammen mit dem JWT-Token in `localStorage` (Key: `role`). Der `adminGuard` liest `localStorage.getItem('role') === 'ADMIN'`. Dies ist konsistent mit dem bestehenden Muster (Token wird ebenfalls in `localStorage` gespeichert).
+
+Der Guard wird auf die `/admin`-Route in `app.routes.ts` angewendet (nicht nur auf `/admin/overview`, sondern auf den gesamten Admin-Bereich).
 
 ### Neue Route
 
@@ -140,7 +184,7 @@ frontend/src/app/components/admin/overview/
 ```
 ┌─────────────────────────────────────────────────────┐
 │  KPI-GRUPPE: User-Zahlen                            │
-│  [Gesamt] [Aktiv] [Inaktiv/Gesperrt] [Neu/Woche]   │
+│  [Gesamt] [Aktiv] [Inaktiv] [Gesperrt] [Ausstehend] [Neu/Woche] │
 ├─────────────────────────────────────────────────────┤
 │  KPI-GRUPPE: Feature-Nutzung                        │
 │  [Strava] [Asthma-Tracking] [Cycle] [Pace-Zonen]   │
@@ -162,20 +206,56 @@ frontend/src/app/components/admin/overview/
 - Filter: `mat-select` (Kategorie), `mat-date-range-input` (Zeitraum)
 - Details: `mat-icon-button` mit Tooltip oder Dialog für JSON-Details
 
+### TypeScript-Interfaces
+
+```typescript
+interface AdminStats {
+  totalUsers: number;
+  activeUsers: number;
+  inactiveUsers: number;
+  blockedUsers: number;
+  pendingVerification: number;
+  newUsersThisWeek: number;
+  newUsersThisMonth: number;
+  stravaConnected: number;
+  asthmaTrackingEnabled: number;
+  cycleTrackingEnabled: number;
+  paceZonesConfigured: number;
+}
+
+interface AuditLogEntry {
+  id: number;
+  timestamp: string;
+  actorId: number | null;
+  actorUsername: string | null;
+  action: string;
+  targetType: string | null;
+  targetId: string | null;
+  details: string | null;
+}
+```
+
 ### Neuer Service: `AdminService`
 
 ```typescript
 // frontend/src/app/services/admin.service.ts
+// Folgt der bestehenden Konvention: hardcodierte Base-URL wie alle anderen Services
+const BASE = 'http://localhost:8080/api/admin';
+
 getStats(): Observable<AdminStats>
-getAuditLog(params): Observable<Page<AuditLogEntry>>
+getAuditLog(params: { page: number; size: number; action?: string; from?: string; to?: string }): Observable<{ content: AuditLogEntry[]; totalElements: number }>
 ```
 
 ---
 
-## 4. Sicherheit
+## 4. Sicherheit — Zusammenfassung
 
-- Alle `/api/admin/*` Endpoints sind mit `@PreAuthorize("hasRole('ADMIN')")` gesichert
-- Frontend: Die `/admin/overview` Route ist bereits durch den bestehenden Admin-Guard geschützt (sofern vorhanden), sonst wird ein Route-Guard ergänzt
+| Ebene | Maßnahme |
+|---|---|
+| Spring (Backend) | `@EnableMethodSecurity(prePostEnabled = true)` in `SecurityConfig` |
+| Endpoint | `@PreAuthorize("hasRole('ADMIN')")` auf `AdminController` |
+| Async | `@EnableAsync` in `SecurityConfig` (oder `AsyncConfig`) |
+| Frontend Route | Neuer `adminGuard` prüft ADMIN-Rolle, Redirect auf `/` bei Fehler |
 
 ---
 
@@ -184,3 +264,4 @@ getAuditLog(params): Observable<Page<AuditLogEntry>>
 - Audit-Log-Export (CSV/Excel) — kann später ergänzt werden
 - Real-time Updates via WebSocket — kann später ergänzt werden
 - Audit-Log für Lese-Aktionen (GET-Requests) — zu viel Rauschen, nur schreibende Aktionen werden getrackt
+- `LOGOUT`-Action — kein Logout-Endpoint vorhanden, kann später ergänzt werden
