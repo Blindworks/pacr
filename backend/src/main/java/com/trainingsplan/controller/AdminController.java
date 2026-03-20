@@ -3,10 +3,9 @@ package com.trainingsplan.controller;
 import com.trainingsplan.dto.AdminStatsDto;
 import com.trainingsplan.dto.AuditLogDto;
 import com.trainingsplan.entity.AuditAction;
-import com.trainingsplan.repository.AuditLogRepository;
 import com.trainingsplan.service.AdminStatsService;
+import com.trainingsplan.service.AuditLogService;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -20,12 +19,12 @@ import java.time.LocalDateTime;
 public class AdminController {
 
     private final AdminStatsService adminStatsService;
-    private final AuditLogRepository auditLogRepository;
+    private final AuditLogService auditLogService;
 
     public AdminController(AdminStatsService adminStatsService,
-                           AuditLogRepository auditLogRepository) {
+                           AuditLogService auditLogService) {
         this.adminStatsService = adminStatsService;
-        this.auditLogRepository = auditLogRepository;
+        this.auditLogService = auditLogService;
     }
 
     @GetMapping("/stats")
@@ -34,21 +33,25 @@ public class AdminController {
     }
 
     @GetMapping("/audit-log")
-    public ResponseEntity<Page<AuditLogDto>> getAuditLog(
+    public ResponseEntity<?> getAuditLog(
             @RequestParam(required = false) String action,
             @RequestParam(required = false) String from,
             @RequestParam(required = false) String to,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "50") int size) {
 
-        AuditAction actionEnum = action != null && !action.isBlank()
-                ? AuditAction.valueOf(action) : null;
+        AuditAction actionEnum = null;
+        if (action != null && !action.isBlank()) {
+            try {
+                actionEnum = AuditAction.valueOf(action);
+            } catch (IllegalArgumentException e) {
+                return ResponseEntity.badRequest().build();
+            }
+        }
         LocalDateTime fromDt = from != null ? LocalDate.parse(from).atStartOfDay() : null;
         LocalDateTime toDt = to != null ? LocalDate.parse(to).atTime(23, 59, 59) : null;
 
-        Page<AuditLogDto> result = auditLogRepository
-                .findFiltered(actionEnum, fromDt, toDt, PageRequest.of(page, size))
-                .map(AuditLogDto::from);
+        Page<AuditLogDto> result = auditLogService.findFiltered(actionEnum, fromDt, toDt, page, size);
 
         return ResponseEntity.ok(result);
     }

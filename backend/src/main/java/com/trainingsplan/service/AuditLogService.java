@@ -2,12 +2,15 @@ package com.trainingsplan.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.trainingsplan.dto.AuditLogDto;
 import com.trainingsplan.entity.AuditAction;
 import com.trainingsplan.entity.AuditLog;
 import com.trainingsplan.entity.User;
 import com.trainingsplan.repository.AuditLogRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -51,5 +54,10 @@ public class AuditLogService {
         } catch (JsonProcessingException e) {
             log.error("Failed to serialize audit log details", e);
         }
+    }
+
+    public Page<AuditLogDto> findFiltered(AuditAction action, LocalDateTime from, LocalDateTime to, int page, int size) {
+        return repository.findFiltered(action, from, to, PageRequest.of(page, size))
+                .map(AuditLogDto::from);
     }
 }
