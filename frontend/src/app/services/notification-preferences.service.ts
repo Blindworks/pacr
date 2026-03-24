@@ -1,3 +1,4 @@
+import { apiUrl } from '../core/api-base';
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -11,7 +12,7 @@ export interface NotificationPreferences {
 @Injectable({ providedIn: 'root' })
 export class NotificationPreferencesService {
   private readonly http = inject(HttpClient);
-  private readonly base = 'http://localhost:8080/api/users/me/notification-preferences';
+  private readonly base = apiUrl('/users/me/notification-preferences');
 
   getPreferences(): Observable<NotificationPreferences> {
     return this.http.get<NotificationPreferences>(this.base);

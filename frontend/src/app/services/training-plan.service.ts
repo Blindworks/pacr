@@ -1,3 +1,4 @@
+import { apiUrl } from '../core/api-base';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -15,7 +16,7 @@ export interface TrainingPlan {
 
 @Injectable({ providedIn: 'root' })
 export class TrainingPlanService {
-  private readonly baseUrl = 'http://localhost:8080/api/training-plans';
+  private readonly baseUrl = apiUrl('/training-plans');
 
   constructor(private http: HttpClient) {}
 

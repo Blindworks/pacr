@@ -1,3 +1,4 @@
+import { apiUrl } from '../core/api-base';
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -19,7 +20,7 @@ export interface CreateNewsRequest {
 @Injectable({ providedIn: 'root' })
 export class AdminNewsService {
   private readonly http = inject(HttpClient);
-  private readonly base = 'http://localhost:8080/api/admin/news';
+  private readonly base = apiUrl('/admin/news');
 
   getAll(): Observable<AppNews[]> {
     return this.http.get<AppNews[]>(this.base);

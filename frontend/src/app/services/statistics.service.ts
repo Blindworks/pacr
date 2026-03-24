@@ -1,9 +1,10 @@
+import { apiUrl } from '../core/api-base';
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
-const BASE = 'http://localhost:8080/api/completed-trainings';
-const BODY_METRICS_BASE = 'http://localhost:8080/api/body-metrics';
+const BASE = apiUrl('/completed-trainings');
+const BODY_METRICS_BASE = apiUrl('/body-metrics');
 
 export interface Vo2MaxPoint {
   date: string;

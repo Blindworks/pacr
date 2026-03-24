@@ -1,9 +1,10 @@
+import { apiUrl } from '../core/api-base';
 import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient, HttpContext } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 import { SKIP_AUTH_LOGOUT } from '../interceptors/auth.interceptor';
 
-const BASE = 'http://localhost:8080/api/users';
+const BASE = apiUrl('/users');
 
 export interface UserProfile {
   id: number;

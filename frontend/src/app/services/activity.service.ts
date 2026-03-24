@@ -1,8 +1,9 @@
+import { apiUrl } from '../core/api-base';
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
-const BASE = 'http://localhost:8080/api/completed-trainings';
+const BASE = apiUrl('/completed-trainings');
 
 export interface CompletedTraining {
   id: number;
@@ -111,7 +112,7 @@ export class ActivityService {
   }
 
   getVo2MaxByActivity(id: number): Observable<ActivityVo2Max[]> {
-    return this.http.get<ActivityVo2Max[]>(`http://localhost:8080/api/body-metrics/by-activity/${id}`);
+    return this.http.get<ActivityVo2Max[]>(apiUrl(`/body-metrics/by-activity/${id}`));
   }
 
   fetchStreams(id: number): Observable<ActivityStreamDto> {

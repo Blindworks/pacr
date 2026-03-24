@@ -1,8 +1,9 @@
+import { apiUrl } from '../core/api-base';
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
-const BASE = 'http://localhost:8080/api/personal-records';
+const BASE = apiUrl('/personal-records');
 
 export interface PersonalRecord {
   id: number;

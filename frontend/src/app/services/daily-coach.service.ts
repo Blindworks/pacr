@@ -1,3 +1,4 @@
+import { apiUrl } from '../core/api-base';
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -78,7 +79,7 @@ export interface ExecuteResponse {
 @Injectable({ providedIn: 'root' })
 export class DailyCoachService {
   private http = inject(HttpClient);
-  private baseUrl = 'http://localhost:8080/api/ai-trainer';
+  private baseUrl = apiUrl('/ai-trainer');
 
   getContext(date: string): Observable<DailyCoachContextDto> {
     return this.http.get<DailyCoachContextDto>(`${this.baseUrl}/context?date=${date}`);

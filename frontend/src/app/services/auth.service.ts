@@ -1,3 +1,4 @@
+import { apiUrl } from '../core/api-base';
 import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient, HttpContext } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
@@ -5,7 +6,7 @@ import { SKIP_AUTH_LOGOUT } from '../interceptors/auth.interceptor';
 
 const TOKEN_KEY = 'auth_token';
 const ROLE_KEY = 'auth_role';
-const BASE = 'http://localhost:8080/api/auth';
+const BASE = apiUrl('/auth');
 
 export interface AuthResponse {
   token: string;

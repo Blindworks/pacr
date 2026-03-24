@@ -1,3 +1,4 @@
+import { apiUrl } from '../core/api-base';
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -12,7 +13,7 @@ export interface StravaStatus {
 @Injectable({ providedIn: 'root' })
 export class StravaService {
   private readonly http = inject(HttpClient);
-  private readonly base = 'http://localhost:8080/api/strava';
+  private readonly base = apiUrl('/strava');
 
   getStatus(): Observable<StravaStatus> {
     return this.http.get<StravaStatus>(`${this.base}/status`);

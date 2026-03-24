@@ -1,3 +1,4 @@
+import { apiUrl } from '../core/api-base';
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -33,7 +34,7 @@ export interface TrainingFeedbackPayload {
 @Injectable({ providedIn: 'root' })
 export class UserTrainingEntryService {
   private http = inject(HttpClient);
-  private readonly base = 'http://localhost:8080/api/user-training-entries';
+  private readonly base = apiUrl('/user-training-entries');
 
   getCalendar(from: string, to: string): Observable<UserTrainingEntry[]> {
     return this.http.get<UserTrainingEntry[]>(`${this.base}/calendar`, {

@@ -1,3 +1,4 @@
+import { apiUrl } from '../core/api-base';
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -18,7 +19,7 @@ export interface Competition {
 @Injectable({ providedIn: 'root' })
 export class CompetitionService {
   private http = inject(HttpClient);
-  private base = 'http://localhost:8080/api/competitions';
+  private base = apiUrl('/competitions');
 
   getAll(): Observable<Competition[]> {
     return this.http.get<Competition[]>(this.base);

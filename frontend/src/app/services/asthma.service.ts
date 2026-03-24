@@ -1,3 +1,4 @@
+import { apiUrl } from '../core/api-base';
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -34,7 +35,7 @@ export interface AsthmaEntry {
 
 @Injectable({ providedIn: 'root' })
 export class AsthmaService {
-  private readonly base = 'http://localhost:8080/api/asthma';
+  private readonly base = apiUrl('/asthma');
 
   constructor(private http: HttpClient) {}
 

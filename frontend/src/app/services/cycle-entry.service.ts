@@ -1,3 +1,4 @@
+import { apiUrl } from '../core/api-base';
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -16,7 +17,7 @@ export interface CycleEntry {
 
 @Injectable({ providedIn: 'root' })
 export class CycleEntryService {
-  private readonly base = 'http://localhost:8080/api/cycle-entries';
+  private readonly base = apiUrl('/cycle-entries');
 
   constructor(private http: HttpClient) {}
 
