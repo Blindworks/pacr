@@ -13,6 +13,8 @@ services:
       APP_CORS_ALLOWED_ORIGINS: http://localhost,http://localhost:4200,http://localhost:4201,http://192.168.1.100:4201
       STRAVA_REDIRECT_URI: http://localhost/api/strava/callback
       STRAVA_FRONTEND_URL: http://localhost
+      STRAVA_CLIENT_SECRET: ${STRAVA_CLIENT_SECRET}
+      STRAVA_CLIENT_ID: ${STRAVA_CLIENT_ID}
       UPLOAD_PATH: /app/uploads
       MAIL_PASSWORD: ${MAIL_PASSWORD}
       MAIL_USERNAME: ${MAIL_USERNAME}
