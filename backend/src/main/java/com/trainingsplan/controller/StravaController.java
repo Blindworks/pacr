@@ -32,7 +32,7 @@ public class StravaController {
     @GetMapping("/callback")
     public void callback(@RequestParam String code, HttpServletResponse response) throws IOException {
         stravaService.exchangeCodeForToken(code);
-        response.sendRedirect("http://localhost:4200/overview?strava=connected");
+        response.sendRedirect(stravaService.getFrontendCallbackRedirectUrl());
     }
 
     @GetMapping("/status")

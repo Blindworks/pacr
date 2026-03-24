@@ -103,6 +103,10 @@ public class StravaService {
                 "&scope=activity:read_all";
     }
 
+    public String getFrontendCallbackRedirectUrl() {
+        return frontendUrl.replaceAll("/+$", "") + "/overview?strava=connected";
+    }
+
     public void exchangeCodeForToken(String code) {
         MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
         formData.add("client_id", clientId);
