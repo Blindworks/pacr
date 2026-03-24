@@ -11,8 +11,8 @@ services:
       DB_USERNAME: pacr
       DB_PASSWORD: ${DB_PASSWORD}
       APP_CORS_ALLOWED_ORIGINS: http://localhost,http://localhost:4200,http://localhost:4201,http://192.168.1.100:4201
-      STRAVA_REDIRECT_URI: http://localhost:4201/api/strava/callback
-      STRAVA_FRONTEND_URL: http://localhost:4201
+      STRAVA_REDIRECT_URI: http://192.168.1.100:4201/api/strava/callback
+      STRAVA_FRONTEND_URL: http://192.168.1.100:4201
       STRAVA_CLIENT_SECRET: ${STRAVA_CLIENT_SECRET}
       STRAVA_CLIENT_ID: ${STRAVA_CLIENT_ID}
       UPLOAD_PATH: /app/uploads
