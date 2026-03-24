@@ -3,6 +3,7 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
 import { NgClass } from '@angular/common';
 import { PaceCalculatorService } from '../../services/pace-calculator.service';
 import { UserService } from '../../services/user.service';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-sidebar',
@@ -16,7 +17,13 @@ export class Sidebar implements OnInit, OnDestroy {
   profileImageUrl = signal<string | null>(null);
 
   private readonly paceCalc = inject(PaceCalculatorService);
+  private readonly authService = inject(AuthService);
   protected readonly userService = inject(UserService);
+
+  readonly isAdmin = computed(() => {
+    const role = this.userService.currentUser()?.role ?? this.authService.getRole();
+    return role === 'ADMIN';
+  });
 
   readonly membershipLabel = computed(() => {
     const role = this.userService.currentUser()?.role;
