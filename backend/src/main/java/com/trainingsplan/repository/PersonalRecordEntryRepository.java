@@ -20,4 +20,10 @@ public interface PersonalRecordEntryRepository extends JpaRepository<PersonalRec
 
     @Query("SELECT COUNT(e) > 0 FROM PersonalRecordEntry e WHERE e.id = :entryId AND e.personalRecord.user.id = :userId")
     boolean existsByIdAndUserId(@Param("entryId") Long entryId, @Param("userId") Long userId);
+
+    @Query("SELECT COUNT(e) FROM PersonalRecordEntry e WHERE e.personalRecord.user.id = :userId")
+    long countByUserId(@Param("userId") Long userId);
+
+    @Query("SELECT COUNT(DISTINCT e.personalRecord.id) FROM PersonalRecordEntry e WHERE e.personalRecord.user.id = :userId")
+    long countDistinctPersonalRecordsByUserId(@Param("userId") Long userId);
 }

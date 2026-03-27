@@ -2,12 +2,13 @@ import { Component, signal, inject } from '@angular/core';
 import { Router, RouterOutlet, NavigationEnd } from '@angular/router';
 import { Sidebar } from './components/sidebar/sidebar';
 import { PaceCalculatorDialog } from './components/pace-calculator/pace-calculator-dialog';
+import { Toast } from './components/toast/toast';
 import { filter, map, startWith } from 'rxjs/operators';
 import { toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, Sidebar, PaceCalculatorDialog],
+  imports: [RouterOutlet, Sidebar, PaceCalculatorDialog, Toast],
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })

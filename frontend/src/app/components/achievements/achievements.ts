@@ -1,0 +1,77 @@
+import { Component, OnInit, inject, signal, ElementRef, ViewChild } from '@angular/core';
+import { AchievementService, Achievement } from '../../services/achievement.service';
+
+@Component({
+  selector: 'app-achievements',
+  standalone: true,
+  templateUrl: './achievements.html',
+  styleUrl: './achievements.scss'
+})
+export class Achievements implements OnInit {
+  private readonly achievementService = inject(AchievementService);
+
+  achievements = signal<Achievement[]>([]);
+  loading = signal(true);
+  selectedAchievement = signal<Achievement | null>(null);
+
+  @ViewChild('detailDialog') detailDialogRef!: ElementRef<HTMLDialogElement>;
+
+  readonly categories = [
+    { key: 'DISTANCE', label: 'Distance Milestones', icon: 'directions_run' },
+    { key: 'STREAK', label: 'Training Streaks', icon: 'local_fire_department' },
+    { key: 'PR', label: 'Personal Records', icon: 'emoji_events' },
+    { key: 'PLAN_COMPLETION', label: 'Plan Completion', icon: 'task_alt' }
+  ];
+
+  ngOnInit(): void {
+    this.achievementService.getAll().subscribe({
+      next: data => {
+        this.achievements.set(data);
+        this.loading.set(false);
+      },
+      error: () => this.loading.set(false)
+    });
+  }
+
+  getByCategory(category: string): Achievement[] {
+    return this.achievements().filter(a => a.category === category);
+  }
+
+  openDetail(achievement: Achievement): void {
+    this.selectedAchievement.set(achievement);
+    this.detailDialogRef?.nativeElement?.showModal();
+  }
+
+  closeDetail(): void {
+    this.detailDialogRef?.nativeElement?.close();
+    this.selectedAchievement.set(null);
+  }
+
+  onDialogClick(event: MouseEvent): void {
+    const dialog = this.detailDialogRef.nativeElement;
+    const rect = dialog.getBoundingClientRect();
+    if (
+      event.clientX < rect.left || event.clientX > rect.right ||
+      event.clientY < rect.top || event.clientY > rect.bottom
+    ) {
+      this.closeDetail();
+    }
+  }
+
+  formatProgress(a: Achievement): string {
+    if (a.threshold <= 1) {
+      return a.unlocked ? 'Completed' : 'Not yet';
+    }
+    const current = a.currentValue ?? 0;
+    if (a.category === 'DISTANCE') {
+      return `${Math.round(current)} / ${Math.round(a.threshold)} km`;
+    }
+    return `${Math.round(current)} / ${Math.round(a.threshold)}`;
+  }
+
+  formatDate(dateStr: string | null): string {
+    if (!dateStr) return '';
+    const d = new Date(dateStr);
+    return d.toLocaleDateString('de-DE', { day: '2-digit', month: 'short', year: 'numeric' });
+  }
+}

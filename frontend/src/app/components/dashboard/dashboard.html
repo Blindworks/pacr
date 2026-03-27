@@ -111,6 +111,28 @@
 
   </div>
 
+  <!-- ── Streak Counter ── -->
+  <div class="streak-row" *ngIf="streak() as s">
+    <div class="stat-card streak-card">
+      <div class="stat-icon stat-icon--streak">
+        <span class="material-symbols-outlined">local_fire_department</span>
+      </div>
+      <div class="stat-body">
+        <p class="stat-label">Aktuelle Serie</p>
+        <p class="stat-value">{{ s.currentStreak }} <span class="stat-unit">Tage am Stück</span></p>
+      </div>
+    </div>
+    <div class="stat-card" *ngIf="s.longestStreak > 0">
+      <div class="stat-icon stat-icon--amber">
+        <span class="material-symbols-outlined">military_tech</span>
+      </div>
+      <div class="stat-body">
+        <p class="stat-label">Längste Serie</p>
+        <p class="stat-value">{{ s.longestStreak }} <span class="stat-unit">Tage</span></p>
+      </div>
+    </div>
+  </div>
+
   <!-- ── Stats Row: Strain + Load Status ── -->
   <div class="stats-row">
     <div class="stat-card">
