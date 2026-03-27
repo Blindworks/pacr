@@ -22,4 +22,10 @@ public interface UserAchievementRepository extends JpaRepository<UserAchievement
     long countByUserIdAndUnlockedAtIsNotNull(Long userId);
 
     List<UserAchievement> findByUserIdAndUnlockedAtAfter(Long userId, LocalDateTime after);
+
+    List<UserAchievement> findByAchievementId(Long achievementId);
+
+    long countByAchievementIdAndUnlockedAtIsNotNull(Long achievementId);
+
+    long countByAchievementIdAndUnlockedAtIsNull(Long achievementId);
 }

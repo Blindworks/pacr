@@ -56,6 +56,18 @@ export const adminRoutes: Routes = [
         loadComponent: () => import('./users/user-form/user-form').then(m => m.UserForm)
       },
       {
+        path: 'achievements',
+        loadComponent: () => import('./achievements/achievement-list/achievement-list').then(m => m.AchievementList)
+      },
+      {
+        path: 'achievements/new',
+        loadComponent: () => import('./achievements/achievement-form/achievement-form').then(m => m.AchievementForm)
+      },
+      {
+        path: 'achievements/:id/edit',
+        loadComponent: () => import('./achievements/achievement-form/achievement-form').then(m => m.AchievementForm)
+      },
+      {
         path: 'news',
         loadComponent: () => import('./news/news-list/news-list').then(m => m.NewsList)
       },

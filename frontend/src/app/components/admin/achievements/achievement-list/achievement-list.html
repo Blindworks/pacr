@@ -1,0 +1,118 @@
+<div class="list-page">
+  <div class="list-header">
+    <h2>Achievements</h2>
+    <button class="btn-primary" (click)="goNew()">+ Neues Achievement</button>
+  </div>
+
+  @if (isLoading()) {
+    <p class="loading">Wird geladen…</p>
+  } @else if (achievements().length === 0) {
+    <p class="empty">Noch keine Achievements vorhanden.</p>
+  } @else {
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Icon</th>
+          <th>Name</th>
+          <th>Kategorie</th>
+          <th>Schwelle</th>
+          <th>Status</th>
+          <th>Erreicht</th>
+          <th>In Arbeit</th>
+          <th>Aktionen</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (item of achievements(); track item.id) {
+          <tr>
+            <td class="cell-icon">
+              <span class="material-symbols-outlined">{{ item.icon }}</span>
+            </td>
+            <td>
+              <span class="achievement-name">{{ item.name }}</span>
+              @if (item.timeBound) {
+                <span class="timeframe-hint">{{ formatDate(item.validFrom) }} – {{ formatDate(item.validUntil) }}</span>
+              }
+            </td>
+            <td>
+              <span class="badge badge--category">{{ categoryLabel(item.category) }}</span>
+            </td>
+            <td>{{ item.threshold }}</td>
+            <td>
+              <span class="badge" [class]="statusClass(item)">{{ statusLabel(item) }}</span>
+            </td>
+            <td class="cell-count">
+              <button class="count-btn" [class.has-users]="item.unlockedCount > 0" (click)="showUsers(item)">
+                <span class="material-symbols-outlined">emoji_events</span>
+                {{ item.unlockedCount }}
+              </button>
+            </td>
+            <td class="cell-count">
+              <span class="in-progress-count">{{ item.inProgressCount }}</span>
+            </td>
+            <td class="actions">
+              <button class="btn-icon" (click)="edit(item)" title="Bearbeiten">
+                <span class="material-symbols-outlined">edit</span>
+              </button>
+              <button class="btn-icon btn-icon--danger" (click)="delete(item)" title="Löschen">
+                <span class="material-symbols-outlined">delete</span>
+              </button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+</div>
+
+<!-- Users Dialog -->
+<dialog #usersDialog class="users-dialog" (click)="onDialogClick($event)">
+  @if (selectedAchievement(); as a) {
+    <div class="dialog-content">
+      <div class="dialog-header">
+        <span class="material-symbols-outlined dialog-icon">{{ a.icon }}</span>
+        <div>
+          <h3>{{ a.name }}</h3>
+          <p class="dialog-subtitle">{{ a.unlockedCount }} erreicht · {{ a.inProgressCount }} in Arbeit</p>
+        </div>
+      </div>
+
+      @if (a.unlockedUsers && a.unlockedUsers.length > 0) {
+        <table class="users-table">
+          <thead>
+            <tr>
+              <th>Benutzer</th>
+              <th>Fortschritt</th>
+              <th>Erreicht am</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (user of a.unlockedUsers; track user.userId) {
+              <tr [class.unlocked]="user.unlockedAt !== null">
+                <td>
+                  <span class="user-name">{{ fullName(user) }}</span>
+                  <span class="user-username">{{ user.username }}</span>
+                </td>
+                <td>{{ user.currentValue }} / {{ a.threshold }}</td>
+                <td>
+                  @if (user.unlockedAt) {
+                    <span class="unlocked-badge">
+                      <span class="material-symbols-outlined">check_circle</span>
+                      {{ formatDateTime(user.unlockedAt) }}
+                    </span>
+                  } @else {
+                    <span class="in-progress-label">In Arbeit</span>
+                  }
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      } @else {
+        <p class="empty-users">Noch niemand hat dieses Achievement begonnen.</p>
+      }
+
+      <button class="btn-secondary dialog-close" (click)="closeUsersDialog()">Schließen</button>
+    </div>
+  }
+</dialog>
