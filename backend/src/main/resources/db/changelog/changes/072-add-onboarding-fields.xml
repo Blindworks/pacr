@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="072-add-onboarding-completed" author="trainingsplan">
+        <preConditions onFail="MARK_RAN">
+            <not><columnExists tableName="users" columnName="onboarding_completed"/></not>
+        </preConditions>
+        <addColumn tableName="users">
+            <column name="onboarding_completed" type="BOOLEAN" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="072-add-target-distance" author="trainingsplan">
+        <preConditions onFail="MARK_RAN">
+            <not><columnExists tableName="users" columnName="target_distance"/></not>
+        </preConditions>
+        <addColumn tableName="users">
+            <column name="target_distance" type="VARCHAR(20)"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="072-add-weekly-volume-km" author="trainingsplan">
+        <preConditions onFail="MARK_RAN">
+            <not><columnExists tableName="users" columnName="weekly_volume_km"/></not>
+        </preConditions>
+        <addColumn tableName="users">
+            <column name="weekly_volume_km" type="VARCHAR(10)"/>
+        </addColumn>
+    </changeSet>
+
+</databaseChangeLog>

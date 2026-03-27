@@ -26,6 +26,9 @@ export interface UserProfile {
   subscriptionPlan: string | null;
   subscriptionExpiresAt: string | null;
   lastLoginAt: string | null;
+  onboardingCompleted: boolean;
+  targetDistance: string | null;
+  weeklyVolumeKm: string | null;
 }
 
 export interface UpdateUserRequest {
@@ -46,6 +49,8 @@ export interface UpdateUserRequest {
   role?: string | null;
   subscriptionPlan?: string | null;
   subscriptionExpiresAt?: string | null;
+  targetDistance?: string | null;
+  weeklyVolumeKm?: string | null;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -83,6 +88,16 @@ export class UserService {
     const formData = new FormData();
     formData.append('file', file);
     return this.http.post<void>(`${BASE}/${id}/profile-image`, formData);
+  }
+
+  completeOnboarding(): Observable<UserProfile> {
+    return this.http.put<UserProfile>(apiUrl('/users/me/complete-onboarding'), {}).pipe(
+      tap(user => this.currentUser.set(user))
+    );
+  }
+
+  setupOnboardingPlan(planId: number, startDate: string): Observable<any> {
+    return this.http.post(apiUrl('/users/me/onboarding-plan-setup'), { planId, startDate });
   }
 
   getProfileImage(id: number): Observable<Blob> {

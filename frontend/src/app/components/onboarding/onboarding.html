@@ -1,0 +1,322 @@
+<div class="onboarding">
+  <!-- Header -->
+  <header class="ob-header">
+    <span class="logo">PACR</span>
+    <span class="material-symbols-outlined user-icon">account_circle</span>
+  </header>
+
+  <!-- Progress Bar -->
+  <div class="progress-track">
+    <div class="progress-fill" [style.width.%]="progress()"></div>
+  </div>
+
+  <!-- Main Content -->
+  <main class="ob-main">
+
+    <!-- ═══════════════════ STEP 1: BASICS ═══════════════════ -->
+    @if (currentStep() === 1) {
+      <section class="step step-basics">
+        <span class="phase-label">{{ phaseLabels[1] }}</span>
+
+        <h1 class="mega-title">
+          WELCOME TO PACR,<br>
+          <span class="accent">RUNNER!</span>
+        </h1>
+
+        <p class="step-desc">
+          Let's calibrate your performance engine. Provide your basic metrics
+          to generate your initial kinetic profile.
+        </p>
+
+        <div class="form-section">
+          <span class="field-label">IDENTITY SELECTION</span>
+          <div class="gender-cards">
+            <button class="gender-card" [class.selected]="gender() === 'Male'" (click)="selectGender('Male')">
+              <span class="material-symbols-outlined">male</span>
+              <span>MALE</span>
+            </button>
+            <button class="gender-card" [class.selected]="gender() === 'Female'" (click)="selectGender('Female')">
+              <span class="material-symbols-outlined">female</span>
+              <span>FEMALE</span>
+            </button>
+            <button class="gender-card" [class.selected]="gender() === 'Non-binary'" (click)="selectGender('Non-binary')">
+              <span class="material-symbols-outlined">transgender</span>
+              <span>NON-BINARY</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="metrics-row">
+          <div class="metric-field">
+            <span class="field-label">CHRONOLOGICAL AGE</span>
+            <div class="input-wrap">
+              <input type="number" [ngModel]="age()" (ngModelChange)="age.set($event)" placeholder="28" />
+              <span class="input-unit">YEARS</span>
+            </div>
+          </div>
+          <div class="metric-field">
+            <span class="field-label">VERTICAL REACH</span>
+            <div class="input-wrap">
+              <input type="number" [ngModel]="height()" (ngModelChange)="height.set($event)" placeholder="178" />
+              <span class="input-unit">CM</span>
+            </div>
+          </div>
+          <div class="metric-field">
+            <span class="field-label">MASS INDEX</span>
+            <div class="input-wrap">
+              <input type="number" [ngModel]="weight()" (ngModelChange)="weight.set($event)" placeholder="72" />
+              <span class="input-unit">KG</span>
+            </div>
+          </div>
+        </div>
+
+        <p class="quote">"PRECISION IS THE ULTIMATE SPEED."</p>
+      </section>
+    }
+
+    <!-- ═══════════════════ STEP 2: INTELLIGENCE OPT-IN ═══════════════════ -->
+    @if (currentStep() === 2) {
+      <section class="step step-intel">
+        <div class="phase-row">
+          <span class="phase-label">{{ phaseLabels[2] }}</span>
+          <span class="progress-pct">{{ progress() | number:'1.0-0' }}% COMPLETE</span>
+        </div>
+
+        <h1 class="mega-title">
+          CHOOSE YOUR<br><span class="accent">INTEL</span>
+        </h1>
+
+        <p class="step-desc">
+          Supercharge your performance with specialized environmental and
+          physiological tracking modules.
+        </p>
+
+        <div class="intel-cards">
+          <button class="intel-card" [class.selected]="cycleEnabled()" (click)="toggleIntel('cycle')">
+            <div class="intel-card-top">
+              <span class="material-symbols-outlined">nights_stay</span>
+              <div class="toggle-dot" [class.active]="cycleEnabled()">
+                @if (cycleEnabled()) {
+                  <span class="material-symbols-outlined">check</span>
+                }
+              </div>
+            </div>
+            <h3>CYCLE INTELLIGENCE</h3>
+            <p>Pro-active training adjustments based on your natural physiological rhythms and recovery windows.</p>
+          </button>
+
+          <button class="intel-card" [class.selected]="bioWeatherEnabled()" (click)="toggleIntel('bioWeather')">
+            <div class="intel-card-top">
+              <span class="material-symbols-outlined">cloudy_snowing</span>
+              <div class="toggle-dot" [class.active]="bioWeatherEnabled()">
+                @if (bioWeatherEnabled()) {
+                  <span class="material-symbols-outlined">check</span>
+                }
+              </div>
+            </div>
+            <h3>BIO-WEATHER</h3>
+            <p>Real-time environmental alerts for air quality, humidity, and pressure shifts that affect your output.</p>
+          </button>
+
+          <button class="intel-card" [class.selected]="asthmaEnabled()" (click)="toggleIntel('asthma')">
+            <div class="intel-card-top">
+              <span class="material-symbols-outlined">pulmonology</span>
+              <div class="toggle-dot" [class.active]="asthmaEnabled()">
+                @if (asthmaEnabled()) {
+                  <span class="material-symbols-outlined">check</span>
+                }
+              </div>
+            </div>
+            <h3>ASTHMA TRACKING</h3>
+            <p>Continuous respiratory monitoring and event logging for performance safety in varying altitudes.</p>
+          </button>
+        </div>
+
+        <p class="info-note">
+          <span class="material-symbols-outlined">info</span>
+          THESE FEATURES ARE OPTIONAL AND CAN BE MANAGED LATER IN SETTINGS.
+        </p>
+      </section>
+    }
+
+    <!-- ═══════════════════ STEP 3: GOAL ASSESSMENT ═══════════════════ -->
+    @if (currentStep() === 3) {
+      <section class="step step-goals">
+        <div class="phase-row">
+          <span class="phase-label">{{ phaseLabels[3] }}</span>
+          <span class="progress-pct">{{ progress() | number:'1.0-0' }}% COMPLETE</span>
+        </div>
+
+        <h1 class="mega-title">
+          WHAT'S YOUR NEXT<br><span class="accent">FINISH LINE?</span>
+        </h1>
+
+        <div class="goals-layout">
+          <div class="distance-section">
+            <span class="field-label">TARGET DISTANCE</span>
+            <div class="distance-cards">
+              @for (d of ['5K', '10K', 'HALF_MARATHON', 'MARATHON', 'FUN']; track d) {
+                <button class="distance-card" [class.selected]="targetDistance() === d" (click)="selectDistance(d)">
+                  <div class="dist-info">
+                    <strong>{{ getDistanceLabel(d) }}</strong>
+                    <span class="dist-sub">{{ getDistanceSub(d) }}</span>
+                  </div>
+                  @if (targetDistance() === d) {
+                    <span class="material-symbols-outlined check-icon">check_circle</span>
+                  }
+                </button>
+              }
+            </div>
+          </div>
+
+          <div class="volume-section">
+            <span class="field-label">CURRENT WEEKLY VOLUME</span>
+            <div class="volume-chips">
+              @for (v of ['0_10', '10_30', '20_40', '40_60', '60_PLUS']; track v) {
+                <button class="volume-chip" [class.selected]="weeklyVolume() === v" (click)="selectVolume(v)">
+                  {{ getVolumeLabel(v) }}
+                </button>
+              }
+            </div>
+
+            <div class="volume-hint">
+              <p>Your current volume will define the <span class="accent-text">acceleration phase</span> of your
+                customized training engine. We adjust the load to prevent injury while maximizing adaptation.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+    }
+
+    <!-- ═══════════════════ STEP 4: PLAN SELECTION ═══════════════════ -->
+    @if (currentStep() === 4) {
+      <section class="step step-plan">
+        <span class="phase-label">{{ phaseLabels[4] }}</span>
+
+        <h1 class="mega-title">
+          YOUR KINETIC<br><span class="accent">ENGINE IS READY</span>
+        </h1>
+
+        <p class="step-desc">
+          Based on your profile, we've engineered a high-performance training
+          protocol optimized for endurance gains and injury prevention.
+        </p>
+
+        @if (availablePlans().length > 0) {
+          <div class="plan-layout">
+            <div class="plan-section">
+              @for (plan of availablePlans(); track plan.id) {
+                <button class="plan-card" [class.selected]="selectedPlan()?.id === plan.id" (click)="selectPlan(plan)">
+                  @if (selectedPlan()?.id === plan.id) {
+                    <span class="recommended-badge">RECOMMENDED</span>
+                  }
+                  <span class="material-symbols-outlined plan-check">check_circle</span>
+                  <h3>{{ plan.name }}</h3>
+                  <div class="plan-stats">
+                    @if (plan.competitionType) {
+                      <div class="stat">
+                        <span class="stat-val">{{ plan.competitionType }}</span>
+                        <span class="stat-label">DISTANCE</span>
+                      </div>
+                    }
+                    @if (plan.trainingCount) {
+                      <div class="stat">
+                        <span class="stat-val">{{ plan.trainingCount }}</span>
+                        <span class="stat-label">SESSIONS</span>
+                      </div>
+                    }
+                  </div>
+                </button>
+              }
+            </div>
+
+            <div class="start-section">
+              <div class="start-card">
+                <h3>
+                  <span class="material-symbols-outlined">calendar_today</span>
+                  SET START DATE
+                </h3>
+                <div class="start-options">
+                  <button class="start-opt" [class.selected]="startDateMode() === 'immediate'" (click)="setStartMode('immediate')">
+                    <strong>IMMEDIATE</strong>
+                    <span>Next Monday</span>
+                  </button>
+                  <button class="start-opt" [class.selected]="startDateMode() === 'custom'" (click)="setStartMode('custom')">
+                    <strong>CUSTOM START</strong>
+                    <span>Select from calendar</span>
+                  </button>
+                </div>
+                @if (startDateMode() === 'custom') {
+                  <input type="date" class="date-input"
+                    [ngModel]="customStartDate()"
+                    (ngModelChange)="customStartDate.set($event)" />
+                }
+              </div>
+            </div>
+          </div>
+        } @else {
+          <div class="no-plans">
+            <span class="material-symbols-outlined">info</span>
+            <p>No training plans available yet. You can skip this step and add a plan later from the Training Plans section.</p>
+          </div>
+        }
+      </section>
+    }
+
+    <!-- ═══════════════════ STEP 5: FINAL SETUP ═══════════════════ -->
+    @if (currentStep() === 5) {
+      <section class="step step-final">
+        <span class="phase-label">{{ phaseLabels[5] }}</span>
+
+        <h1 class="mega-title">
+          YOU'RE READY<br>TO <span class="accent">RUN.</span>
+        </h1>
+
+        <div class="final-layout">
+          <div class="profile-status">
+            <span class="material-symbols-outlined status-icon">check_circle</span>
+            <div>
+              <span class="status-label">PROFILE STATUS</span>
+              <strong class="status-value">ENGINE PRIMED</strong>
+            </div>
+          </div>
+
+          @if (selectedPlan()) {
+            <div class="final-card blueprint-card">
+              <span class="card-badge">SELECTED BLUEPRINT</span>
+              <h3>{{ selectedPlan()!.name }}</h3>
+              <div class="plan-meta">
+                @if (selectedPlan()!.competitionType) {
+                  <span>{{ selectedPlan()!.competitionType }}</span>
+                }
+                @if (selectedPlan()!.trainingCount) {
+                  <span>{{ selectedPlan()!.trainingCount }} Sessions</span>
+                }
+              </div>
+            </div>
+          }
+        </div>
+
+        <button class="cta-button" (click)="goToDashboard()" [disabled]="saving()">
+          {{ saving() ? 'INITIALIZING...' : 'GO TO DASHBOARD' }}
+        </button>
+        <p class="cta-sub">SYNCING BIOMETRICS // INITIALIZING ENGINE</p>
+      </section>
+    }
+
+  </main>
+
+  <!-- Navigation -->
+  @if (currentStep() < 5) {
+    <nav class="ob-nav">
+      <button class="nav-btn nav-prev" [disabled]="currentStep() === 1" (click)="prevStep()">
+        <span class="material-symbols-outlined">arrow_back</span>
+        PREVIOUS
+      </button>
+      <button class="nav-btn nav-next" (click)="nextStep()" [disabled]="saving()">
+        {{ saving() ? 'SAVING...' : 'NEXT' }}
+        <span class="material-symbols-outlined">arrow_forward</span>
+      </button>
+    </nav>
+  }
+</div>

@@ -34,6 +34,12 @@ export const routes: Routes = [
     data: { fullPage: true }
   },
   {
+    path: 'onboarding',
+    canActivate: [authGuard],
+    loadComponent: () => import('./components/onboarding/onboarding').then(m => m.Onboarding),
+    data: { fullPage: true }
+  },
+  {
     path: '',
     pathMatch: 'full',
     canActivate: [authGuard],

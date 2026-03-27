@@ -57,13 +57,20 @@ public class UserService {
                 .orElseThrow(() -> new RuntimeException("User not found: " + id));
     }
 
+    public User completeOnboarding(Long userId) {
+        User user = findById(userId);
+        user.setOnboardingCompleted(true);
+        return userRepository.save(user);
+    }
+
     public User updateUser(Long id, String username, String email,
                            String firstName, String lastName,
                            LocalDate dateOfBirth, Integer heightCm, Double weightKg,
                            Integer maxHeartRate, Integer hrRest, String gender, String status,
                            Integer dwdRegionId, boolean asthmaTrackingEnabled,
                            boolean cycleTrackingEnabled, String role,
-                           String subscriptionPlan, LocalDateTime subscriptionExpiresAt) {
+                           String subscriptionPlan, LocalDateTime subscriptionExpiresAt,
+                           String targetDistance, String weeklyVolumeKm) {
         User user = findById(id);
         UserStatus oldStatus = user.getStatus();
         SubscriptionPlan oldPlan = user.getSubscriptionPlan();
@@ -90,6 +97,8 @@ public class UserService {
             user.setSubscriptionPlan(SubscriptionPlan.valueOf(subscriptionPlan));
         }
         user.setSubscriptionExpiresAt(subscriptionExpiresAt);
+        user.setTargetDistance(targetDistance);
+        user.setWeeklyVolumeKm(weeklyVolumeKm);
         User saved = userRepository.save(user);
         User caller = securityUtils.getCurrentUser();
         auditLogService.log(caller, AuditAction.USER_UPDATED, "USER", String.valueOf(id), null);

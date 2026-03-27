@@ -253,6 +253,21 @@
       </div>
     </article>
 
+    <!-- Onboarding -->
+    <article class="section">
+      <div class="section-head">
+        <span class="material-symbols-outlined">rocket_launch</span>
+        <h2>Onboarding</h2>
+      </div>
+      <div class="toggle-row" style="cursor: pointer" (click)="restartOnboarding()">
+        <div class="toggle-info">
+          <span class="toggle-title">Onboarding wiederholen</span>
+          <span class="toggle-sub">Durchlaufe die Einrichtung erneut, um dein Profil und deine Ziele anzupassen</span>
+        </div>
+        <span class="material-symbols-outlined" style="color: var(--primary)">arrow_forward</span>
+      </div>
+    </article>
+
     <!-- Footer Actions -->
     <div class="footer-actions">
       <button class="btn-save" type="button" (click)="saveChanges()" [disabled]="saving()">

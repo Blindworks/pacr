@@ -1,8 +1,10 @@
 package com.trainingsplan.controller;
 
+import com.trainingsplan.dto.CompetitionDto;
 import com.trainingsplan.dto.ProfileCompletionDto;
 import com.trainingsplan.entity.User;
 import com.trainingsplan.security.SecurityUtils;
+import com.trainingsplan.service.OnboardingService;
 import com.trainingsplan.service.PaceZoneService;
 import com.trainingsplan.service.UserProfileValidationService;
 import com.trainingsplan.service.UserService;
@@ -26,14 +28,17 @@ public class UserController {
     private final SecurityUtils securityUtils;
     private final UserProfileValidationService userProfileValidationService;
     private final PaceZoneService paceZoneService;
+    private final OnboardingService onboardingService;
 
     public UserController(UserService userService, SecurityUtils securityUtils,
                           UserProfileValidationService userProfileValidationService,
-                          PaceZoneService paceZoneService) {
+                          PaceZoneService paceZoneService,
+                          OnboardingService onboardingService) {
         this.userService = userService;
         this.securityUtils = securityUtils;
         this.userProfileValidationService = userProfileValidationService;
         this.paceZoneService = paceZoneService;
+        this.onboardingService = onboardingService;
     }
 
     public record CreateUserRequest(String username, String email) {}
@@ -61,7 +66,9 @@ public class UserController {
             Boolean cycleTrackingEnabled,
             String role,
             String subscriptionPlan,
-            LocalDateTime subscriptionExpiresAt
+            LocalDateTime subscriptionExpiresAt,
+            String targetDistance,
+            String weeklyVolumeKm
     ) {}
 
     @GetMapping("/me")
@@ -111,7 +118,8 @@ public class UserController {
                     request.maxHeartRate(), request.hrRest(), request.gender(), request.status(),
                     request.dwdRegionId(), Boolean.TRUE.equals(request.asthmaTrackingEnabled()),
                     Boolean.TRUE.equals(request.cycleTrackingEnabled()),
-                    request.role(), request.subscriptionPlan(), request.subscriptionExpiresAt());
+                    request.role(), request.subscriptionPlan(), request.subscriptionExpiresAt(),
+                    request.targetDistance(), request.weeklyVolumeKm());
             return ResponseEntity.ok(updated);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().build();
@@ -171,6 +179,30 @@ public class UserController {
     public ResponseEntity<Void> uploadProfileImage(@PathVariable Long id, @RequestParam("file") MultipartFile file) {
         userService.uploadProfileImage(id, file);
         return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("/me/complete-onboarding")
+    public ResponseEntity<User> completeOnboarding() {
+        User user = securityUtils.getCurrentUser();
+        if (user == null) {
+            return ResponseEntity.status(401).build();
+        }
+        return ResponseEntity.ok(userService.completeOnboarding(user.getId()));
+    }
+
+    @PostMapping("/me/onboarding-plan-setup")
+    public ResponseEntity<CompetitionDto> onboardingPlanSetup(
+            @RequestBody OnboardingService.OnboardingPlanSetupRequest request) {
+        User user = securityUtils.getCurrentUser();
+        if (user == null) {
+            return ResponseEntity.status(401).build();
+        }
+        try {
+            CompetitionDto result = onboardingService.setupPlan(request);
+            return ResponseEntity.ok(result);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     @GetMapping("/{id}/profile-image")

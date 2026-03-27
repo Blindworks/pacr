@@ -19,4 +19,7 @@ public interface TrainingRepository extends JpaRepository<Training, Long> {
 
     @Query("SELECT t FROM Training t LEFT JOIN FETCH t.prepTips WHERE t.id = :id")
     Optional<Training> findByIdWithPrepTips(@Param("id") Long id);
+
+    @Query("SELECT MAX(t.weekNumber) FROM Training t WHERE t.trainingPlan.id = :planId")
+    Integer findMaxWeekNumberByPlanId(@Param("planId") Long planId);
 }

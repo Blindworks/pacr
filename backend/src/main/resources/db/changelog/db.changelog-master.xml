@@ -75,5 +75,6 @@
     <include file="db/changelog/changes/069-add-achievements.xml"/>
     <include file="db/changelog/changes/070-add-user-achievements.xml"/>
     <include file="db/changelog/changes/071-add-achievement-time-bounds.xml"/>
+    <include file="db/changelog/changes/072-add-onboarding-fields.xml"/>
 
 </databaseChangeLog>

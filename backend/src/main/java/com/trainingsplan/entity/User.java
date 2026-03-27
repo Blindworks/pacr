@@ -115,6 +115,15 @@ public class User implements UserDetails {
     @Column(name = "last_login_at")
     private LocalDateTime lastLoginAt;
 
+    @Column(name = "onboarding_completed", nullable = false)
+    private boolean onboardingCompleted = false;
+
+    @Column(name = "target_distance", length = 20)
+    private String targetDistance;
+
+    @Column(name = "weekly_volume_km", length = 10)
+    private String weeklyVolumeKm;
+
     @JsonIgnore
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY, optional = true)
     private StravaToken stravaToken;
@@ -358,4 +367,13 @@ public class User implements UserDetails {
 
     public LocalDateTime getLastLoginAt() { return lastLoginAt; }
     public void setLastLoginAt(LocalDateTime lastLoginAt) { this.lastLoginAt = lastLoginAt; }
+
+    public boolean isOnboardingCompleted() { return onboardingCompleted; }
+    public void setOnboardingCompleted(boolean onboardingCompleted) { this.onboardingCompleted = onboardingCompleted; }
+
+    public String getTargetDistance() { return targetDistance; }
+    public void setTargetDistance(String targetDistance) { this.targetDistance = targetDistance; }
+
+    public String getWeeklyVolumeKm() { return weeklyVolumeKm; }
+    public void setWeeklyVolumeKm(String weeklyVolumeKm) { this.weeklyVolumeKm = weeklyVolumeKm; }
 }

@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, OnDestroy, signal, inject, ViewChild, ElementRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { StravaService } from '../../services/strava.service';
 import { UserService, UserProfile } from '../../services/user.service';
 import { NotificationPreferencesService } from '../../services/notification-preferences.service';
@@ -23,6 +24,7 @@ type Integration = {
 export class Settings implements OnInit, OnDestroy {
   @ViewChild('fileInput') private fileInput!: ElementRef<HTMLInputElement>;
 
+  private readonly router = inject(Router);
   private readonly stravaService = inject(StravaService);
   private readonly userService = inject(UserService);
   private readonly notifPrefsService = inject(NotificationPreferencesService);
@@ -268,6 +270,10 @@ export class Settings implements OnInit, OnDestroy {
         this.saving.set(false);
       }
     });
+  }
+
+  protected restartOnboarding(): void {
+    this.router.navigate(['/onboarding']);
   }
 
   private saveNotificationPreferences(): void {

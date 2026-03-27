@@ -20,8 +20,8 @@ export class App {
   protected readonly showSidebar = toSignal(
     this.router.events.pipe(
       filter(e => e instanceof NavigationEnd),
-      map((e: NavigationEnd) => !['/login', '/signup', '/forgot-password', '/new-password'].some(p => e.urlAfterRedirects.startsWith(p))),
-      startWith(!['/login', '/signup', '/forgot-password', '/new-password'].some(p => this.router.url.startsWith(p)))
+      map((e: NavigationEnd) => !['/login', '/signup', '/forgot-password', '/new-password', '/onboarding'].some(p => e.urlAfterRedirects.startsWith(p))),
+      startWith(!['/login', '/signup', '/forgot-password', '/new-password', '/onboarding'].some(p => this.router.url.startsWith(p)))
     )
   );
 }
