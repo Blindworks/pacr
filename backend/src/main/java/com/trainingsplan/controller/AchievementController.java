@@ -60,6 +60,11 @@ public class AchievementController {
             dto.setIcon(a.getIcon());
             dto.setCategory(a.getCategory().name());
             dto.setThreshold(a.getThreshold());
+            dto.setValidFrom(a.getValidFrom());
+            dto.setValidUntil(a.getValidUntil());
+            dto.setTimeBound(a.isTimeBound());
+            dto.setExpired(a.isExpired());
+            dto.setActive(a.isActive());
 
             UserAchievement ua = userMap.get(a.getId());
             if (ua != null) {

@@ -1,5 +1,6 @@
 package com.trainingsplan.dto;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public class AchievementDto {
@@ -15,6 +16,11 @@ public class AchievementDto {
     private boolean unlocked;
     private LocalDateTime unlockedAt;
     private double progress;
+    private LocalDate validFrom;
+    private LocalDate validUntil;
+    private boolean timeBound;
+    private boolean expired;
+    private boolean active;
 
     public AchievementDto() {}
 
@@ -50,4 +56,19 @@ public class AchievementDto {
 
     public double getProgress() { return progress; }
     public void setProgress(double progress) { this.progress = progress; }
+
+    public LocalDate getValidFrom() { return validFrom; }
+    public void setValidFrom(LocalDate validFrom) { this.validFrom = validFrom; }
+
+    public LocalDate getValidUntil() { return validUntil; }
+    public void setValidUntil(LocalDate validUntil) { this.validUntil = validUntil; }
+
+    public boolean isTimeBound() { return timeBound; }
+    public void setTimeBound(boolean timeBound) { this.timeBound = timeBound; }
+
+    public boolean isExpired() { return expired; }
+    public void setExpired(boolean expired) { this.expired = expired; }
+
+    public boolean isActive() { return active; }
+    public void setActive(boolean active) { this.active = active; }
 }

@@ -10,15 +10,77 @@
       <span>Loading achievements...</span>
     </div>
   } @else {
+    <!-- Time-bound achievements (active challenges) -->
+    @if (getTimeBoundActive().length > 0) {
+      <section class="category-section">
+        <div class="category-header">
+          <span class="material-symbols-outlined category-icon">timer</span>
+          <h2>Active Challenges</h2>
+        </div>
+        <div class="badge-grid">
+          @for (a of getTimeBoundActive(); track a.id) {
+            <div class="badge-card" [class.unlocked]="a.unlocked" [class.time-bound]="true" (click)="openDetail(a)">
+              <div class="badge-icon-wrap" [class.unlocked]="a.unlocked">
+                <span class="material-symbols-outlined badge-icon">{{ a.icon }}</span>
+              </div>
+              <div class="badge-info">
+                <span class="badge-name">{{ a.name }}</span>
+                <span class="badge-timeframe">{{ formatTimeframe(a) }}</span>
+                @if (a.unlocked) {
+                  <span class="badge-date">{{ formatDate(a.unlockedAt) }}</span>
+                } @else {
+                  <div class="badge-progress">
+                    <div class="progress-bar">
+                      <div class="progress-fill" [style.width.%]="a.progress * 100"></div>
+                    </div>
+                    <span class="progress-text">{{ formatProgress(a) }}</span>
+                  </div>
+                }
+              </div>
+            </div>
+          }
+        </div>
+      </section>
+    }
+
+    <!-- Expired challenges -->
+    @if (getTimeBoundExpired().length > 0) {
+      <section class="category-section">
+        <div class="category-header">
+          <span class="material-symbols-outlined category-icon">history</span>
+          <h2>Past Challenges</h2>
+        </div>
+        <div class="badge-grid">
+          @for (a of getTimeBoundExpired(); track a.id) {
+            <div class="badge-card" [class.unlocked]="a.unlocked" [class.expired]="!a.unlocked" (click)="openDetail(a)">
+              <div class="badge-icon-wrap" [class.unlocked]="a.unlocked" [class.expired]="!a.unlocked">
+                <span class="material-symbols-outlined badge-icon">{{ a.icon }}</span>
+              </div>
+              <div class="badge-info">
+                <span class="badge-name">{{ a.name }}</span>
+                <span class="badge-timeframe expired">{{ formatTimeframe(a) }}</span>
+                @if (a.unlocked) {
+                  <span class="badge-date">{{ formatDate(a.unlockedAt) }}</span>
+                } @else {
+                  <span class="badge-expired-label">Expired</span>
+                }
+              </div>
+            </div>
+          }
+        </div>
+      </section>
+    }
+
+    <!-- Permanent achievements by category -->
     @for (cat of categories; track cat.key) {
-      @if (getByCategory(cat.key).length > 0) {
+      @if (getPermanentByCategory(cat.key).length > 0) {
         <section class="category-section">
           <div class="category-header">
             <span class="material-symbols-outlined category-icon">{{ cat.icon }}</span>
             <h2>{{ cat.label }}</h2>
           </div>
           <div class="badge-grid">
-            @for (a of getByCategory(cat.key); track a.id) {
+            @for (a of getPermanentByCategory(cat.key); track a.id) {
               <div class="badge-card" [class.unlocked]="a.unlocked" (click)="openDetail(a)">
                 <div class="badge-icon-wrap" [class.unlocked]="a.unlocked">
                   <span class="material-symbols-outlined badge-icon">{{ a.icon }}</span>
@@ -49,16 +111,34 @@
 <dialog #detailDialog class="detail-dialog" (click)="onDialogClick($event)">
   @if (selectedAchievement(); as a) {
     <div class="dialog-content">
-      <div class="dialog-badge" [class.unlocked]="a.unlocked">
+      <div class="dialog-badge" [class.unlocked]="a.unlocked" [class.expired]="a.expired && !a.unlocked">
         <span class="material-symbols-outlined">{{ a.icon }}</span>
       </div>
       <h3>{{ a.name }}</h3>
       <p class="dialog-desc">{{ a.description }}</p>
 
+      @if (a.timeBound) {
+        <div class="dialog-timeframe">
+          <span class="material-symbols-outlined">calendar_today</span>
+          <span>{{ formatTimeframe(a) }}</span>
+        </div>
+      }
+
       @if (a.unlocked) {
         <div class="dialog-status unlocked">
           <span class="material-symbols-outlined">check_circle</span>
           <span>Unlocked on {{ formatDate(a.unlockedAt) }}</span>
+        </div>
+      } @else if (a.expired) {
+        <div class="dialog-status expired">
+          <span class="material-symbols-outlined">timer_off</span>
+          <span>Challenge expired</span>
+        </div>
+        <div class="dialog-progress">
+          <div class="progress-bar large">
+            <div class="progress-fill expired" [style.width.%]="a.progress * 100"></div>
+          </div>
+          <span class="progress-text">{{ formatProgress(a) }}</span>
         </div>
       } @else {
         <div class="dialog-progress">

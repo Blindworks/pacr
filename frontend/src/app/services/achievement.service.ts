@@ -17,6 +17,11 @@ export interface Achievement {
   unlocked: boolean;
   unlockedAt: string | null;
   progress: number;
+  validFrom: string | null;
+  validUntil: string | null;
+  timeBound: boolean;
+  expired: boolean;
+  active: boolean;
 }
 
 export interface StreakInfo {
