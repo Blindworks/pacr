@@ -16,10 +16,12 @@ import com.trainingsplan.repository.ActivityMetricsRepository;
 import com.trainingsplan.repository.ActivityStreamRepository;
 import com.trainingsplan.repository.CompletedTrainingRepository;
 import com.trainingsplan.repository.StravaTokenRepository;
+import com.trainingsplan.event.TrainingCompletedEvent;
 import com.trainingsplan.security.SecurityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
@@ -66,6 +68,7 @@ public class StravaService {
     private final MetricsKernelService metricsKernelService;
     private final BodyMetricService bodyMetricService;
     private final AuditLogService auditLogService;
+    private final ApplicationEventPublisher eventPublisher;
     private final RestClient restClient;
 
     public StravaService(StravaTokenRepository tokenRepository, ObjectMapper objectMapper,
@@ -77,7 +80,8 @@ public class StravaService {
                          UserProfileValidationService userProfileValidationService,
                          MetricsKernelService metricsKernelService,
                          BodyMetricService bodyMetricService,
-                         AuditLogService auditLogService) {
+                         AuditLogService auditLogService,
+                         ApplicationEventPublisher eventPublisher) {
         this.tokenRepository = tokenRepository;
         this.objectMapper = objectMapper;
         this.completedTrainingRepository = completedTrainingRepository;
@@ -89,6 +93,7 @@ public class StravaService {
         this.metricsKernelService = metricsKernelService;
         this.bodyMetricService = bodyMetricService;
         this.auditLogService = auditLogService;
+        this.eventPublisher = eventPublisher;
         SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
         factory.setConnectTimeout(java.time.Duration.ofSeconds(10));
         factory.setReadTimeout(java.time.Duration.ofSeconds(30));
@@ -280,6 +285,7 @@ public class StravaService {
                 ct.setUser(user);
                 CompletedTraining saved = completedTrainingRepository.save(ct);
                 fetchStreamsAndPersistMetrics(dto.getId(), saved, accessToken, user);
+                eventPublisher.publishEvent(new TrainingCompletedEvent(this, saved, user));
             } catch (Exception e) {
                 log.warn("Failed to persist Strava activity id={}: {}", dto.getId(), e.getMessage());
             }

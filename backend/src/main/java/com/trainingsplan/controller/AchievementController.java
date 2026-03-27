@@ -41,6 +41,10 @@ public class AchievementController {
     @GetMapping
     public ResponseEntity<List<AchievementDto>> getAll() {
         User user = securityUtils.getCurrentUser();
+
+        // Recalculate progress from current data before returning
+        achievementEvaluationService.evaluateAll(user);
+
         List<Achievement> allAchievements = achievementRepository.findAllByOrderBySortOrderAsc();
         Map<Long, UserAchievement> userMap = userAchievementRepository.findByUserId(user.getId())
                 .stream()
