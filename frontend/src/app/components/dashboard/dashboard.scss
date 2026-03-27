@@ -294,10 +294,10 @@
 }
 
 .gauge-sublabel {
-  font-size: 10px;
+  font-size: 0.5rem;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.05em;
   &--good { color: var(--pp); }
   &--warn { color: #f2a60d; }
   &--bad  { color: #ff4444; }
