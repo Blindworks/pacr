@@ -2,6 +2,7 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { DashboardService, DashboardData } from '../../services/dashboard.service';
+import { AchievementService, StreakInfo } from '../../services/achievement.service';
 
 const DAYS_DE = ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'];
 
@@ -14,10 +15,12 @@ const DAYS_DE = ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'];
 })
 export class Dashboard implements OnInit {
   private readonly dashboardService = inject(DashboardService);
+  private readonly achievementService = inject(AchievementService);
 
   data: DashboardData | null = null;
   profileError = signal<string | null>(null);
   missingFields = signal<string[]>([]);
+  streak = signal<StreakInfo | null>(null);
 
   private readonly FIELD_LABELS: Record<string, string> = {
     firstName: 'Vorname',
@@ -43,6 +46,11 @@ export class Dashboard implements OnInit {
           console.error('Dashboard load failed', err);
         }
       }
+    });
+
+    this.achievementService.getStreak().subscribe({
+      next: s => this.streak.set(s),
+      error: () => {}
     });
   }
 

@@ -75,6 +75,11 @@ export const routes: Routes = [
     loadComponent: () => import('./components/statistics/statistics').then(m => m.Statistics)
   },
   {
+    path: 'achievements',
+    canActivate: [authGuard],
+    loadComponent: () => import('./components/achievements/achievements').then(m => m.Achievements)
+  },
+  {
     path: 'elite-upgrade',
     canActivate: [authGuard],
     loadComponent: () => import('./components/elite-upgrade/elite-upgrade').then(m => m.EliteUpgrade)

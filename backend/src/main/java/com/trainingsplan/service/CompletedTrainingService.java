@@ -11,6 +11,8 @@ import com.trainingsplan.repository.CompletedTrainingRepository;
 import com.trainingsplan.security.SecurityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import com.trainingsplan.event.TrainingCompletedEvent;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -40,6 +42,7 @@ public class CompletedTrainingService {
     private final PersonalRecordService personalRecordService;
     private final ObjectMapper objectMapper;
     private final AuditLogService auditLogService;
+    private final ApplicationEventPublisher eventPublisher;
 
     public CompletedTrainingService(CompletedTrainingRepository completedTrainingRepository,
                                     UserTrainingScheduleService userTrainingScheduleService,
@@ -51,7 +54,8 @@ public class CompletedTrainingService {
                                     ActivityStreamRepository activityStreamRepository,
                                     PersonalRecordService personalRecordService,
                                     ObjectMapper objectMapper,
-                                    AuditLogService auditLogService) {
+                                    AuditLogService auditLogService,
+                                    ApplicationEventPublisher eventPublisher) {
         this.completedTrainingRepository = completedTrainingRepository;
         this.userTrainingScheduleService = userTrainingScheduleService;
         this.bodyMetricService = bodyMetricService;
@@ -63,6 +67,7 @@ public class CompletedTrainingService {
         this.personalRecordService = personalRecordService;
         this.objectMapper = objectMapper;
         this.auditLogService = auditLogService;
+        this.eventPublisher = eventPublisher;
     }
 
     /**
@@ -115,6 +120,7 @@ public class CompletedTrainingService {
             try { userTrainingScheduleService.updateCompletion(trainingId, true, "completed"); }
             catch (Exception ignored) {}
         }
+        eventPublisher.publishEvent(new TrainingCompletedEvent(this, savedTraining, currentUser));
         return savedTraining;
     }
 
@@ -151,6 +157,7 @@ public class CompletedTrainingService {
             try { userTrainingScheduleService.updateCompletion(trainingId, true, "completed"); }
             catch (Exception ignored) {}
         }
+        eventPublisher.publishEvent(new TrainingCompletedEvent(this, savedTraining, currentUser));
         return savedTraining;
     }
 
@@ -210,6 +217,7 @@ public class CompletedTrainingService {
             }
         }
 
+        eventPublisher.publishEvent(new TrainingCompletedEvent(this, savedTraining, currentUser));
         return savedTraining;
     }
 
