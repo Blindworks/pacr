@@ -231,27 +231,61 @@
             </div>
 
             <div class="start-section">
-              <div class="start-card">
-                <h3>
+              <!-- Mode Toggle -->
+              <div class="schedule-mode-toggle">
+                <button class="mode-btn" [class.selected]="scheduleMode() === 'startdate'" (click)="setScheduleMode('startdate')">
                   <span class="material-symbols-outlined">calendar_today</span>
-                  SET START DATE
-                </h3>
-                <div class="start-options">
-                  <button class="start-opt" [class.selected]="startDateMode() === 'immediate'" (click)="setStartMode('immediate')">
-                    <strong>IMMEDIATE</strong>
-                    <span>Next Monday</span>
-                  </button>
-                  <button class="start-opt" [class.selected]="startDateMode() === 'custom'" (click)="setStartMode('custom')">
-                    <strong>CUSTOM START</strong>
-                    <span>Select from calendar</span>
-                  </button>
-                </div>
-                @if (startDateMode() === 'custom') {
-                  <input type="date" class="date-input"
-                    [ngModel]="customStartDate()"
-                    (ngModelChange)="customStartDate.set($event)" />
-                }
+                  START DATE
+                </button>
+                <button class="mode-btn" [class.selected]="scheduleMode() === 'competition'" (click)="setScheduleMode('competition')">
+                  <span class="material-symbols-outlined">emoji_events</span>
+                  COMPETITION
+                </button>
               </div>
+
+              @if (scheduleMode() === 'startdate') {
+                <div class="start-card">
+                  <div class="start-options">
+                    <button class="start-opt" [class.selected]="startDateMode() === 'immediate'" (click)="setStartMode('immediate')">
+                      <strong>IMMEDIATE</strong>
+                      <span>Next Monday</span>
+                    </button>
+                    <button class="start-opt" [class.selected]="startDateMode() === 'custom'" (click)="setStartMode('custom')">
+                      <strong>CUSTOM START</strong>
+                      <span>Select from calendar</span>
+                    </button>
+                  </div>
+                  @if (startDateMode() === 'custom') {
+                    <input type="date" class="date-input"
+                      [ngModel]="customStartDate()"
+                      (ngModelChange)="customStartDate.set($event)" />
+                  }
+                </div>
+              }
+
+              @if (scheduleMode() === 'competition') {
+                @if (availableCompetitions().length > 0) {
+                  <div class="competition-list">
+                    @for (comp of availableCompetitions(); track comp.id) {
+                      <button class="competition-item" [class.selected]="selectedCompetition()?.id === comp.id" (click)="selectCompetition(comp)">
+                        <span class="material-symbols-outlined comp-check">check_circle</span>
+                        <div class="comp-info">
+                          <strong>{{ comp.name }}</strong>
+                          <span class="comp-date">{{ formatCompDate(comp.date) }}</span>
+                        </div>
+                        @if (comp.type) {
+                          <span class="comp-type">{{ comp.type }}</span>
+                        }
+                      </button>
+                    }
+                  </div>
+                } @else {
+                  <div class="no-competitions">
+                    <span class="material-symbols-outlined">info</span>
+                    <p>Noch keine Wettkämpfe angelegt. Wähle ein Startdatum.</p>
+                  </div>
+                }
+              }
             </div>
           </div>
         } @else {

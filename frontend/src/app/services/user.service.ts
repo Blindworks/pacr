@@ -96,8 +96,8 @@ export class UserService {
     );
   }
 
-  setupOnboardingPlan(planId: number, startDate: string): Observable<any> {
-    return this.http.post(apiUrl('/users/me/onboarding-plan-setup'), { planId, startDate });
+  setupOnboardingPlan(planId: number, startDate: string, competitionId?: number): Observable<any> {
+    return this.http.post(apiUrl('/users/me/onboarding-plan-setup'), { planId, startDate, competitionId });
   }
 
   getProfileImage(id: number): Observable<Blob> {

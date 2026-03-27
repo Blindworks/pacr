@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { UserService, UserProfile } from '../../services/user.service';
 import { TrainingPlanService, TrainingPlan } from '../../services/training-plan.service';
+import { CompetitionService, Competition } from '../../services/competition.service';
 
 @Component({
   selector: 'app-onboarding',
@@ -16,6 +17,7 @@ export class Onboarding implements OnInit {
   private readonly router = inject(Router);
   private readonly userService = inject(UserService);
   private readonly planService = inject(TrainingPlanService);
+  private readonly competitionService = inject(CompetitionService);
 
   protected readonly currentStep = signal(1);
   protected readonly totalSteps = 5;
@@ -39,8 +41,11 @@ export class Onboarding implements OnInit {
   // Step 4: Plan Selection
   protected readonly availablePlans = signal<TrainingPlan[]>([]);
   protected readonly selectedPlan = signal<TrainingPlan | null>(null);
+  protected readonly scheduleMode = signal<'startdate' | 'competition'>('startdate');
   protected readonly startDateMode = signal<'immediate' | 'custom'>('immediate');
   protected readonly customStartDate = signal('');
+  protected readonly availableCompetitions = signal<Competition[]>([]);
+  protected readonly selectedCompetition = signal<Competition | null>(null);
 
   // Step 5: Final
   protected readonly setupComplete = signal(false);
@@ -68,6 +73,10 @@ export class Onboarding implements OnInit {
     } else {
       this.userService.getMe().subscribe(u => this.prefillFromUser(u));
     }
+    this.competitionService.getAll().subscribe({
+      next: comps => this.availableCompetitions.set(comps),
+      error: () => this.availableCompetitions.set([])
+    });
   }
 
   private prefillFromUser(user: UserProfile): void {
@@ -192,11 +201,19 @@ export class Onboarding implements OnInit {
       return;
     }
 
-    const startDate = this.startDateMode() === 'custom' && this.customStartDate()
-      ? this.customStartDate()
-      : this.getNextMonday();
+    let obs;
+    if (this.scheduleMode() === 'competition') {
+      const comp = this.selectedCompetition();
+      if (!comp) { this.advanceStep(); return; }
+      obs = this.userService.setupOnboardingPlan(plan.id, '', comp.id);
+    } else {
+      const startDate = this.startDateMode() === 'custom' && this.customStartDate()
+        ? this.customStartDate()
+        : this.getNextMonday();
+      obs = this.userService.setupOnboardingPlan(plan.id, startDate);
+    }
 
-    this.userService.setupOnboardingPlan(plan.id, startDate).subscribe({
+    obs.subscribe({
       next: (result: any) => {
         this.setupComplete.set(true);
         if (result?.name) this.competitionName.set(result.name);
@@ -333,6 +350,18 @@ export class Onboarding implements OnInit {
       '60_PLUS': '60km+'
     };
     return labels[v] ?? v;
+  }
+
+  protected setScheduleMode(mode: 'startdate' | 'competition'): void {
+    this.scheduleMode.set(mode);
+  }
+
+  protected selectCompetition(comp: Competition): void {
+    this.selectedCompetition.set(comp);
+  }
+
+  protected formatCompDate(dateStr: string): string {
+    return new Date(dateStr).toLocaleDateString('de-DE', { day: '2-digit', month: 'short', year: 'numeric' });
   }
 
   protected goToDashboard(): void {

@@ -39,7 +39,7 @@ public class OnboardingService {
         this.securityUtils = securityUtils;
     }
 
-    public record OnboardingPlanSetupRequest(Long planId, String startDate) {}
+    public record OnboardingPlanSetupRequest(Long planId, String startDate, Long competitionId) {}
 
     @Transactional
     public CompetitionDto setupPlan(OnboardingPlanSetupRequest request) {
@@ -51,30 +51,53 @@ public class OnboardingService {
         TrainingPlan plan = trainingPlanRepository.findById(request.planId())
                 .orElseThrow(() -> new IllegalArgumentException("Training plan not found: " + request.planId()));
 
-        Integer maxWeek = trainingRepository.findMaxWeekNumberByPlanId(plan.getId());
-        if (maxWeek == null) {
-            maxWeek = 12;
+        Competition competition;
+        CompetitionRegistration registration;
+
+        if (request.competitionId() != null) {
+            // User selected an existing competition — build schedule backwards from its date
+            final Competition existingCompetition = competitionRepository.findById(request.competitionId())
+                    .orElseThrow(() -> new IllegalArgumentException("Competition not found: " + request.competitionId()));
+            competition = existingCompetition;
+
+            registration = registrationRepository
+                    .findByCompetitionIdAndUserId(existingCompetition.getId(), user.getId())
+                    .orElseGet(() -> {
+                        CompetitionRegistration r = new CompetitionRegistration();
+                        r.setCompetition(existingCompetition);
+                        r.setUser(user);
+                        r.setRegisteredAt(LocalDateTime.now());
+                        return r;
+                    });
+            registration.setTrainingPlan(plan);
+            registration = registrationRepository.save(registration);
+        } else {
+            // No competition selected — auto-create one from start date
+            Integer maxWeek = trainingRepository.findMaxWeekNumberByPlanId(plan.getId());
+            if (maxWeek == null) {
+                maxWeek = 12;
+            }
+
+            LocalDate startDate = LocalDate.parse(request.startDate());
+            LocalDate raceDate = startDate.plusWeeks(maxWeek - 1)
+                    .with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY));
+
+            competition = new Competition();
+            competition.setName(buildCompetitionName(user, plan));
+            competition.setDate(raceDate);
+            competition.setDescription("Auto-generated during onboarding");
+            if (plan.getCompetitionType() != null) {
+                competition.setType(plan.getCompetitionType());
+            }
+            competition = competitionRepository.save(competition);
+
+            registration = new CompetitionRegistration();
+            registration.setCompetition(competition);
+            registration.setUser(user);
+            registration.setTrainingPlan(plan);
+            registration.setRegisteredAt(LocalDateTime.now());
+            registration = registrationRepository.save(registration);
         }
-
-        LocalDate startDate = LocalDate.parse(request.startDate());
-        LocalDate raceDate = startDate.plusWeeks(maxWeek)
-                .with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY));
-
-        Competition competition = new Competition();
-        competition.setName(buildCompetitionName(user, plan));
-        competition.setDate(raceDate);
-        competition.setDescription("Auto-generated during onboarding");
-        if (plan.getCompetitionType() != null) {
-            competition.setType(plan.getCompetitionType());
-        }
-        competition = competitionRepository.save(competition);
-
-        CompetitionRegistration registration = new CompetitionRegistration();
-        registration.setCompetition(competition);
-        registration.setUser(user);
-        registration.setTrainingPlan(plan);
-        registration.setRegisteredAt(LocalDateTime.now());
-        registration = registrationRepository.save(registration);
 
         scheduleService.reassignPlan(registration);
 

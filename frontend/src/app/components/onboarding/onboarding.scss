@@ -656,6 +656,143 @@
   }
 }
 
+/* ── Schedule Mode Toggle ────────────────── */
+.schedule-mode-toggle {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+}
+
+.mode-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--panel-border);
+  border-radius: 0.5rem;
+  padding: 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: var(--muted);
+  font-family: var(--font-display);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+
+  .material-symbols-outlined {
+    font-size: 1rem;
+  }
+
+  &:hover {
+    border-color: rgba(202, 253, 0, 0.3);
+    color: var(--text);
+  }
+
+  &.selected {
+    border-color: var(--accent);
+    background: var(--accent-dim);
+    color: var(--accent);
+  }
+}
+
+/* ── Competition List ─────────────────────── */
+.competition-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  max-height: 260px;
+  overflow-y: auto;
+}
+
+.competition-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  border-radius: 0.75rem;
+  padding: 0.85rem 1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: left;
+  color: var(--text);
+  width: 100%;
+
+  &:hover {
+    background: var(--panel-hover);
+    border-color: rgba(202, 253, 0, 0.25);
+  }
+
+  &.selected {
+    border-color: var(--accent);
+    background: var(--accent-dim);
+
+    .comp-check {
+      color: var(--accent);
+    }
+  }
+
+  .comp-check {
+    font-size: 1.1rem;
+    color: var(--muted);
+    flex-shrink: 0;
+  }
+
+  .comp-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    flex: 1;
+
+    strong {
+      font-family: var(--font-display);
+      font-size: 0.85rem;
+      font-weight: 700;
+    }
+
+    .comp-date {
+      font-size: 0.72rem;
+      color: var(--muted);
+    }
+  }
+
+  .comp-type {
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: var(--accent-dim);
+    padding: 0.2rem 0.5rem;
+    border-radius: 0.25rem;
+  }
+}
+
+.no-competitions {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+
+  .material-symbols-outlined {
+    color: var(--accent);
+    font-size: 1.1rem;
+    flex-shrink: 0;
+  }
+
+  p {
+    color: var(--muted);
+    font-size: 0.85rem;
+    margin: 0;
+  }
+}
+
 /* ── Step 5: Final Setup ─────────────────── */
 .final-layout {
   display: grid;
