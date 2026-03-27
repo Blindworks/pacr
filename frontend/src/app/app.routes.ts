@@ -42,6 +42,11 @@ export const routes: Routes = [
   {
     path: '',
     pathMatch: 'full',
+    loadComponent: () => import('./components/landing-redirect/landing-redirect').then(m => m.LandingRedirect),
+    data: { fullPage: true }
+  },
+  {
+    path: 'dashboard',
     canActivate: [authGuard],
     loadComponent: () => import('./components/dashboard/dashboard').then(m => m.Dashboard)
   },

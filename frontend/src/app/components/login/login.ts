@@ -29,7 +29,7 @@ export class Login implements OnInit {
     this.error.set('');
     this.loading.set(true);
     this.auth.login(this.email, this.password).subscribe({
-      next: () => this.router.navigate(['/']),
+      next: () => this.router.navigate(['/dashboard']),
       error: (err) => {
         this.loading.set(false);
         const msg = err?.error?.message ?? err?.error ?? 'Login fehlgeschlagen';

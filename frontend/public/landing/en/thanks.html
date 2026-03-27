@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html class="scroll-smooth" lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>PACR | Thank You</title>
+  <meta content="Thank you for joining early access for PACR." name="description"/>
+  <link href="/landing/pacer_icon.png" rel="icon" type="image/png"/>
+  <link href="https://fonts.googleapis.com" rel="preconnect"/>
+  <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+  <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            charcoal: '#121212',
+            'electric-lime': '#b9f20d',
+            'deep-gray': '#1e1e1e',
+            'soft-gray': '#2a2a2a',
+          },
+          fontFamily: {
+            sans: ['Lexend', 'sans-serif'],
+          },
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-charcoal text-white font-sans antialiased min-h-screen">
+  <main class="min-h-screen flex items-center justify-center px-4 py-16">
+    <section class="max-w-2xl w-full bg-deep-gray border border-white/5 rounded-[2rem] p-8 md:p-12 text-center shadow-2xl">
+      <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-electric-lime text-charcoal text-3xl font-black mb-6">✓</div>
+      <p class="text-electric-lime font-semibold uppercase tracking-[0.2em] text-sm mb-4">Early Access</p>
+      <h1 class="text-4xl md:text-5xl font-extrabold mb-6">Thanks for signing up.</h1>
+      <p class="text-lg text-gray-300 leading-relaxed mb-8">
+        You are now on the PACR waitlist. We will get in touch as soon as there is news about access, beta testing or launch timing.
+      </p>
+      <div class="flex flex-col sm:flex-row gap-3 justify-center">
+        <a class="bg-electric-lime text-charcoal font-bold px-8 py-4 rounded-xl hover:bg-[#a6d80c] transition-colors" href="/landing/en/index.html">Back to home</a>
+        <a class="border border-white/10 text-white font-bold px-8 py-4 rounded-xl hover:bg-white/5 transition-colors" href="/landing/thanks.html" hreflang="de" lang="de">Auf Deutsch ansehen</a>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

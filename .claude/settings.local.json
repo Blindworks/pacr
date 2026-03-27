@@ -42,7 +42,9 @@
       "Bash(wmic process where:*)",
       "Bash(cmd /c:*)",
       "Bash(git checkout:*)",
-      "Bash(timeout:*)"
+      "Bash(timeout:*)",
+      "Bash(mkdir -p \"C:/Users/bened/IdeaProjects/Smart_Trainingsplan/frontend/public/landing/en\")",
+      "Bash(cp -r \"C:/Users/bened/IdeaProjects/Smart_Trainingsplan/webpage/\"* \"C:/Users/bened/IdeaProjects/Smart_Trainingsplan/frontend/public/landing/\")"
     ],
     "deny": [],
     "ask": []

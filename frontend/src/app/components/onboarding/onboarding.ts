@@ -227,11 +227,11 @@ export class Onboarding implements OnInit {
     this.userService.completeOnboarding().subscribe({
       next: () => {
         this.saving.set(false);
-        this.router.navigate(['/']);
+        this.router.navigate(['/dashboard']);
       },
       error: () => {
         this.saving.set(false);
-        this.router.navigate(['/']);
+        this.router.navigate(['/dashboard']);
       }
     });
   }
