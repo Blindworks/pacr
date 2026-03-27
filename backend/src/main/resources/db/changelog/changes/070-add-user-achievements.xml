@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="070-add-user-achievements" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not><tableExists tableName="user_achievements"/></not>
+        </preConditions>
+        <createTable tableName="user_achievements">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="user_id" type="BIGINT">
+                <constraints nullable="false" foreignKeyName="fk_ua_user" references="users(id)"/>
+            </column>
+            <column name="achievement_id" type="BIGINT">
+                <constraints nullable="false" foreignKeyName="fk_ua_achievement" references="achievements(id)"/>
+            </column>
+            <column name="current_value" type="DOUBLE" defaultValueNumeric="0"/>
+            <column name="unlocked_at" type="DATETIME"/>
+            <column name="created_at" type="DATETIME" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" type="DATETIME" defaultValueComputed="CURRENT_TIMESTAMP"/>
+        </createTable>
+        <addUniqueConstraint tableName="user_achievements" columnNames="user_id,achievement_id"
+            constraintName="uq_user_achievement"/>
+    </changeSet>
+
+</databaseChangeLog>
