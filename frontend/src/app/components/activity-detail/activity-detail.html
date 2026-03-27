@@ -38,6 +38,9 @@
             [colorMode]="mapColorMode"
             (colorModeChange)="mapColorMode = $event">
           </app-activity-map>
+          <button class="map-expand-btn" (click)="openMapDialog()" title="Karte vergrößern">
+            <span class="material-symbols-outlined">open_in_full</span>
+          </button>
         } @else {
           <!-- SVG Placeholder (no GPS data) -->
           <svg class="route-svg" viewBox="0 0 800 400" preserveAspectRatio="xMidYMid slice">
@@ -574,4 +577,6 @@
 
     </div>
   </div>
+
+  <app-map-dialog #mapDialog></app-map-dialog>
 }
