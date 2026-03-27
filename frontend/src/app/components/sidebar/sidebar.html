@@ -103,7 +103,7 @@
           <span>Settings</span>
         </a>
         <div class="user-menu-divider"></div>
-        <a routerLink="/login" class="user-menu-item user-menu-item--danger">
+        <a (click)="logout()" class="user-menu-item user-menu-item--danger" style="cursor: pointer;">
           <span class="material-symbols-outlined">logout</span>
           <span>Log out</span>
         </a>

@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, inject, signal, computed } from '@angular/core';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { NgClass } from '@angular/common';
 import { PaceCalculatorService } from '../../services/pace-calculator.service';
 import { UserService } from '../../services/user.service';
@@ -18,6 +18,7 @@ export class Sidebar implements OnInit, OnDestroy {
 
   private readonly paceCalc = inject(PaceCalculatorService);
   private readonly authService = inject(AuthService);
+  private readonly router = inject(Router);
   protected readonly userService = inject(UserService);
 
   readonly isAdmin = computed(() => {
@@ -67,5 +68,10 @@ export class Sidebar implements OnInit, OnDestroy {
 
   openPaceCalculator(): void {
     this.paceCalc.open();
+  }
+
+  logout(): void {
+    this.authService.logout();
+    this.router.navigate(['/login']);
   }
 }
