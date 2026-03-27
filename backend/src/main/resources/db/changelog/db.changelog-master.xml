@@ -72,5 +72,7 @@
     <include file="db/changelog/changes/066-add-user-notification-preferences.xml"/>
     <include file="db/changelog/changes/067-add-app-news.xml"/>
     <include file="db/changelog/changes/068-add-app-news-sent-log.xml"/>
+    <include file="db/changelog/changes/069-add-achievements.xml"/>
+    <include file="db/changelog/changes/070-add-user-achievements.xml"/>
 
 </databaseChangeLog>
