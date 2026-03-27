@@ -55,6 +55,11 @@
   }
 }
 
+// Brighten the dark map tiles for better visibility
+:host ::ng-deep .map-tiles-brighten {
+  filter: brightness(1.4) saturate(0.9);
+}
+
 // Override Leaflet defaults for dark theme
 :host ::ng-deep {
   .leaflet-control-attribution {
