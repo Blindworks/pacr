@@ -1,0 +1,38 @@
+<dialog #dialog class="map-dialog" (click)="onBackdropClick($event)">
+  <div class="map-inner" (click)="$event.stopPropagation()">
+
+    <header class="map-header">
+      <div class="map-header-title">
+        <span class="material-symbols-outlined map-icon">map</span>
+        <span>Routenkarte</span>
+      </div>
+      <div class="map-header-actions">
+        @if (gpsData?.hasHeartRate && gpsData?.hasPace) {
+          <div class="map-toggle">
+            <button class="map-toggle-btn" [class.active]="colorMode === 'pace'" (click)="colorMode = 'pace'">
+              Pace
+            </button>
+            <button class="map-toggle-btn" [class.active]="colorMode === 'hr'" (click)="colorMode = 'hr'">
+              HF
+            </button>
+          </div>
+        }
+        <button class="map-close" (click)="close()">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+    </header>
+
+    <div class="map-body">
+      @if (gpsData) {
+        <app-activity-map
+          [gpsData]="gpsData"
+          [colorMode]="colorMode"
+          [fullscreen]="true"
+          (colorModeChange)="colorMode = $event">
+        </app-activity-map>
+      }
+    </div>
+
+  </div>
+</dialog>

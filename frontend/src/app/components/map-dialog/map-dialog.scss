@@ -1,0 +1,119 @@
+$primary: #b9f20d;
+$surface: #161b22;
+$border: rgba(#b9f20d, 0.1);
+$text: #e6edf3;
+$muted: #8b949e;
+
+.map-dialog {
+  margin: auto;
+  padding: 0;
+  border: 1px solid $border;
+  border-radius: 16px;
+  background: $surface;
+  color: $text;
+  width: min(1200px, 96vw);
+  height: 90vh;
+  overflow: hidden;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.6);
+
+  &::backdrop {
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(4px);
+  }
+}
+
+.map-inner {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+// Header
+.map-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1.25rem;
+  border-bottom: 1px solid $border;
+  background: $surface;
+  flex-shrink: 0;
+}
+
+.map-header-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 600;
+  font-size: 15px;
+  font-family: 'Inter', 'Segoe UI', sans-serif;
+}
+
+.map-icon {
+  font-size: 20px;
+  color: $primary;
+}
+
+.map-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.map-toggle {
+  display: flex;
+  gap: 4px;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 8px;
+  padding: 3px;
+}
+
+.map-toggle-btn {
+  background: transparent;
+  border: none;
+  color: $muted;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 5px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  font-family: 'Inter', 'Segoe UI', sans-serif;
+
+  &:hover {
+    background: rgba($primary, 0.08);
+    color: rgba(255, 255, 255, 0.8);
+  }
+
+  &.active {
+    background: rgba($primary, 0.15);
+    color: $primary;
+  }
+}
+
+.map-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 1px solid $border;
+  border-radius: 8px;
+  padding: 6px;
+  color: $muted;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+
+  .material-symbols-outlined { font-size: 20px; }
+
+  &:hover {
+    background: rgba($primary, 0.08);
+    color: $primary;
+  }
+}
+
+// Map body fills remaining space
+.map-body {
+  flex: 1;
+  position: relative;
+  min-height: 0;
+}

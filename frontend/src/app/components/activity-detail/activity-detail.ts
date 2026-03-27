@@ -1,13 +1,14 @@
-import { Component, OnInit, inject, ChangeDetectorRef, signal } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectorRef, signal, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { ActivityService, ActivityStreamDto, CompletedTraining, ActivityMetrics, ActivityVo2Max, GpsStreamDto } from '../../services/activity.service';
 import { ActivityMapComponent } from '../activity-map/activity-map';
+import { MapDialogComponent } from '../map-dialog/map-dialog';
 
 @Component({
   selector: 'app-activity-detail',
   standalone: true,
-  imports: [CommonModule, ActivityMapComponent],
+  imports: [CommonModule, ActivityMapComponent, MapDialogComponent],
   templateUrl: './activity-detail.html',
   styleUrl: './activity-detail.scss'
 })
@@ -16,6 +17,8 @@ export class ActivityDetail implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly activityService = inject(ActivityService);
+
+  @ViewChild('mapDialog') private mapDialog!: MapDialogComponent;
 
   activity: CompletedTraining | null = null;
   loading = true;
@@ -98,6 +101,12 @@ export class ActivityDetail implements OnInit {
 
   goBack(): void {
     this.router.navigate(['/activities']);
+  }
+
+  openMapDialog(): void {
+    if (this.gpsData) {
+      this.mapDialog.open(this.gpsData, this.mapColorMode);
+    }
   }
 
   fetchStreams(): void {

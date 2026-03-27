@@ -24,6 +24,7 @@ import 'leaflet-hotline';
 export class ActivityMapComponent implements AfterViewInit, OnDestroy, OnChanges {
   @Input({ required: true }) gpsData!: GpsStreamDto;
   @Input() colorMode: 'pace' | 'hr' = 'pace';
+  @Input() fullscreen = false;
   @Output() colorModeChange = new EventEmitter<'pace' | 'hr'>();
 
   readonly mapContainerId = 'activity-map-' + Math.random().toString(36).slice(2, 8);
@@ -61,11 +62,15 @@ export class ActivityMapComponent implements AfterViewInit, OnDestroy, OnChanges
     this.map = L.map(container, {
       zoomControl: false,
       attributionControl: true,
-      scrollWheelZoom: false,
+      scrollWheelZoom: this.fullscreen,
       dragging: true,
-      doubleClickZoom: false,
+      doubleClickZoom: this.fullscreen,
       touchZoom: true
     });
+
+    if (this.fullscreen) {
+      L.control.zoom({ position: 'topleft' }).addTo(this.map);
+    }
 
     L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}{r}.png', {
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/">CARTO</a>',
