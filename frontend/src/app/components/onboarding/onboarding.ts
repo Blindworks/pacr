@@ -59,6 +59,7 @@ export class Onboarding implements OnInit {
   };
 
   private userId = 0;
+  private userSnapshot: UserProfile | null = null;
 
   ngOnInit(): void {
     const user = this.userService.currentUser();
@@ -71,6 +72,7 @@ export class Onboarding implements OnInit {
 
   private prefillFromUser(user: UserProfile): void {
     this.userId = user.id;
+    this.userSnapshot = user;
     if (user.gender) this.gender.set(user.gender);
     if (user.heightCm) this.height.set(String(user.heightCm));
     if (user.weightKg) this.weight.set(String(user.weightKg));
@@ -83,6 +85,28 @@ export class Onboarding implements OnInit {
     this.asthmaEnabled.set(user.asthmaTrackingEnabled ?? false);
     if (user.targetDistance) this.targetDistance.set(user.targetDistance);
     if (user.weeklyVolumeKm) this.weeklyVolume.set(user.weeklyVolumeKm);
+  }
+
+  private baseRequest(): object {
+    const u = this.userSnapshot;
+    return {
+      username: u?.username ?? null,
+      email: u?.email ?? null,
+      firstName: u?.firstName ?? null,
+      lastName: u?.lastName ?? null,
+      dateOfBirth: u?.dateOfBirth ?? null,
+      heightCm: u?.heightCm ?? null,
+      weightKg: u?.weightKg ?? null,
+      maxHeartRate: u?.maxHeartRate ?? null,
+      hrRest: u?.hrRest ?? null,
+      gender: u?.gender ?? null,
+      status: u?.status ?? null,
+      dwdRegionId: u?.dwdRegionId ?? null,
+      asthmaTrackingEnabled: u?.asthmaTrackingEnabled ?? false,
+      cycleTrackingEnabled: u?.cycleTrackingEnabled ?? false,
+      targetDistance: u?.targetDistance ?? null,
+      weeklyVolumeKm: u?.weeklyVolumeKm ?? null,
+    };
   }
 
   protected nextStep(): void {
@@ -117,22 +141,25 @@ export class Onboarding implements OnInit {
       : null;
 
     this.userService.updateUser(this.userId, {
+      ...this.baseRequest(),
       gender: this.gender(),
       dateOfBirth: dateOfBirth,
       heightCm: this.height() ? parseInt(this.height(), 10) : null,
       weightKg: this.weight() ? parseFloat(this.weight()) : null
     }).subscribe({
-      next: () => this.advanceStep(),
+      next: u => { this.userSnapshot = u; this.advanceStep(); },
       error: () => this.advanceStep()
     });
   }
 
   private saveIntelligence(): void {
     this.userService.updateUser(this.userId, {
+      ...this.baseRequest(),
       cycleTrackingEnabled: this.cycleEnabled(),
       asthmaTrackingEnabled: this.asthmaEnabled()
     }).subscribe({
-      next: () => {
+      next: u => {
+        this.userSnapshot = u;
         this.loadPlans();
         this.advanceStep();
       },
@@ -145,10 +172,12 @@ export class Onboarding implements OnInit {
 
   private saveGoals(): void {
     this.userService.updateUser(this.userId, {
+      ...this.baseRequest(),
       targetDistance: this.targetDistance(),
       weeklyVolumeKm: this.weeklyVolume()
     }).subscribe({
-      next: () => {
+      next: u => {
+        this.userSnapshot = u;
         this.loadPlans();
         this.advanceStep();
       },
