@@ -68,6 +68,18 @@ export interface ActivityVo2Max {
   recordedAt: string | null;
 }
 
+export interface GpsStreamDto {
+  completedTrainingId: number;
+  latlng: [number, number][];
+  distance: number[];
+  heartRate: (number | null)[] | null;
+  paceSecondsPerKm: (number | null)[] | null;
+  altitude: (number | null)[] | null;
+  hasHeartRate: boolean;
+  hasPace: boolean;
+  hasAltitude: boolean;
+}
+
 export interface ActivityMetrics {
   id: number;
   zonesUnknown: boolean;
@@ -117,6 +129,10 @@ export class ActivityService {
 
   fetchStreams(id: number): Observable<ActivityStreamDto> {
     return this.http.post<ActivityStreamDto>(`${BASE}/${id}/fetch-streams`, null);
+  }
+
+  getGpsStream(id: number): Observable<GpsStreamDto> {
+    return this.http.get<GpsStreamDto>(`${BASE}/${id}/gps`);
   }
 
   uploadActivity(file: File, date: string): Observable<any> {
