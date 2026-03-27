@@ -1,0 +1,89 @@
+<div class="form-page">
+  <div class="form-header">
+    <h2>{{ editId() ? 'Achievement bearbeiten' : 'Neues Achievement' }}</h2>
+  </div>
+
+  <form class="form-body" (ngSubmit)="save()">
+    <div class="field-row">
+      <div class="field">
+        <label for="key">Key</label>
+        <input id="key" type="text" [ngModel]="key()" (ngModelChange)="key.set($event)"
+               name="key" placeholder="z.B. distance_100k" [disabled]="editId() !== null" />
+      </div>
+      <div class="field">
+        <label for="sortOrder">Sortierung</label>
+        <input id="sortOrder" type="number" [ngModel]="sortOrder()" (ngModelChange)="sortOrder.set($event)"
+               name="sortOrder" />
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="name">Name</label>
+      <input id="name" type="text" [ngModel]="name()" (ngModelChange)="name.set($event)"
+             name="name" placeholder="Achievement-Name" />
+    </div>
+
+    <div class="field">
+      <label for="description">Beschreibung</label>
+      <textarea id="description" [ngModel]="description()" (ngModelChange)="description.set($event)"
+                name="description" rows="3" placeholder="Was muss man tun?"></textarea>
+    </div>
+
+    <div class="field-row">
+      <div class="field">
+        <label for="category">Kategorie</label>
+        <select id="category" [ngModel]="category()" (ngModelChange)="category.set($event)" name="category">
+          @for (cat of categories; track cat.value) {
+            <option [value]="cat.value">{{ cat.label }}</option>
+          }
+        </select>
+      </div>
+      <div class="field">
+        <label for="threshold">Schwellenwert</label>
+        <input id="threshold" type="number" [ngModel]="threshold()" (ngModelChange)="threshold.set($event)"
+               name="threshold" step="any" />
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Icon</label>
+      <div class="icon-picker">
+        @for (ic of icons; track ic) {
+          <button type="button" class="icon-option" [class.selected]="icon() === ic" (click)="icon.set(ic)">
+            <span class="material-symbols-outlined">{{ ic }}</span>
+          </button>
+        }
+      </div>
+      <input type="text" [ngModel]="icon()" (ngModelChange)="icon.set($event)"
+             name="icon" placeholder="Oder Material Icon Name eingeben" class="icon-input" />
+    </div>
+
+    <fieldset class="time-bound-section">
+      <legend>Zeitgebunden (optional)</legend>
+      <div class="field-row">
+        <div class="field">
+          <label for="validFrom">Gültig ab</label>
+          <input id="validFrom" type="date" [ngModel]="validFrom()" (ngModelChange)="validFrom.set($event)"
+                 name="validFrom" />
+        </div>
+        <div class="field">
+          <label for="validUntil">Gültig bis</label>
+          <input id="validUntil" type="date" [ngModel]="validUntil()" (ngModelChange)="validUntil.set($event)"
+                 name="validUntil" />
+        </div>
+      </div>
+      <p class="hint">Leer lassen für ein permanentes Achievement.</p>
+    </fieldset>
+
+    @if (error()) {
+      <p class="form-error">{{ error() }}</p>
+    }
+
+    <div class="form-actions">
+      <button type="submit" class="btn-primary" [disabled]="saving()">
+        {{ saving() ? 'Wird gespeichert…' : 'Speichern' }}
+      </button>
+      <button type="button" class="btn-secondary" (click)="cancel()">Abbrechen</button>
+    </div>
+  </form>
+</div>

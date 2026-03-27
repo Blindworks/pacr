@@ -1,0 +1,272 @@
+.list-page {
+  padding: 1.5rem;
+}
+
+.list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+
+  h2 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+  }
+}
+
+.btn-primary {
+  background: var(--color-primary, #1976d2);
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.875rem;
+
+  &:hover { opacity: 0.9; }
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+
+  th, td {
+    padding: 0.75rem 1rem;
+    text-align: left;
+    border-bottom: 1px solid var(--color-border, rgba(255,255,255,0.1));
+    font-size: 0.875rem;
+  }
+
+  th { font-weight: 600; opacity: 0.7; }
+}
+
+.cell-icon {
+  width: 48px;
+
+  .material-symbols-outlined {
+    font-size: 22px;
+    opacity: 0.7;
+  }
+}
+
+.achievement-name {
+  display: block;
+  font-weight: 500;
+}
+
+.timeframe-hint {
+  display: block;
+  font-size: 0.75rem;
+  opacity: 0.5;
+  margin-top: 2px;
+}
+
+.cell-count {
+  text-align: center;
+  width: 80px;
+}
+
+.count-btn {
+  background: none;
+  border: 1px solid transparent;
+  color: inherit;
+  cursor: pointer;
+  padding: 0.3rem 0.6rem;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.875rem;
+  opacity: 0.5;
+
+  .material-symbols-outlined { font-size: 16px; }
+
+  &.has-users {
+    opacity: 1;
+    color: #f59e0b;
+    border-color: rgba(245, 158, 11, 0.2);
+
+    &:hover {
+      background: rgba(245, 158, 11, 0.08);
+    }
+  }
+}
+
+.in-progress-count {
+  opacity: 0.5;
+}
+
+.badge {
+  display: inline-block;
+  padding: 0.2rem 0.6rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  background: rgba(255,255,255,0.1);
+
+  &--category {
+    background: rgba(56, 139, 253, 0.15);
+    color: #388bfd;
+  }
+
+  &--permanent {
+    background: rgba(63, 185, 80, 0.15);
+    color: #3fb950;
+  }
+
+  &--active {
+    background: rgba(245, 158, 11, 0.15);
+    color: #f59e0b;
+  }
+
+  &--expired {
+    background: rgba(255,255,255,0.06);
+    color: #7d8590;
+  }
+
+  &--planned {
+    background: rgba(56, 139, 253, 0.1);
+    color: #388bfd;
+  }
+}
+
+.actions {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.btn-icon {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.25rem;
+  border-radius: 4px;
+  opacity: 0.7;
+  color: inherit;
+
+  &:hover { opacity: 1; background: rgba(255,255,255,0.08); }
+
+  &--danger { color: #f44336; }
+}
+
+.loading, .empty {
+  opacity: 0.6;
+  text-align: center;
+  padding: 2rem;
+}
+
+// Users Dialog
+.users-dialog {
+  background: #161b22;
+  border: 1px solid #30363d;
+  border-radius: 12px;
+  color: #e6edf3;
+  padding: 0;
+  max-width: 600px;
+  width: 90vw;
+
+  &::backdrop {
+    background: rgba(0, 0, 0, 0.6);
+  }
+}
+
+.dialog-content {
+  padding: 1.5rem;
+}
+
+.dialog-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+
+  .dialog-icon {
+    font-size: 32px;
+    color: #f59e0b;
+  }
+
+  h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+  }
+
+  .dialog-subtitle {
+    margin: 0.25rem 0 0;
+    font-size: 0.8rem;
+    color: #7d8590;
+  }
+}
+
+.users-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1rem;
+
+  th, td {
+    padding: 0.6rem 0.75rem;
+    text-align: left;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    font-size: 0.825rem;
+  }
+
+  th {
+    font-weight: 600;
+    opacity: 0.6;
+    font-size: 0.75rem;
+  }
+
+  tr.unlocked {
+    td { opacity: 1; }
+  }
+}
+
+.user-name {
+  display: block;
+  font-weight: 500;
+}
+
+.user-username {
+  display: block;
+  font-size: 0.75rem;
+  opacity: 0.5;
+}
+
+.unlocked-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  color: #3fb950;
+  font-size: 0.8rem;
+
+  .material-symbols-outlined { font-size: 16px; }
+}
+
+.in-progress-label {
+  font-size: 0.8rem;
+  color: #7d8590;
+}
+
+.empty-users {
+  text-align: center;
+  opacity: 0.5;
+  padding: 1.5rem 0;
+  margin: 0;
+}
+
+.dialog-close {
+  margin-top: 0.5rem;
+  width: 100%;
+}
+
+.btn-secondary {
+  background: transparent;
+  border: 1px solid var(--color-border, rgba(255,255,255,0.15));
+  color: inherit;
+  padding: 0.6rem 1.5rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.875rem;
+
+  &:hover { background: rgba(255,255,255,0.05); }
+}
