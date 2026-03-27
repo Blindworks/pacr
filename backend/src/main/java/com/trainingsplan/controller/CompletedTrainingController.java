@@ -392,6 +392,21 @@ public class CompletedTrainingController {
         }
     }
 
+    @GetMapping("/{id}/gps")
+    public ResponseEntity<?> getGpsStream(@PathVariable Long id) {
+        User user = securityUtils.getCurrentUser();
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        Optional<CompletedTraining> ctOpt = completedTrainingRepository.findByIdAndUserId(id, user.getId());
+        if (ctOpt.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        Optional<com.trainingsplan.dto.GpsStreamDto> dto = activityStreamService.getGpsStreamDto(id);
+        return dto.<ResponseEntity<?>>map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteCompletedTraining(@PathVariable Long id) {
         // Diese Methode kann später implementiert werden

@@ -1,0 +1,13 @@
+<div class="map-container">
+  <div [id]="mapContainerId" class="leaflet-map"></div>
+  @if (gpsData?.hasHeartRate && gpsData?.hasPace) {
+    <div class="map-controls">
+      <button class="map-toggle-btn" [class.active]="colorMode === 'pace'" (click)="setColorMode('pace')">
+        Pace
+      </button>
+      <button class="map-toggle-btn" [class.active]="colorMode === 'hr'" (click)="setColorMode('hr')">
+        HF
+      </button>
+    </div>
+  }
+</div>

@@ -115,6 +115,8 @@
   position: absolute;
   inset: 0;
   background: linear-gradient(to top, #0d1117 0%, rgba(13,17,23,0.55) 55%, transparent 100%);
+  z-index: 2;
+  pointer-events: none;
 }
 
 .route-svg {
@@ -135,6 +137,7 @@
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 20px;
+  z-index: 3;
 }
 
 .activity-badge {

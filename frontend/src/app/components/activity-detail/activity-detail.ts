@@ -1,12 +1,13 @@
 import { Component, OnInit, inject, ChangeDetectorRef, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { ActivityService, ActivityStreamDto, CompletedTraining, ActivityMetrics, ActivityVo2Max } from '../../services/activity.service';
+import { ActivityService, ActivityStreamDto, CompletedTraining, ActivityMetrics, ActivityVo2Max, GpsStreamDto } from '../../services/activity.service';
+import { ActivityMapComponent } from '../activity-map/activity-map';
 
 @Component({
   selector: 'app-activity-detail',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, ActivityMapComponent],
   templateUrl: './activity-detail.html',
   styleUrl: './activity-detail.scss'
 })
@@ -26,6 +27,9 @@ export class ActivityDetail implements OnInit {
 
   metrics: ActivityMetrics | null = null;
   vo2maxMetrics: ActivityVo2Max[] = [];
+
+  gpsData: GpsStreamDto | null = null;
+  mapColorMode: 'pace' | 'hr' = 'pace';
 
   private activityId = 0;
 
@@ -77,6 +81,10 @@ export class ActivityDetail implements OnInit {
         });
         this.activityService.getVo2MaxByActivity(this.activityId).subscribe({
           next: (v) => { this.vo2maxMetrics = v; this.cdr.detectChanges(); },
+          error: () => {}
+        });
+        this.activityService.getGpsStream(this.activityId).subscribe({
+          next: (g) => { this.gpsData = g; this.cdr.detectChanges(); },
           error: () => {}
         });
       },
