@@ -1,6 +1,7 @@
 package com.trainingsplan.entity;
 
 import jakarta.persistence.*;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "achievements")
@@ -32,6 +33,12 @@ public class Achievement {
     @Column(name = "sort_order", nullable = false)
     private int sortOrder;
 
+    @Column(name = "valid_from")
+    private LocalDate validFrom;
+
+    @Column(name = "valid_until")
+    private LocalDate validUntil;
+
     public Achievement() {}
 
     public Achievement(String key, String name, String description, String icon,
@@ -43,6 +50,21 @@ public class Achievement {
         this.category = category;
         this.threshold = threshold;
         this.sortOrder = sortOrder;
+    }
+
+    public boolean isTimeBound() {
+        return validFrom != null || validUntil != null;
+    }
+
+    public boolean isActive() {
+        LocalDate today = LocalDate.now();
+        if (validFrom != null && today.isBefore(validFrom)) return false;
+        if (validUntil != null && today.isAfter(validUntil)) return false;
+        return true;
+    }
+
+    public boolean isExpired() {
+        return validUntil != null && LocalDate.now().isAfter(validUntil);
     }
 
     public Long getId() { return id; }
@@ -68,4 +90,10 @@ public class Achievement {
 
     public int getSortOrder() { return sortOrder; }
     public void setSortOrder(int sortOrder) { this.sortOrder = sortOrder; }
+
+    public LocalDate getValidFrom() { return validFrom; }
+    public void setValidFrom(LocalDate validFrom) { this.validFrom = validFrom; }
+
+    public LocalDate getValidUntil() { return validUntil; }
+    public void setValidUntil(LocalDate validUntil) { this.validUntil = validUntil; }
 }

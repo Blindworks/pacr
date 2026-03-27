@@ -52,126 +52,129 @@ public class AchievementEvaluationService {
 
     @Transactional
     public List<Achievement> evaluateAll(User user) {
+        List<Achievement> allAchievements = achievementRepository.findAllByOrderBySortOrderAsc();
         List<Achievement> newlyUnlocked = new ArrayList<>();
-        newlyUnlocked.addAll(evaluateDistanceMilestones(user));
-        newlyUnlocked.addAll(evaluateStreaks(user));
-        newlyUnlocked.addAll(evaluatePRs(user));
-        newlyUnlocked.addAll(evaluatePlanCompletion(user));
+
+        for (Achievement achievement : allAchievements) {
+            // Skip expired achievements that user hasn't unlocked yet
+            if (achievement.isExpired() && !isAlreadyUnlocked(user, achievement)) {
+                continue;
+            }
+            // Skip achievements that haven't started yet
+            if (achievement.getValidFrom() != null && LocalDate.now().isBefore(achievement.getValidFrom())) {
+                continue;
+            }
+
+            double currentValue = calculateCurrentValue(user, achievement);
+            if (upsertProgress(user, achievement, currentValue)) {
+                newlyUnlocked.add(achievement);
+            }
+        }
         return newlyUnlocked;
     }
 
-    private List<Achievement> evaluateDistanceMilestones(User user) {
-        List<Achievement> unlocked = new ArrayList<>();
-        double totalKm = completedTrainingRepository.sumDistanceKmByUserId(user.getId());
-
-        for (AchievementDefinition def : AchievementDefinition.values()) {
-            if (def.getCategory() != AchievementCategory.DISTANCE) continue;
-            if (upsertProgress(user, def, totalKm)) {
-                achievementRepository.findByKey(def.getKey()).ifPresent(unlocked::add);
-            }
-        }
-        return unlocked;
+    private boolean isAlreadyUnlocked(User user, Achievement achievement) {
+        return userAchievementRepository
+                .existsByUserIdAndAchievementIdAndUnlockedAtIsNotNull(user.getId(), achievement.getId());
     }
 
-    private List<Achievement> evaluateStreaks(User user) {
-        List<Achievement> unlocked = new ArrayList<>();
-        List<LocalDate> dates = completedTrainingRepository
-                .findDistinctTrainingDatesByUserIdOrderByTrainingDateDesc(user.getId());
+    private double calculateCurrentValue(User user, Achievement achievement) {
+        LocalDate from = achievement.getValidFrom();
+        LocalDate until = achievement.getValidUntil();
+        boolean timeBound = achievement.isTimeBound();
 
+        switch (achievement.getCategory()) {
+            case DISTANCE:
+                return calculateDistance(user, from, until, timeBound);
+            case STREAK:
+                return calculateStreak(user, from, until, timeBound);
+            case PR:
+                return calculatePR(user, achievement);
+            case PLAN_COMPLETION:
+                return calculatePlanCompletion(user, achievement);
+            default:
+                return 0.0;
+        }
+    }
+
+    private double calculateDistance(User user, LocalDate from, LocalDate until, boolean timeBound) {
+        if (timeBound) {
+            LocalDate effectiveFrom = from != null ? from : LocalDate.of(2000, 1, 1);
+            LocalDate effectiveUntil = until != null ? until : LocalDate.now();
+            return completedTrainingRepository.sumDistanceKmByUserIdAndDateBetween(
+                    user.getId(), effectiveFrom, effectiveUntil);
+        }
+        return completedTrainingRepository.sumDistanceKmByUserId(user.getId());
+    }
+
+    private double calculateStreak(User user, LocalDate from, LocalDate until, boolean timeBound) {
+        List<LocalDate> dates;
+        if (timeBound) {
+            LocalDate effectiveFrom = from != null ? from : LocalDate.of(2000, 1, 1);
+            LocalDate effectiveUntil = until != null ? until : LocalDate.now();
+            dates = completedTrainingRepository.findDistinctTrainingDatesByUserIdAndDateBetween(
+                    user.getId(), effectiveFrom, effectiveUntil);
+        } else {
+            dates = completedTrainingRepository
+                    .findDistinctTrainingDatesByUserIdOrderByTrainingDateDesc(user.getId());
+        }
         int currentStreak = calculateCurrentStreak(dates);
         int longestStreak = calculateLongestStreak(dates);
-        int bestStreak = Math.max(currentStreak, longestStreak);
-
-        for (AchievementDefinition def : AchievementDefinition.values()) {
-            if (def.getCategory() != AchievementCategory.STREAK) continue;
-            if (upsertProgress(user, def, bestStreak)) {
-                achievementRepository.findByKey(def.getKey()).ifPresent(unlocked::add);
-            }
-        }
-        return unlocked;
+        return Math.max(currentStreak, longestStreak);
     }
 
-    private List<Achievement> evaluatePRs(User user) {
-        List<Achievement> unlocked = new ArrayList<>();
+    private double calculatePR(User user, Achievement achievement) {
+        String key = achievement.getKey();
         long totalPREntries = personalRecordEntryRepository.countByUserId(user.getId());
-        List<PersonalRecord> records = personalRecordRepository.findByUserIdOrderByDistanceKmAsc(user.getId());
-        long distinctRecordsWithEntries = personalRecordEntryRepository.countDistinctPersonalRecordsByUserId(user.getId());
-
-        for (AchievementDefinition def : AchievementDefinition.values()) {
-            if (def.getCategory() != AchievementCategory.PR) continue;
-
-            double currentValue;
-            switch (def) {
-                case FIRST_PR:
-                    currentValue = totalPREntries > 0 ? 1.0 : 0.0;
-                    break;
-                case PR_ALL_DISTANCES:
-                    currentValue = distinctRecordsWithEntries;
-                    break;
-                case PR_10_BROKEN:
-                    currentValue = totalPREntries;
-                    break;
-                default:
-                    continue;
-            }
-
-            if (upsertProgress(user, def, currentValue)) {
-                achievementRepository.findByKey(def.getKey()).ifPresent(unlocked::add);
-            }
+        // Match by key prefix for known PR types
+        if (key.startsWith("first_pr")) {
+            return totalPREntries > 0 ? 1.0 : 0.0;
+        } else if (key.startsWith("pr_all_distances")) {
+            return personalRecordEntryRepository.countDistinctPersonalRecordsByUserId(user.getId());
+        } else if (key.startsWith("pr_10_broken")) {
+            return totalPREntries;
         }
-        return unlocked;
+        return totalPREntries;
     }
 
-    private List<Achievement> evaluatePlanCompletion(User user) {
-        List<Achievement> unlocked = new ArrayList<>();
-
-        // Check for perfect weeks: find any week where all entries are completed
-        // and for full plan completion
+    private double calculatePlanCompletion(User user, Achievement achievement) {
         try {
             List<CompetitionRegistration> registrations = getActiveRegistrations(user);
-            boolean hasCompletedWeek = false;
-            boolean hasCompletedPlan = false;
+            String key = achievement.getKey();
 
-            for (CompetitionRegistration reg : registrations) {
-                List<UserTrainingEntry> entries = userTrainingEntryRepository
-                        .findByCompetitionRegistrationId(reg.getId());
-
-                if (entries.isEmpty()) continue;
-
-                // Group by week and check for 100% week completion
-                java.util.Map<Integer, List<UserTrainingEntry>> byWeek = new java.util.HashMap<>();
-                for (UserTrainingEntry entry : entries) {
-                    byWeek.computeIfAbsent(entry.getWeekNumber(), k -> new ArrayList<>()).add(entry);
-                }
-
-                boolean allWeeksComplete = true;
-                for (var weekEntries : byWeek.values()) {
-                    boolean weekComplete = weekEntries.stream().allMatch(e -> Boolean.TRUE.equals(e.getCompleted()));
-                    if (weekComplete && !weekEntries.isEmpty()) {
-                        hasCompletedWeek = true;
-                    } else {
-                        allWeeksComplete = false;
+            if (key.startsWith("week_100_pct")) {
+                for (CompetitionRegistration reg : registrations) {
+                    List<UserTrainingEntry> entries = userTrainingEntryRepository
+                            .findByCompetitionRegistrationId(reg.getId());
+                    if (entries.isEmpty()) continue;
+                    java.util.Map<Integer, List<UserTrainingEntry>> byWeek = new java.util.HashMap<>();
+                    for (UserTrainingEntry entry : entries) {
+                        byWeek.computeIfAbsent(entry.getWeekNumber(), k -> new ArrayList<>()).add(entry);
+                    }
+                    for (var weekEntries : byWeek.values()) {
+                        if (!weekEntries.isEmpty() && weekEntries.stream().allMatch(e -> Boolean.TRUE.equals(e.getCompleted()))) {
+                            return 1.0;
+                        }
                     }
                 }
-                if (allWeeksComplete && !entries.isEmpty()) {
-                    hasCompletedPlan = true;
+                return 0.0;
+            } else if (key.startsWith("plan_completed")) {
+                for (CompetitionRegistration reg : registrations) {
+                    List<UserTrainingEntry> entries = userTrainingEntryRepository
+                            .findByCompetitionRegistrationId(reg.getId());
+                    if (!entries.isEmpty() && entries.stream().allMatch(e -> Boolean.TRUE.equals(e.getCompleted()))) {
+                        return 1.0;
+                    }
                 }
-            }
-
-            if (upsertProgress(user, AchievementDefinition.WEEK_100_PCT, hasCompletedWeek ? 1.0 : 0.0)) {
-                achievementRepository.findByKey(AchievementDefinition.WEEK_100_PCT.getKey()).ifPresent(unlocked::add);
-            }
-            if (upsertProgress(user, AchievementDefinition.PLAN_COMPLETED, hasCompletedPlan ? 1.0 : 0.0)) {
-                achievementRepository.findByKey(AchievementDefinition.PLAN_COMPLETED.getKey()).ifPresent(unlocked::add);
+                return 0.0;
             }
         } catch (Exception e) {
             log.warn("Could not evaluate plan completion: {}", e.getMessage());
         }
-        return unlocked;
+        return 0.0;
     }
 
     private List<CompetitionRegistration> getActiveRegistrations(User user) {
-        // Use the entries query to find registrations indirectly
         LocalDate from = LocalDate.now().minusYears(2);
         LocalDate to = LocalDate.now();
         List<UserTrainingEntry> entries = userTrainingEntryRepository
@@ -187,10 +190,7 @@ public class AchievementEvaluationService {
     /**
      * Upsert achievement progress for a user. Returns true if the achievement was newly unlocked.
      */
-    private boolean upsertProgress(User user, AchievementDefinition def, double currentValue) {
-        Achievement achievement = achievementRepository.findByKey(def.getKey()).orElse(null);
-        if (achievement == null) return false;
-
+    private boolean upsertProgress(User user, Achievement achievement, double currentValue) {
         UserAchievement ua = userAchievementRepository
                 .findByUserIdAndAchievementId(user.getId(), achievement.getId())
                 .orElse(null);
@@ -205,7 +205,7 @@ public class AchievementEvaluationService {
         if (!ua.isUnlocked() && currentValue >= achievement.getThreshold()) {
             ua.unlock();
             newlyUnlocked = true;
-            log.info("Achievement unlocked: {} for user {}", def.getKey(), user.getId());
+            log.info("Achievement unlocked: {} for user {}", achievement.getKey(), user.getId());
         }
 
         userAchievementRepository.save(ua);
@@ -242,7 +242,6 @@ public class AchievementEvaluationService {
     public int calculateLongestStreak(List<LocalDate> sortedDatesDesc) {
         if (sortedDatesDesc.isEmpty()) return 0;
 
-        // Reverse to ascending order for simpler iteration
         List<LocalDate> ascending = new ArrayList<>(sortedDatesDesc);
         java.util.Collections.reverse(ascending);
 

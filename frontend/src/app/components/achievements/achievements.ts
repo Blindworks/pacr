@@ -33,8 +33,16 @@ export class Achievements implements OnInit {
     });
   }
 
-  getByCategory(category: string): Achievement[] {
-    return this.achievements().filter(a => a.category === category);
+  getPermanentByCategory(category: string): Achievement[] {
+    return this.achievements().filter(a => a.category === category && !a.timeBound);
+  }
+
+  getTimeBoundActive(): Achievement[] {
+    return this.achievements().filter(a => a.timeBound && a.active);
+  }
+
+  getTimeBoundExpired(): Achievement[] {
+    return this.achievements().filter(a => a.timeBound && a.expired);
   }
 
   openDetail(achievement: Achievement): void {
@@ -73,5 +81,14 @@ export class Achievements implements OnInit {
     if (!dateStr) return '';
     const d = new Date(dateStr);
     return d.toLocaleDateString('de-DE', { day: '2-digit', month: 'short', year: 'numeric' });
+  }
+
+  formatTimeframe(a: Achievement): string {
+    const from = a.validFrom ? this.formatDate(a.validFrom) : '';
+    const until = a.validUntil ? this.formatDate(a.validUntil) : '';
+    if (from && until) return `${from} – ${until}`;
+    if (from) return `Ab ${from}`;
+    if (until) return `Bis ${until}`;
+    return '';
   }
 }

@@ -63,8 +63,17 @@ public interface CompletedTrainingRepository extends JpaRepository<CompletedTrai
     @Query("SELECT COALESCE(SUM(c.distanceKm), 0) FROM CompletedTraining c WHERE c.user.id = :userId")
     double sumDistanceKmByUserId(@Param("userId") Long userId);
 
+    @Query("SELECT COALESCE(SUM(c.distanceKm), 0) FROM CompletedTraining c WHERE c.user.id = :userId AND c.trainingDate BETWEEN :from AND :to")
+    double sumDistanceKmByUserIdAndDateBetween(@Param("userId") Long userId, @Param("from") LocalDate from, @Param("to") LocalDate to);
+
     @Query("SELECT DISTINCT c.trainingDate FROM CompletedTraining c WHERE c.user.id = :userId ORDER BY c.trainingDate DESC")
     List<LocalDate> findDistinctTrainingDatesByUserIdOrderByTrainingDateDesc(@Param("userId") Long userId);
+
+    @Query("SELECT DISTINCT c.trainingDate FROM CompletedTraining c WHERE c.user.id = :userId AND c.trainingDate BETWEEN :from AND :to ORDER BY c.trainingDate DESC")
+    List<LocalDate> findDistinctTrainingDatesByUserIdAndDateBetween(@Param("userId") Long userId, @Param("from") LocalDate from, @Param("to") LocalDate to);
+
+    @Query("SELECT COUNT(c) FROM CompletedTraining c WHERE c.user.id = :userId AND c.trainingDate = :date")
+    long countByUserIdAndTrainingDate(@Param("userId") Long userId, @Param("date") LocalDate date);
 
     /**
      * One-time migration: assigns the current user to any Strava activities that were

@@ -92,6 +92,31 @@
       border-color: rgba(245, 158, 11, 0.5);
     }
   }
+
+  &.time-bound {
+    border-color: rgba(56, 139, 253, 0.3);
+
+    &:hover {
+      border-color: rgba(56, 139, 253, 0.5);
+    }
+
+    &.unlocked {
+      border-color: rgba(245, 158, 11, 0.3);
+
+      &:hover {
+        border-color: rgba(245, 158, 11, 0.5);
+      }
+    }
+  }
+
+  &.expired {
+    opacity: 0.6;
+    border-color: #21262d;
+
+    &:hover {
+      opacity: 0.8;
+    }
+  }
 }
 
 .badge-icon-wrap {
@@ -118,6 +143,14 @@
       font-variation-settings: 'FILL' 1;
     }
   }
+
+  &.expired {
+    background: #1c2128;
+
+    .badge-icon {
+      color: #484f58;
+    }
+  }
 }
 
 .badge-info {
@@ -136,6 +169,21 @@
 .badge-date {
   font-size: 0.75rem;
   color: #3fb950;
+}
+
+.badge-timeframe {
+  font-size: 0.7rem;
+  color: #388bfd;
+
+  &.expired {
+    color: #484f58;
+  }
+}
+
+.badge-expired-label {
+  font-size: 0.7rem;
+  color: #484f58;
+  font-style: italic;
 }
 
 .badge-progress {
@@ -163,6 +211,10 @@
   background: linear-gradient(90deg, #f59e0b, #d97706);
   border-radius: inherit;
   transition: width 0.5s ease;
+
+  &.expired {
+    background: linear-gradient(90deg, #484f58, #30363d);
+  }
 }
 
 .progress-text {
@@ -230,6 +282,10 @@
       font-variation-settings: 'FILL' 1;
     }
   }
+
+  &.expired {
+    background: #1c2128;
+  }
 }
 
 .dialog-status {
@@ -244,6 +300,23 @@
   &.unlocked {
     background: rgba(63, 185, 80, 0.1);
     color: #3fb950;
+  }
+
+  &.expired {
+    background: rgba(72, 79, 88, 0.1);
+    color: #7d8590;
+  }
+}
+
+.dialog-timeframe {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8rem;
+  color: #388bfd;
+
+  .material-symbols-outlined {
+    font-size: 18px;
   }
 }
 
