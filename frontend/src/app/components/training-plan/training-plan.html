@@ -19,6 +19,42 @@
     </div>
   </header>
 
+  @if (pendingAdjustments.length > 0) {
+    <section class="tp-adjustments">
+      <div class="tp-adjustments__header">
+        <span class="material-symbols-outlined">auto_fix_high</span>
+        <h3>Planänderungen vorgeschlagen</h3>
+        <span class="tp-adjustments__count">{{ pendingAdjustments.length }}</span>
+      </div>
+      <div class="tp-adjustments__list">
+        @for (adj of pendingAdjustments; track adj.id) {
+          <div class="tp-adjustment-card">
+            <div class="tp-adjustment-card__icon">
+              <span class="material-symbols-outlined">{{ adjustmentIcon(adj.adjustmentType) }}</span>
+            </div>
+            <div class="tp-adjustment-card__info">
+              <div class="tp-adjustment-card__top">
+                <span class="tp-adjustment-card__type">{{ adjustmentLabel(adj.adjustmentType) }}</span>
+                @if (adj.trainingName) {
+                  <span class="tp-adjustment-card__name">{{ adj.trainingName }}</span>
+                }
+              </div>
+              <p class="tp-adjustment-card__reason">{{ adj.reason }}</p>
+            </div>
+            <div class="tp-adjustment-card__actions">
+              <button class="tp-adj-btn tp-adj-btn--accept" (click)="acceptAdjustment(adj)">
+                <span class="material-symbols-outlined">check</span>
+              </button>
+              <button class="tp-adj-btn tp-adj-btn--reject" (click)="rejectAdjustment(adj)">
+                <span class="material-symbols-outlined">close</span>
+              </button>
+            </div>
+          </div>
+        }
+      </div>
+    </section>
+  }
+
   <div class="tp-grid">
     <section class="tp-schedule">
       <div class="tp-schedule__head">

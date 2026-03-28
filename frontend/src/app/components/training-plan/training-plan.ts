@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { forkJoin } from 'rxjs';
 import { UserTrainingEntry, UserTrainingEntryService } from '../../services/user-training-entry.service';
 import { StatisticsService, TrainingStatsDto } from '../../services/statistics.service';
+import { PlanAdjustment, PlanAdjustmentService } from '../../services/plan-adjustment.service';
 
 interface TrainingSession {
   id: number;
@@ -52,6 +53,7 @@ export class TrainingPlan implements OnInit {
   private router = inject(Router);
   private entryService = inject(UserTrainingEntryService);
   private statsService = inject(StatisticsService);
+  private adjustmentService = inject(PlanAdjustmentService);
   private cdr = inject(ChangeDetectorRef);
 
   planName = '—';
@@ -88,8 +90,62 @@ export class TrainingPlan implements OnInit {
 
   recoveryScore = 0;
 
+  pendingAdjustments: PlanAdjustment[] = [];
+
   ngOnInit(): void {
     this.loadWeek();
+    this.loadPendingAdjustments();
+  }
+
+  private loadPendingAdjustments(): void {
+    this.adjustmentService.getPending().subscribe({
+      next: (adjustments) => {
+        this.pendingAdjustments = adjustments;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.pendingAdjustments = [];
+      }
+    });
+  }
+
+  acceptAdjustment(adj: PlanAdjustment): void {
+    this.adjustmentService.accept(adj.id).subscribe({
+      next: () => {
+        this.pendingAdjustments = this.pendingAdjustments.filter(a => a.id !== adj.id);
+        this.loadWeek();
+        this.cdr.detectChanges();
+      },
+      error: (err) => console.error('Failed to accept adjustment:', err)
+    });
+  }
+
+  rejectAdjustment(adj: PlanAdjustment): void {
+    this.adjustmentService.reject(adj.id).subscribe({
+      next: () => {
+        this.pendingAdjustments = this.pendingAdjustments.filter(a => a.id !== adj.id);
+        this.cdr.detectChanges();
+      },
+      error: (err) => console.error('Failed to reject adjustment:', err)
+    });
+  }
+
+  adjustmentIcon(type: string): string {
+    switch (type) {
+      case 'RESCHEDULE': return 'event';
+      case 'DROP': return 'delete_outline';
+      case 'INTENSITY_REDUCE': return 'trending_down';
+      default: return 'tune';
+    }
+  }
+
+  adjustmentLabel(type: string): string {
+    switch (type) {
+      case 'RESCHEDULE': return 'Verschieben';
+      case 'DROP': return 'Entfernen';
+      case 'INTENSITY_REDUCE': return 'Intensität senken';
+      default: return type;
+    }
   }
 
   private getWeekRange(offset: number): { monday: Date; sunday: Date } {

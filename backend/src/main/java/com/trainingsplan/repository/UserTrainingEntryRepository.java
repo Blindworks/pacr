@@ -47,4 +47,29 @@ public interface UserTrainingEntryRepository extends JpaRepository<UserTrainingE
 
     @Query("SELECT MAX(t.weekNumber) FROM Training t WHERE t.trainingPlan.id = :planId")
     Integer findMaxWeekNumberByPlanId(@Param("planId") Long planId);
+
+    @Query("SELECT e FROM UserTrainingEntry e " +
+           "LEFT JOIN FETCH e.competitionRegistration reg " +
+           "LEFT JOIN FETCH reg.user " +
+           "LEFT JOIN FETCH e.training t " +
+           "WHERE reg.user.id = :userId " +
+           "AND e.trainingDate < :today " +
+           "AND e.trainingDate >= :since " +
+           "AND e.completed = false " +
+           "AND (e.completionStatus IS NULL OR e.completionStatus = '')")
+    List<UserTrainingEntry> findMissedWorkouts(
+            @Param("userId") Long userId,
+            @Param("today") LocalDate today,
+            @Param("since") LocalDate since);
+
+    @Query("SELECT e FROM UserTrainingEntry e " +
+           "LEFT JOIN FETCH e.competitionRegistration reg " +
+           "LEFT JOIN FETCH reg.user " +
+           "LEFT JOIN FETCH e.training t " +
+           "WHERE reg.user.id = :userId " +
+           "AND e.trainingDate BETWEEN :from AND :to")
+    List<UserTrainingEntry> findUpcomingEntries(
+            @Param("userId") Long userId,
+            @Param("from") LocalDate from,
+            @Param("to") LocalDate to);
 }
