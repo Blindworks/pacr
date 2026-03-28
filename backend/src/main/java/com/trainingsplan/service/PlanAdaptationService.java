@@ -196,7 +196,7 @@ public class PlanAdaptationService {
     }
 
     private boolean hasPendingAdjustment(Long entryId) {
-        return adjustmentRepository.existsByUserTrainingEntryIdAndStatusIn(
+        return adjustmentRepository.existsByUserTrainingEntry_IdAndStatusIn(
                 entryId, List.of(AdjustmentStatus.PENDING, AdjustmentStatus.ACCEPTED));
     }
 
