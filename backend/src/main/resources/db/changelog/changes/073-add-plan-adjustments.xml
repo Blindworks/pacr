@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="073-create-plan-adjustments" author="dev">
+        <preConditions onFail="MARK_RAN">
+            <not><tableExists tableName="plan_adjustments"/></not>
+        </preConditions>
+        <createTable tableName="plan_adjustments">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="user_id" type="BIGINT">
+                <constraints nullable="false" foreignKeyName="fk_plan_adj_user" references="users(id)"/>
+            </column>
+            <column name="user_training_entry_id" type="BIGINT">
+                <constraints foreignKeyName="fk_plan_adj_entry" references="user_training_entries(id)"/>
+            </column>
+            <column name="adjustment_type" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="VARCHAR(10)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="reason" type="VARCHAR(500)"/>
+            <column name="trigger_source" type="VARCHAR(30)"/>
+            <column name="original_date" type="DATE"/>
+            <column name="new_date" type="DATE"/>
+            <column name="original_intensity" type="VARCHAR(20)"/>
+            <column name="new_intensity" type="VARCHAR(20)"/>
+            <column name="created_at" type="DATETIME">
+                <constraints nullable="false"/>
+            </column>
+            <column name="resolved_at" type="DATETIME"/>
+        </createTable>
+        <createIndex tableName="plan_adjustments" indexName="idx_plan_adj_user_status">
+            <column name="user_id"/>
+            <column name="status"/>
+        </createIndex>
+    </changeSet>
+</databaseChangeLog>
