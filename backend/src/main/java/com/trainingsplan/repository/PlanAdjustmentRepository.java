@@ -15,5 +15,5 @@ public interface PlanAdjustmentRepository extends JpaRepository<PlanAdjustment, 
 
     List<PlanAdjustment> findByUserIdAndCreatedAtAfterOrderByCreatedAtDesc(Long userId, LocalDateTime since);
 
-    boolean existsByUserTrainingEntryIdAndStatusIn(Long entryId, List<AdjustmentStatus> statuses);
+    boolean existsByUserTrainingEntry_IdAndStatusIn(Long entryId, List<AdjustmentStatus> statuses);
 }
