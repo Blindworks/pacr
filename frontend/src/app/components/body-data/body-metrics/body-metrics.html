@@ -39,139 +39,6 @@
 
     <div class="content-grid">
       <div class="main-column">
-        <section class="perf-chart-section" *ngIf="hasChartData">
-          <!-- Card Header: title left + legend right -->
-          <div class="chart-card-header">
-            <div class="chart-card-title">
-              <span class="material-symbols-outlined chart-title-icon">bar_chart</span>
-              <span>Body Composition Trends</span>
-            </div>
-            <div class="chart-legend">
-              <button
-                *ngFor="let d of availableStreams"
-                class="legend-item"
-                [class.legend-item--active]="activeStreams().has(d.key)"
-                [style.--item-color]="d.color"
-                (click)="toggleStream(d.key)"
-              >
-                <span class="legend-dot"></span>
-                <span class="legend-label">{{ d.label }}</span>
-              </button>
-            </div>
-          </div>
-
-          <!-- Chart Container -->
-          <div class="chart-outer">
-            <svg
-              class="chart-svg"
-              viewBox="0 0 960 280"
-              preserveAspectRatio="none"
-              (mousemove)="onChartMouseMove($event)"
-              (mouseleave)="onChartMouseLeave()"
-            >
-              <g transform="translate(60, 10)">
-
-                <!-- Horizontal grid lines -->
-                <line *ngFor="let tick of [0, 0.25, 0.5, 0.75, 1]"
-                  x1="0" [attr.y1]="plotH * (1 - tick)"
-                  [attr.x2]="plotW" [attr.y2]="plotH * (1 - tick)"
-                  stroke="rgba(255,255,255,0.06)" stroke-width="1"
-                />
-
-                <!-- Stream paths -->
-                <ng-container *ngFor="let d of availableActiveStreams">
-                  <ng-container *ngIf="getStreamData(d.key) as data">
-                    <ng-container *ngIf="streamRange(data) as range">
-                      <path
-                        [attr.d]="buildStreamPath(data, range)"
-                        [attr.stroke]="d.color"
-                        fill="none"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      />
-                    </ng-container>
-                  </ng-container>
-                </ng-container>
-
-                <!-- Hover hairline + dots -->
-                <ng-container *ngIf="tooltipIndex !== null">
-                  <line
-                    [attr.x1]="hoverX(tooltipIndex)" y1="0"
-                    [attr.x2]="hoverX(tooltipIndex)" [attr.y2]="plotH"
-                    stroke="#b9f20d" stroke-width="1.5" stroke-opacity="0.8"
-                  />
-                  <ng-container *ngFor="let d of availableActiveStreams; let first = first">
-                    <ng-container *ngIf="first">
-                      <circle *ngIf="hoverDotY(d.key) as dotY"
-                        [attr.cx]="hoverX(tooltipIndex)"
-                        [attr.cy]="dotY"
-                        r="5"
-                        fill="#b9f20d"
-                        style="filter: drop-shadow(0 0 6px rgba(185,242,13,0.9))"
-                      />
-                    </ng-container>
-                  </ng-container>
-                </ng-container>
-
-                <!-- Y-axis labels -->
-                <ng-container *ngFor="let item of yAxisItems">
-                  <text *ngFor="let tick of item.ticks"
-                    x="-8" [attr.y]="tick.y + 4"
-                    text-anchor="end"
-                    font-size="10"
-                    font-family="Lexend, sans-serif"
-                    [attr.fill]="item.color"
-                    fill-opacity="0.85"
-                  >{{ tick.label }}</text>
-                </ng-container>
-
-                <!-- X-axis baseline -->
-                <line x1="0" [attr.y1]="plotH" [attr.x2]="plotW" [attr.y2]="plotH"
-                      stroke="rgba(255,255,255,0.12)" stroke-width="1"/>
-
-                <!-- X-axis date labels -->
-                <text *ngFor="let tick of xAxisTicks"
-                  [attr.x]="tick.x" [attr.y]="plotH + 18"
-                  text-anchor="middle"
-                  font-size="10"
-                  font-family="Lexend, sans-serif"
-                  fill="#475569"
-                >{{ tick.label }}</text>
-
-              </g>
-            </svg>
-
-            <!-- Hover Tooltip -->
-            <div class="chart-tooltip" *ngIf="tooltipIndex !== null" [style.left.px]="tooltipPixelX">
-              <div class="tooltip-header">
-                <span class="tooltip-diamond">&#9671;</span>
-                <span class="tooltip-date-label">{{ tooltipDate }}</span>
-              </div>
-              <ng-container *ngFor="let d of availableActiveStreams">
-                <div class="tooltip-row" *ngIf="tooltipValue(d.key) as val">
-                  <span class="tooltip-stream-label">{{ d.label }}</span>
-                  <span class="tooltip-stream-val" [style.color]="d.color">{{ val }}</span>
-                  <span class="tooltip-stream-unit">{{ d.unit }}</span>
-                </div>
-              </ng-container>
-            </div>
-          </div>
-        </section>
-
-        <!-- No data fallback -->
-        <section class="perf-chart-section perf-chart-section--empty" *ngIf="!hasChartData">
-          <div class="chart-card-header">
-            <div class="chart-card-title">
-              <span class="material-symbols-outlined chart-title-icon">bar_chart</span>
-              <span>Body Composition Trends</span>
-            </div>
-          </div>
-          <div class="chart-empty">
-            <span class="material-symbols-outlined">show_chart</span>
-            <p>No data yet</p>
-          </div>
-        </section>
 
         <section class="detail-grid">
           <article class="detail-card" *ngFor="let metric of detailMetrics">
@@ -190,6 +57,28 @@
             </div>
           </article>
         </section>
+
+        <!-- ═══ Body Composition Trends ═══ -->
+        <ng-container *ngTemplateOutlet="chartTpl; context: {
+          ctx: bodyChart,
+          title: 'Body Composition Trends',
+          icon: 'bar_chart'
+        }"></ng-container>
+
+        <!-- ═══ Blood Pressure Trends ═══ -->
+        <ng-container *ngTemplateOutlet="chartTpl; context: {
+          ctx: bpChart,
+          title: 'Blood Pressure Trends',
+          icon: 'blood_pressure'
+        }"></ng-container>
+
+        <!-- ═══ Resting Heart Rate ═══ -->
+        <ng-container *ngTemplateOutlet="chartTpl; context: {
+          ctx: hrChart,
+          title: 'Resting Heart Rate',
+          icon: 'favorite'
+        }"></ng-container>
+
       </div>
 
       <aside class="side-column">
@@ -239,3 +128,141 @@
     </div>
   </div>
 </div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     Reusable chart template
+     ═══════════════════════════════════════════════════════════════ -->
+<ng-template #chartTpl let-ctx="ctx" let-title="title" let-icon="icon">
+  <section class="perf-chart-section" *ngIf="ctx.hasData">
+    <div class="chart-card-header">
+      <div class="chart-card-title">
+        <span class="material-symbols-outlined chart-title-icon">{{ icon }}</span>
+        <span>{{ title }}</span>
+      </div>
+      <div class="chart-legend">
+        <button
+          *ngFor="let d of availableStreams(ctx)"
+          class="legend-item"
+          [class.legend-item--active]="ctx.activeStreams().has(d.key)"
+          [style.--item-color]="d.color"
+          (click)="toggleStream(ctx, d.key)"
+        >
+          <span class="legend-dot"></span>
+          <span class="legend-label">{{ d.label }}</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="chart-outer">
+      <svg
+        class="chart-svg"
+        viewBox="0 0 960 280"
+        preserveAspectRatio="none"
+        (mousemove)="onChartMouseMove(ctx, $event)"
+        (mouseleave)="onChartMouseLeave(ctx)"
+      >
+        <g transform="translate(60, 10)">
+          <!-- Horizontal grid lines -->
+          <line *ngFor="let tick of [0, 0.25, 0.5, 0.75, 1]"
+            x1="0" [attr.y1]="plotH * (1 - tick)"
+            [attr.x2]="plotW" [attr.y2]="plotH * (1 - tick)"
+            stroke="rgba(255,255,255,0.06)" stroke-width="1"
+          />
+
+          <!-- Stream paths -->
+          <ng-container *ngFor="let d of availableActiveStreams(ctx)">
+            <ng-container *ngIf="getStreamData(ctx, d.key) as data">
+              <ng-container *ngIf="streamRange(data) as range">
+                <path
+                  [attr.d]="buildStreamPath(data, range)"
+                  [attr.stroke]="d.color"
+                  fill="none"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </ng-container>
+            </ng-container>
+          </ng-container>
+
+          <!-- Hover hairline + dots -->
+          <ng-container *ngIf="ctx.tooltipIndex !== null">
+            <line
+              [attr.x1]="hoverX(ctx, ctx.tooltipIndex)" y1="0"
+              [attr.x2]="hoverX(ctx, ctx.tooltipIndex)" [attr.y2]="plotH"
+              stroke="#b9f20d" stroke-width="1.5" stroke-opacity="0.8"
+            />
+            <ng-container *ngFor="let d of availableActiveStreams(ctx); let first = first">
+              <ng-container *ngIf="first">
+                <circle *ngIf="hoverDotY(ctx, d.key) as dotY"
+                  [attr.cx]="hoverX(ctx, ctx.tooltipIndex)"
+                  [attr.cy]="dotY"
+                  r="5"
+                  fill="#b9f20d"
+                  style="filter: drop-shadow(0 0 6px rgba(185,242,13,0.9))"
+                />
+              </ng-container>
+            </ng-container>
+          </ng-container>
+
+          <!-- Y-axis labels -->
+          <ng-container *ngFor="let item of yAxisItems(ctx)">
+            <text *ngFor="let tick of item.ticks"
+              x="-8" [attr.y]="tick.y + 4"
+              text-anchor="end"
+              font-size="10"
+              font-family="Lexend, sans-serif"
+              [attr.fill]="item.color"
+              fill-opacity="0.85"
+            >{{ tick.label }}</text>
+          </ng-container>
+
+          <!-- X-axis baseline -->
+          <line x1="0" [attr.y1]="plotH" [attr.x2]="plotW" [attr.y2]="plotH"
+                stroke="rgba(255,255,255,0.12)" stroke-width="1"/>
+
+          <!-- X-axis date labels -->
+          <text *ngFor="let tick of xAxisTicks(ctx)"
+            [attr.x]="tick.x" [attr.y]="plotH + 18"
+            text-anchor="middle"
+            font-size="10"
+            font-family="Lexend, sans-serif"
+            fill="#475569"
+          >{{ tick.label }}</text>
+        </g>
+      </svg>
+
+      <!-- Hover Tooltip -->
+      <div class="chart-tooltip"
+           *ngIf="ctx.tooltipIndex !== null"
+           [style.left.px]="ctx.tooltipPixelX"
+           [class.chart-tooltip--flip]="ctx.tooltipPixelX != null && ctx.tooltipPixelX > 700">
+        <div class="tooltip-header">
+          <span class="tooltip-diamond">&#9671;</span>
+          <span class="tooltip-date-label">{{ tooltipDate(ctx) }}</span>
+        </div>
+        <ng-container *ngFor="let d of availableActiveStreams(ctx)">
+          <div class="tooltip-row" *ngIf="tooltipValue(ctx, d.key) as val">
+            <span class="tooltip-stream-label">{{ d.label }}</span>
+            <span class="tooltip-stream-val" [style.color]="d.color">{{ val }}</span>
+            <span class="tooltip-stream-unit">{{ d.unit }}</span>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+  </section>
+
+  <!-- No data fallback -->
+  <section class="perf-chart-section perf-chart-section--empty" *ngIf="!ctx.hasData">
+    <div class="chart-card-header">
+      <div class="chart-card-title">
+        <span class="material-symbols-outlined chart-title-icon">{{ icon }}</span>
+        <span>{{ title }}</span>
+      </div>
+    </div>
+    <div class="chart-empty">
+      <span class="material-symbols-outlined">show_chart</span>
+      <p>No data yet</p>
+    </div>
+  </section>
+</ng-template>

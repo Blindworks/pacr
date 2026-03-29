@@ -7,8 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-03-29
+
 ### Added
+- Blood Pressure Trends chart on Body Measures page (systolic & diastolic)
+- Resting Heart Rate chart on Body Measures page
+- Reusable chart template for all body metrics graphs (eliminates code duplication)
 - Changelog feature with backend endpoint and About dialog integration
+
+### Changed
+- Detail metric cards (Resting HR, Blood Pressure, etc.) moved above charts for better visibility
+- Chart tooltip now flips left when near right edge to prevent clipping
 
 ## [0.1.1] - 2025-03-29
 
