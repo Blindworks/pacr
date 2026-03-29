@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { catchError, forkJoin, of } from 'rxjs';
@@ -30,11 +30,11 @@ interface HistoryItem {
   bodyFat: string;
 }
 
-interface ChartPoint {
-  x: number;
-  y: number;
-  rawValue: number;
-  timestamp: number;
+interface StreamDescriptor {
+  key: string;
+  label: string;
+  color: string;
+  unit: string;
 }
 
 @Component({
@@ -71,31 +71,25 @@ export class BodyMetrics implements OnInit {
 
   historyItems: HistoryItem[] = [];
 
-  // Legend toggle state
-  visibleLines = { weight: true, fat: true, muscle: true };
+  // ── Chart: Stream config (like activity-detail) ──────────────────
+  readonly streamDescriptors: StreamDescriptor[] = [
+    { key: 'weight', label: 'Weight', color: '#b9f20d', unit: 'kg' },
+    { key: 'fat', label: 'Body Fat', color: 'rgba(255,255,255,0.5)', unit: '%' },
+    { key: 'muscle', label: 'Muscle', color: '#60a5fa', unit: 'kg' },
+  ];
 
-  // Chart data
-  weightPath = '';
-  weightFillPath = '';
-  fatPath = '';
-  musclePath = '';
-  axisLabels: string[] = ['', '', '', 'TODAY'];
+  activeStreams = signal<Set<string>>(new Set(['weight', 'fat', 'muscle']));
+
+  readonly plotW = 880;
+  readonly plotH = 250;
+
   hasChartData = false;
+  tooltipIndex: number | null = null;
+  tooltipPixelX: number | null = null;
 
-  // Marker state
-  markerVisible = false;
-  markerX = 0;
-  markerWeightY: number | null = null;
-  markerFatY: number | null = null;
-  markerMuscleY: number | null = null;
-  markerWeightValue = '';
-  markerFatValue = '';
-  markerMuscleValue = '';
-  markerDate = '';
-
-  private chartWeightPoints: ChartPoint[] = [];
-  private chartFatPoints: ChartPoint[] = [];
-  private chartMusclePoints: ChartPoint[] = [];
+  // Raw stream data arrays (parallel: same length, indexed by sorted measurement)
+  private streamData: Record<string, (number | null)[]> = {};
+  private timestamps: number[] = [];
 
   ngOnInit(): void {
     this.loadData();
@@ -105,8 +99,10 @@ export class BodyMetrics implements OnInit {
     this.router.navigate(['/body-data/log-body-metrics']);
   }
 
-  toggleLine(line: 'weight' | 'fat' | 'muscle'): void {
-    this.visibleLines[line] = !this.visibleLines[line];
+  toggleStream(key: string): void {
+    const next = new Set(this.activeStreams());
+    if (next.has(key)) next.delete(key); else next.add(key);
+    this.activeStreams.set(next);
   }
 
   private loadData(): void {
@@ -145,41 +141,154 @@ export class BodyMetrics implements OnInit {
     this.cdr.detectChanges();
   }
 
-  onChartMouseMove(event: MouseEvent): void {
-    const target = event.currentTarget as HTMLElement;
-    const rect = target.getBoundingClientRect();
-    const svgX = ((event.clientX - rect.left) / rect.width) * 100;
+  // ── Chart: computed getters ──────────────────────────────────────
 
-    if (svgX < 0 || svgX > 100) {
-      this.markerVisible = false;
-      return;
+  /** Streams that have data (for legend). */
+  get availableStreams(): StreamDescriptor[] {
+    return this.streamDescriptors.filter(d => {
+      const data = this.streamData[d.key];
+      return data && data.some(v => v !== null);
+    });
+  }
+
+  /** Streams that have data AND are toggled on. */
+  get availableActiveStreams(): StreamDescriptor[] {
+    const active = this.activeStreams();
+    return this.availableStreams.filter(d => active.has(d.key));
+  }
+
+  getStreamData(key: string): (number | null)[] | null {
+    return this.streamData[key] ?? null;
+  }
+
+  streamRange(data: (number | null)[]): { min: number; max: number } | null {
+    const vals = data.filter((v): v is number => v !== null);
+    if (vals.length === 0) return null;
+    return { min: Math.min(...vals), max: Math.max(...vals) };
+  }
+
+  /** Builds SVG path string for one stream using a smooth cardinal spline. */
+  buildStreamPath(data: (number | null)[], range: { min: number; max: number }): string {
+    const span = range.max - range.min || 1;
+    const n = data.length;
+    if (n === 0) return '';
+
+    const pts: { x: number; y: number }[] = [];
+    for (let i = 0; i < n; i++) {
+      const v = data[i];
+      if (v === null || v === undefined) continue;
+      const x = n === 1 ? this.plotW / 2 : (i / (n - 1)) * this.plotW;
+      const norm = (v - range.min) / span;
+      pts.push({ x, y: this.plotH - norm * this.plotH });
     }
 
-    this.markerX = svgX;
-    this.markerVisible = true;
+    if (pts.length < 2) return '';
 
-    this.markerWeightY = this.visibleLines.weight ? this.interpolateY(this.chartWeightPoints, svgX) : null;
-    this.markerFatY = this.visibleLines.fat ? this.interpolateY(this.chartFatPoints, svgX) : null;
-    this.markerMuscleY = this.visibleLines.muscle ? this.interpolateY(this.chartMusclePoints, svgX) : null;
+    // Cardinal spline with tension 0.3
+    const t = 0.3;
+    let d = `M${pts[0].x.toFixed(1)},${pts[0].y.toFixed(1)}`;
+    for (let i = 0; i < pts.length - 1; i++) {
+      const p0 = pts[Math.max(0, i - 1)];
+      const p1 = pts[i];
+      const p2 = pts[i + 1];
+      const p3 = pts[Math.min(pts.length - 1, i + 2)];
+      const cp1x = p1.x + (p2.x - p0.x) * t;
+      const cp1y = p1.y + (p2.y - p0.y) * t;
+      const cp2x = p2.x - (p3.x - p1.x) * t;
+      const cp2y = p2.y - (p3.y - p1.y) * t;
+      d += ` C${cp1x.toFixed(1)},${cp1y.toFixed(1)} ${cp2x.toFixed(1)},${cp2y.toFixed(1)} ${p2.x.toFixed(1)},${p2.y.toFixed(1)}`;
+    }
+    return d;
+  }
 
-    const weightVal = this.visibleLines.weight ? this.interpolateRawValue(this.chartWeightPoints, svgX) : null;
-    const fatVal = this.visibleLines.fat ? this.interpolateRawValue(this.chartFatPoints, svgX) : null;
-    const muscleVal = this.visibleLines.muscle ? this.interpolateRawValue(this.chartMusclePoints, svgX) : null;
+  get yAxisItems(): { color: string; ticks: { y: number; label: string }[] }[] {
+    return this.availableActiveStreams.map(d => {
+      const data = this.getStreamData(d.key);
+      if (!data) return null;
+      const range = this.streamRange(data);
+      if (!range) return null;
+      const ticks = [0, 0.5, 1].map(frac => {
+        const val = range.min + frac * (range.max - range.min);
+        const y = this.plotH - frac * this.plotH;
+        return { y, label: this.formatNumber(val) };
+      });
+      return { color: d.color, ticks };
+    }).filter(Boolean) as { color: string; ticks: { y: number; label: string }[] }[];
+  }
 
-    this.markerWeightValue = weightVal != null ? `${this.formatNumber(weightVal)} kg` : '';
-    this.markerFatValue = fatVal != null ? `${this.formatNumber(fatVal)}%` : '';
-    this.markerMuscleValue = muscleVal != null ? `${this.formatNumber(muscleVal)} kg` : '';
+  get xAxisTicks(): { label: string; x: number }[] {
+    if (this.timestamps.length === 0) return [];
+    const n = this.timestamps.length;
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const ticks: { label: string; x: number }[] = [];
+    const count = Math.min(n, 6);
+    for (let i = 0; i < count; i++) {
+      const idx = count === 1 ? 0 : Math.round(i * (n - 1) / (count - 1));
+      const d = new Date(this.timestamps[idx]);
+      const x = n === 1 ? this.plotW / 2 : (idx / (n - 1)) * this.plotW;
+      ticks.push({ label: `${d.getDate()} ${months[d.getMonth()]}`, x });
+    }
+    return ticks;
+  }
 
-    const refPoints = this.chartWeightPoints.length > 0 ? this.chartWeightPoints
-      : this.chartFatPoints.length > 0 ? this.chartFatPoints
-      : this.chartMusclePoints;
-    const ts = this.interpolateTimestamp(refPoints, svgX);
-    this.markerDate = ts != null ? new Date(ts).toLocaleDateString('de-DE', { day: '2-digit', month: 'short', year: 'numeric' }) : '';
+  onChartMouseMove(event: MouseEvent): void {
+    const rect = (event.currentTarget as SVGElement).getBoundingClientRect();
+    const relX = event.clientX - rect.left;
+    const n = this.timestamps.length;
+    if (n === 0) return;
+
+    const targetIdx = (relX / rect.width) * (n - 1);
+    let closest = 0;
+    let minDiff = Math.abs(0 - targetIdx);
+    for (let i = 1; i < n; i++) {
+      const diff = Math.abs(i - targetIdx);
+      if (diff < minDiff) { minDiff = diff; closest = i; }
+    }
+    this.tooltipIndex = closest;
+    this.tooltipPixelX = relX;
+    this.cdr.detectChanges();
   }
 
   onChartMouseLeave(): void {
-    this.markerVisible = false;
+    this.tooltipIndex = null;
+    this.tooltipPixelX = null;
   }
+
+  hoverX(idx: number): number {
+    const n = this.timestamps.length;
+    if (n <= 1) return this.plotW / 2;
+    return (idx / (n - 1)) * this.plotW;
+  }
+
+  hoverDotY(key: string): number | null {
+    if (this.tooltipIndex === null) return null;
+    const data = this.getStreamData(key);
+    if (!data) return null;
+    const v = data[this.tooltipIndex];
+    if (v === null || v === undefined) return null;
+    const range = this.streamRange(data);
+    if (!range) return null;
+    const span = range.max - range.min || 1;
+    const norm = (v - range.min) / span;
+    return this.plotH - norm * this.plotH;
+  }
+
+  get tooltipDate(): string {
+    if (this.tooltipIndex === null || this.timestamps.length === 0) return '';
+    const ts = this.timestamps[this.tooltipIndex];
+    return new Date(ts).toLocaleDateString('de-DE', { day: '2-digit', month: 'short', year: 'numeric' });
+  }
+
+  tooltipValue(key: string): string | null {
+    if (this.tooltipIndex === null) return null;
+    const data = this.getStreamData(key);
+    if (!data) return null;
+    const v = data[this.tooltipIndex];
+    if (v === null || v === undefined) return null;
+    return this.formatNumber(v);
+  }
+
+  // ── Chart data build ───────────────────────────────────────────
 
   private buildChartData(measurements: BodyMeasurementEntry[]): void {
     const sorted = [...measurements]
@@ -189,162 +298,17 @@ export class BodyMetrics implements OnInit {
     this.hasChartData = sorted.length > 0;
 
     if (sorted.length === 0) {
-      this.weightPath = '';
-      this.weightFillPath = '';
-      this.fatPath = '';
-      this.musclePath = '';
-      this.chartWeightPoints = [];
-      this.chartFatPoints = [];
-      this.chartMusclePoints = [];
+      this.streamData = {};
+      this.timestamps = [];
       return;
     }
 
-    const timestamps = sorted.map(m => new Date(m.measuredAt).getTime());
-    const minDate = Math.min(...timestamps);
-    const maxDate = Math.max(...timestamps);
-    const dateRange = maxDate - minDate || 1;
-
-    // Collect all values to build a shared Y scale
-    const allValues = [
-      ...sorted.map(m => m.weightKg).filter((v): v is number => v != null),
-      ...sorted.map(m => m.fatPercentage).filter((v): v is number => v != null),
-      ...sorted.map(m => m.muscleMassKg).filter((v): v is number => v != null),
-    ];
-
-    if (allValues.length === 0) {
-      this.hasChartData = false;
-      return;
-    }
-
-    const globalMin = Math.min(...allValues);
-    const globalMax = Math.max(...allValues);
-    const pad = (globalMax - globalMin) * 0.15 || 2;
-    const yLow = globalMin - pad;
-    const yHigh = globalMax + pad;
-
-    const toX = (ts: number) => (ts - minDate) / dateRange * 94 + 3;
-    const toY = (v: number) => 35 - ((v - yLow) / (yHigh - yLow)) * 28;
-
-    this.chartWeightPoints = sorted
-      .filter(m => m.weightKg != null)
-      .map(m => { const ts = new Date(m.measuredAt).getTime(); return { x: toX(ts), y: toY(m.weightKg!), rawValue: m.weightKg!, timestamp: ts }; });
-
-    this.chartFatPoints = sorted
-      .filter(m => m.fatPercentage != null)
-      .map(m => { const ts = new Date(m.measuredAt).getTime(); return { x: toX(ts), y: toY(m.fatPercentage!), rawValue: m.fatPercentage!, timestamp: ts }; });
-
-    this.chartMusclePoints = sorted
-      .filter(m => m.muscleMassKg != null)
-      .map(m => { const ts = new Date(m.measuredAt).getTime(); return { x: toX(ts), y: toY(m.muscleMassKg!), rawValue: m.muscleMassKg!, timestamp: ts }; });
-
-    if (this.chartWeightPoints.length > 0) {
-      this.weightPath = this.buildSvgPath(this.chartWeightPoints);
-      const first = this.chartWeightPoints[0];
-      const last = this.chartWeightPoints[this.chartWeightPoints.length - 1];
-      this.weightFillPath = `${this.weightPath} L${last.x.toFixed(2)},38 L${first.x.toFixed(2)},38 Z`;
-    } else {
-      this.weightPath = '';
-      this.weightFillPath = '';
-    }
-
-    this.fatPath = this.chartFatPoints.length > 0 ? this.buildSvgPath(this.chartFatPoints) : '';
-    this.musclePath = this.chartMusclePoints.length > 0 ? this.buildSvgPath(this.chartMusclePoints) : '';
-
-    this.axisLabels = this.buildAxisLabels(minDate, maxDate);
-  }
-
-  private buildSvgPath(points: ChartPoint[]): string {
-    if (points.length === 0) return '';
-    if (points.length === 1) {
-      const p = points[0];
-      return `M${p.x.toFixed(2)},${p.y.toFixed(2)} L${(p.x + 0.01).toFixed(2)},${p.y.toFixed(2)}`;
-    }
-
-    let d = `M${points[0].x.toFixed(2)},${points[0].y.toFixed(2)}`;
-    for (let i = 1; i < points.length; i++) {
-      const p0 = points[i - 1];
-      const p1 = points[i];
-      const cpX = ((p0.x + p1.x) / 2).toFixed(2);
-      d += ` C${cpX},${p0.y.toFixed(2)} ${cpX},${p1.y.toFixed(2)} ${p1.x.toFixed(2)},${p1.y.toFixed(2)}`;
-    }
-    return d;
-  }
-
-  private buildAxisLabels(minDate: number, maxDate: number): string[] {
-    const months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
-    const start = new Date(minDate);
-    const end = new Date(maxDate);
-
-    const labels: string[] = [];
-    const current = new Date(start.getFullYear(), start.getMonth(), 1);
-    const endMonth = new Date(end.getFullYear(), end.getMonth(), 1);
-
-    while (current <= endMonth) {
-      labels.push(months[current.getMonth()]);
-      current.setMonth(current.getMonth() + 1);
-    }
-
-    if (labels.length === 0) return ['', '', '', 'TODAY'];
-    labels[labels.length - 1] = 'TODAY';
-
-    if (labels.length >= 4) {
-      const len = labels.length;
-      return [labels[0], labels[Math.round(len / 3)], labels[Math.round((len * 2) / 3)], 'TODAY'];
-    }
-
-    while (labels.length < 4) labels.unshift('');
-    return labels;
-  }
-
-  private interpolateY(points: ChartPoint[], svgX: number): number | null {
-    if (points.length === 0) return null;
-    if (points.length === 1) return points[0].y;
-    if (svgX <= points[0].x) return points[0].y;
-    if (svgX >= points[points.length - 1].x) return points[points.length - 1].y;
-
-    for (let i = 1; i < points.length; i++) {
-      if (svgX <= points[i].x) {
-        const p0 = points[i - 1];
-        const p1 = points[i];
-        const t = (svgX - p0.x) / (p1.x - p0.x);
-        return p0.y + (p1.y - p0.y) * t;
-      }
-    }
-    return points[points.length - 1].y;
-  }
-
-  private interpolateRawValue(points: ChartPoint[], svgX: number): number | null {
-    if (points.length === 0) return null;
-    if (points.length === 1) return points[0].rawValue;
-    if (svgX <= points[0].x) return points[0].rawValue;
-    if (svgX >= points[points.length - 1].x) return points[points.length - 1].rawValue;
-
-    for (let i = 1; i < points.length; i++) {
-      if (svgX <= points[i].x) {
-        const p0 = points[i - 1];
-        const p1 = points[i];
-        const t = (svgX - p0.x) / (p1.x - p0.x);
-        return p0.rawValue + (p1.rawValue - p0.rawValue) * t;
-      }
-    }
-    return points[points.length - 1].rawValue;
-  }
-
-  private interpolateTimestamp(points: ChartPoint[], svgX: number): number | null {
-    if (points.length === 0) return null;
-    if (points.length === 1) return points[0].timestamp;
-    if (svgX <= points[0].x) return points[0].timestamp;
-    if (svgX >= points[points.length - 1].x) return points[points.length - 1].timestamp;
-
-    for (let i = 1; i < points.length; i++) {
-      if (svgX <= points[i].x) {
-        const p0 = points[i - 1];
-        const p1 = points[i];
-        const t = (svgX - p0.x) / (p1.x - p0.x);
-        return p0.timestamp + (p1.timestamp - p0.timestamp) * t;
-      }
-    }
-    return points[points.length - 1].timestamp;
+    this.timestamps = sorted.map(m => new Date(m.measuredAt).getTime());
+    this.streamData = {
+      weight: sorted.map(m => m.weightKg ?? null),
+      fat: sorted.map(m => m.fatPercentage ?? null),
+      muscle: sorted.map(m => m.muscleMassKg ?? null),
+    };
   }
 
   private buildSummaryCards(latest: BodyMeasurementEntry | null, previous: BodyMeasurementEntry | null): SummaryCard[] {

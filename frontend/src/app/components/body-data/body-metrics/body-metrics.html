@@ -39,87 +39,137 @@
 
     <div class="content-grid">
       <div class="main-column">
-        <section class="panel">
-          <div class="panel__header">
-            <div>
-              <h4>Performance Trends</h4>
-              <p>Weight &amp; Body Fat Analysis</p>
+        <section class="perf-chart-section" *ngIf="hasChartData">
+          <!-- Card Header: title left + legend right -->
+          <div class="chart-card-header">
+            <div class="chart-card-title">
+              <span class="material-symbols-outlined chart-title-icon">bar_chart</span>
+              <span>Body Composition Trends</span>
             </div>
-            <div class="legend">
-              <button type="button" class="legend__item" [class.legend__item--off]="!visibleLines.weight" (click)="toggleLine('weight')">
-                <span class="legend__dot legend__dot--primary"></span>
-                <span>Weight</span>
-              </button>
-              <button type="button" class="legend__item" [class.legend__item--off]="!visibleLines.fat" (click)="toggleLine('fat')">
-                <span class="legend__dot legend__dot--muted"></span>
-                <span>Body Fat</span>
-              </button>
-              <button type="button" class="legend__item" [class.legend__item--off]="!visibleLines.muscle" (click)="toggleLine('muscle')">
-                <span class="legend__dot legend__dot--muscle"></span>
-                <span>Muscle</span>
+            <div class="chart-legend">
+              <button
+                *ngFor="let d of availableStreams"
+                class="legend-item"
+                [class.legend-item--active]="activeStreams().has(d.key)"
+                [style.--item-color]="d.color"
+                (click)="toggleStream(d.key)"
+              >
+                <span class="legend-dot"></span>
+                <span class="legend-label">{{ d.label }}</span>
               </button>
             </div>
           </div>
 
-          <div class="chart-area"
-               (mousemove)="onChartMouseMove($event)"
-               (mouseleave)="onChartMouseLeave()">
-            <svg viewBox="0 0 100 40" preserveAspectRatio="none">
-              <line x1="0" y1="10" x2="100" y2="10"></line>
-              <line x1="0" y1="20" x2="100" y2="20"></line>
-              <line x1="0" y1="30" x2="100" y2="30"></line>
+          <!-- Chart Container -->
+          <div class="chart-outer">
+            <svg
+              class="chart-svg"
+              viewBox="0 0 960 280"
+              preserveAspectRatio="none"
+              (mousemove)="onChartMouseMove($event)"
+              (mouseleave)="onChartMouseLeave()"
+            >
+              <g transform="translate(60, 10)">
 
-              <ng-container *ngIf="hasChartData; else noDataLines">
-                <path *ngIf="weightFillPath && visibleLines.weight" class="chart-area__fill" [attr.d]="weightFillPath"></path>
-                <path *ngIf="weightPath && visibleLines.weight" class="chart-area__line chart-area__line--primary" [attr.d]="weightPath"></path>
-                <path *ngIf="fatPath && visibleLines.fat" class="chart-area__line chart-area__line--secondary" [attr.d]="fatPath"></path>
-                <path *ngIf="musclePath && visibleLines.muscle" class="chart-area__line chart-area__line--muscle" [attr.d]="musclePath"></path>
-              </ng-container>
+                <!-- Horizontal grid lines -->
+                <line *ngFor="let tick of [0, 0.25, 0.5, 0.75, 1]"
+                  x1="0" [attr.y1]="plotH * (1 - tick)"
+                  [attr.x2]="plotW" [attr.y2]="plotH * (1 - tick)"
+                  stroke="rgba(255,255,255,0.06)" stroke-width="1"
+                />
 
-              <ng-template #noDataLines>
-                <text class="chart-no-data" x="50" y="22" text-anchor="middle">No data yet</text>
-              </ng-template>
+                <!-- Stream paths -->
+                <ng-container *ngFor="let d of availableActiveStreams">
+                  <ng-container *ngIf="getStreamData(d.key) as data">
+                    <ng-container *ngIf="streamRange(data) as range">
+                      <path
+                        [attr.d]="buildStreamPath(data, range)"
+                        [attr.stroke]="d.color"
+                        fill="none"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                    </ng-container>
+                  </ng-container>
+                </ng-container>
 
-              <!-- Interactive marker -->
-              <g *ngIf="markerVisible && hasChartData" class="chart-marker">
-                <line class="chart-marker__line"
-                      [attr.x1]="markerX" y1="0"
-                      [attr.x2]="markerX" y2="40"></line>
-                <circle *ngIf="markerWeightY != null && visibleLines.weight"
-                        class="chart-marker__dot chart-marker__dot--primary"
-                        [attr.cx]="markerX" [attr.cy]="markerWeightY" r="1.4"></circle>
-                <circle *ngIf="markerFatY != null && visibleLines.fat"
-                        class="chart-marker__dot chart-marker__dot--secondary"
-                        [attr.cx]="markerX" [attr.cy]="markerFatY" r="1.4"></circle>
-                <circle *ngIf="markerMuscleY != null && visibleLines.muscle"
-                        class="chart-marker__dot chart-marker__dot--muscle"
-                        [attr.cx]="markerX" [attr.cy]="markerMuscleY" r="1.4"></circle>
+                <!-- Hover hairline + dots -->
+                <ng-container *ngIf="tooltipIndex !== null">
+                  <line
+                    [attr.x1]="hoverX(tooltipIndex)" y1="0"
+                    [attr.x2]="hoverX(tooltipIndex)" [attr.y2]="plotH"
+                    stroke="#b9f20d" stroke-width="1.5" stroke-opacity="0.8"
+                  />
+                  <ng-container *ngFor="let d of availableActiveStreams; let first = first">
+                    <ng-container *ngIf="first">
+                      <circle *ngIf="hoverDotY(d.key) as dotY"
+                        [attr.cx]="hoverX(tooltipIndex)"
+                        [attr.cy]="dotY"
+                        r="5"
+                        fill="#b9f20d"
+                        style="filter: drop-shadow(0 0 6px rgba(185,242,13,0.9))"
+                      />
+                    </ng-container>
+                  </ng-container>
+                </ng-container>
+
+                <!-- Y-axis labels -->
+                <ng-container *ngFor="let item of yAxisItems">
+                  <text *ngFor="let tick of item.ticks"
+                    x="-8" [attr.y]="tick.y + 4"
+                    text-anchor="end"
+                    font-size="10"
+                    font-family="Lexend, sans-serif"
+                    [attr.fill]="item.color"
+                    fill-opacity="0.85"
+                  >{{ tick.label }}</text>
+                </ng-container>
+
+                <!-- X-axis baseline -->
+                <line x1="0" [attr.y1]="plotH" [attr.x2]="plotW" [attr.y2]="plotH"
+                      stroke="rgba(255,255,255,0.12)" stroke-width="1"/>
+
+                <!-- X-axis date labels -->
+                <text *ngFor="let tick of xAxisTicks"
+                  [attr.x]="tick.x" [attr.y]="plotH + 18"
+                  text-anchor="middle"
+                  font-size="10"
+                  font-family="Lexend, sans-serif"
+                  fill="#475569"
+                >{{ tick.label }}</text>
+
               </g>
             </svg>
 
-            <!-- HTML tooltip overlay -->
-            <div class="chart-tooltip"
-                 *ngIf="markerVisible && hasChartData && (markerWeightValue || markerFatValue || markerMuscleValue)"
-                 [style.left.%]="markerX"
-                 [class.chart-tooltip--flip]="markerX > 70">
-              <div class="chart-tooltip__date" *ngIf="markerDate">{{ markerDate }}</div>
-              <div class="chart-tooltip__row chart-tooltip__row--weight" *ngIf="markerWeightValue">
-                <span class="chart-tooltip__dot chart-tooltip__dot--primary"></span>
-                <span>{{ markerWeightValue }}</span>
+            <!-- Hover Tooltip -->
+            <div class="chart-tooltip" *ngIf="tooltipIndex !== null" [style.left.px]="tooltipPixelX">
+              <div class="tooltip-header">
+                <span class="tooltip-diamond">&#9671;</span>
+                <span class="tooltip-date-label">{{ tooltipDate }}</span>
               </div>
-              <div class="chart-tooltip__row chart-tooltip__row--fat" *ngIf="markerFatValue && visibleLines.fat">
-                <span class="chart-tooltip__dot chart-tooltip__dot--secondary"></span>
-                <span>{{ markerFatValue }}</span>
-              </div>
-              <div class="chart-tooltip__row chart-tooltip__row--muscle" *ngIf="markerMuscleValue && visibleLines.muscle">
-                <span class="chart-tooltip__dot chart-tooltip__dot--muscle"></span>
-                <span>{{ markerMuscleValue }}</span>
-              </div>
+              <ng-container *ngFor="let d of availableActiveStreams">
+                <div class="tooltip-row" *ngIf="tooltipValue(d.key) as val">
+                  <span class="tooltip-stream-label">{{ d.label }}</span>
+                  <span class="tooltip-stream-val" [style.color]="d.color">{{ val }}</span>
+                  <span class="tooltip-stream-unit">{{ d.unit }}</span>
+                </div>
+              </ng-container>
             </div>
+          </div>
+        </section>
 
-            <div class="chart-axis">
-              <span *ngFor="let label of axisLabels">{{ label }}</span>
+        <!-- No data fallback -->
+        <section class="perf-chart-section perf-chart-section--empty" *ngIf="!hasChartData">
+          <div class="chart-card-header">
+            <div class="chart-card-title">
+              <span class="material-symbols-outlined chart-title-icon">bar_chart</span>
+              <span>Body Composition Trends</span>
             </div>
+          </div>
+          <div class="chart-empty">
+            <span class="material-symbols-outlined">show_chart</span>
+            <p>No data yet</p>
           </div>
         </section>
 
