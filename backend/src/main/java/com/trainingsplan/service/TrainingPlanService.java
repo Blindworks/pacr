@@ -22,7 +22,9 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -72,10 +74,14 @@ public class TrainingPlanService {
     }
 
     public void deleteById(Long id) {
+        String planName = trainingPlanRepository.findById(id)
+                .map(TrainingPlan::getName).orElse(null);
         trainingPlanRepository.deleteById(id);
         User currentUser = securityUtils.getCurrentUser();
+        Map<String, Object> details = new LinkedHashMap<>();
+        if (planName != null) details.put("name", planName);
         auditLogService.log(currentUser, AuditAction.PLAN_DELETED, "TRAINING_PLAN",
-                String.valueOf(id), null);
+                String.valueOf(id), details.isEmpty() ? null : details);
     }
 
     // -------------------------------------------------------------------------
@@ -93,8 +99,11 @@ public class TrainingPlanService {
         TrainingPlan savedPlan = trainingPlanRepository.save(trainingPlan);
 
         User currentUser = securityUtils.getCurrentUser();
+        Map<String, Object> planDetails = new LinkedHashMap<>();
+        planDetails.put("name", savedPlan.getName());
+        if (savedPlan.getTrainingCount() != null) planDetails.put("trainings", savedPlan.getTrainingCount());
         auditLogService.log(currentUser, AuditAction.PLAN_CREATED, "TRAINING_PLAN",
-                String.valueOf(savedPlan.getId()), null);
+                String.valueOf(savedPlan.getId()), planDetails);
 
         // Create training templates
         parseAndCreateTemplates(savedPlan, jsonContent);
@@ -126,8 +135,12 @@ public class TrainingPlanService {
         TrainingPlan saved = trainingPlanRepository.save(template);
 
         User currentUser = securityUtils.getCurrentUser();
+        Map<String, Object> templateDetails = new LinkedHashMap<>();
+        templateDetails.put("name", saved.getName());
+        templateDetails.put("template", true);
+        if (saved.getTrainingCount() != null) templateDetails.put("trainings", saved.getTrainingCount());
         auditLogService.log(currentUser, AuditAction.PLAN_CREATED, "TRAINING_PLAN",
-                String.valueOf(saved.getId()), null);
+                String.valueOf(saved.getId()), templateDetails);
 
         parseAndCreateTemplates(saved, jsonContent);
 

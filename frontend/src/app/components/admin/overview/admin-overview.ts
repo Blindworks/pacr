@@ -15,6 +15,7 @@ export class AdminOverview implements OnInit {
 
   stats = signal<AdminStats | null>(null);
   auditLog = signal<AuditLogEntry[]>([]);
+  selectedEntry = signal<AuditLogEntry | null>(null);
   totalElements = signal(0);
   totalPages = signal(0);
   isLoadingStats = signal(false);
@@ -92,6 +93,39 @@ export class AdminOverview implements OnInit {
       return JSON.stringify(JSON.parse(details), null, 2);
     } catch {
       return details;
+    }
+  }
+
+  formatDetailsShort(details: string | null): string {
+    if (!details) return '—';
+    try {
+      const obj = JSON.parse(details);
+      const parts = Object.entries(obj).map(([k, v]) => `${k}=${v}`);
+      const joined = parts.join(', ');
+      return joined.length > 60 ? joined.substring(0, 57) + '...' : joined;
+    } catch {
+      return details.length > 60 ? details.substring(0, 57) + '...' : details;
+    }
+  }
+
+  openDetailsDialog(entry: AuditLogEntry): void {
+    this.selectedEntry.set(entry);
+  }
+
+  closeDetailsDialog(): void {
+    this.selectedEntry.set(null);
+  }
+
+  getDetailsKeyValues(details: string | null): { key: string; value: string }[] {
+    if (!details) return [];
+    try {
+      const obj = JSON.parse(details);
+      return Object.entries(obj).map(([key, value]) => ({
+        key,
+        value: String(value)
+      }));
+    } catch {
+      return [{ key: 'raw', value: details }];
     }
   }
 }

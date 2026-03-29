@@ -22,7 +22,9 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -105,7 +107,7 @@ public class CompletedTrainingService {
         CompletedTraining savedTraining = completedTrainingRepository.save(training);
 
         auditLogService.log(currentUser, AuditAction.FIT_UPLOADED, "COMPLETED_TRAINING",
-                String.valueOf(savedTraining.getId()), null);
+                String.valueOf(savedTraining.getId()), buildUploadDetails("GPX", savedTraining));
 
         bodyMetricService.calculateAndStore(savedTraining, currentUser);
         activityMetricsService.calculateAndPersist(savedTraining, data.timeSeconds, data.heartRates, currentUser);
@@ -142,7 +144,7 @@ public class CompletedTrainingService {
         CompletedTraining savedTraining = completedTrainingRepository.save(training);
 
         auditLogService.log(currentUser, AuditAction.FIT_UPLOADED, "COMPLETED_TRAINING",
-                String.valueOf(savedTraining.getId()), null);
+                String.valueOf(savedTraining.getId()), buildUploadDetails("TCX", savedTraining));
 
         bodyMetricService.calculateAndStore(savedTraining, currentUser);
         activityMetricsService.calculateAndPersist(savedTraining, data.timeSeconds, data.heartRates, currentUser);
@@ -188,7 +190,7 @@ public class CompletedTrainingService {
         CompletedTraining savedTraining = completedTrainingRepository.save(training);
 
         auditLogService.log(currentUser, AuditAction.FIT_UPLOADED, "COMPLETED_TRAINING",
-                String.valueOf(savedTraining.getId()), null);
+                String.valueOf(savedTraining.getId()), buildUploadDetails("FIT", savedTraining));
 
         saveActivityStream(savedTraining, collector);
 
@@ -563,5 +565,14 @@ public class CompletedTrainingService {
         if (userId == null) return Optional.empty();
         return completedTrainingRepository
                 .findTopByUserIdAndSportContainingIgnoreCaseOrderByTrainingDateDescUploadDateDesc(userId, "run");
+    }
+
+    private Map<String, Object> buildUploadDetails(String format, CompletedTraining training) {
+        Map<String, Object> details = new LinkedHashMap<>();
+        details.put("format", format);
+        if (training.getTrainingDate() != null) details.put("date", training.getTrainingDate().toString());
+        if (training.getSport() != null) details.put("sport", training.getSport());
+        if (training.getDistanceKm() != null) details.put("distanceKm", training.getDistanceKm());
+        return details;
     }
 }

@@ -86,8 +86,8 @@
             <td><span class="action-badge">{{ entry.action }}</span></td>
             <td>{{ entry.targetType ? entry.targetType + ' #' + entry.targetId : '—' }}</td>
             <td>
-              <span class="details-cell" *ngIf="entry.details" [title]="formatDetails(entry.details)">
-                &#128269;
+              <span class="details-cell" *ngIf="entry.details" (click)="openDetailsDialog(entry)">
+                {{ formatDetailsShort(entry.details) }}
               </span>
               <span *ngIf="!entry.details">—</span>
             </td>
@@ -106,5 +106,35 @@
       <button (click)="goToPage(currentPage + 1)" [disabled]="currentPage >= totalPages() - 1">Weiter &#8250;</button>
     </div>
   </section>
+
+  <!-- Details Dialog Overlay -->
+  <div class="details-overlay" *ngIf="selectedEntry()" (click)="closeDetailsDialog()">
+    <div class="details-dialog" (click)="$event.stopPropagation()">
+      <div class="details-dialog-header">
+        <h3>Details — {{ selectedEntry()!.action }}</h3>
+        <button class="details-close-btn" (click)="closeDetailsDialog()">&times;</button>
+      </div>
+      <div class="details-dialog-body">
+        <div class="details-meta">
+          <span class="details-meta-label">Zeitpunkt:</span>
+          <span>{{ selectedEntry()!.timestamp | date:'dd.MM.yy HH:mm:ss' }}</span>
+        </div>
+        <div class="details-meta" *ngIf="selectedEntry()!.actorUsername">
+          <span class="details-meta-label">Actor:</span>
+          <span>{{ selectedEntry()!.actorUsername }}</span>
+        </div>
+        <div class="details-meta" *ngIf="selectedEntry()!.targetType">
+          <span class="details-meta-label">Ziel:</span>
+          <span>{{ selectedEntry()!.targetType }} #{{ selectedEntry()!.targetId }}</span>
+        </div>
+        <div class="details-kv-list">
+          <div class="details-kv" *ngFor="let kv of getDetailsKeyValues(selectedEntry()!.details)">
+            <span class="details-kv-key">{{ kv.key }}</span>
+            <span class="details-kv-value">{{ kv.value }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
 </div>

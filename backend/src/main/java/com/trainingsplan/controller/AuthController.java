@@ -22,6 +22,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import jakarta.servlet.http.HttpServletRequest;
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.Map;
@@ -132,7 +133,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody AuthRequest request) {
+    public ResponseEntity<?> login(@RequestBody AuthRequest request, HttpServletRequest httpRequest) {
         User user = userRepository.findByUsername(request.username())
                 .or(() -> userRepository.findByEmail(request.username()))
                 .orElse(null);
@@ -150,7 +151,8 @@ public class AuthController {
         User authenticatedUser = (User) authentication.getPrincipal();
         authenticatedUser.setLastLoginAt(LocalDateTime.now());
         userRepository.save(authenticatedUser);
-        auditLogService.log(authenticatedUser, AuditAction.LOGIN, null, null, null);
+        auditLogService.log(authenticatedUser, AuditAction.LOGIN, null, null,
+                Map.of("ip", httpRequest.getRemoteAddr()));
         String token = jwtService.generateToken(authenticatedUser);
 
         return ResponseEntity.ok(new AuthResponse(token, authenticatedUser.getId(), authenticatedUser.getUsername(),

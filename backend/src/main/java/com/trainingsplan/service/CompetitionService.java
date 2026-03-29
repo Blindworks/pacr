@@ -12,7 +12,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -83,17 +85,25 @@ public class CompetitionService {
                 : null;
         if (isNew) {
             User currentUser = securityUtils.getCurrentUser();
+            Map<String, Object> details = new LinkedHashMap<>();
+            details.put("name", saved.getName());
+            if (saved.getDate() != null) details.put("date", saved.getDate().toString());
+            if (saved.getLocation() != null) details.put("location", saved.getLocation());
             auditLogService.log(currentUser, AuditAction.COMPETITION_CREATED, "COMPETITION",
-                    String.valueOf(saved.getId()), null);
+                    String.valueOf(saved.getId()), details);
         }
         return new CompetitionDto(saved, reg);
     }
 
     public void deleteById(Long id) {
+        String competitionName = competitionRepository.findById(id)
+                .map(Competition::getName).orElse(null);
         competitionRepository.deleteById(id);
         User currentUser = securityUtils.getCurrentUser();
+        Map<String, Object> details = new LinkedHashMap<>();
+        if (competitionName != null) details.put("name", competitionName);
         auditLogService.log(currentUser, AuditAction.COMPETITION_DELETED, "COMPETITION",
-                String.valueOf(id), null);
+                String.valueOf(id), details.isEmpty() ? null : details);
     }
 
     public CompetitionRegistration updateRegistration(Long competitionId, String ranking,

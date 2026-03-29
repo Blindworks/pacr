@@ -40,7 +40,8 @@ public class UserService {
     public User createUser(String username, String email) {
         User user = new User(username, email, LocalDateTime.now());
         User saved = userRepository.save(user);
-        auditLogService.log(null, AuditAction.USER_CREATED, "USER", String.valueOf(saved.getId()), null);
+        auditLogService.log(null, AuditAction.USER_CREATED, "USER", String.valueOf(saved.getId()),
+                Map.of("username", saved.getUsername(), "email", saved.getEmail()));
         return saved;
     }
 
@@ -101,7 +102,8 @@ public class UserService {
         user.setWeeklyVolumeKm(weeklyVolumeKm);
         User saved = userRepository.save(user);
         User caller = securityUtils.getCurrentUser();
-        auditLogService.log(caller, AuditAction.USER_UPDATED, "USER", String.valueOf(id), null);
+        auditLogService.log(caller, AuditAction.USER_UPDATED, "USER", String.valueOf(id),
+                Map.of("username", username, "email", email));
 
         if (status != null && !status.isBlank() && !UserStatus.valueOf(status).equals(oldStatus)) {
             auditLogService.log(caller, AuditAction.USER_STATUS_CHANGED, "USER", String.valueOf(id),

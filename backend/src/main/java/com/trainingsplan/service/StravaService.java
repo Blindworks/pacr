@@ -147,7 +147,8 @@ public class StravaService {
 
             User user = securityUtils.getCurrentUser();
             auditLogService.log(user, AuditAction.STRAVA_CONNECTED, "USER",
-                    user != null ? String.valueOf(user.getId()) : null, null);
+                    user != null ? String.valueOf(user.getId()) : null,
+                    java.util.Map.of("athlete", token.getAthleteName() != null ? token.getAthleteName() : "unknown"));
         } catch (Exception e) {
             log.error("Strava token exchange failed: {}", e.getMessage());
             throw new RuntimeException("Failed to exchange Strava code for token", e);
