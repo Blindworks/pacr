@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="075-1" author="claude">
+        <comment>Create coros_token table for COROS OAuth integration</comment>
+        <createTable tableName="coros_token">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="user_id" type="BIGINT">
+                <constraints nullable="true"/>
+            </column>
+            <column name="open_id" type="VARCHAR(64)">
+                <constraints nullable="true" unique="true" uniqueConstraintName="uk_coros_token_open_id"/>
+            </column>
+            <column name="access_token" type="VARCHAR(1000)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="refresh_token" type="VARCHAR(1000)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="expires_at" type="BIGINT">
+                <constraints nullable="true"/>
+            </column>
+            <column name="nickname" type="VARCHAR(255)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="profile_photo" type="VARCHAR(1000)">
+                <constraints nullable="true"/>
+            </column>
+        </createTable>
+        <addForeignKeyConstraint
+            baseTableName="coros_token" baseColumnNames="user_id"
+            referencedTableName="users" referencedColumnNames="id"
+            constraintName="fk_coros_token_user"/>
+    </changeSet>
+
+    <changeSet id="075-2" author="claude">
+        <comment>Add coros_label_id column to completed_trainings for COROS webhook dedup</comment>
+        <addColumn tableName="completed_trainings">
+            <column name="coros_label_id" type="VARCHAR(64)">
+                <constraints nullable="true" unique="true" uniqueConstraintName="uk_completed_trainings_coros_label_id"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+</databaseChangeLog>

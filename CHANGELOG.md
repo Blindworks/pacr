@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-03-29
+
+### Added
+- COROS API integration (V2.0.6) with OAuth 2.0 authorization flow
+- COROS webhook endpoint for receiving workout data push (`POST /api/coros/webhook`)
+- COROS service status check endpoint (`GET /api/coros/status`)
+- COROS sport type mapper supporting 50+ workout types (running, cycling, swimming, triathlon, etc.)
+- Automatic conversion of COROS workout data to CompletedTraining entities with dedup via labelId
+- COROS user profile sync (nickname, profile photo) on connection
+- COROS token management with automatic refresh before expiry
+- Audit logging for COROS connect/disconnect events
+
 ## [0.2.0] - 2026-03-29
 
 ### Added

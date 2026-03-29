@@ -146,6 +146,9 @@ public class CompletedTraining {
     @Column(name = "strava_activity_id", unique = true)
     private Long stravaActivityId;
 
+    @Column(name = "coros_label_id", unique = true, length = 64)
+    private String corosLabelId;
+
     @Column(name = "activity_name")
     private String activityName;
 
@@ -533,6 +536,14 @@ public class CompletedTraining {
 
     public void setStravaActivityId(Long stravaActivityId) {
         this.stravaActivityId = stravaActivityId;
+    }
+
+    public String getCorosLabelId() {
+        return corosLabelId;
+    }
+
+    public void setCorosLabelId(String corosLabelId) {
+        this.corosLabelId = corosLabelId;
     }
 
     public String getActivityName() {
