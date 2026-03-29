@@ -1,0 +1,43 @@
+<dialog #dialog class="about-dialog" (click)="onBackdropClick($event)">
+  <div class="about-inner" (click)="$event.stopPropagation()">
+
+    <header class="about-header">
+      <div class="about-header-title">
+        <span class="material-symbols-outlined about-icon">info</span>
+        <span>About</span>
+      </div>
+      <button class="about-close" (click)="close()">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </header>
+
+    <div class="about-body">
+      <div class="about-brand">
+        <div class="about-logo">
+          <span class="material-symbols-outlined">bolt</span>
+        </div>
+        <h2>PACR</h2>
+        <p class="about-tagline">Premium Running</p>
+      </div>
+
+      @if (versionService.version(); as v) {
+        <div class="about-details">
+          <div class="about-row">
+            <span class="about-label">VERSION</span>
+            <span class="about-value about-value--version">{{ v.version }}</span>
+          </div>
+          @if (v.buildTimestamp && v.buildTimestamp !== 'unknown') {
+            <div class="about-row">
+              <span class="about-label">BUILD</span>
+              <span class="about-value">{{ v.buildTimestamp }}</span>
+            </div>
+          }
+        </div>
+      }
+
+      <div class="about-footer">
+        <p>&copy; {{ currentYear }} PACR. All rights reserved.</p>
+      </div>
+    </div>
+  </div>
+</dialog>

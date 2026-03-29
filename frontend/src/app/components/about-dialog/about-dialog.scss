@@ -1,0 +1,163 @@
+$primary: #b9f20d;
+$bg: #0d1117;
+$surface: #161b22;
+$surface2: #1c2128;
+$border: rgba(#b9f20d, 0.1);
+$text: #e6edf3;
+$muted: #8b949e;
+
+.about-dialog {
+  margin: auto;
+  padding: 0;
+  border: 1px solid $border;
+  border-radius: 16px;
+  background: $surface;
+  color: $text;
+  width: min(420px, 92vw);
+  overflow: hidden;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.6);
+
+  &::backdrop {
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(4px);
+  }
+}
+
+.about-inner {
+  display: flex;
+  flex-direction: column;
+}
+
+.about-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid $border;
+}
+
+.about-header-title {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: $text;
+
+  .about-icon {
+    font-size: 20px;
+    color: $primary;
+  }
+}
+
+.about-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  color: $muted;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+
+  .material-symbols-outlined {
+    font-size: 20px;
+  }
+
+  &:hover {
+    background: rgba($primary, 0.08);
+    color: $text;
+  }
+}
+
+.about-body {
+  padding: 2rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.about-brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+
+  h2 {
+    font-size: 1.75rem;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    color: $text;
+    margin: 0;
+  }
+}
+
+.about-tagline {
+  font-size: 0.875rem;
+  color: $muted;
+  margin: 0;
+  font-weight: 500;
+}
+
+.about-logo {
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  background: rgba($primary, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .material-symbols-outlined {
+    font-size: 28px;
+    color: $primary;
+  }
+}
+
+.about-details {
+  width: 100%;
+  background: $surface2;
+  border: 1px solid $border;
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.about-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.about-label {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: $muted;
+}
+
+.about-value {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: $text;
+  font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+}
+
+.about-value--version {
+  color: $primary;
+  font-weight: 700;
+}
+
+.about-footer {
+  p {
+    font-size: 0.75rem;
+    color: $muted;
+    margin: 0;
+  }
+}

@@ -73,6 +73,15 @@ CompletedTraining (from FIT file upload, linked to date — NOT a FK to Training
 ### FIT File Processing
 The Garmin FIT SDK (`com.garmin:fit:21.176.0`) is a local dependency. It must be installed to the local Maven repository — see `MAVEN_SETUP.md`. `CompletedTrainingService` parses uploaded `.fit` files and stores metrics (HR, pace, power, cadence, elevation) in `CompletedTraining`.
 
+### Version Management
+- Current version: `0.1.0` (defined in `backend/pom.xml`, mirrored in `frontend/package.json`)
+- **Before every commit**, bump the version using `./version-bump.sh <patch|minor|major>`:
+  - `patch` — bugfixes, small corrections
+  - `minor` — new features, new endpoints, new pages
+  - `major` — breaking changes, large redesigns
+- Include the bumped `pom.xml` and `package.json` in the same commit
+- The version is exposed via `GET /api/version` (public) and shown in the frontend About dialog
+
 ### Training Plan JSON Upload Format
 ```json
 {
