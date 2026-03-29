@@ -14,6 +14,7 @@ $muted: #8b949e;
   background: $surface;
   color: $text;
   width: min(420px, 92vw);
+  max-height: 85vh;
   overflow: hidden;
   box-shadow: 0 24px 64px rgba(0, 0, 0, 0.6);
 
@@ -26,6 +27,8 @@ $muted: #8b949e;
 .about-inner {
   display: flex;
   flex-direction: column;
+  max-height: 85vh;
+  overflow-y: auto;
 }
 
 .about-header {
@@ -34,6 +37,10 @@ $muted: #8b949e;
   justify-content: space-between;
   padding: 1.25rem 1.5rem;
   border-bottom: 1px solid $border;
+  position: sticky;
+  top: 0;
+  background: $surface;
+  z-index: 1;
 }
 
 .about-header-title {
@@ -152,6 +159,108 @@ $muted: #8b949e;
 .about-value--version {
   color: $primary;
   font-weight: 700;
+}
+
+// Changelog toggle button
+.changelog-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.25rem;
+  background: $surface2;
+  border: 1px solid $border;
+  border-radius: 10px;
+  color: $muted;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+
+  .material-symbols-outlined {
+    font-size: 18px;
+  }
+
+  &:hover {
+    background: rgba($primary, 0.08);
+    color: $text;
+    border-color: rgba($primary, 0.2);
+  }
+}
+
+// Changelog content area
+.changelog-container {
+  width: 100%;
+  max-height: 320px;
+  overflow-y: auto;
+  background: $surface2;
+  border: 1px solid $border;
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: rgba($muted, 0.3);
+    border-radius: 3px;
+  }
+}
+
+.changelog-loading {
+  text-align: center;
+  color: $muted;
+  font-size: 0.8125rem;
+  padding: 1rem 0;
+}
+
+.changelog-content {
+  font-size: 0.8125rem;
+  line-height: 1.6;
+
+  :global(.cl-version) {
+    font-size: 0.9375rem;
+    font-weight: 700;
+    color: $primary;
+    margin: 1.25rem 0 0.5rem 0;
+    padding-bottom: 0.375rem;
+    border-bottom: 1px solid $border;
+
+    &:first-child {
+      margin-top: 0;
+    }
+  }
+
+  :global(.cl-category) {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: $text;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin: 0.75rem 0 0.375rem 0;
+  }
+
+  :global(.cl-list) {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 0.5rem 0;
+
+    li {
+      position: relative;
+      padding-left: 1rem;
+      color: $muted;
+      margin-bottom: 0.25rem;
+
+      &::before {
+        content: '•';
+        position: absolute;
+        left: 0;
+        color: rgba($primary, 0.5);
+      }
+    }
+  }
 }
 
 .about-footer {

@@ -35,6 +35,21 @@
         </div>
       }
 
+      <button class="changelog-toggle" (click)="toggleChangelog()">
+        <span class="material-symbols-outlined">{{ showChangelog() ? 'expand_less' : 'history' }}</span>
+        <span>{{ showChangelog() ? 'Hide Changelog' : 'Changelog' }}</span>
+      </button>
+
+      @if (showChangelog()) {
+        <div class="changelog-container">
+          @if (changelogLoading()) {
+            <div class="changelog-loading">Loading...</div>
+          } @else {
+            <div class="changelog-content" [innerHTML]="changelogHtml()"></div>
+          }
+        </div>
+      }
+
       <div class="about-footer">
         <p>&copy; {{ currentYear }} PACR. All rights reserved.</p>
       </div>

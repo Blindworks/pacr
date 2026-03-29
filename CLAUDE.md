@@ -82,6 +82,14 @@ The Garmin FIT SDK (`com.garmin:fit:21.176.0`) is a local dependency. It must be
 - Include the bumped `pom.xml` and `package.json` in the same commit
 - The version is exposed via `GET /api/version` (public) and shown in the frontend About dialog
 
+### Changelog
+- **Before every commit**, update `CHANGELOG.md` in the project root
+- Format: [Keep a Changelog](https://keepachangelog.com/), written in **English**
+- Add entries under `[Unreleased]` section during development; move to a versioned section on release
+- Categories: `Added`, `Changed`, `Fixed`, `Removed`
+- The changelog is served via `GET /api/changelog` (public) and displayed in the frontend About dialog
+- `CHANGELOG.md` is included as a classpath resource in the backend build (configured in `pom.xml`)
+
 ### Training Plan JSON Upload Format
 ```json
 {
