@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy, inject, signal, computed } from '@angular
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { NgClass } from '@angular/common';
 import { PaceCalculatorService } from '../../services/pace-calculator.service';
+import { AboutDialogService } from '../../services/about-dialog.service';
 import { UserService } from '../../services/user.service';
 import { AuthService } from '../../services/auth.service';
 
@@ -17,6 +18,7 @@ export class Sidebar implements OnInit, OnDestroy {
   profileImageUrl = signal<string | null>(null);
 
   private readonly paceCalc = inject(PaceCalculatorService);
+  private readonly aboutDialog = inject(AboutDialogService);
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
   protected readonly userService = inject(UserService);
@@ -68,6 +70,10 @@ export class Sidebar implements OnInit, OnDestroy {
 
   openPaceCalculator(): void {
     this.paceCalc.open();
+  }
+
+  openAbout(): void {
+    this.aboutDialog.open();
   }
 
   logout(): void {
