@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { catchError, forkJoin, of } from 'rxjs';
 import { BloodPressureEntry, BloodPressureService } from '../../../services/blood-pressure.service';
 import { BodyMeasurementEntry, BodyMeasurementService } from '../../../services/body-measurement.service';
+import { SleepDataEntry, SleepDataService } from '../../../services/sleep-data.service';
 
 interface SummaryCard {
   label: string;
@@ -22,12 +23,19 @@ interface DetailMetric {
   trend: 'up' | 'down' | 'flat';
 }
 
+type HistoryEntryType = 'body' | 'bloodPressure' | 'restingHr';
+
 interface HistoryItem {
-  measurement: BodyMeasurementEntry;
+  id: number;
+  type: HistoryEntryType;
   date: string;
-  time: string;
-  weight: string;
-  bodyFat: string;
+  rawDate: string;
+  icon: string;
+  label: string;
+  values: { label: string; value: string }[];
+  originalEntry: BodyMeasurementEntry | BloodPressureEntry | SleepDataEntry;
+  editing: boolean;
+  editFields: Record<string, number | string | null>;
 }
 
 interface StreamDescriptor {
@@ -61,7 +69,9 @@ export class BodyMetrics implements OnInit {
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly bodyMeasurementService = inject(BodyMeasurementService);
   private readonly bloodPressureService = inject(BloodPressureService);
+  private readonly sleepDataService = inject(SleepDataService);
   private bloodPressures: BloodPressureEntry[] = [];
+  private sleepDataEntries: SleepDataEntry[] = [];
 
   summaryCards: SummaryCard[] = [
     { label: 'Weight', value: '-', unit: 'kg', change: 'Stable', trend: 'flat' },
@@ -291,10 +301,12 @@ export class BodyMetrics implements OnInit {
       latestMeasurement: this.bodyMeasurementService.getLatest().pipe(catchError(() => of(null))),
       measurements: this.bodyMeasurementService.getAll().pipe(catchError(() => of([]))),
       bloodPressures: this.bloodPressureService.getAll().pipe(catchError(() => of([]))),
-      latestBloodPressure: this.bloodPressureService.getLatest().pipe(catchError(() => of(null)))
-    }).subscribe(({ latestMeasurement, measurements, bloodPressures, latestBloodPressure }) => {
+      latestBloodPressure: this.bloodPressureService.getLatest().pipe(catchError(() => of(null))),
+      sleepData: this.sleepDataService.getAll().pipe(catchError(() => of([])))
+    }).subscribe(({ latestMeasurement, measurements, bloodPressures, latestBloodPressure, sleepData }) => {
       const effectiveLatestMeasurement = latestMeasurement ?? measurements[0] ?? null;
       this.bloodPressures = bloodPressures;
+      this.sleepDataEntries = sleepData;
 
       const previousMeasurement = measurements[1] ?? null;
       this.summaryCards = this.buildSummaryCards(effectiveLatestMeasurement, previousMeasurement);
@@ -302,7 +314,7 @@ export class BodyMetrics implements OnInit {
         effectiveLatestMeasurement,
         this.resolveBloodPressureForMeasurement(effectiveLatestMeasurement, latestBloodPressure)
       );
-      this.historyItems = this.buildHistoryItems(measurements);
+      this.historyItems = this.buildHistoryItems(measurements, bloodPressures, sleepData);
       this.lastUpdatedText = this.resolveLastUpdated(
         effectiveLatestMeasurement,
         this.resolveBloodPressureForMeasurement(effectiveLatestMeasurement, latestBloodPressure)
@@ -315,13 +327,68 @@ export class BodyMetrics implements OnInit {
   }
 
   loadHistoryItem(item: HistoryItem): void {
-    const matchingBloodPressure = this.resolveBloodPressureForMeasurement(item.measurement, null);
-    const idx = this.historyItems.indexOf(item);
-    const prev = idx >= 0 && idx + 1 < this.historyItems.length ? this.historyItems[idx + 1].measurement : null;
-    this.summaryCards = this.buildSummaryCards(item.measurement, prev);
-    this.detailMetrics = this.buildDetailMetrics(item.measurement, matchingBloodPressure);
-    this.lastUpdatedText = this.resolveLastUpdated(item.measurement, matchingBloodPressure);
+    if (item.type !== 'body') return;
+    const m = item.originalEntry as BodyMeasurementEntry;
+    const matchingBloodPressure = this.resolveBloodPressureForMeasurement(m, null);
+    const bodyItems = this.historyItems.filter(i => i.type === 'body');
+    const idx = bodyItems.indexOf(item);
+    const prev = idx >= 0 && idx + 1 < bodyItems.length ? (bodyItems[idx + 1].originalEntry as BodyMeasurementEntry) : null;
+    this.summaryCards = this.buildSummaryCards(m, prev);
+    this.detailMetrics = this.buildDetailMetrics(m, matchingBloodPressure);
+    this.lastUpdatedText = this.resolveLastUpdated(m, matchingBloodPressure);
     this.cdr.detectChanges();
+  }
+
+  // ── Edit / Delete ─────────────────────────────────────────────
+
+  startEdit(item: HistoryItem, event: Event): void {
+    event.stopPropagation();
+    item.editing = true;
+    item.editFields = {};
+    if (item.type === 'body') {
+      const e = item.originalEntry as BodyMeasurementEntry;
+      item.editFields = { weightKg: e.weightKg ?? null, fatPercentage: e.fatPercentage ?? null };
+    } else if (item.type === 'bloodPressure') {
+      const e = item.originalEntry as BloodPressureEntry;
+      item.editFields = { systolicPressure: e.systolicPressure, diastolicPressure: e.diastolicPressure, pulseAtMeasurement: e.pulseAtMeasurement ?? null };
+    } else {
+      const e = item.originalEntry as SleepDataEntry;
+      item.editFields = { restingHeartRate: e.restingHeartRate ?? null };
+    }
+  }
+
+  cancelEdit(item: HistoryItem, event: Event): void {
+    event.stopPropagation();
+    item.editing = false;
+  }
+
+  saveEdit(item: HistoryItem, event: Event): void {
+    event.stopPropagation();
+    const f = item.editFields;
+    if (item.type === 'body') {
+      const entry = { ...item.originalEntry as BodyMeasurementEntry, weightKg: f['weightKg'] as number, fatPercentage: f['fatPercentage'] as number };
+      this.bodyMeasurementService.update(item.id, entry).subscribe(() => { item.editing = false; this.loadData(); });
+    } else if (item.type === 'bloodPressure') {
+      const entry = { ...item.originalEntry as BloodPressureEntry, systolicPressure: f['systolicPressure'] as number, diastolicPressure: f['diastolicPressure'] as number, pulseAtMeasurement: f['pulseAtMeasurement'] as number };
+      this.bloodPressureService.update(item.id, entry).subscribe(() => { item.editing = false; this.loadData(); });
+    } else {
+      const entry = { ...item.originalEntry as SleepDataEntry, restingHeartRate: f['restingHeartRate'] as number };
+      this.sleepDataService.update(item.id, entry).subscribe(() => { item.editing = false; this.loadData(); });
+    }
+  }
+
+  deleteItem(item: HistoryItem, event: Event): void {
+    event.stopPropagation();
+    const typeLabel = item.type === 'body' ? 'Body Measurement' : item.type === 'bloodPressure' ? 'Blood Pressure' : 'Resting HR';
+    if (!confirm(`Delete ${typeLabel} entry from ${item.date}?`)) return;
+
+    if (item.type === 'body') {
+      this.bodyMeasurementService.delete(item.id).subscribe(() => this.loadData());
+    } else if (item.type === 'bloodPressure') {
+      this.bloodPressureService.delete(item.id).subscribe(() => this.loadData());
+    } else {
+      this.sleepDataService.delete(item.id).subscribe(() => this.loadData());
+    }
   }
 
   // ── Chart data builders ────────────────────────────────────────
@@ -438,25 +505,78 @@ export class BodyMetrics implements OnInit {
     ];
   }
 
-  private buildHistoryItems(measurements: BodyMeasurementEntry[]): HistoryItem[] {
+  private buildHistoryItems(
+    measurements: BodyMeasurementEntry[],
+    bloodPressures: BloodPressureEntry[],
+    sleepData: SleepDataEntry[]
+  ): HistoryItem[] {
     const term = this.search.trim().toLowerCase();
-    return measurements
-      .filter(item => {
-        if (!term) {
-          return true;
-        }
+    const items: HistoryItem[] = [];
 
-        const searchable = `${item.measuredAt} ${item.weightKg ?? ''} ${item.fatPercentage ?? ''}`.toLowerCase();
+    for (const m of measurements) {
+      if (m.id == null) continue;
+      items.push({
+        id: m.id,
+        type: 'body',
+        date: this.formatLongDate(m.measuredAt),
+        rawDate: m.measuredAt,
+        icon: 'monitor_weight',
+        label: 'Body',
+        values: [
+          { label: 'Weight', value: m.weightKg != null ? `${this.formatNumber(m.weightKg)} kg` : '-' },
+          { label: 'Body Fat', value: m.fatPercentage != null ? `${this.formatNumber(m.fatPercentage)}%` : '-' },
+        ],
+        originalEntry: m,
+        editing: false,
+        editFields: {},
+      });
+    }
+
+    for (const bp of bloodPressures) {
+      if (bp.id == null) continue;
+      items.push({
+        id: bp.id,
+        type: 'bloodPressure',
+        date: this.formatLongDate(bp.measuredAt),
+        rawDate: bp.measuredAt,
+        icon: 'blood_pressure',
+        label: 'BP',
+        values: [
+          { label: 'BP', value: `${bp.systolicPressure}/${bp.diastolicPressure}` },
+          { label: 'Pulse', value: bp.pulseAtMeasurement != null ? `${bp.pulseAtMeasurement} bpm` : '-' },
+        ],
+        originalEntry: bp,
+        editing: false,
+        editFields: {},
+      });
+    }
+
+    for (const sd of sleepData) {
+      if (sd.id == null || sd.restingHeartRate == null) continue;
+      items.push({
+        id: sd.id,
+        type: 'restingHr',
+        date: this.formatLongDate(sd.recordedAt),
+        rawDate: sd.recordedAt,
+        icon: 'favorite',
+        label: 'HR',
+        values: [
+          { label: 'Resting HR', value: `${sd.restingHeartRate} bpm` },
+        ],
+        originalEntry: sd,
+        editing: false,
+        editFields: {},
+      });
+    }
+
+    return items
+      .filter(item => {
+        if (!term) return true;
+        const searchable = `${item.rawDate} ${item.label} ${item.values.map(v => v.value).join(' ')}`.toLowerCase();
         return searchable.includes(term);
       })
-      .slice(0, 4)
-      .map(item => ({
-        measurement: item,
-        date: this.formatLongDate(item.measuredAt),
-        time: '08:00 AM',
-        weight: item.weightKg != null ? `${this.formatNumber(item.weightKg)} kg` : 'No data',
-        bodyFat: item.fatPercentage != null ? `${this.formatNumber(item.fatPercentage)}%` : 'No data'
-      }));
+      .sort((a, b) => new Date(b.rawDate).getTime() - new Date(a.rawDate).getTime())
+      .slice(0, 8);
   }
 
   private resolveBloodPressureForMeasurement(

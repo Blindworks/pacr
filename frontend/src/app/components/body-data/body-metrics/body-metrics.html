@@ -105,20 +105,62 @@
 
           <div class="history-list">
             <article class="history-item" *ngFor="let item of historyItems" (click)="loadHistoryItem(item)">
-              <div class="history-item__date">
-                <span>{{ item.date }}</span>
-                <small>{{ item.time }}</small>
-              </div>
-              <div class="history-item__metrics">
-                <div>
-                  <span>{{ item.weight }}</span>
-                  <small>Weight</small>
+              <!-- Display mode -->
+              <ng-container *ngIf="!item.editing">
+                <div class="history-item__date">
+                  <span>{{ item.date }}</span>
+                  <small class="history-item__badge" [attr.data-type]="item.type">
+                    <span class="material-symbols-outlined history-badge-icon">{{ item.icon }}</span>
+                    {{ item.label }}
+                  </small>
                 </div>
-                <div>
-                  <span>{{ item.bodyFat }}</span>
-                  <small>Body Fat</small>
+                <div class="history-item__metrics">
+                  <div *ngFor="let v of item.values">
+                    <span>{{ v.value }}</span>
+                    <small>{{ v.label }}</small>
+                  </div>
                 </div>
-              </div>
+                <div class="history-item__actions">
+                  <button type="button" class="icon-btn" title="Edit" (click)="startEdit(item, $event)">
+                    <span class="material-symbols-outlined">edit</span>
+                  </button>
+                  <button type="button" class="icon-btn icon-btn--danger" title="Delete" (click)="deleteItem(item, $event)">
+                    <span class="material-symbols-outlined">delete</span>
+                  </button>
+                </div>
+              </ng-container>
+
+              <!-- Edit mode -->
+              <ng-container *ngIf="item.editing">
+                <div class="history-item__edit" (click)="$event.stopPropagation()">
+                  <div class="edit-header">
+                    <span class="material-symbols-outlined history-badge-icon">{{ item.icon }}</span>
+                    <span>{{ item.date }}</span>
+                  </div>
+                  <div class="edit-fields">
+                    <ng-container *ngIf="item.type === 'body'">
+                      <label>Weight (kg) <input type="number" step="0.1" [(ngModel)]="item.editFields['weightKg']"></label>
+                      <label>Body Fat (%) <input type="number" step="0.1" [(ngModel)]="item.editFields['fatPercentage']"></label>
+                    </ng-container>
+                    <ng-container *ngIf="item.type === 'bloodPressure'">
+                      <label>Systolic <input type="number" [(ngModel)]="item.editFields['systolicPressure']"></label>
+                      <label>Diastolic <input type="number" [(ngModel)]="item.editFields['diastolicPressure']"></label>
+                      <label>Pulse <input type="number" [(ngModel)]="item.editFields['pulseAtMeasurement']"></label>
+                    </ng-container>
+                    <ng-container *ngIf="item.type === 'restingHr'">
+                      <label>Resting HR (bpm) <input type="number" [(ngModel)]="item.editFields['restingHeartRate']"></label>
+                    </ng-container>
+                  </div>
+                  <div class="edit-actions">
+                    <button type="button" class="edit-btn edit-btn--save" (click)="saveEdit(item, $event)">
+                      <span class="material-symbols-outlined">check</span> Save
+                    </button>
+                    <button type="button" class="edit-btn edit-btn--cancel" (click)="cancelEdit(item, $event)">
+                      <span class="material-symbols-outlined">close</span> Cancel
+                    </button>
+                  </div>
+                </div>
+              </ng-container>
             </article>
           </div>
 

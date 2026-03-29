@@ -18,11 +18,23 @@ export interface SleepDataEntry {
 export class SleepDataService {
   private readonly http = inject(HttpClient);
 
+  getAll(): Observable<SleepDataEntry[]> {
+    return this.http.get<SleepDataEntry[]>(BASE);
+  }
+
   getLatest(): Observable<SleepDataEntry> {
     return this.http.get<SleepDataEntry>(`${BASE}/latest`);
   }
 
   create(entry: SleepDataEntry): Observable<SleepDataEntry> {
     return this.http.post<SleepDataEntry>(BASE, entry);
+  }
+
+  update(id: number, entry: SleepDataEntry): Observable<SleepDataEntry> {
+    return this.http.put<SleepDataEntry>(`${BASE}/${id}`, entry);
+  }
+
+  delete(id: number): Observable<void> {
+    return this.http.delete<void>(`${BASE}/${id}`);
   }
 }

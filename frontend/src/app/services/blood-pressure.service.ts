@@ -29,4 +29,12 @@ export class BloodPressureService {
   create(entry: BloodPressureEntry): Observable<BloodPressureEntry> {
     return this.http.post<BloodPressureEntry>(BASE, entry);
   }
+
+  update(id: number, entry: BloodPressureEntry): Observable<BloodPressureEntry> {
+    return this.http.put<BloodPressureEntry>(`${BASE}/${id}`, entry);
+  }
+
+  delete(id: number): Observable<void> {
+    return this.http.delete<void>(`${BASE}/${id}`);
+  }
 }

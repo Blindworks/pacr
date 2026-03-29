@@ -34,4 +34,12 @@ export class BodyMeasurementService {
   create(entry: BodyMeasurementEntry): Observable<BodyMeasurementEntry> {
     return this.http.post<BodyMeasurementEntry>(BASE, entry);
   }
+
+  update(id: number, entry: BodyMeasurementEntry): Observable<BodyMeasurementEntry> {
+    return this.http.put<BodyMeasurementEntry>(`${BASE}/${id}`, entry);
+  }
+
+  delete(id: number): Observable<void> {
+    return this.http.delete<void>(`${BASE}/${id}`);
+  }
 }
