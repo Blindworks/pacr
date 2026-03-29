@@ -29,6 +29,9 @@ public interface CompletedTrainingRepository extends JpaRepository<CompletedTrai
 
     boolean existsByStravaActivityId(Long stravaActivityId);
 
+    Optional<CompletedTraining> findByCorosLabelId(String corosLabelId);
+    boolean existsByCorosLabelId(String corosLabelId);
+
     Optional<CompletedTraining> findByStravaActivityId(Long stravaActivityId);
     List<CompletedTraining> findByUserIdAndSourceAndTrainingDateBetween(Long userId, String source, LocalDate startDate, LocalDate endDate);
     List<CompletedTraining> findByUserIsNullAndSourceAndTrainingDateBetween(String source, LocalDate startDate, LocalDate endDate);

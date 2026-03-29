@@ -78,5 +78,6 @@
     <include file="db/changelog/changes/072-add-onboarding-fields.xml"/>
     <include file="db/changelog/changes/073-add-plan-adjustments.xml"/>
     <include file="db/changelog/changes/074-add-competition-system-generated.xml"/>
+    <include file="db/changelog/changes/075-add-coros-integration.xml"/>
 
 </databaseChangeLog>
