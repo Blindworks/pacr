@@ -42,6 +42,24 @@
       <input #fileInput type="file" accept="image/jpeg,image/png,image/webp" class="file-input-hidden" (change)="onFileSelected($event)" />
     </article>
 
+    <!-- Account -->
+    <article class="section">
+      <div class="section-head">
+        <span class="material-symbols-outlined">badge</span>
+        <h2>Account</h2>
+      </div>
+      <div class="metrics-grid">
+        <div class="field">
+          <label>Vorname</label>
+          <input type="text" [ngModel]="firstName()" (ngModelChange)="firstName.set($event)" placeholder="Max" />
+        </div>
+        <div class="field">
+          <label>Nachname</label>
+          <input type="text" [ngModel]="lastName()" (ngModelChange)="lastName.set($event)" placeholder="Mustermann" />
+        </div>
+      </div>
+    </article>
+
     <!-- Body Metrics -->
     <article class="section">
       <div class="section-head">
@@ -250,6 +268,39 @@
             <span class="track"></span>
           </label>
         </div>
+      </div>
+    </article>
+
+    <!-- Passwort ändern -->
+    <article class="section">
+      <div class="section-head">
+        <span class="material-symbols-outlined">lock</span>
+        <h2>Passwort ändern</h2>
+      </div>
+      <div class="metrics-grid">
+        <div class="field" style="grid-column: 1 / -1">
+          <label>Aktuelles Passwort</label>
+          <input type="password" [ngModel]="currentPassword()" (ngModelChange)="currentPassword.set($event)" placeholder="••••••••" />
+        </div>
+        <div class="field">
+          <label>Neues Passwort</label>
+          <input type="password" [ngModel]="newPassword()" (ngModelChange)="newPassword.set($event)" placeholder="Mind. 8 Zeichen" />
+        </div>
+        <div class="field">
+          <label>Neues Passwort bestätigen</label>
+          <input type="password" [ngModel]="confirmPassword()" (ngModelChange)="confirmPassword.set($event)" placeholder="Wiederholen" />
+        </div>
+      </div>
+      @if (passwordError()) {
+        <p class="password-feedback password-error">{{ passwordError() }}</p>
+      }
+      @if (passwordSuccess()) {
+        <p class="password-feedback password-success">{{ passwordSuccess() }}</p>
+      }
+      <div class="password-actions">
+        <button class="btn-change-password" type="button" (click)="changePassword()" [disabled]="passwordSaving()">
+          {{ passwordSaving() ? 'WIRD GEÄNDERT...' : 'PASSWORT ÄNDERN' }}
+        </button>
       </div>
     </article>
 

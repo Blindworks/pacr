@@ -178,6 +178,12 @@ public class UserService {
         return currentUser;
     }
 
+    public void changePassword(Long userId, String newPasswordHash) {
+        User user = findById(userId);
+        user.setPasswordHash(newPasswordHash);
+        userRepository.save(user);
+    }
+
     public record ProfileImageData(Resource resource, String contentType) {
     }
 }

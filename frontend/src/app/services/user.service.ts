@@ -100,6 +100,10 @@ export class UserService {
     return this.http.post(apiUrl('/users/me/onboarding-plan-setup'), { planId, startDate, competitionId });
   }
 
+  changePassword(currentPassword: string, newPassword: string): Observable<{ message: string }> {
+    return this.http.put<{ message: string }>(`${BASE}/me/password`, { currentPassword, newPassword });
+  }
+
   getProfileImage(id: number): Observable<Blob> {
     return this.http.get(`${BASE}/${id}/profile-image`, {
       responseType: 'blob',

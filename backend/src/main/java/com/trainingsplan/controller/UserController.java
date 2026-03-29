@@ -2,8 +2,10 @@ package com.trainingsplan.controller;
 
 import com.trainingsplan.dto.CompetitionDto;
 import com.trainingsplan.dto.ProfileCompletionDto;
+import com.trainingsplan.entity.AuditAction;
 import com.trainingsplan.entity.User;
 import com.trainingsplan.security.SecurityUtils;
+import com.trainingsplan.service.AuditLogService;
 import com.trainingsplan.service.OnboardingService;
 import com.trainingsplan.service.PaceZoneService;
 import com.trainingsplan.service.UserProfileValidationService;
@@ -12,13 +14,14 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/users")
@@ -29,16 +32,22 @@ public class UserController {
     private final UserProfileValidationService userProfileValidationService;
     private final PaceZoneService paceZoneService;
     private final OnboardingService onboardingService;
+    private final PasswordEncoder passwordEncoder;
+    private final AuditLogService auditLogService;
 
     public UserController(UserService userService, SecurityUtils securityUtils,
                           UserProfileValidationService userProfileValidationService,
                           PaceZoneService paceZoneService,
-                          OnboardingService onboardingService) {
+                          OnboardingService onboardingService,
+                          PasswordEncoder passwordEncoder,
+                          AuditLogService auditLogService) {
         this.userService = userService;
         this.securityUtils = securityUtils;
         this.userProfileValidationService = userProfileValidationService;
         this.paceZoneService = paceZoneService;
         this.onboardingService = onboardingService;
+        this.passwordEncoder = passwordEncoder;
+        this.auditLogService = auditLogService;
     }
 
     public record CreateUserRequest(String username, String email) {}
@@ -48,6 +57,8 @@ public class UserController {
             Integer referenceTimeSeconds,
             String referenceLabel
     ) {}
+
+    public record ChangePasswordRequest(String currentPassword, String newPassword) {}
 
     public record UpdateUserRequest(
             String username,
@@ -78,6 +89,26 @@ public class UserController {
             return ResponseEntity.status(401).build();
         }
         return ResponseEntity.ok(user);
+    }
+
+    @PutMapping("/me/password")
+    public ResponseEntity<?> changePassword(@RequestBody ChangePasswordRequest request) {
+        User user = securityUtils.getCurrentUser();
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        if (request.currentPassword() == null || request.newPassword() == null) {
+            return ResponseEntity.badRequest().body(Map.of("message", "Aktuelles und neues Passwort sind erforderlich"));
+        }
+        if (request.newPassword().length() < 8) {
+            return ResponseEntity.badRequest().body(Map.of("message", "Das neue Passwort muss mindestens 8 Zeichen lang sein"));
+        }
+        if (!passwordEncoder.matches(request.currentPassword(), user.getPasswordHash())) {
+            return ResponseEntity.badRequest().body(Map.of("message", "Das aktuelle Passwort ist falsch"));
+        }
+        userService.changePassword(user.getId(), passwordEncoder.encode(request.newPassword()));
+        auditLogService.log(user, AuditAction.PASSWORD_CHANGED, "USER", String.valueOf(user.getId()), null);
+        return ResponseEntity.ok(Map.of("message", "Passwort erfolgreich geaendert"));
     }
 
     @GetMapping("/me/profile-completion")

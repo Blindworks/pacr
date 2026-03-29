@@ -33,12 +33,22 @@ export class Settings implements OnInit, OnDestroy {
   private currentUser: UserProfile | null = null;
   private profileImageObjectUrl: string | null = null;
 
+  protected firstName = signal('');
+  protected lastName = signal('');
+
   protected weight = signal('');
   protected height = signal('');
   protected dateOfBirth = signal('');
   protected gender = signal('Male');
   protected restingHr = signal('');
   protected maxHr = signal('');
+
+  protected currentPassword = signal('');
+  protected newPassword = signal('');
+  protected confirmPassword = signal('');
+  protected passwordError = signal('');
+  protected passwordSuccess = signal('');
+  protected passwordSaving = signal(false);
 
   protected unit = signal<'metric' | 'imperial'>('metric');
   protected theme = signal<'light' | 'dark' | 'auto'>('dark');
@@ -117,6 +127,8 @@ export class Settings implements OnInit, OnDestroy {
       next: user => {
         this.currentUser = user;
         this.userId = user.id;
+        this.firstName.set(user.firstName ?? '');
+        this.lastName.set(user.lastName ?? '');
         this.weight.set(user.weightKg != null ? String(user.weightKg) : '');
         this.height.set(user.heightCm != null ? String(user.heightCm) : '');
         this.gender.set(user.gender ?? 'Male');
@@ -247,8 +259,8 @@ export class Settings implements OnInit, OnDestroy {
     this.userService.updateUser(this.userId, {
       username: this.currentUser.username,
       email: this.currentUser.email,
-      firstName: this.currentUser.firstName,
-      lastName: this.currentUser.lastName,
+      firstName: this.firstName(),
+      lastName: this.lastName(),
       dateOfBirth: this.dateOfBirth() || null,
       heightCm: this.height() ? parseInt(this.height(), 10) : null,
       weightKg: this.weight() ? parseFloat(this.weight()) : null,
@@ -268,6 +280,40 @@ export class Settings implements OnInit, OnDestroy {
       error: () => {
         this.saveError.set('Failed to save. Please try again.');
         this.saving.set(false);
+      }
+    });
+  }
+
+  protected changePassword(): void {
+    this.passwordError.set('');
+    this.passwordSuccess.set('');
+
+    if (!this.currentPassword() || !this.newPassword() || !this.confirmPassword()) {
+      this.passwordError.set('Bitte alle Felder ausfüllen.');
+      return;
+    }
+    if (this.newPassword().length < 8) {
+      this.passwordError.set('Das neue Passwort muss mindestens 8 Zeichen lang sein.');
+      return;
+    }
+    if (this.newPassword() !== this.confirmPassword()) {
+      this.passwordError.set('Die Passwörter stimmen nicht überein.');
+      return;
+    }
+
+    this.passwordSaving.set(true);
+    this.userService.changePassword(this.currentPassword(), this.newPassword()).subscribe({
+      next: () => {
+        this.passwordSaving.set(false);
+        this.passwordSuccess.set('Passwort erfolgreich geändert.');
+        this.currentPassword.set('');
+        this.newPassword.set('');
+        this.confirmPassword.set('');
+      },
+      error: (err) => {
+        this.passwordSaving.set(false);
+        const msg = err.error?.message ?? 'Passwort konnte nicht geändert werden.';
+        this.passwordError.set(msg);
       }
     });
   }
