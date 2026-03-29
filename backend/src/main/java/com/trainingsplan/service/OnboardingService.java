@@ -86,6 +86,7 @@ public class OnboardingService {
             competition.setName(buildCompetitionName(user, plan));
             competition.setDate(raceDate);
             competition.setDescription("Auto-generated during onboarding");
+            competition.setSystemGenerated(true);
             if (plan.getCompetitionType() != null) {
                 competition.setType(plan.getCompetitionType());
             }

@@ -32,6 +32,9 @@ public class Competition {
     @Column(name = "location", length = 255)
     private String location;
 
+    @Column(name = "system_generated", nullable = false)
+    private boolean systemGenerated = false;
+
     public Competition() {}
 
     public Competition(String name, LocalDate date, String description) {
@@ -57,4 +60,7 @@ public class Competition {
 
     public String getLocation() { return location; }
     public void setLocation(String location) { this.location = location; }
+
+    public boolean isSystemGenerated() { return systemGenerated; }
+    public void setSystemGenerated(boolean systemGenerated) { this.systemGenerated = systemGenerated; }
 }

@@ -38,11 +38,13 @@ public class CompetitionService {
         this.auditLogService = auditLogService;
     }
 
-    public List<CompetitionDto> findAll() {
+    public List<CompetitionDto> findAll(boolean includeSystemGenerated) {
         Long userId = securityUtils.getCurrentUserId();
-        log.info("[CompetitionService] findAll() called, userId={}", userId);
+        log.info("[CompetitionService] findAll() called, userId={}, includeSystemGenerated={}", userId, includeSystemGenerated);
         try {
-            List<Competition> all = competitionRepository.findAll();
+            List<Competition> all = includeSystemGenerated
+                    ? competitionRepository.findAll()
+                    : competitionRepository.findBySystemGeneratedFalse();
             log.info("[CompetitionService] found {} competitions in DB", all.size());
             List<CompetitionDto> result = all.stream()
                     .map(c -> {

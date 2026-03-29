@@ -33,10 +33,11 @@ public class CompetitionController {
     }
 
     @GetMapping
-    public ResponseEntity<List<CompetitionDto>> getAllCompetitions() {
-        log.info("[CompetitionController] GET /api/competitions");
+    public ResponseEntity<List<CompetitionDto>> getAllCompetitions(
+            @RequestParam(defaultValue = "false") boolean includeSystemGenerated) {
+        log.info("[CompetitionController] GET /api/competitions, includeSystemGenerated={}", includeSystemGenerated);
         try {
-            List<CompetitionDto> result = competitionService.findAll();
+            List<CompetitionDto> result = competitionService.findAll(includeSystemGenerated);
             log.info("[CompetitionController] returning {} competitions", result.size());
             return ResponseEntity.ok(result);
         } catch (Exception e) {

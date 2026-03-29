@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="074-1-add-system-generated-column" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="competitions" columnName="system_generated"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="competitions">
+            <column name="system_generated" type="BOOLEAN" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="074-2-mark-existing-auto-generated" author="system">
+        <update tableName="competitions">
+            <column name="system_generated" valueBoolean="true"/>
+            <where>description = 'Auto-generated during onboarding'</where>
+        </update>
+    </changeSet>
+
+</databaseChangeLog>

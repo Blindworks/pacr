@@ -18,4 +18,6 @@ public interface CompetitionRepository extends JpaRepository<Competition, Long> 
     List<Competition> findByDateBetween(LocalDate startDate, LocalDate endDate);
 
     List<Competition> findByNameContainingIgnoreCase(String name);
+
+    List<Competition> findBySystemGeneratedFalse();
 }

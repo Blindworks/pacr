@@ -77,5 +77,6 @@
     <include file="db/changelog/changes/071-add-achievement-time-bounds.xml"/>
     <include file="db/changelog/changes/072-add-onboarding-fields.xml"/>
     <include file="db/changelog/changes/073-add-plan-adjustments.xml"/>
+    <include file="db/changelog/changes/074-add-competition-system-generated.xml"/>
 
 </databaseChangeLog>
