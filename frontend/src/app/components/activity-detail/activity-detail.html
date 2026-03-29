@@ -19,9 +19,15 @@
         <span>Alle Aktivitäten</span>
       </button>
       <div class="header-actions">
-        <button class="icon-btn">
-          <span class="material-symbols-outlined">share</span>
-        </button>
+        @if (userService.currentUser()?.communityRoutesEnabled && gpsData) {
+          <a class="icon-btn" [routerLink]="['/community-routes/share', activity.id]" title="Share as Community Route">
+            <span class="material-symbols-outlined">share</span>
+          </a>
+        } @else {
+          <button class="icon-btn">
+            <span class="material-symbols-outlined">share</span>
+          </button>
+        }
         <button class="icon-btn">
           <span class="material-symbols-outlined">more_vert</span>
         </button>

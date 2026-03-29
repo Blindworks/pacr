@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="076-1" author="claude">
+        <comment>Create community_routes table for shared running routes</comment>
+        <createTable tableName="community_routes">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="creator_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="source_activity_id" type="BIGINT">
+                <constraints nullable="false" unique="true" uniqueConstraintName="uk_community_routes_source_activity"/>
+            </column>
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="distance_km" type="DOUBLE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="elevation_gain_m" type="INT">
+                <constraints nullable="true"/>
+            </column>
+            <column name="start_latitude" type="DOUBLE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="start_longitude" type="DOUBLE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="visibility" type="VARCHAR(20)" defaultValue="PUBLIC">
+                <constraints nullable="false"/>
+            </column>
+            <column name="gps_track_json" type="LONGTEXT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="DATETIME">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="DATETIME">
+                <constraints nullable="true"/>
+            </column>
+        </createTable>
+        <addForeignKeyConstraint
+            baseTableName="community_routes" baseColumnNames="creator_id"
+            referencedTableName="users" referencedColumnNames="id"
+            constraintName="fk_community_routes_creator"/>
+        <addForeignKeyConstraint
+            baseTableName="community_routes" baseColumnNames="source_activity_id"
+            referencedTableName="completed_trainings" referencedColumnNames="id"
+            constraintName="fk_community_routes_source_activity"/>
+        <createIndex tableName="community_routes" indexName="idx_community_routes_start_lat_lon">
+            <column name="start_latitude"/>
+            <column name="start_longitude"/>
+        </createIndex>
+        <createIndex tableName="community_routes" indexName="idx_community_routes_creator">
+            <column name="creator_id"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>

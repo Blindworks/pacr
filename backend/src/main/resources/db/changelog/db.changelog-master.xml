@@ -79,5 +79,8 @@
     <include file="db/changelog/changes/073-add-plan-adjustments.xml"/>
     <include file="db/changelog/changes/074-add-competition-system-generated.xml"/>
     <include file="db/changelog/changes/075-add-coros-integration.xml"/>
+    <include file="db/changelog/changes/076-add-community-routes.xml"/>
+    <include file="db/changelog/changes/077-add-route-attempts.xml"/>
+    <include file="db/changelog/changes/078-add-user-community-routes-enabled.xml"/>
 
 </databaseChangeLog>

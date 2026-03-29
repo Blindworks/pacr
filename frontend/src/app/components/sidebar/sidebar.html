@@ -36,6 +36,12 @@
       <span class="material-symbols-outlined">military_tech</span>
       <span>Achievements</span>
     </a>
+    @if (userService.currentUser()?.communityRoutesEnabled) {
+      <a routerLink="/community-routes" routerLinkActive="active" class="nav-item">
+        <span class="material-symbols-outlined">explore</span>
+        <span>Community</span>
+      </a>
+    }
     <div class="nav-group">
       <button class="nav-item nav-item--group" (click)="toggleBodyData()" [ngClass]="{'open': bodyDataOpen}">
         <span class="material-symbols-outlined">monitoring</span>

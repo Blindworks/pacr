@@ -1,14 +1,15 @@
 import { Component, OnInit, inject, ChangeDetectorRef, signal, ViewChild } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { ActivityService, ActivityStreamDto, CompletedTraining, ActivityMetrics, ActivityVo2Max, GpsStreamDto } from '../../services/activity.service';
 import { ActivityMapComponent } from '../activity-map/activity-map';
 import { MapDialogComponent } from '../map-dialog/map-dialog';
+import { UserService } from '../../services/user.service';
 
 @Component({
   selector: 'app-activity-detail',
   standalone: true,
-  imports: [CommonModule, ActivityMapComponent, MapDialogComponent],
+  imports: [CommonModule, ActivityMapComponent, MapDialogComponent, RouterModule],
   templateUrl: './activity-detail.html',
   styleUrl: './activity-detail.scss'
 })
@@ -17,6 +18,7 @@ export class ActivityDetail implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly activityService = inject(ActivityService);
+  protected readonly userService = inject(UserService);
 
   @ViewChild('mapDialog') private mapDialog!: MapDialogComponent;
 

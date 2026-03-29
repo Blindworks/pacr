@@ -91,6 +91,26 @@ export const routes: Routes = [
     loadComponent: () => import('./components/achievements/achievements').then(m => m.Achievements)
   },
   {
+    path: 'community-routes',
+    canActivate: [authGuard],
+    loadComponent: () => import('./components/community-routes/community-routes').then(m => m.CommunityRoutes)
+  },
+  {
+    path: 'community-routes/mine',
+    canActivate: [authGuard],
+    loadComponent: () => import('./components/my-routes/my-routes').then(m => m.MyRoutes)
+  },
+  {
+    path: 'community-routes/share/:activityId',
+    canActivate: [authGuard],
+    loadComponent: () => import('./components/share-route/share-route').then(m => m.ShareRoute)
+  },
+  {
+    path: 'community-routes/:id',
+    canActivate: [authGuard],
+    loadComponent: () => import('./components/community-route-detail/community-route-detail').then(m => m.CommunityRouteDetail)
+  },
+  {
     path: 'elite-upgrade',
     canActivate: [authGuard],
     loadComponent: () => import('./components/elite-upgrade/elite-upgrade').then(m => m.EliteUpgrade)

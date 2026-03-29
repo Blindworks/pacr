@@ -22,6 +22,7 @@ export interface UserProfile {
   dwdRegionId: number | null;
   asthmaTrackingEnabled: boolean;
   cycleTrackingEnabled: boolean;
+  communityRoutesEnabled: boolean;
   role: string | null;
   subscriptionPlan: string | null;
   subscriptionExpiresAt: string | null;
@@ -46,6 +47,7 @@ export interface UpdateUserRequest {
   dwdRegionId?: number | null;
   asthmaTrackingEnabled?: boolean;
   cycleTrackingEnabled?: boolean;
+  communityRoutesEnabled?: boolean;
   role?: string | null;
   subscriptionPlan?: string | null;
   subscriptionExpiresAt?: string | null;

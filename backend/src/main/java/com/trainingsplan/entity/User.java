@@ -105,6 +105,10 @@ public class User implements UserDetails {
     @Column(name = "cycle_tracking_enabled", nullable = false)
     private boolean cycleTrackingEnabled = false;
 
+    /** Whether community routes and leaderboards feature is enabled for this user. */
+    @Column(name = "community_routes_enabled", nullable = false)
+    private boolean communityRoutesEnabled = false;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "subscription_plan", nullable = false, length = 20)
     private SubscriptionPlan subscriptionPlan = SubscriptionPlan.FREE;
@@ -356,6 +360,9 @@ public class User implements UserDetails {
 
     public boolean isCycleTrackingEnabled() { return cycleTrackingEnabled; }
     public void setCycleTrackingEnabled(boolean cycleTrackingEnabled) { this.cycleTrackingEnabled = cycleTrackingEnabled; }
+
+    public boolean isCommunityRoutesEnabled() { return communityRoutesEnabled; }
+    public void setCommunityRoutesEnabled(boolean communityRoutesEnabled) { this.communityRoutesEnabled = communityRoutesEnabled; }
 
     public SubscriptionPlan getSubscriptionPlan() { return subscriptionPlan; }
     public void setSubscriptionPlan(SubscriptionPlan subscriptionPlan) {
