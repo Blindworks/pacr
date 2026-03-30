@@ -47,6 +47,12 @@ public class BodyMeasurement {
     @Column(name = "notes", length = 500)
     private String notes;
 
+    @Column(name = "source", nullable = false, length = 20)
+    private String source = "MANUAL";
+
+    @Column(name = "external_id", unique = true, length = 100)
+    private String externalId;
+
     public BodyMeasurement() {}
 
     public Long getId() { return id; }
@@ -84,4 +90,10 @@ public class BodyMeasurement {
 
     public String getNotes() { return notes; }
     public void setNotes(String notes) { this.notes = notes; }
+
+    public String getSource() { return source; }
+    public void setSource(String source) { this.source = source; }
+
+    public String getExternalId() { return externalId; }
+    public void setExternalId(String externalId) { this.externalId = externalId; }
 }

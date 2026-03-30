@@ -6,6 +6,7 @@ import { Subject } from 'rxjs';
 import { debounceTime, takeUntil } from 'rxjs/operators';
 import { StravaService } from '../../services/strava.service';
 import { CorosService } from '../../services/coros.service';
+import { YolandaService } from '../../services/yolanda.service';
 import { UserService, UserProfile } from '../../services/user.service';
 import { NotificationPreferencesService } from '../../services/notification-preferences.service';
 import { ThemeService, ThemeChoice } from '../../services/theme.service';
@@ -31,6 +32,7 @@ export class Settings implements OnInit, OnDestroy {
   private readonly router = inject(Router);
   private readonly stravaService = inject(StravaService);
   private readonly corosService = inject(CorosService);
+  private readonly yolandaService = inject(YolandaService);
   private readonly userService = inject(UserService);
   private readonly notifPrefsService = inject(NotificationPreferencesService);
   private readonly themeService = inject(ThemeService);
@@ -78,6 +80,7 @@ export class Settings implements OnInit, OnDestroy {
 
   protected stravaLoading = signal(false);
   protected corosLoading = signal(false);
+  protected yolandaLoading = signal(false);
   protected saving = signal(false);
   protected saveError = signal('');
 
@@ -120,6 +123,13 @@ export class Settings implements OnInit, OnDestroy {
       connected: false
     },
     {
+      id: 'yolanda',
+      name: 'Yolanda',
+      description: 'Sync body composition from your smart scale',
+      iconBg: '#00B4D8',
+      connected: false
+    },
+    {
       id: 'garmin',
       name: 'Garmin Connect',
       description: 'Import health metrics and training data',
@@ -138,6 +148,7 @@ export class Settings implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.loadStravaStatus();
     this.loadCorosStatus();
+    this.loadYolandaStatus();
     this.loadUserProfile();
     this.loadNotificationPreferences();
 
@@ -286,6 +297,8 @@ export class Settings implements OnInit, OnDestroy {
       integration.connected ? this.disconnectStrava(integration) : this.connectStrava();
     } else if (integration.id === 'coros') {
       integration.connected ? this.disconnectCoros(integration) : this.connectCoros();
+    } else if (integration.id === 'yolanda') {
+      integration.connected ? this.disconnectYolanda(integration) : this.connectYolanda();
     }
   }
 
@@ -324,6 +337,31 @@ export class Settings implements OnInit, OnDestroy {
 
   private disconnectCoros(integration: Integration): void {
     this.corosService.disconnect().subscribe({
+      next: () => { integration.connected = false; },
+      error: () => { /* ignore */ }
+    });
+  }
+
+  private loadYolandaStatus(): void {
+    this.yolandaService.getStatus().subscribe({
+      next: status => {
+        const yolanda = this.integrations.find(i => i.id === 'yolanda');
+        if (yolanda) yolanda.connected = status.connected;
+      },
+      error: () => { /* backend unreachable, keep default */ }
+    });
+  }
+
+  private connectYolanda(): void {
+    this.yolandaLoading.set(true);
+    this.yolandaService.getAuthUrl().subscribe({
+      next: ({ url }) => window.location.href = url,
+      error: () => this.yolandaLoading.set(false)
+    });
+  }
+
+  private disconnectYolanda(integration: Integration): void {
+    this.yolandaService.disconnect().subscribe({
       next: () => { integration.connected = false; },
       error: () => { /* ignore */ }
     });

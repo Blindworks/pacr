@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-03-30
+
+### Added
+- Yolanda smart scale integration: OAuth connection flow for syncing body composition data (weight, body fat, BMI, muscle mass, bone mass, water percentage, visceral fat, metabolic age)
+- New API endpoints: `/api/yolanda/auth-url`, `/api/yolanda/callback`, `/api/yolanda/status`, `/api/yolanda/disconnect`, `/api/yolanda/sync`
+- Source tracking for body measurements (`MANUAL` vs `YOLANDA`) with deduplication via external ID
+- Yolanda connection card in frontend settings page with connect/disconnect flow
+
 ## [0.4.1] - 2026-03-30
 
 ### Added

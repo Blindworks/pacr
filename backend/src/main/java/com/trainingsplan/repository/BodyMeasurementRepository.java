@@ -15,4 +15,6 @@ public interface BodyMeasurementRepository extends JpaRepository<BodyMeasurement
     Optional<BodyMeasurement> findTopByUserIdOrderByMeasuredAtDesc(Long userId);
 
     Optional<BodyMeasurement> findByIdAndUserId(Long id, Long userId);
+
+    Optional<BodyMeasurement> findByExternalIdAndUserId(String externalId, Long userId);
 }

@@ -83,5 +83,6 @@
     <include file="db/changelog/changes/077-add-route-attempts.xml"/>
     <include file="db/changelog/changes/078-add-user-community-routes-enabled.xml"/>
     <include file="db/changelog/changes/079-add-user-theme.xml"/>
+    <include file="db/changelog/changes/080-add-yolanda-integration.xml"/>
 
 </databaseChangeLog>
