@@ -142,6 +142,10 @@
                   <svg class="icon-svg" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M15.387 17.944l-2.089-4.116h-3.065L15.387 24l5.15-10.172h-3.066m-7.008-5.599l2.836 5.598h4.172L10.463 0l-7 13.828h4.169"/>
                   </svg>
+                } @else if (item.id === 'coros') {
+                  <svg class="icon-svg" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/>
+                  </svg>
                 } @else if (item.id === 'garmin') {
                   <span class="material-symbols-outlined">watch_button_press</span>
                 } @else {
@@ -158,10 +162,10 @@
             <button
               class="int-btn"
               [class.int-btn--connected]="item.connected"
-              [disabled]="(item.id === 'strava' && stravaLoading()) || item.id === 'garmin'"
+              [disabled]="(item.id === 'strava' && stravaLoading()) || (item.id === 'coros' && corosLoading()) || item.id === 'garmin'"
               (click)="toggleIntegration(item)"
             >
-              @if (item.id === 'strava' && stravaLoading()) {
+              @if ((item.id === 'strava' && stravaLoading()) || (item.id === 'coros' && corosLoading())) {
                 <span class="material-symbols-outlined">progress_activity</span>
               } @else if (item.connected) {
                 <span class="material-symbols-outlined">check_circle</span>
