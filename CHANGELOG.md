@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.1] - 2026-03-30
+
+### Added
+- COROS integration in frontend settings: connect/disconnect COROS account via OAuth
+
 ## [0.4.0] - 2026-03-29
 
 ### Added

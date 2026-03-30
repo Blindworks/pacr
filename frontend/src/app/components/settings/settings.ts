@@ -3,6 +3,7 @@ import { Component, OnInit, OnDestroy, signal, inject, ViewChild, ElementRef } f
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { StravaService } from '../../services/strava.service';
+import { CorosService } from '../../services/coros.service';
 import { UserService, UserProfile } from '../../services/user.service';
 import { NotificationPreferencesService } from '../../services/notification-preferences.service';
 
@@ -26,6 +27,7 @@ export class Settings implements OnInit, OnDestroy {
 
   private readonly router = inject(Router);
   private readonly stravaService = inject(StravaService);
+  private readonly corosService = inject(CorosService);
   private readonly userService = inject(UserService);
   private readonly notifPrefsService = inject(NotificationPreferencesService);
 
@@ -67,6 +69,7 @@ export class Settings implements OnInit, OnDestroy {
   protected communityRoutesEnabled = signal(false);
 
   protected stravaLoading = signal(false);
+  protected corosLoading = signal(false);
   protected saving = signal(false);
   protected saveError = signal('');
 
@@ -102,6 +105,13 @@ export class Settings implements OnInit, OnDestroy {
       connected: false
     },
     {
+      id: 'coros',
+      name: 'COROS',
+      description: 'Sync workouts from your COROS watch',
+      iconBg: '#e7262a',
+      connected: false
+    },
+    {
       id: 'garmin',
       name: 'Garmin Connect',
       description: 'Import health metrics and training data',
@@ -119,6 +129,7 @@ export class Settings implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.loadStravaStatus();
+    this.loadCorosStatus();
     this.loadUserProfile();
     this.loadNotificationPreferences();
   }
@@ -239,6 +250,8 @@ export class Settings implements OnInit, OnDestroy {
   protected toggleIntegration(integration: Integration): void {
     if (integration.id === 'strava') {
       integration.connected ? this.disconnectStrava(integration) : this.connectStrava();
+    } else if (integration.id === 'coros') {
+      integration.connected ? this.disconnectCoros(integration) : this.connectCoros();
     }
   }
 
@@ -252,6 +265,31 @@ export class Settings implements OnInit, OnDestroy {
 
   private disconnectStrava(integration: Integration): void {
     this.stravaService.disconnect().subscribe({
+      next: () => { integration.connected = false; },
+      error: () => { /* ignore */ }
+    });
+  }
+
+  private loadCorosStatus(): void {
+    this.corosService.getStatus().subscribe({
+      next: status => {
+        const coros = this.integrations.find(i => i.id === 'coros');
+        if (coros) coros.connected = status.connected;
+      },
+      error: () => { /* backend unreachable, keep default */ }
+    });
+  }
+
+  private connectCoros(): void {
+    this.corosLoading.set(true);
+    this.corosService.getAuthUrl().subscribe({
+      next: ({ url }) => window.location.href = url,
+      error: () => this.corosLoading.set(false)
+    });
+  }
+
+  private disconnectCoros(integration: Integration): void {
+    this.corosService.disconnect().subscribe({
       next: () => { integration.connected = false; },
       error: () => { /* ignore */ }
     });
