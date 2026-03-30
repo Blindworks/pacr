@@ -96,4 +96,29 @@ export class CommunityRoutes implements OnInit {
     if (h > 0) return `${h}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
     return `${m}:${String(s).padStart(2, '0')}`;
   }
+
+  generateTags(route: CommunityRouteDto): { label: string; primary: boolean }[] {
+    const tags: { label: string; primary: boolean }[] = [];
+    const km = route.distanceKm;
+    const elev = route.elevationGainM ?? 0;
+
+    if (elev > 300) {
+      tags.push({ label: 'TECHNICAL', primary: true });
+      tags.push({ label: 'TRAIL', primary: false });
+    } else if (elev > 100) {
+      tags.push({ label: 'HILLY', primary: true });
+    } else {
+      tags.push({ label: 'FLAT', primary: false });
+    }
+
+    if (km >= 21) {
+      tags.push({ label: 'MARATHON+', primary: false });
+    } else if (km >= 10) {
+      tags.push({ label: 'LONG', primary: false });
+    } else if (km < 5) {
+      tags.push({ label: 'FAST', primary: false });
+    }
+
+    return tags;
+  }
 }

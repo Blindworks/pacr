@@ -1,83 +1,125 @@
 <div class="community-routes">
+  <!-- Header -->
   <div class="page-header">
     <div class="header-left">
-      <h1>Community Routes</h1>
-      <p>Discover and compete on routes near you</p>
+      <h1>COMMUNITY<br/><span class="accent">ROUTES</span></h1>
+      <p class="subtitle">High performance curated paths</p>
     </div>
     <div class="header-actions">
-      <a routerLink="/community-routes/mine" class="btn btn-secondary">
+      <a routerLink="/community-routes/mine" class="btn-secondary">
         <span class="material-symbols-outlined">folder</span>
-        My Routes
+        MY ROUTES
       </a>
-    </div>
-  </div>
-
-  <div class="controls">
-    <div class="control-group">
-      <label>Search Radius</label>
-      <div class="radius-control">
-        <input type="range" [min]="1" [max]="50" [value]="radiusKm()"
-               (input)="onRadiusChange(+$any($event.target).value)" />
-        <span class="radius-value">{{ radiusKm() }} km</span>
-      </div>
-    </div>
-    <div class="control-group">
-      <label>Sort By</label>
-      <div class="sort-toggle">
-        <button [class.active]="sortBy() === 'distance'" (click)="onSortChange('distance')">Distance</button>
-        <button [class.active]="sortBy() === 'popularity'" (click)="onSortChange('popularity')">Popularity</button>
+      <div class="near-you-toggle">
+        <span class="toggle-label">Near You</span>
+        <button class="toggle-track active" type="button">
+          <span class="toggle-thumb"></span>
+        </button>
       </div>
     </div>
   </div>
 
+  <!-- Filter Bar -->
+  <div class="filter-bar">
+    <div class="search-field">
+      <span class="material-symbols-outlined search-icon">location_on</span>
+      <input type="text" placeholder="SEARCH BY LOCATION OR NAME" />
+    </div>
+    <div class="select-wrapper">
+      <select (change)="onRadiusChange(+$any($event.target).value)">
+        <option value="5" [selected]="radiusKm() === 5">RADIUS: 5 KM</option>
+        <option value="10" [selected]="radiusKm() === 10">RADIUS: 10 KM</option>
+        <option value="25" [selected]="radiusKm() === 25">RADIUS: 25 KM</option>
+        <option value="50" [selected]="radiusKm() === 50">RADIUS: 50 KM</option>
+      </select>
+      <span class="material-symbols-outlined select-arrow">expand_more</span>
+    </div>
+    <div class="select-wrapper">
+      <select (change)="onSortChange($any($event.target).value)">
+        <option value="distance" [selected]="sortBy() === 'distance'">SORT: DISTANCE</option>
+        <option value="popularity" [selected]="sortBy() === 'popularity'">SORT: POPULARITY</option>
+      </select>
+      <span class="material-symbols-outlined select-arrow">expand_more</span>
+    </div>
+  </div>
+
+  <!-- States -->
   @if (loading()) {
     <div class="loading-state">
       <span class="material-symbols-outlined spinning">progress_activity</span>
+      <h3>Scanning Area</h3>
       <p>Finding routes near you...</p>
     </div>
   } @else if (error()) {
     <div class="error-state">
       <span class="material-symbols-outlined">error</span>
+      <h3>Connection Lost</h3>
       <p>{{ error() }}</p>
-      <button class="btn btn-primary" (click)="loadRoutes()">Try Again</button>
+      <button class="btn-retry" (click)="loadRoutes()">TRY AGAIN</button>
     </div>
   } @else if (routes().length === 0) {
     <div class="empty-state">
       <span class="material-symbols-outlined">explore_off</span>
-      <h3>No routes found nearby</h3>
+      <h3>No Routes Found</h3>
       <p>Try increasing the search radius or share your own route from any activity.</p>
     </div>
   } @else {
-    <div class="route-list">
+    <!-- Route Cards Grid -->
+    <div class="route-grid">
       @for (route of routes(); track route.id) {
-        <a [routerLink]="['/community-routes', route.id]" class="route-card">
-          <div class="route-info">
-            <h3>{{ route.name }}</h3>
-            <span class="creator">by {{ route.creatorUsername }}</span>
+        <div class="route-card">
+          <!-- Card Image -->
+          <div class="card-image">
+            <div class="image-placeholder"></div>
+            <div class="image-overlay"></div>
+            <div class="card-title">
+              <h3>{{ route.name }}</h3>
+              <div class="creator">by {{ route.creatorUsername }}</div>
+            </div>
           </div>
-          <div class="route-stats">
-            <div class="stat">
-              <span class="material-symbols-outlined">straighten</span>
-              <span>{{ formatDistance(route.distanceKm) }}</span>
-            </div>
-            @if (route.elevationGainM) {
-              <div class="stat">
-                <span class="material-symbols-outlined">terrain</span>
-                <span>{{ route.elevationGainM }}m</span>
+
+          <!-- Card Body -->
+          <div class="card-body">
+            <div class="card-stats">
+              <div class="stats-left">
+                <div class="stat-block">
+                  <div class="stat-label">Distance</div>
+                  <div class="stat-value accent">{{ formatDistance(route.distanceKm) }}</div>
+                </div>
+                @if (route.elevationGainM) {
+                  <div class="stat-block">
+                    <div class="stat-label">Elevation</div>
+                    <div class="stat-value">{{ route.elevationGainM }}M</div>
+                  </div>
+                }
               </div>
-            }
-            <div class="stat">
-              <span class="material-symbols-outlined">group</span>
-              <span>{{ route.athleteCount }}</span>
+              <div class="card-tags">
+                @for (tag of generateTags(route); track tag.label) {
+                  <span class="tag" [class.primary]="tag.primary">{{ tag.label }}</span>
+                }
+              </div>
             </div>
+
             @if (route.recordTimeSeconds) {
-              <div class="stat record">
+              <div class="record-badge">
                 <span class="material-symbols-outlined">emoji_events</span>
-                <span>{{ formatTime(route.recordTimeSeconds) }}</span>
+                <span>RECORD {{ formatTime(route.recordTimeSeconds) }}</span>
               </div>
             }
+
+            <div class="card-runners">
+              <span class="material-symbols-outlined">group</span>
+              <span>{{ route.athleteCount }} athletes on this route</span>
+            </div>
+
+            <div class="card-actions">
+              <a [routerLink]="['/community-routes', route.id]" class="btn-view">VIEW DETAIL</a>
+              <a [routerLink]="['/community-routes', route.id]" class="btn-icon">
+                <span class="material-symbols-outlined">watch</span>
+              </a>
+            </div>
           </div>
-        </a>
+        </div>
       }
     </div>
   }

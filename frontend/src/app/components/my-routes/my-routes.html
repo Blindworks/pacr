@@ -1,40 +1,82 @@
 <div class="my-routes">
+  <!-- Header -->
   <div class="page-header">
-    <a routerLink="/community-routes" class="back-btn">
-      <span class="material-symbols-outlined">arrow_back</span>
-    </a>
-    <h1>My Shared Routes</h1>
+    <div class="header-left">
+      <a routerLink="/community-routes" class="back-link">
+        <span class="material-symbols-outlined">arrow_back</span>
+        <span>ROUTES</span>
+      </a>
+      <h1>MY<br/><span class="accent">ROUTES</span></h1>
+      <p class="subtitle">Your shared routes &amp; performance</p>
+    </div>
   </div>
 
+  <!-- States -->
   @if (loading()) {
     <div class="loading-state">
       <span class="material-symbols-outlined spinning">progress_activity</span>
-      <p>Loading your routes...</p>
+      <h3>Loading Routes</h3>
+      <p>Fetching your shared routes...</p>
     </div>
   } @else if (routes().length === 0) {
     <div class="empty-state">
       <span class="material-symbols-outlined">share_off</span>
-      <h3>No shared routes</h3>
+      <h3>No Shared Routes</h3>
       <p>Share a route from any activity with GPS data to see it here.</p>
     </div>
   } @else {
-    <div class="route-list">
+    <!-- Route Cards Grid -->
+    <div class="route-grid">
       @for (route of routes(); track route.id) {
         <div class="route-card">
-          <a [routerLink]="['/community-routes', route.id]" class="route-info">
-            <h3>{{ route.name }}</h3>
-            <div class="route-meta">
-              <span>{{ formatDistance(route.distanceKm) }}</span>
-              @if (route.elevationGainM) {
-                <span>{{ route.elevationGainM }}m elev</span>
-              }
-              <span>{{ route.athleteCount }} athletes</span>
-              <span class="visibility-badge">{{ route.visibility }}</span>
+          <!-- Card Image -->
+          <div class="card-image">
+            <div class="image-placeholder"></div>
+            <div class="image-overlay"></div>
+            <div class="card-title">
+              <h3>{{ route.name }}</h3>
             </div>
-          </a>
-          <button class="unshare-btn" (click)="unshare(route)" title="Unshare route">
-            <span class="material-symbols-outlined">delete</span>
-          </button>
+            <div class="visibility-badge">
+              <span class="material-symbols-outlined">{{ route.visibility === 'PUBLIC' ? 'public' : 'group' }}</span>
+              <span>{{ route.visibility }}</span>
+            </div>
+          </div>
+
+          <!-- Card Body -->
+          <div class="card-body">
+            <div class="card-stats">
+              <div class="stats-left">
+                <div class="stat-block">
+                  <div class="stat-label">Distance</div>
+                  <div class="stat-value accent">{{ formatDistance(route.distanceKm) }}</div>
+                </div>
+                @if (route.elevationGainM) {
+                  <div class="stat-block">
+                    <div class="stat-label">Elevation</div>
+                    <div class="stat-value">{{ route.elevationGainM }}M</div>
+                  </div>
+                }
+                <div class="stat-block">
+                  <div class="stat-label">Athletes</div>
+                  <div class="stat-value">{{ route.athleteCount }}</div>
+                </div>
+              </div>
+            </div>
+
+            @if (route.recordTimeSeconds) {
+              <div class="record-badge">
+                <span class="material-symbols-outlined">emoji_events</span>
+                <span>RECORD {{ formatTime(route.recordTimeSeconds) }}</span>
+              </div>
+            }
+
+            <div class="card-actions">
+              <a [routerLink]="['/community-routes', route.id]" class="btn-view">VIEW DETAIL</a>
+              <button class="btn-unshare" (click)="unshare(route)" title="Unshare route">
+                <span class="material-symbols-outlined">delete</span>
+              </button>
+            </div>
+          </div>
         </div>
       }
     </div>

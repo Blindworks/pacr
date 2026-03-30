@@ -36,4 +36,13 @@ export class MyRoutes implements OnInit {
   formatDistance(km: number): string {
     return km < 1 ? `${Math.round(km * 1000)}m` : `${km.toFixed(1)} km`;
   }
+
+  formatTime(seconds: number | null): string {
+    if (!seconds) return '—';
+    const h = Math.floor(seconds / 3600);
+    const m = Math.floor((seconds % 3600) / 60);
+    const s = seconds % 60;
+    if (h > 0) return `${h}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+    return `${m}:${String(s).padStart(2, '0')}`;
+  }
 }
