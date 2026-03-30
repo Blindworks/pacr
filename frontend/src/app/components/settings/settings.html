@@ -231,6 +231,26 @@
       </div>
     </article>
 
+    <!-- Community Routes -->
+    <article class="section">
+      <div class="section-head">
+        <span class="material-symbols-outlined">explore</span>
+        <h2>Community Routes</h2>
+      </div>
+      <div class="toggles">
+        <div class="toggle-row">
+          <div class="toggle-info">
+            <span class="toggle-title">Community Routes aktivieren</span>
+            <span class="toggle-sub">Teile Routen, entdecke Strecken in deiner Nähe und konkurriere auf Bestenlisten</span>
+          </div>
+          <label class="switch">
+            <input type="checkbox" [ngModel]="communityRoutesEnabled()" (ngModelChange)="onCommunityRoutesChange($event)" />
+            <span class="track"></span>
+          </label>
+        </div>
+      </div>
+    </article>
+
     <!-- E-Mail-Einstellungen -->
     <article class="section">
       <div class="section-head">

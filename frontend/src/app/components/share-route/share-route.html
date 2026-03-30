@@ -1,0 +1,59 @@
+<div class="share-route">
+  <div class="page-header">
+    <button class="back-btn" (click)="goBack()">
+      <span class="material-symbols-outlined">arrow_back</span>
+    </button>
+    <h1>Share as Community Route</h1>
+  </div>
+
+  @if (loading()) {
+    <div class="loading-state">
+      <span class="material-symbols-outlined spinning">progress_activity</span>
+      <p>Loading activity...</p>
+    </div>
+  } @else if (activity(); as act) {
+    <div class="activity-summary">
+      <h3>{{ act.activityName || 'Activity' }}</h3>
+      <div class="summary-stats">
+        <span>{{ formatDistance(act.distanceKm) }}</span>
+        @if (act.elevationGainM) {
+          <span>{{ act.elevationGainM }}m elev</span>
+        }
+        <span>{{ act.trainingDate }}</span>
+      </div>
+    </div>
+
+    <div class="form">
+      <div class="form-group">
+        <label for="routeName">Route Name</label>
+        <input id="routeName" type="text" [value]="routeName()"
+               (input)="routeName.set($any($event.target).value)"
+               placeholder="Give your route a name" />
+      </div>
+
+      <div class="form-group">
+        <label>Visibility</label>
+        <div class="visibility-options">
+          <button [class.active]="visibility() === 'PUBLIC'" (click)="visibility.set('PUBLIC')">
+            <span class="material-symbols-outlined">public</span>
+            Public
+          </button>
+          <button [class.active]="visibility() === 'FOLLOWERS_ONLY'" (click)="visibility.set('FOLLOWERS_ONLY')">
+            <span class="material-symbols-outlined">group</span>
+            Followers Only
+          </button>
+        </div>
+      </div>
+
+      @if (error()) {
+        <div class="error-msg">{{ error() }}</div>
+      }
+
+      <button class="btn btn-primary btn-lg" (click)="share()"
+              [disabled]="saving() || !routeName()">
+        <span class="material-symbols-outlined">share</span>
+        {{ saving() ? 'Sharing...' : 'Share Route' }}
+      </button>
+    </div>
+  }
+</div>

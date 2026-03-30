@@ -1,0 +1,112 @@
+@if (loading()) {
+  <div class="loading-state">
+    <span class="material-symbols-outlined spinning">progress_activity</span>
+    <p>Loading route...</p>
+  </div>
+} @else if (route(); as r) {
+  <div class="route-detail">
+    <div class="detail-header">
+      <button class="back-btn" (click)="goBack()">
+        <span class="material-symbols-outlined">arrow_back</span>
+      </button>
+      <div>
+        <h1>{{ r.name }}</h1>
+        <span class="creator">by {{ r.creatorUsername }}</span>
+      </div>
+    </div>
+
+    <div id="route-map" class="route-map"></div>
+
+    <div class="stats-row">
+      <div class="stat-card">
+        <span class="material-symbols-outlined">straighten</span>
+        <div class="stat-value">{{ formatDistance(r.distanceKm) }}</div>
+        <div class="stat-label">Distance</div>
+      </div>
+      @if (r.elevationGainM) {
+        <div class="stat-card">
+          <span class="material-symbols-outlined">terrain</span>
+          <div class="stat-value">{{ r.elevationGainM }}m</div>
+          <div class="stat-label">Elevation</div>
+        </div>
+      }
+      <div class="stat-card">
+        <span class="material-symbols-outlined">group</span>
+        <div class="stat-value">{{ r.athleteCount }}</div>
+        <div class="stat-label">Athletes</div>
+      </div>
+      @if (r.recordTimeSeconds) {
+        <div class="stat-card highlight">
+          <span class="material-symbols-outlined">emoji_events</span>
+          <div class="stat-value">{{ formatTime(r.recordTimeSeconds) }}</div>
+          <div class="stat-label">Record by {{ r.recordHolder }}</div>
+        </div>
+      }
+    </div>
+
+    <div class="attempt-section">
+      @if (pendingAttempt(); as attempt) {
+        @if (attempt.routeId === r.id) {
+          <div class="attempt-active">
+            <span class="material-symbols-outlined">directions_run</span>
+            <span>Attempt active — go run this route!</span>
+            <button class="btn btn-secondary" (click)="cancelAttempt()">Cancel</button>
+          </div>
+        } @else {
+          <p class="attempt-note">You have a pending attempt on another route.</p>
+        }
+      } @else {
+        <button class="btn btn-primary btn-lg" (click)="selectRoute()" [disabled]="selectingRoute()">
+          <span class="material-symbols-outlined">flag</span>
+          {{ selectingRoute() ? 'Selecting...' : 'Run This Route' }}
+        </button>
+      }
+    </div>
+
+    <div class="leaderboard-section">
+      <div class="leaderboard-header">
+        <h2>Leaderboard</h2>
+        <div class="period-tabs">
+          <button [class.active]="period() === 'ALL_TIME'" (click)="onPeriodChange('ALL_TIME')">All Time</button>
+          <button [class.active]="period() === 'THIS_MONTH'" (click)="onPeriodChange('THIS_MONTH')">This Month</button>
+          <button [class.active]="period() === 'THIS_WEEK'" (click)="onPeriodChange('THIS_WEEK')">This Week</button>
+        </div>
+      </div>
+
+      @if (leaderboard().length === 0) {
+        <div class="empty-leaderboard">
+          <p>No entries yet. Be the first to run this route!</p>
+        </div>
+      } @else {
+        <table class="leaderboard-table">
+          <thead>
+            <tr>
+              <th class="rank-col">#</th>
+              <th>Athlete</th>
+              <th>Time</th>
+              <th>Pace</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (entry of leaderboard(); track entry.rank) {
+              <tr [class.top-3]="entry.rank <= 3">
+                <td class="rank-col">
+                  @if (entry.rank <= 3) {
+                    <span class="medal rank-{{ entry.rank }}">{{ entry.rank }}</span>
+                  } @else {
+                    {{ entry.rank }}
+                  }
+                </td>
+                <td class="athlete-col">{{ entry.username }}</td>
+                <td>{{ formatTime(entry.timeSeconds) }}</td>
+                <td>{{ formatPace(entry.paceSecondsPerKm) }}</td>
+                <td class="date-col">{{ entry.date }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      }
+    </div>
+  </div>
+}

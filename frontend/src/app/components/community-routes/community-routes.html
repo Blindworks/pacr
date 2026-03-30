@@ -1,0 +1,84 @@
+<div class="community-routes">
+  <div class="page-header">
+    <div class="header-left">
+      <h1>Community Routes</h1>
+      <p>Discover and compete on routes near you</p>
+    </div>
+    <div class="header-actions">
+      <a routerLink="/community-routes/mine" class="btn btn-secondary">
+        <span class="material-symbols-outlined">folder</span>
+        My Routes
+      </a>
+    </div>
+  </div>
+
+  <div class="controls">
+    <div class="control-group">
+      <label>Search Radius</label>
+      <div class="radius-control">
+        <input type="range" [min]="1" [max]="50" [value]="radiusKm()"
+               (input)="onRadiusChange(+$any($event.target).value)" />
+        <span class="radius-value">{{ radiusKm() }} km</span>
+      </div>
+    </div>
+    <div class="control-group">
+      <label>Sort By</label>
+      <div class="sort-toggle">
+        <button [class.active]="sortBy() === 'distance'" (click)="onSortChange('distance')">Distance</button>
+        <button [class.active]="sortBy() === 'popularity'" (click)="onSortChange('popularity')">Popularity</button>
+      </div>
+    </div>
+  </div>
+
+  @if (loading()) {
+    <div class="loading-state">
+      <span class="material-symbols-outlined spinning">progress_activity</span>
+      <p>Finding routes near you...</p>
+    </div>
+  } @else if (error()) {
+    <div class="error-state">
+      <span class="material-symbols-outlined">error</span>
+      <p>{{ error() }}</p>
+      <button class="btn btn-primary" (click)="loadRoutes()">Try Again</button>
+    </div>
+  } @else if (routes().length === 0) {
+    <div class="empty-state">
+      <span class="material-symbols-outlined">explore_off</span>
+      <h3>No routes found nearby</h3>
+      <p>Try increasing the search radius or share your own route from any activity.</p>
+    </div>
+  } @else {
+    <div class="route-list">
+      @for (route of routes(); track route.id) {
+        <a [routerLink]="['/community-routes', route.id]" class="route-card">
+          <div class="route-info">
+            <h3>{{ route.name }}</h3>
+            <span class="creator">by {{ route.creatorUsername }}</span>
+          </div>
+          <div class="route-stats">
+            <div class="stat">
+              <span class="material-symbols-outlined">straighten</span>
+              <span>{{ formatDistance(route.distanceKm) }}</span>
+            </div>
+            @if (route.elevationGainM) {
+              <div class="stat">
+                <span class="material-symbols-outlined">terrain</span>
+                <span>{{ route.elevationGainM }}m</span>
+              </div>
+            }
+            <div class="stat">
+              <span class="material-symbols-outlined">group</span>
+              <span>{{ route.athleteCount }}</span>
+            </div>
+            @if (route.recordTimeSeconds) {
+              <div class="stat record">
+                <span class="material-symbols-outlined">emoji_events</span>
+                <span>{{ formatTime(route.recordTimeSeconds) }}</span>
+              </div>
+            }
+          </div>
+        </a>
+      }
+    </div>
+  }
+</div>

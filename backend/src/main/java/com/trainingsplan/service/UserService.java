@@ -69,7 +69,8 @@ public class UserService {
                            LocalDate dateOfBirth, Integer heightCm, Double weightKg,
                            Integer maxHeartRate, Integer hrRest, String gender, String status,
                            Integer dwdRegionId, boolean asthmaTrackingEnabled,
-                           boolean cycleTrackingEnabled, String role,
+                           boolean cycleTrackingEnabled, boolean communityRoutesEnabled,
+                           String role,
                            String subscriptionPlan, LocalDateTime subscriptionExpiresAt,
                            String targetDistance, String weeklyVolumeKm) {
         User user = findById(id);
@@ -94,6 +95,7 @@ public class UserService {
         user.setDwdRegionId(dwdRegionId);
         user.setAsthmaTrackingEnabled(asthmaTrackingEnabled);
         user.setCycleTrackingEnabled(cycleTrackingEnabled);
+        user.setCommunityRoutesEnabled(communityRoutesEnabled);
         if (subscriptionPlan != null && !subscriptionPlan.isBlank()) {
             user.setSubscriptionPlan(SubscriptionPlan.valueOf(subscriptionPlan));
         }

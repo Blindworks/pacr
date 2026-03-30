@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-03-29
+
+### Added
+- Community Routes feature: share running routes from completed activities with GPS data
+- Route discovery: browse public community routes nearby with configurable search radius
+- Route leaderboards: per-route rankings by total time, filterable by All Time / This Month / This Week
+- Route attempts: select a route before running, auto-assign synced activity with distance plausibility check (+/-30%)
+- Community Routes opt-in toggle in user profile settings (privacy-first, disabled by default)
+- New sidebar navigation item for Community Routes (visible when feature is enabled)
+- Share as Community Route button on activity detail page (for activities with GPS data)
+- My Shared Routes management page for editing or unsharing routes
+- Backend: CommunityRoute and RouteAttempt entities with Haversine-based nearby search
+- Backend: CommunityRouteController and RouteAttemptController REST APIs
+- Backend: Automatic route attempt assignment via TrainingCompletedEvent listener
+
 ## [0.3.0] - 2026-03-29
 
 ### Added
