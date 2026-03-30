@@ -2,6 +2,8 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit, OnDestroy, signal, inject, ViewChild, ElementRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { Subject } from 'rxjs';
+import { debounceTime, takeUntil } from 'rxjs/operators';
 import { StravaService } from '../../services/strava.service';
 import { CorosService } from '../../services/coros.service';
 import { UserService, UserProfile } from '../../services/user.service';
@@ -30,6 +32,10 @@ export class Settings implements OnInit, OnDestroy {
   private readonly corosService = inject(CorosService);
   private readonly userService = inject(UserService);
   private readonly notifPrefsService = inject(NotificationPreferencesService);
+
+  private readonly autoSave$ = new Subject<void>();
+  private readonly destroy$ = new Subject<void>();
+  private profileLoaded = false;
 
   private userId = 0;
   private currentUser: UserProfile | null = null;
@@ -132,6 +138,17 @@ export class Settings implements OnInit, OnDestroy {
     this.loadCorosStatus();
     this.loadUserProfile();
     this.loadNotificationPreferences();
+
+    this.autoSave$.pipe(
+      debounceTime(800),
+      takeUntil(this.destroy$)
+    ).subscribe(() => this.saveChanges());
+  }
+
+  private triggerAutoSave(): void {
+    if (this.profileLoaded) {
+      this.autoSave$.next();
+    }
   }
 
   private loadUserProfile(): void {
@@ -151,6 +168,7 @@ export class Settings implements OnInit, OnDestroy {
         this.asthmaTrackingEnabled.set(user.asthmaTrackingEnabled ?? false);
         this.cycleTrackingEnabled.set(user.cycleTrackingEnabled ?? false);
         this.communityRoutesEnabled.set(user.communityRoutesEnabled ?? false);
+        this.profileLoaded = true;
         this.loadProfileImage();
       },
       error: () => { /* keep defaults if backend unreachable */ }
@@ -209,6 +227,8 @@ export class Settings implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
     if (this.profileImageObjectUrl) {
       URL.revokeObjectURL(this.profileImageObjectUrl);
     }
@@ -227,24 +247,33 @@ export class Settings implements OnInit, OnDestroy {
   protected onAsthmaTrackingChange(value: boolean): void {
     this.asthmaTrackingEnabled.set(value);
     this.userService.currentUser.update(u => u ? { ...u, asthmaTrackingEnabled: value } : null);
+    this.triggerAutoSave();
   }
 
   protected onCycleTrackingChange(value: boolean): void {
     this.cycleTrackingEnabled.set(value);
     this.userService.currentUser.update(u => u ? { ...u, cycleTrackingEnabled: value } : null);
+    this.triggerAutoSave();
   }
 
   protected onCommunityRoutesChange(value: boolean): void {
     this.communityRoutesEnabled.set(value);
     this.userService.currentUser.update(u => u ? { ...u, communityRoutesEnabled: value } : null);
+    this.triggerAutoSave();
   }
 
   protected setUnit(value: 'metric' | 'imperial'): void {
     this.unit.set(value);
+    this.triggerAutoSave();
   }
 
   protected setTheme(value: 'light' | 'dark' | 'auto'): void {
     this.theme.set(value);
+    this.triggerAutoSave();
+  }
+
+  protected onFieldChange(): void {
+    this.triggerAutoSave();
   }
 
   protected toggleIntegration(integration: Integration): void {

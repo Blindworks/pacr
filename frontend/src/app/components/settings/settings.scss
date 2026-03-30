@@ -450,41 +450,6 @@
   padding-top: 0.5rem;
 }
 
-.btn-save {
-  padding: 0.85rem 2rem;
-  background: var(--primary);
-  color: #0d1117;
-  font-family: inherit;
-  font-size: 0.85rem;
-  font-weight: 900;
-  border: none;
-  border-radius: 0.75rem;
-  cursor: pointer;
-  letter-spacing: 0.04em;
-  transition: filter 0.15s;
-
-  &:hover {
-    filter: brightness(1.08);
-  }
-}
-
-.btn-cancel {
-  padding: 0.85rem 2rem;
-  background: transparent;
-  color: var(--muted);
-  font-family: inherit;
-  font-size: 0.85rem;
-  font-weight: 700;
-  border: 1px solid var(--border);
-  border-radius: 0.75rem;
-  cursor: pointer;
-  transition: background 0.15s;
-
-  &:hover {
-    background: var(--panel-soft);
-  }
-}
-
 .save-error {
   color: #f87171;
   font-size: 0.85rem;
@@ -493,7 +458,6 @@
 }
 
 .btn-delete {
-  margin-left: auto;
   padding: 0.85rem 1.25rem;
   background: transparent;
   color: #f87171;

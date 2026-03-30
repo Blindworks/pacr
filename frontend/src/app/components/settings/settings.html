@@ -51,11 +51,11 @@
       <div class="metrics-grid">
         <div class="field">
           <label>Vorname</label>
-          <input type="text" [ngModel]="firstName()" (ngModelChange)="firstName.set($event)" placeholder="Max" />
+          <input type="text" [ngModel]="firstName()" (ngModelChange)="firstName.set($event); onFieldChange()" placeholder="Max" />
         </div>
         <div class="field">
           <label>Nachname</label>
-          <input type="text" [ngModel]="lastName()" (ngModelChange)="lastName.set($event)" placeholder="Mustermann" />
+          <input type="text" [ngModel]="lastName()" (ngModelChange)="lastName.set($event); onFieldChange()" placeholder="Mustermann" />
         </div>
       </div>
     </article>
@@ -69,19 +69,19 @@
       <div class="metrics-grid">
         <div class="field">
           <label>Weight (kg)</label>
-          <input type="number" [ngModel]="weight()" (ngModelChange)="weight.set($event)" placeholder="72" />
+          <input type="number" [ngModel]="weight()" (ngModelChange)="weight.set($event); onFieldChange()" placeholder="72" />
         </div>
         <div class="field">
           <label>Height (cm)</label>
-          <input type="number" [ngModel]="height()" (ngModelChange)="height.set($event)" placeholder="180" />
+          <input type="number" [ngModel]="height()" (ngModelChange)="height.set($event); onFieldChange()" placeholder="180" />
         </div>
         <div class="field">
           <label>Date of Birth</label>
-          <input type="date" [ngModel]="dateOfBirth()" (ngModelChange)="dateOfBirth.set($event)" />
+          <input type="date" [ngModel]="dateOfBirth()" (ngModelChange)="dateOfBirth.set($event); onFieldChange()" />
         </div>
         <div class="field">
           <label>Gender</label>
-          <select [ngModel]="gender()" (ngModelChange)="gender.set($event)">
+          <select [ngModel]="gender()" (ngModelChange)="gender.set($event); onFieldChange()">
             <option>Male</option>
             <option>Female</option>
             <option>Non-binary</option>
@@ -90,11 +90,11 @@
         </div>
         <div class="field">
           <label>Resting HR (bpm)</label>
-          <input type="number" [ngModel]="restingHr()" (ngModelChange)="restingHr.set($event)" placeholder="54" />
+          <input type="number" [ngModel]="restingHr()" (ngModelChange)="restingHr.set($event); onFieldChange()" placeholder="54" />
         </div>
         <div class="field">
           <label>Max HR (bpm)</label>
-          <input type="number" [ngModel]="maxHr()" (ngModelChange)="maxHr.set($event)" placeholder="190" />
+          <input type="number" [ngModel]="maxHr()" (ngModelChange)="maxHr.set($event); onFieldChange()" placeholder="190" />
         </div>
       </div>
     </article>
@@ -204,7 +204,7 @@
         <div class="metrics-grid">
           <div class="field" style="grid-column: 1 / -1">
             <label>DWD-Wetterregion</label>
-            <select [ngModel]="dwdRegionId()" (ngModelChange)="dwdRegionId.set($event ? +$event : null)">
+            <select [ngModel]="dwdRegionId()" (ngModelChange)="dwdRegionId.set($event ? +$event : null); onFieldChange()">
               <option [ngValue]="null">-- Keine Auswahl --</option>
               @for (r of dwdRegions; track r.id) {
                 <option [ngValue]="r.id">{{ r.name }}</option>
@@ -268,14 +268,14 @@
             <span class="toggle-sub">Erinnerung am Vorabend mit dem morgigen Training</span>
           </div>
           <label class="switch">
-            <input type="checkbox" [ngModel]="emailReminderEnabled()" (ngModelChange)="emailReminderEnabled.set($event)" />
+            <input type="checkbox" [ngModel]="emailReminderEnabled()" (ngModelChange)="emailReminderEnabled.set($event); onFieldChange()" />
             <span class="track"></span>
           </label>
         </div>
         @if (emailReminderEnabled()) {
           <div class="field" style="margin: 0.75rem 1rem 0.5rem">
             <label>Erinnerungszeit</label>
-            <select [ngModel]="emailReminderTime()" (ngModelChange)="emailReminderTime.set($event)">
+            <select [ngModel]="emailReminderTime()" (ngModelChange)="emailReminderTime.set($event); onFieldChange()">
               @for (t of reminderTimes; track t) {
                 <option [value]="t">{{ t }} Uhr</option>
               }
@@ -288,7 +288,7 @@
             <span class="toggle-sub">Benachrichtigung bei neuen Features und wichtigen Änderungen</span>
           </div>
           <label class="switch">
-            <input type="checkbox" [ngModel]="emailNewsEnabled()" (ngModelChange)="emailNewsEnabled.set($event)" />
+            <input type="checkbox" [ngModel]="emailNewsEnabled()" (ngModelChange)="emailNewsEnabled.set($event); onFieldChange()" />
             <span class="track"></span>
           </label>
         </div>
@@ -345,10 +345,6 @@
 
     <!-- Footer Actions -->
     <div class="footer-actions">
-      <button class="btn-save" type="button" (click)="saveChanges()" [disabled]="saving()">
-        {{ saving() ? 'SAVING...' : 'SAVE CHANGES' }}
-      </button>
-      <button class="btn-cancel" type="button">CANCEL</button>
       <button class="btn-delete" type="button">Delete Account</button>
     </div>
     @if (saveError()) {
