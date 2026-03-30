@@ -1,10 +1,4 @@
-$primary: #b9f20d;
-$bg: #0d1117;
-$surface: #161b22;
-$card: #161b22;
-$text: #e6edf3;
-$muted: #8b949e;
-
+// Intentional cycle phase colors
 $menstrual: #f87171;
 $follicular: #4ade80;
 $ovulation: #facc15;
@@ -14,7 +8,7 @@ $luteal: #fb923c;
   display: block;
   height: 100%;
   overflow-y: auto;
-  background: $bg;
+  background: var(--bg);
 }
 
 .settings-page {
@@ -35,14 +29,14 @@ $luteal: #fb923c;
   h2 {
     font-size: 1.875rem;
     font-weight: 700;
-    color: $text;
+    color: var(--text);
     margin: 0;
     letter-spacing: -0.02em;
   }
 }
 
 .subtitle {
-  color: $muted;
+  color: var(--text-muted);
   margin: 0.25rem 0 0;
   font-size: 0.9375rem;
 }
@@ -56,7 +50,7 @@ $luteal: #fb923c;
   background: rgba(255, 255, 255, 0.06);
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 50%;
-  color: $text;
+  color: var(--text);
   cursor: pointer;
   flex-shrink: 0;
   transition: background 0.2s;
@@ -79,7 +73,7 @@ $luteal: #fb923c;
 
 /* ── Card Base ── */
 .card {
-  background: $card;
+  background: var(--bg-card);
   border: 1px solid rgba(255, 255, 255, 0.05);
   border-radius: 1.5rem;
   padding: 1.5rem;
@@ -88,7 +82,7 @@ $luteal: #fb923c;
 .card-title {
   font-size: 1rem;
   font-weight: 700;
-  color: $text;
+  color: var(--text);
   margin: 0 0 1.5rem;
   display: flex;
   align-items: center;
@@ -96,7 +90,7 @@ $luteal: #fb923c;
 }
 
 .card-title-icon {
-  color: $primary;
+  color: var(--pp);
   font-size: 20px;
 }
 
@@ -115,7 +109,7 @@ $luteal: #fb923c;
 .form-label {
   font-size: 0.875rem;
   font-weight: 600;
-  color: $text;
+  color: var(--text);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -124,7 +118,7 @@ $luteal: #fb923c;
 .form-value {
   font-size: 0.9375rem;
   font-weight: 700;
-  color: $primary;
+  color: var(--pp);
 }
 
 .form-input,
@@ -132,7 +126,7 @@ $luteal: #fb923c;
   background: rgba(255, 255, 255, 0.06);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 0.75rem;
-  color: $text;
+  color: var(--text);
   font-family: inherit;
   font-size: 0.9375rem;
   padding: 0.75rem 1rem;
@@ -142,11 +136,11 @@ $luteal: #fb923c;
   box-sizing: border-box;
 
   &:focus {
-    border-color: $primary;
+    border-color: var(--pp);
   }
 
   option {
-    background: $surface;
+    background: var(--bg-card);
   }
 }
 
@@ -165,16 +159,16 @@ $luteal: #fb923c;
     appearance: none;
     width: 20px;
     height: 20px;
-    background: $primary;
+    background: var(--pp);
     border-radius: 50%;
     cursor: pointer;
-    box-shadow: 0 0 8px rgba($primary, 0.4);
+    box-shadow: 0 0 8px var(--pp-active-border);
   }
 
   &::-moz-range-thumb {
     width: 20px;
     height: 20px;
-    background: $primary;
+    background: var(--pp);
     border-radius: 50%;
     cursor: pointer;
     border: none;
@@ -185,7 +179,7 @@ $luteal: #fb923c;
   display: flex;
   justify-content: space-between;
   font-size: 0.75rem;
-  color: $muted;
+  color: var(--text-muted);
 }
 
 .form-actions {
@@ -201,8 +195,8 @@ $luteal: #fb923c;
   justify-content: center;
   gap: 0.5rem;
   padding: 0.875rem 2rem;
-  background: $primary;
-  color: $bg;
+  background: var(--pp);
+  color: var(--bg);
   border: none;
   border-radius: 9999px;
   font-size: 0.9375rem;
@@ -216,7 +210,7 @@ $luteal: #fb923c;
   }
 
   &:hover:not(:disabled) {
-    box-shadow: 0 0 20px rgba($primary, 0.4);
+    box-shadow: 0 0 20px var(--pp-active-border);
     filter: brightness(1.05);
   }
 
@@ -236,9 +230,9 @@ $luteal: #fb923c;
   border-radius: 0.75rem;
 
   &--success {
-    background: rgba($primary, 0.1);
-    color: $primary;
-    border: 1px solid rgba($primary, 0.25);
+    background: var(--pp-hover);
+    color: var(--pp);
+    border: 1px solid var(--pp-active-border);
   }
 
   &--error {
@@ -278,7 +272,7 @@ $luteal: #fb923c;
   align-items: center;
   gap: 0.375rem;
   font-size: 0.8125rem;
-  color: $muted;
+  color: var(--text-muted);
 }
 
 .legend-dot {
@@ -310,14 +304,14 @@ $luteal: #fb923c;
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: $muted;
+  color: var(--text-muted);
   margin: 0 0 0.35rem;
 }
 
 .status-value {
   font-size: 1.25rem;
   font-weight: 700;
-  color: $text;
+  color: var(--text);
   margin: 0;
 
   &.phase-menstrual { color: $menstrual; }

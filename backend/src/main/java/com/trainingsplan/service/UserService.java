@@ -72,7 +72,7 @@ public class UserService {
                            boolean cycleTrackingEnabled, boolean communityRoutesEnabled,
                            String role,
                            String subscriptionPlan, LocalDateTime subscriptionExpiresAt,
-                           String targetDistance, String weeklyVolumeKm) {
+                           String targetDistance, String weeklyVolumeKm, String theme) {
         User user = findById(id);
         UserStatus oldStatus = user.getStatus();
         SubscriptionPlan oldPlan = user.getSubscriptionPlan();
@@ -102,6 +102,7 @@ public class UserService {
         user.setSubscriptionExpiresAt(subscriptionExpiresAt);
         user.setTargetDistance(targetDistance);
         user.setWeeklyVolumeKm(weeklyVolumeKm);
+        user.setTheme(theme != null ? theme : "dark");
         User saved = userRepository.save(user);
         User caller = securityUtils.getCurrentUser();
         auditLogService.log(caller, AuditAction.USER_UPDATED, "USER", String.valueOf(id),

@@ -1,19 +1,8 @@
-:host {
-  --pp: #b9f20d;
-  --pp-dim: rgba(185, 242, 13, 0.10);
-  --pp-border: rgba(185, 242, 13, 0.18);
-  --bg: #0d1117;
-  --bg-card: #161b22;
-  --border: rgba(255, 255, 255, 0.08);
-  --text: #e6edf3;
-  --text-muted: #7d8590;
-}
-
 .td-page {
   min-height: 100vh;
   background: var(--bg);
   color: var(--text);
-  font-family: 'Lexend', 'Inter', sans-serif;
+  font-family: var(--font-family);
   display: flex;
   flex-direction: column;
 }
@@ -25,7 +14,7 @@
   justify-content: space-between;
   padding: 16px 24px;
   border-bottom: 1px solid var(--border);
-  background: rgba(13, 17, 23, 0.85);
+  background: color-mix(in srgb, var(--bg) 85%, transparent);
   backdrop-filter: blur(10px);
   position: sticky;
   top: 0;
@@ -123,12 +112,12 @@
   aspect-ratio: 21 / 9;
   border-radius: 14px;
   overflow: hidden;
-  background: linear-gradient(135deg, #161b22 0%, #0d1117 50%, rgba(185, 242, 13, 0.06) 100%);
+  background: linear-gradient(135deg, var(--bg-card) 0%, var(--bg) 50%, var(--pp-hover) 100%);
 
   &__overlay {
     position: absolute;
     inset: 0;
-    background: linear-gradient(to top, #0d1117 0%, rgba(13, 17, 23, 0.20) 60%, transparent 100%);
+    background: linear-gradient(to top, var(--bg) 0%, color-mix(in srgb, var(--bg) 20%, transparent) 60%, transparent 100%);
     z-index: 1;
   }
 
@@ -157,7 +146,7 @@
 .td-difficulty-badge {
   display: inline-block;
   background: var(--pp);
-  color: #0d1117;
+  color: var(--btn-active-text);
   font-size: 10px;
   font-weight: 900;
   text-transform: uppercase;
@@ -184,7 +173,7 @@
 }
 
 .td-stat-card {
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--panel-soft);
   border: 1px solid var(--border);
   border-radius: 14px;
   padding: 16px;
@@ -250,16 +239,16 @@
   gap: 14px;
   padding: 14px 16px;
   border-radius: 12px;
-  border-left: 4px solid rgba(185, 242, 13, 0.3);
-  background: rgba(255, 255, 255, 0.04);
+  border-left: 4px solid var(--pp-active-border);
+  background: var(--panel-soft);
 
   &--highlight {
-    background: rgba(185, 242, 13, 0.08);
+    background: var(--pp-hover);
     border-left-color: var(--pp);
 
     .td-step__icon {
       background: var(--pp);
-      color: #0d1117;
+      color: var(--btn-active-text);
     }
 
     .td-step__pace {
@@ -287,7 +276,7 @@
     width: 40px;
     height: 40px;
     border-radius: 10px;
-    background: rgba(185, 242, 13, 0.12);
+    background: var(--pp-dim);
     color: var(--pp);
     flex-shrink: 0;
 
@@ -384,7 +373,7 @@
   left: 0;
   right: 0;
   padding: 20px 24px;
-  background: linear-gradient(to top, #0d1117 60%, transparent);
+  background: linear-gradient(to top, var(--bg) 60%, transparent);
   z-index: 30;
   display: flex;
   gap: 12px;
@@ -422,13 +411,13 @@
     border-radius: 12px;
     background: var(--pp);
     border: none;
-    color: #0d1117;
+    color: var(--btn-active-text);
     font-size: 14px;
     font-weight: 900;
     text-transform: uppercase;
     letter-spacing: 0.1em;
     cursor: pointer;
-    box-shadow: 0 0 20px rgba(185, 242, 13, 0.25);
+    box-shadow: 0 0 20px var(--pp-active-border);
     transition: opacity 0.2s;
 
     .material-symbols-outlined { font-size: 20px; }

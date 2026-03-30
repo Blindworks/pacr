@@ -46,10 +46,10 @@ import { ToastService } from '../../services/toast.service';
       gap: 0.75rem;
       padding: 0.875rem 1.25rem;
       border-radius: 12px;
-      background: #161b22;
-      border: 1px solid #30363d;
-      color: #e6edf3;
-      font-family: 'Lexend', 'Inter', sans-serif;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: var(--font-family);
       font-size: 0.875rem;
       min-width: 300px;
       max-width: 420px;
@@ -60,7 +60,7 @@ import { ToastService } from '../../services/toast.service';
 
     .toast--achievement {
       border-color: #f59e0b;
-      background: linear-gradient(135deg, #1c1a0e 0%, #161b22 100%);
+      background: linear-gradient(135deg, var(--panel-soft) 0%, var(--bg-card) 100%);
     }
 
     .toast--success {
@@ -114,7 +114,7 @@ import { ToastService } from '../../services/toast.service';
     .toast-close {
       background: none;
       border: none;
-      color: #484f58;
+      color: var(--text-muted);
       cursor: pointer;
       padding: 2px;
       margin-left: auto;
@@ -126,7 +126,7 @@ import { ToastService } from '../../services/toast.service';
     }
 
     .toast-close:hover {
-      color: #e6edf3;
+      color: var(--text);
     }
 
     @keyframes slideIn {

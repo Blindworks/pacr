@@ -137,7 +137,7 @@ export class ActivityMapComponent implements AfterViewInit, OnDestroy, OnChanges
     } catch {
       // Fallback to regular polyline if hotline fails
       this.hotlineLayer = L.polyline(latlngs, {
-        color: '#b9f20d',
+        color: getComputedStyle(document.documentElement).getPropertyValue('--pp').trim(),
         weight: 4,
         opacity: 0.9
       }).addTo(this.map);
@@ -162,13 +162,13 @@ export class ActivityMapComponent implements AfterViewInit, OnDestroy, OnChanges
     if (latlngs.length > 1) {
       const startIcon = L.divIcon({
         className: '',
-        html: '<div style="width:12px;height:12px;border-radius:50%;background:#fff;border:3px solid #b9f20d;box-shadow:0 2px 6px rgba(0,0,0,0.4)"></div>',
+        html: '<div style="width:12px;height:12px;border-radius:50%;background:#fff;border:3px solid var(--pp);box-shadow:0 2px 6px rgba(0,0,0,0.4)"></div>',
         iconSize: [12, 12],
         iconAnchor: [6, 6]
       });
       const endIcon = L.divIcon({
         className: '',
-        html: '<div style="width:12px;height:12px;border-radius:50%;background:#0d1117;border:3px solid #b9f20d;box-shadow:0 2px 6px rgba(0,0,0,0.4)"></div>',
+        html: '<div style="width:12px;height:12px;border-radius:50%;background:var(--bg);border:3px solid var(--pp);box-shadow:0 2px 6px rgba(0,0,0,0.4)"></div>',
         iconSize: [12, 12],
         iconAnchor: [6, 6]
       });
@@ -223,7 +223,7 @@ export class ActivityMapComponent implements AfterViewInit, OnDestroy, OnChanges
     const distKm = (data.distance[nearestIdx] / 1000).toFixed(2);
 
     let content = `<div style="font-family:'Inter',sans-serif;font-size:12px;line-height:1.6">`;
-    content += `<strong style="color:#b9f20d">${distKm} km</strong><br>`;
+    content += `<strong style="color:var(--pp)">${distKm} km</strong><br>`;
 
     if (data.hasPace && data.paceSecondsPerKm?.[nearestIdx]) {
       const pace = data.paceSecondsPerKm[nearestIdx]!;

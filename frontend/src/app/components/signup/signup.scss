@@ -39,7 +39,7 @@
   .brand-icon {
     width: 2rem;
     height: 2rem;
-    color: #b9f20d;
+    color: var(--pp);
 
     svg { width: 100%; height: 100%; }
   }
@@ -47,7 +47,7 @@
   .brand-name {
     font-size: 1.5rem;
     font-weight: 900;
-    color: #f1f5f9;
+    color: var(--text);
     letter-spacing: 0.02em;
   }
 }
@@ -59,7 +59,7 @@
 
   .already-text {
     font-size: 0.875rem;
-    color: #64748b;
+    color: var(--text-muted);
   }
 }
 
@@ -71,7 +71,7 @@
   background: rgba(185, 242, 13, 0.08);
   border: 1px solid rgba(185, 242, 13, 0.25);
   border-radius: 0.5rem;
-  color: #b9f20d;
+  color: var(--pp);
   font-size: 0.875rem;
   font-weight: 700;
   text-decoration: none;
@@ -101,7 +101,7 @@
   h1 {
     font-size: 2.25rem;
     font-weight: 900;
-    color: #f1f5f9;
+    color: var(--text);
     margin: 0 0 0.5rem;
     line-height: 1.1;
     letter-spacing: -0.02em;
@@ -135,21 +135,21 @@
   input {
     width: 100%;
     background: rgba(30, 34, 16, 0.5);
-    border: 1px solid rgba(185, 242, 13, 0.2);
+    border: 1px solid var(--pp-border);
     border-radius: 0.5rem;
     padding: 0.875rem 1rem;
-    color: #f1f5f9;
+    color: var(--text);
     font-family: inherit;
     font-size: 0.95rem;
     outline: none;
     transition: border-color 0.2s, box-shadow 0.2s;
     box-sizing: border-box;
 
-    &::placeholder { color: #475569; }
+    &::placeholder { color: var(--text-muted); }
 
     &:focus {
       border-color: transparent;
-      box-shadow: 0 0 0 2px #b9f20d;
+      box-shadow: 0 0 0 2px var(--pp);
     }
   }
 }
@@ -166,14 +166,14 @@
     transform: translateY(-50%);
     background: none;
     border: none;
-    color: #64748b;
+    color: var(--text-muted);
     cursor: pointer;
     padding: 0;
     display: flex;
     align-items: center;
     transition: color 0.2s;
 
-    &:hover { color: #b9f20d; }
+    &:hover { color: var(--pp); }
 
     .material-symbols-outlined { font-size: 1.25rem; }
   }
@@ -181,8 +181,8 @@
 
 .btn-join {
   width: 100%;
-  background: #b9f20d;
-  color: #12140a;
+  background: var(--pp);
+  color: var(--btn-active-text);
   font-family: inherit;
   font-size: 1.125rem;
   font-weight: 900;
@@ -191,7 +191,7 @@
   border-radius: 0.75rem;
   cursor: pointer;
   letter-spacing: 0.05em;
-  box-shadow: 0 8px 24px rgba(185, 242, 13, 0.2);
+  box-shadow: 0 8px 24px var(--pp-active-bg);
   transition: transform 0.15s, box-shadow 0.15s;
 
   &:hover {
@@ -231,7 +231,7 @@
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.1em;
-    color: #64748b;
+    color: var(--text-muted);
   }
 }
 
@@ -252,13 +252,13 @@
   background: rgba(30, 34, 16, 0.5);
   border: 1px solid rgba(185, 242, 13, 0.15);
   border-radius: 0.75rem;
-  color: #94a3b8;
+  color: var(--text-muted);
   cursor: pointer;
   transition: border-color 0.2s, color 0.2s;
 
   &:hover {
-    border-color: #b9f20d;
-    color: #b9f20d;
+    border-color: var(--pp);
+    color: var(--pp);
   }
 
   .material-symbols-outlined { font-size: 1.5rem; }
@@ -275,13 +275,13 @@
 .terms-text {
   text-align: center;
   font-size: 0.75rem;
-  color: #64748b;
+  color: var(--text-muted);
   line-height: 1.6;
   padding: 0 2rem;
   margin: 0;
 
   a {
-    color: #b9f20d;
+    color: var(--pp);
     text-decoration: none;
 
     &:hover { text-decoration: underline; }
@@ -298,7 +298,7 @@
   .footer-bar {
     width: 6rem;
     height: 0.25rem;
-    background: #b9f20d;
+    background: var(--pp);
     border-radius: 9999px;
   }
 }

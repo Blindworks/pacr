@@ -128,6 +128,9 @@ public class User implements UserDetails {
     @Column(name = "weekly_volume_km", length = 10)
     private String weeklyVolumeKm;
 
+    @Column(name = "theme", nullable = false, length = 10)
+    private String theme = "dark";
+
     @JsonIgnore
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY, optional = true)
     private StravaToken stravaToken;
@@ -383,4 +386,7 @@ public class User implements UserDetails {
 
     public String getWeeklyVolumeKm() { return weeklyVolumeKm; }
     public void setWeeklyVolumeKm(String weeklyVolumeKm) { this.weeklyVolumeKm = weeklyVolumeKm; }
+
+    public String getTheme() { return theme; }
+    public void setTheme(String theme) { this.theme = theme != null ? theme : "dark"; }
 }

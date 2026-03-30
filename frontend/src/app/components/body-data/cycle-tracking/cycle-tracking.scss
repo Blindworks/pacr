@@ -1,12 +1,6 @@
 @use 'sass:color';
 
-$primary: #b9f20d;
-$bg: #0d1117;
-$surface: #161b22;
-$card: #161b22;
-$text: #e6edf3;
-$muted: #8b949e;
-
+// Intentional cycle phase colors
 $menstrual: #f87171;
 $follicular: #4ade80;
 $ovulation: #facc15;
@@ -16,7 +10,7 @@ $luteal: #fb923c;
   display: block;
   height: 100%;
   overflow-y: auto;
-  background: $bg;
+  background: var(--bg);
 }
 
 .cycle-page {
@@ -39,14 +33,14 @@ $luteal: #fb923c;
   h2 {
     font-size: 1.875rem;
     font-weight: 700;
-    color: $text;
+    color: var(--text);
     margin: 0;
     letter-spacing: -0.02em;
   }
 }
 
 .subtitle {
-  color: $muted;
+  color: var(--text-muted);
   margin: 0.25rem 0 0;
   font-size: 0.9375rem;
 }
@@ -64,7 +58,7 @@ $luteal: #fb923c;
   gap: 0.5rem;
   padding: 0.75rem 1.25rem;
   background: rgba(255, 255, 255, 0.06);
-  color: $text;
+  color: var(--text);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 9999px;
   font-size: 0.9375rem;
@@ -106,7 +100,7 @@ $luteal: #fb923c;
   flex: 1;
   font-size: 0.9375rem;
   font-weight: 600;
-  color: $text;
+  color: var(--text);
   margin: 0;
   min-width: 200px;
 }
@@ -138,12 +132,12 @@ $luteal: #fb923c;
 
   &--dismiss {
     background: rgba(255, 255, 255, 0.08);
-    color: $muted;
+    color: var(--text-muted);
     border: 1px solid rgba(255, 255, 255, 0.1);
 
     &:hover {
       background: rgba(255, 255, 255, 0.12);
-      color: $text;
+      color: var(--text);
     }
   }
 }
@@ -153,8 +147,8 @@ $luteal: #fb923c;
   align-items: center;
   gap: 0.5rem;
   padding: 0.75rem 1.5rem;
-  background: $primary;
-  color: $bg;
+  background: var(--pp);
+  color: var(--bg);
   border: none;
   border-radius: 9999px;
   font-size: 0.9375rem;
@@ -169,7 +163,7 @@ $luteal: #fb923c;
   }
 
   &:hover {
-    box-shadow: 0 0 20px rgba($primary, 0.4);
+    box-shadow: 0 0 20px var(--pp-active-border);
     filter: brightness(1.05);
   }
 }
@@ -183,7 +177,7 @@ $luteal: #fb923c;
 
 /* ── Card Base ── */
 .card {
-  background: $card;
+  background: var(--bg-card);
   border: 1px solid rgba(255, 255, 255, 0.05);
   border-radius: 1.5rem;
   padding: 1.5rem;
@@ -192,7 +186,7 @@ $luteal: #fb923c;
 .card-title {
   font-size: 1rem;
   font-weight: 700;
-  color: $text;
+  color: var(--text);
   margin: 0 0 1.25rem;
   display: flex;
   align-items: center;
@@ -200,7 +194,7 @@ $luteal: #fb923c;
 }
 
 .card-title-icon {
-  color: $primary;
+  color: var(--pp);
   font-size: 20px;
 }
 
@@ -209,7 +203,7 @@ $luteal: #fb923c;
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: $muted;
+  color: var(--text-muted);
 }
 
 /* ── Phase Colors ── */
@@ -232,7 +226,7 @@ $luteal: #fb923c;
   }
 
   .phase-day {
-    color: $muted;
+    color: var(--text-muted);
     font-size: 0.9375rem;
     margin: 0;
   }
@@ -247,7 +241,7 @@ $luteal: #fb923c;
 
 .next-phase-label {
   font-size: 0.875rem;
-  color: $muted;
+  color: var(--text-muted);
   margin: 0 0 0.75rem;
 
   .next-phase-value {
@@ -276,7 +270,7 @@ $luteal: #fb923c;
 .days-remaining {
   font-size: 1.5rem;
   font-weight: 700;
-  color: $text;
+  color: var(--text);
   margin: 0.75rem 0 0;
 }
 
@@ -301,7 +295,7 @@ $luteal: #fb923c;
 
 .tip-text {
   font-size: 0.8125rem;
-  color: $muted;
+  color: var(--text-muted);
 }
 
 /* ── Training Impact ── */
@@ -340,13 +334,13 @@ $luteal: #fb923c;
 .impact-label {
   font-weight: 700;
   font-size: 0.9375rem;
-  color: $text;
+  color: var(--text);
   margin: 0 0 0.25rem;
 }
 
 .impact-text {
   font-size: 0.8125rem;
-  color: $muted;
+  color: var(--text-muted);
   line-height: 1.5;
   margin: 0;
 }
@@ -361,7 +355,7 @@ $luteal: #fb923c;
 
 .ring-label {
   font-size: 0.75rem;
-  color: $muted;
+  color: var(--text-muted);
   margin: 0;
   text-align: center;
 }
@@ -388,7 +382,7 @@ $luteal: #fb923c;
 }
 
 .ring-fill {
-  stroke: $primary;
+  stroke: var(--pp);
   transition: stroke-dashoffset 0.5s ease;
 }
 
@@ -396,7 +390,7 @@ $luteal: #fb923c;
   position: relative;
   font-size: 1.5rem;
   font-weight: 900;
-  color: $text;
+  color: var(--text);
   z-index: 1;
 }
 
@@ -405,7 +399,7 @@ $luteal: #fb923c;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  color: $primary;
+  color: var(--pp);
   margin: 0;
 }
 
@@ -438,7 +432,7 @@ $luteal: #fb923c;
   align-items: center;
   gap: 0.375rem;
   font-size: 0.75rem;
-  color: $muted;
+  color: var(--text-muted);
 }
 
 .legend-dot {
@@ -462,7 +456,7 @@ $luteal: #fb923c;
   text-align: center;
   font-size: 0.6875rem;
   font-weight: 700;
-  color: $muted;
+  color: var(--text-muted);
   padding: 0.5rem 0;
 }
 
@@ -505,8 +499,8 @@ $luteal: #fb923c;
   }
 
   &--today {
-    border-color: $primary !important;
-    box-shadow: inset 0 0 0 1px rgba($primary, 0.5), 0 0 14px rgba($primary, 0.3);
+    border-color: var(--pp) !important;
+    box-shadow: inset 0 0 0 1px var(--pp), 0 0 14px var(--pp-active-border);
   }
 
   &:not(&--empty):hover {
@@ -520,7 +514,7 @@ $luteal: #fb923c;
   left: 0.375rem;
   width: 18px;
   height: 18px;
-  background: $primary;
+  background: var(--pp);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -528,7 +522,7 @@ $luteal: #fb923c;
 
   .material-symbols-outlined {
     font-size: 12px;
-    color: $bg;
+    color: var(--bg);
     font-variation-settings: 'wght' 700;
   }
 }
@@ -536,11 +530,11 @@ $luteal: #fb923c;
 .cal-day-num {
   font-size: 0.875rem;
   font-weight: 700;
-  color: $text;
+  color: var(--text);
   align-self: flex-end;
 
   &--today {
-    color: $primary;
+    color: var(--pp);
     font-weight: 900;
   }
 }
@@ -561,8 +555,8 @@ $luteal: #fb923c;
   z-index: 10;
 
   &.phase-menstrual { background: $menstrual; color: #fff; }
-  &.phase-follicular { background: $follicular; color: $bg; }
-  &.phase-ovulation { background: $ovulation; color: $bg; }
+  &.phase-follicular { background: $follicular; color: var(--bg); }
+  &.phase-ovulation { background: $ovulation; color: var(--bg); }
   &.phase-luteal { background: $luteal; color: #fff; }
 }
 
@@ -590,13 +584,13 @@ $luteal: #fb923c;
   right: 0.375rem;
   width: 8px;
   height: 8px;
-  background: $primary;
+  background: var(--pp);
   border-radius: 50%;
 }
 
 .cal-today-label {
   font-size: 0.625rem;
-  color: $primary;
+  color: var(--pp);
   font-weight: 600;
   margin-top: 2px;
 }
@@ -612,7 +606,7 @@ $luteal: #fb923c;
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: $primary;
+  background: var(--pp);
   animation: pulse 2s infinite;
   flex-shrink: 0;
 
@@ -643,8 +637,8 @@ $luteal: #fb923c;
   }
 
   &--adjusted {
-    background: rgba($primary, 0.08);
-    border: 1px solid rgba($primary, 0.25);
+    background: var(--pp-hover);
+    border: 1px solid var(--pp-active-border);
   }
 }
 
@@ -659,12 +653,12 @@ $luteal: #fb923c;
 
   &--muted {
     background: rgba(255, 255, 255, 0.08);
-    color: $muted;
+    color: var(--text-muted);
   }
 
   &--primary {
-    background: $primary;
-    color: $bg;
+    background: var(--pp);
+    color: var(--bg);
   }
 
   .material-symbols-outlined {
@@ -677,16 +671,16 @@ $luteal: #fb923c;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.07em;
-  color: $muted;
+  color: var(--text-muted);
   margin: 0 0 0.25rem;
 
   &--primary {
-    color: $primary;
+    color: var(--pp);
   }
 }
 
 .adaptive-item-value {
-  color: $text;
+  color: var(--text);
   margin: 0;
   font-size: 0.9375rem;
 
@@ -698,7 +692,7 @@ $luteal: #fb923c;
 
 .adaptive-quote {
   font-size: 0.8125rem;
-  color: $muted;
+  color: var(--text-muted);
   font-style: italic;
   margin: 1rem 0 0;
   line-height: 1.5;
@@ -712,7 +706,7 @@ $luteal: #fb923c;
   bottom: -4rem;
   width: 16rem;
   height: 16rem;
-  background: radial-gradient(circle, rgba($primary, 0.06) 0%, transparent 70%);
+  background: radial-gradient(circle, var(--pp-hover) 0%, transparent 70%);
   pointer-events: none;
 }
 
@@ -744,21 +738,21 @@ $luteal: #fb923c;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: $muted;
+  color: var(--text-muted);
   margin: 0 0 0.25rem;
 }
 
 .physio-metric-value {
   font-size: 1.5rem;
   font-weight: 700;
-  color: $text;
+  color: var(--text);
   margin: 0;
 }
 
 .physio-metric-unit {
   font-size: 0.875rem;
   font-weight: 400;
-  color: $muted;
+  color: var(--text-muted);
 }
 
 .physio-metric-delta {
@@ -766,7 +760,7 @@ $luteal: #fb923c;
   font-weight: 700;
   margin: 0;
 
-  &--neutral { color: $muted; }
+  &--neutral { color: var(--text-muted); }
 }
 
 .mini-bar-chart {
@@ -782,7 +776,7 @@ $luteal: #fb923c;
   border-radius: 2px 2px 0 0;
 
   &--primary {
-    background: $primary;
+    background: var(--pp);
   }
 }
 

@@ -10,12 +10,12 @@
   h1 {
     font-size: 1.75rem;
     font-weight: 700;
-    color: #e6edf3;
+    color: var(--text);
     margin: 0 0 0.25rem;
   }
 
   .page-subtitle {
-    color: #7d8590;
+    color: var(--text-muted);
     font-size: 0.9rem;
     margin: 0;
   }
@@ -25,7 +25,7 @@
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  color: #7d8590;
+  color: var(--text-muted);
   padding: 3rem 0;
   justify-content: center;
 
@@ -50,13 +50,13 @@
 
   .category-icon {
     font-size: 22px;
-    color: #7d8590;
+    color: var(--text-muted);
   }
 
   h2 {
     font-size: 1.1rem;
     font-weight: 600;
-    color: #e6edf3;
+    color: var(--text);
     margin: 0;
   }
 }
@@ -68,8 +68,8 @@
 }
 
 .badge-card {
-  background: #161b22;
-  border: 1px solid #21262d;
+  background: var(--bg-card);
+  border: 1px solid var(--panel-soft);
   border-radius: 12px;
   padding: 1.25rem;
   display: flex;
@@ -81,7 +81,7 @@
   transition: border-color 0.2s, transform 0.2s;
 
   &:hover {
-    border-color: #30363d;
+    border-color: var(--border);
     transform: translateY(-2px);
   }
 
@@ -111,7 +111,7 @@
 
   &.expired {
     opacity: 0.6;
-    border-color: #21262d;
+    border-color: var(--panel-soft);
 
     &:hover {
       opacity: 0.8;
@@ -126,7 +126,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #21262d;
+  background: var(--panel-soft);
   transition: all 0.3s;
 
   .badge-icon {
@@ -163,7 +163,7 @@
 .badge-name {
   font-weight: 600;
   font-size: 0.85rem;
-  color: #e6edf3;
+  color: var(--text);
 }
 
 .badge-date {
@@ -196,7 +196,7 @@
 .progress-bar {
   width: 100%;
   height: 4px;
-  background: #21262d;
+  background: var(--panel-soft);
   border-radius: 2px;
   overflow: hidden;
 
@@ -219,15 +219,15 @@
 
 .progress-text {
   font-size: 0.7rem;
-  color: #7d8590;
+  color: var(--text-muted);
 }
 
 // Detail Dialog
 .detail-dialog {
-  background: #161b22;
-  border: 1px solid #30363d;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
   border-radius: 16px;
-  color: #e6edf3;
+  color: var(--text);
   padding: 0;
   max-width: 360px;
   width: 90vw;
@@ -252,7 +252,7 @@
   }
 
   .dialog-desc {
-    color: #7d8590;
+    color: var(--text-muted);
     font-size: 0.875rem;
     margin: 0;
     line-height: 1.5;
@@ -266,7 +266,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #21262d;
+  background: var(--panel-soft);
 
   .material-symbols-outlined {
     font-size: 36px;
@@ -304,7 +304,7 @@
 
   &.expired {
     background: rgba(72, 79, 88, 0.1);
-    color: #7d8590;
+    color: var(--text-muted);
   }
 }
 
@@ -335,16 +335,16 @@
 .dialog-close-btn {
   margin-top: 1rem;
   padding: 0.5rem 2rem;
-  border: 1px solid #30363d;
+  border: 1px solid var(--border);
   border-radius: 8px;
   background: transparent;
-  color: #e6edf3;
+  color: var(--text);
   font-size: 0.85rem;
   cursor: pointer;
   font-family: inherit;
 
   &:hover {
-    background: #21262d;
+    background: var(--panel-soft);
   }
 }
 

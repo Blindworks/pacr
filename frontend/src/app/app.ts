@@ -1,4 +1,4 @@
-import { Component, signal, inject } from '@angular/core';
+import { Component, signal, inject, effect } from '@angular/core';
 import { Router, RouterOutlet, NavigationEnd } from '@angular/router';
 import { Sidebar } from './components/sidebar/sidebar';
 import { PaceCalculatorDialog } from './components/pace-calculator/pace-calculator-dialog';
@@ -6,6 +6,8 @@ import { AboutDialog } from './components/about-dialog/about-dialog';
 import { Toast } from './components/toast/toast';
 import { filter, map, startWith } from 'rxjs/operators';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { UserService } from './services/user.service';
+import { ThemeService } from './services/theme.service';
 
 @Component({
   selector: 'app-root',
@@ -17,6 +19,17 @@ export class App {
   protected readonly title = signal('frontend');
 
   private readonly router = inject(Router);
+  private readonly userService = inject(UserService);
+  private readonly themeService = inject(ThemeService);
+
+  constructor() {
+    effect(() => {
+      const user = this.userService.currentUser();
+      if (user) {
+        this.themeService.initFromProfile(user.theme);
+      }
+    });
+  }
 
   private readonly hideSidebarPaths = ['/login', '/signup', '/forgot-password', '/new-password', '/onboarding'];
 

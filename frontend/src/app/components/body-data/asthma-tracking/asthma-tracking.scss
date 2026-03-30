@@ -1,11 +1,4 @@
-// ── Tokens ──────────────────────────────────────────
-$bg:       #191919;
-$card:     #242424;
-$card-alt: #2a2a2a;
-$border:   rgba(255, 255, 255, 0.08);
-$text:     #e8e8e8;
-$muted:    #7a7a7a;
-$lime:     #b9f20d;
+// ── Intentional status colors ────────────────────────
 $orange:   #f97316;
 $yellow:   #eab308;
 $green:    #4ade80;
@@ -16,8 +9,8 @@ $red:      #f87171;
   display: block;
   height: 100%;
   overflow-y: auto;
-  background: $bg;
-  color: $text;
+  background: var(--bg);
+  color: var(--text);
   font-family: inherit;
 }
 
@@ -36,11 +29,11 @@ $red:      #f87171;
 .page-title {
   font-size: 1.875rem;
   font-weight: 700;
-  color: $text;
+  color: var(--text);
   margin: 0 0 0.375rem;
   letter-spacing: -0.02em;
 
-  .lime { color: $lime; }
+  .lime { color: var(--pp); }
 }
 
 .page-meta {
@@ -48,7 +41,7 @@ $red:      #f87171;
   align-items: center;
   gap: 0.625rem;
   font-size: 0.8125rem;
-  color: $muted;
+  color: var(--text-muted);
 }
 
 .meta-item {
@@ -86,7 +79,7 @@ $red:      #f87171;
   display: block;
   width: 3px;
   height: 18px;
-  background: $lime;
+  background: var(--pp);
   border-radius: 2px;
   flex-shrink: 0;
 }
@@ -94,7 +87,7 @@ $red:      #f87171;
 .heading-text {
   font-size: 1rem;
   font-weight: 600;
-  color: $text;
+  color: var(--text);
 }
 
 // ── Risk Badge ────────────────────────────────────────
@@ -113,8 +106,8 @@ $red:      #f87171;
 
 // ══ ENV CARD ═════════════════════════════════════════
 .env-card {
-  background: $card;
-  border: 1px solid $border;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
   border-radius: 12px;
   padding: 1.5rem;
 }
@@ -147,7 +140,7 @@ $red:      #f87171;
   font-size: 0.6875rem;
   font-weight: 600;
   letter-spacing: 0.08em;
-  color: $muted;
+  color: var(--text-muted);
   margin-bottom: 0.375rem;
 }
 
@@ -167,7 +160,7 @@ $red:      #f87171;
 
   &.no-data {
     font-size: 1.5rem;
-    color: $muted;
+    color: var(--text-muted);
     font-weight: 400;
   }
 }
@@ -194,7 +187,7 @@ $red:      #f87171;
 }
 
 // Reuse pollen label colours
-.lbl-none   { color: $muted; }
+.lbl-none   { color: var(--text-muted); }
 .lbl-low    { color: $green; }
 .lbl-medium { color: $yellow; }
 .lbl-high   { color: $orange; }
@@ -215,20 +208,20 @@ $red:      #f87171;
   font-size: 0.625rem;
   font-weight: 600;
   letter-spacing: 0.08em;
-  color: $muted;
+  color: var(--text-muted);
   text-transform: uppercase;
 }
 
 .sec-value {
   font-size: 1rem;
   font-weight: 700;
-  color: $text;
+  color: var(--text);
 }
 
 // Vertical divider
 .env-vdivider {
   width: 1px;
-  background: $border;
+  background: var(--border);
   align-self: stretch;
   margin: 0 2rem;
 }
@@ -243,7 +236,7 @@ $red:      #f87171;
   font-size: 0.6875rem;
   font-weight: 600;
   letter-spacing: 0.08em;
-  color: $muted;
+  color: var(--text-muted);
   margin-bottom: 1rem;
 }
 
@@ -268,7 +261,7 @@ $red:      #f87171;
 
 .pollen-name {
   font-size: 0.9rem;
-  color: $text;
+  color: var(--text);
 }
 
 .pollen-track {
@@ -301,7 +294,7 @@ $red:      #f87171;
   display: flex;
   align-items: center;
   gap: 0.625rem;
-  color: $muted;
+  color: var(--text-muted);
   font-size: 0.875rem;
   padding: 1rem 0;
 }
@@ -310,7 +303,7 @@ $red:      #f87171;
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: $lime;
+  background: var(--pp);
   animation: blink 1.4s ease-in-out infinite;
 }
 
@@ -321,8 +314,8 @@ $red:      #f87171;
 
 // ══ LOG CARD ══════════════════════════════════════════
 .log-card {
-  background: $card;
-  border: 1px solid $border;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
   border-radius: 12px;
   padding: 1.5rem;
 }
@@ -339,7 +332,7 @@ $red:      #f87171;
 .field-label {
   font-size: 0.8125rem;
   font-weight: 500;
-  color: $muted;
+  color: var(--text-muted);
 }
 
 // 4-column symptom grid
@@ -352,9 +345,9 @@ $red:      #f87171;
 .symptom-btn {
   padding: 0.6875rem 0.5rem;
   background: rgba(255,255,255,0.04);
-  border: 1px solid $border;
+  border: 1px solid var(--border);
   border-radius: 8px;
-  color: $text;
+  color: var(--text);
   font-size: 0.8125rem;
   font-weight: 500;
   cursor: pointer;
@@ -362,13 +355,13 @@ $red:      #f87171;
   transition: border-color 0.18s, background 0.18s, color 0.18s;
 
   &:hover {
-    border-color: rgba(185, 242, 13, 0.35);
+    border-color: var(--pp-active-border);
   }
 
   &.active {
-    border-color: $lime;
-    background: rgba(185, 242, 13, 0.08);
-    color: $lime;
+    border-color: var(--pp);
+    background: var(--pp-hover);
+    color: var(--pp);
     font-weight: 600;
   }
 }
@@ -391,7 +384,7 @@ $red:      #f87171;
 .severity-display {
   font-size: 0.9375rem;
   font-weight: 700;
-  color: $lime;
+  color: var(--pp);
 }
 
 .severity-slider {
@@ -411,19 +404,19 @@ $red:      #f87171;
     width: 18px;
     height: 18px;
     border-radius: 50%;
-    background: $lime;
+    background: var(--pp);
     cursor: pointer;
-    box-shadow: 0 0 0 3px rgba(185,242,13,0.2);
+    box-shadow: 0 0 0 3px var(--pp-active-border);
   }
 
   &::-moz-range-thumb {
     width: 18px;
     height: 18px;
     border-radius: 50%;
-    background: $lime;
+    background: var(--pp);
     cursor: pointer;
     border: none;
-    box-shadow: 0 0 0 3px rgba(185,242,13,0.2);
+    box-shadow: 0 0 0 3px var(--pp-active-border);
   }
 }
 
@@ -432,9 +425,9 @@ $red:      #f87171;
 .field-textarea {
   padding: 0.6875rem 0.875rem;
   background: rgba(255,255,255,0.04);
-  border: 1px solid $border;
+  border: 1px solid var(--border);
   border-radius: 8px;
-  color: $text;
+  color: var(--text);
   font-size: 0.9375rem;
   font-family: inherit;
   outline: none;
@@ -442,7 +435,7 @@ $red:      #f87171;
   width: 100%;
   box-sizing: border-box;
 
-  &:focus { border-color: rgba(185,242,13,0.5); }
+  &:focus { border-color: var(--pp-active-border); }
   &::placeholder { color: rgba(255,255,255,0.2); }
 }
 
@@ -454,7 +447,7 @@ $red:      #f87171;
 // Inhaler toggle group
 .inhaler-group {
   display: flex;
-  border: 1px solid $border;
+  border: 1px solid var(--border);
   border-radius: 8px;
   overflow: hidden;
 }
@@ -464,20 +457,20 @@ $red:      #f87171;
   padding: 0.625rem 0.5rem;
   background: transparent;
   border: none;
-  color: $muted;
+  color: var(--text-muted);
   font-size: 0.875rem;
   font-weight: 500;
   cursor: pointer;
   transition: background 0.18s, color 0.18s;
   text-align: center;
 
-  & + & { border-left: 1px solid $border; }
+  & + & { border-left: 1px solid var(--border); }
 
-  &:hover { color: $text; }
+  &:hover { color: var(--text); }
 
   &.active {
-    background: rgba(185,242,13,0.1);
-    color: $lime;
+    background: var(--pp-active-bg);
+    color: var(--pp);
     font-weight: 600;
   }
 }
@@ -487,8 +480,8 @@ $red:      #f87171;
   width: 100%;
   margin-top: 0.25rem;
   padding: 1rem;
-  background: $lime;
-  color: #0d0d0d;
+  background: var(--pp);
+  color: var(--btn-active-text);
   border: none;
   border-radius: 8px;
   font-size: 0.875rem;
@@ -505,15 +498,15 @@ $red:      #f87171;
 .right-col { position: sticky; top: 0; }
 
 .right-card {
-  background: $card;
-  border: 1px solid $border;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
   border-radius: 12px;
   overflow: hidden;
 }
 
 .right-divider {
   height: 1px;
-  background: $border;
+  background: var(--border);
 }
 
 // 7-Day Trends section
@@ -531,12 +524,12 @@ $red:      #f87171;
 .right-section-title {
   font-size: 0.9375rem;
   font-weight: 600;
-  color: $text;
+  color: var(--text);
 }
 
 .full-report-link {
   font-size: 0.8125rem;
-  color: $lime;
+  color: var(--pp);
   cursor: pointer;
   font-weight: 500;
 }
@@ -546,7 +539,7 @@ $red:      #f87171;
   font-size: 0.625rem;
   font-weight: 600;
   letter-spacing: 0.07em;
-  color: $muted;
+  color: var(--text-muted);
   margin-bottom: 0.875rem;
 }
 
@@ -581,7 +574,7 @@ $red:      #f87171;
 
 .chart-bar {
   width: 100%;
-  background: $lime;
+  background: var(--pp);
   border-radius: 3px 3px 0 0;
   min-height: 3px;
   opacity: 0.8;
@@ -599,11 +592,11 @@ $red:      #f87171;
     flex: 1;
     text-align: center;
     font-size: 0.625rem;
-    color: $muted;
+    color: var(--text-muted);
   }
 
   .today-lbl {
-    color: $text;
+    color: var(--text);
     font-weight: 600;
   }
 }
@@ -618,7 +611,7 @@ $red:      #f87171;
   font-size: 0.625rem;
   font-weight: 700;
   letter-spacing: 0.1em;
-  color: $muted;
+  color: var(--text-muted);
   margin-bottom: 1rem;
 }
 
@@ -644,12 +637,12 @@ $red:      #f87171;
 .recent-title {
   font-size: 0.9375rem;
   font-weight: 600;
-  color: $text;
+  color: var(--text);
 }
 
 .recent-date {
   font-size: 0.6875rem;
-  color: $muted;
+  color: var(--text-muted);
 }
 
 .recent-right {
@@ -664,25 +657,25 @@ $red:      #f87171;
   font-size: 0.9375rem;
   font-weight: 700;
 
-  &.flow-lime { color: $lime; }
+  &.flow-lime { color: var(--pp); }
   &.flow-red  { color: $red;  }
 }
 
 .recent-sev {
   font-size: 0.6875rem;
-  color: $muted;
+  color: var(--text-muted);
 }
 
 .empty-note {
   font-size: 0.8125rem;
-  color: $muted;
+  color: var(--text-muted);
   padding: 0.5rem 0;
 }
 
 // Weekly Insight section
 .insight-section {
   padding: 1.25rem;
-  background: rgba(185,242,13,0.03);
+  background: var(--pp-hover);
 }
 
 .insight-label {
@@ -690,13 +683,13 @@ $red:      #f87171;
   font-size: 0.625rem;
   font-weight: 700;
   letter-spacing: 0.1em;
-  color: $lime;
+  color: var(--pp);
   margin-bottom: 0.5rem;
 }
 
 .insight-text {
   font-size: 0.8125rem;
-  color: $muted;
+  color: var(--text-muted);
   line-height: 1.55;
   margin: 0;
 }

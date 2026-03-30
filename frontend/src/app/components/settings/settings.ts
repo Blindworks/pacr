@@ -8,6 +8,7 @@ import { StravaService } from '../../services/strava.service';
 import { CorosService } from '../../services/coros.service';
 import { UserService, UserProfile } from '../../services/user.service';
 import { NotificationPreferencesService } from '../../services/notification-preferences.service';
+import { ThemeService, ThemeChoice } from '../../services/theme.service';
 
 type Integration = {
   id: string;
@@ -32,6 +33,7 @@ export class Settings implements OnInit, OnDestroy {
   private readonly corosService = inject(CorosService);
   private readonly userService = inject(UserService);
   private readonly notifPrefsService = inject(NotificationPreferencesService);
+  private readonly themeService = inject(ThemeService);
 
   private readonly autoSave$ = new Subject<void>();
   private readonly destroy$ = new Subject<void>();
@@ -168,6 +170,8 @@ export class Settings implements OnInit, OnDestroy {
         this.asthmaTrackingEnabled.set(user.asthmaTrackingEnabled ?? false);
         this.cycleTrackingEnabled.set(user.cycleTrackingEnabled ?? false);
         this.communityRoutesEnabled.set(user.communityRoutesEnabled ?? false);
+        this.theme.set((user.theme as ThemeChoice) ?? 'dark');
+        this.themeService.initFromProfile(user.theme);
         this.profileLoaded = true;
         this.loadProfileImage();
       },
@@ -269,6 +273,7 @@ export class Settings implements OnInit, OnDestroy {
 
   protected setTheme(value: 'light' | 'dark' | 'auto'): void {
     this.theme.set(value);
+    this.themeService.setTheme(value);
     this.triggerAutoSave();
   }
 
@@ -345,7 +350,8 @@ export class Settings implements OnInit, OnDestroy {
       dwdRegionId: this.dwdRegionId(),
       asthmaTrackingEnabled: this.asthmaTrackingEnabled(),
       cycleTrackingEnabled: this.cycleTrackingEnabled(),
-      communityRoutesEnabled: this.communityRoutesEnabled()
+      communityRoutesEnabled: this.communityRoutesEnabled(),
+      theme: this.theme()
     }).subscribe({
       next: updated => {
         this.currentUser = updated;

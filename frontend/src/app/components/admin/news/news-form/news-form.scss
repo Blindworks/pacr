@@ -31,8 +31,8 @@
   }
 
   input, textarea {
-    background: var(--color-surface, rgba(255,255,255,0.06));
-    border: 1px solid var(--color-border, rgba(255,255,255,0.12));
+    background: var(--panel-soft);
+    border: 1px solid var(--border);
     border-radius: 6px;
     padding: 0.6rem 0.75rem;
     color: inherit;
@@ -40,7 +40,7 @@
     font-family: inherit;
     resize: vertical;
 
-    &:focus { outline: none; border-color: var(--color-primary, #1976d2); }
+    &:focus { outline: none; border-color: var(--pp); }
   }
 }
 
@@ -56,7 +56,7 @@
 }
 
 .btn-primary {
-  background: var(--color-primary, #1976d2);
+  background: var(--pp);
   color: white;
   border: none;
   padding: 0.6rem 1.5rem;
@@ -70,12 +70,12 @@
 
 .btn-secondary {
   background: transparent;
-  border: 1px solid var(--color-border, rgba(255,255,255,0.15));
+  border: 1px solid var(--border);
   color: inherit;
   padding: 0.6rem 1.5rem;
   border-radius: 6px;
   cursor: pointer;
   font-size: 0.875rem;
 
-  &:hover { background: rgba(255,255,255,0.05); }
+  &:hover { background: var(--panel-soft); }
 }

@@ -1,19 +1,9 @@
-:host {
-  --primary: #b9f20d;
-  --bg: #0d1117;
-  --panel: #161b22;
-  --panel-soft: rgba(255, 255, 255, 0.04);
-  --border: rgba(255, 255, 255, 0.08);
-  --text: #e6edf3;
-  --muted: #8b949e;
-}
-
 .analytics-view {
   max-width: 1200px;
   margin: 0 auto;
   padding: 2rem 1.5rem 3rem;
   color: var(--text);
-  font-family: 'Lexend', 'Inter', sans-serif;
+  font-family: var(--font-family);
   display: grid;
   gap: 1.5rem;
 }
@@ -33,7 +23,7 @@
 
   p {
     margin: 0.35rem 0 0;
-    color: var(--muted);
+    color: var(--text-muted);
     font-size: 0.95rem;
   }
 }
@@ -77,18 +67,18 @@
   outline: none;
 
   &:focus {
-    border-color: rgba(185, 242, 13, 0.4);
+    border-color: var(--pp-active-border);
   }
 
   option {
-    background: #161b22;
+    background: var(--bg-card);
     color: var(--text);
   }
 }
 
 .select-pill {
   padding: 0.45rem 0.7rem;
-  color: var(--muted);
+  color: var(--text-muted);
   font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.07em;
@@ -101,7 +91,7 @@
 }
 
 .metric-card {
-  background: var(--panel);
+  background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: 1rem;
   padding: 1.25rem;
@@ -114,7 +104,7 @@
 }
 
 .metric-label {
-  color: var(--muted);
+  color: var(--text-muted);
   font-weight: 700;
   font-size: 0.72rem;
   text-transform: uppercase;
@@ -138,8 +128,8 @@
   }
 
   &--primary {
-    color: var(--primary);
-    background: rgba(185, 242, 13, 0.15);
+    color: var(--pp);
+    background: var(--pp-dim);
   }
 }
 
@@ -155,7 +145,7 @@
   }
 
   span {
-    color: var(--muted);
+    color: var(--text-muted);
     font-weight: 600;
     font-size: 0.8rem;
   }
@@ -163,7 +153,7 @@
 
 .metric-subline {
   margin: 1rem 0 0;
-  color: var(--muted);
+  color: var(--text-muted);
   display: flex;
   align-items: center;
   gap: 0.25rem;
@@ -180,7 +170,7 @@
 .progress-fill {
   height: 100%;
   border-radius: inherit;
-  background: var(--primary);
+  background: var(--pp);
 }
 
 .chart-grid {
@@ -190,7 +180,7 @@
 }
 
 .panel {
-  background: var(--panel);
+  background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: 1rem;
   padding: 1.25rem;
@@ -216,7 +206,7 @@
 .legend {
   display: flex;
   gap: 0.8rem;
-  color: var(--muted);
+  color: var(--text-muted);
   font-size: 0.72rem;
   font-weight: 600;
 
@@ -234,7 +224,7 @@
   display: inline-block;
 
   &--primary {
-    background: var(--primary);
+    background: var(--pp);
   }
 
   &--muted {
@@ -259,7 +249,7 @@
   height: 100%;
 
   span {
-    color: var(--muted);
+    color: var(--text-muted);
     font-size: 0.72rem;
     font-weight: 700;
   }
@@ -271,7 +261,7 @@
   min-height: 2rem;
   margin-top: auto;
   border-radius: 0.4rem 0.4rem 0 0;
-  background: rgba(185, 242, 13, 0.2);
+  background: var(--pp-active-bg);
   position: relative;
   overflow: hidden;
 }
@@ -280,7 +270,7 @@
   position: absolute;
   inset-inline: 0;
   bottom: 0;
-  background: var(--primary);
+  background: var(--pp);
   border-radius: inherit;
 }
 
@@ -312,8 +302,8 @@
 }
 
 .trend-marker__dot {
-  fill: var(--primary);
-  stroke: var(--panel);
+  fill: var(--pp);
+  stroke: var(--bg-card);
   stroke-width: 2;
 }
 
@@ -321,7 +311,7 @@
   position: absolute;
   top: 0.4rem;
   transform: translateX(4px);
-  background: rgba(13, 17, 23, 0.95);
+  background: color-mix(in srgb, var(--bg) 95%, transparent);
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 0.5rem;
   padding: 0.35rem 0.55rem;
@@ -337,7 +327,7 @@
   &__date {
     font-size: 0.65rem;
     font-weight: 600;
-    color: var(--muted);
+    color: var(--text-muted);
     margin-bottom: 0.25rem;
     padding-bottom: 0.25rem;
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
@@ -349,7 +339,7 @@
     gap: 0.35rem;
     font-size: 0.75rem;
     font-weight: 700;
-    color: var(--primary);
+    color: var(--pp);
     line-height: 1.5;
   }
 
@@ -357,7 +347,7 @@
     width: 0.4rem;
     height: 0.4rem;
     border-radius: 50%;
-    background: var(--primary);
+    background: var(--pp);
     flex-shrink: 0;
   }
 }
@@ -365,7 +355,7 @@
 .months {
   display: flex;
   justify-content: space-between;
-  color: var(--muted);
+  color: var(--text-muted);
   font-weight: 700;
   font-size: 0.72rem;
 }
@@ -390,7 +380,7 @@
   font-size: 0.85rem;
 
   span {
-    color: var(--muted);
+    color: var(--text-muted);
     font-weight: 500;
   }
 }
@@ -412,7 +402,7 @@
 }
 
 .zone--tempo {
-  background: var(--primary);
+  background: var(--pp);
 }
 
 .zone--threshold {
@@ -426,13 +416,13 @@
 .coach-insight {
   margin-top: 1.2rem;
   border-radius: 0.85rem;
-  border: 1px solid rgba(185, 242, 13, 0.25);
-  background: rgba(185, 242, 13, 0.08);
+  border: 1px solid var(--pp-active-border);
+  background: var(--pp-hover);
   padding: 0.85rem 0.95rem;
 
   p {
     margin: 0;
-    color: var(--muted);
+    color: var(--text-muted);
     font-size: 0.72rem;
     font-weight: 600;
   }
@@ -466,7 +456,7 @@
 
   p {
     margin: 0;
-    color: var(--muted);
+    color: var(--text-muted);
     text-transform: uppercase;
     letter-spacing: 0.06em;
     font-size: 0.62rem;
@@ -480,7 +470,7 @@
   }
 
   &:hover {
-    border-color: rgba(185, 242, 13, 0.25);
+    border-color: var(--pp-active-border);
   }
 }
 
@@ -491,7 +481,7 @@
   border: 2px dashed var(--border);
   padding: 0.7rem;
   background: transparent;
-  color: var(--muted);
+  color: var(--text-muted);
   font-size: 0.75rem;
   font-weight: 700;
   letter-spacing: 0.05em;
@@ -499,8 +489,8 @@
   cursor: pointer;
 
   &:hover {
-    border-color: rgba(185, 242, 13, 0.4);
-    color: var(--primary);
+    border-color: var(--pp-active-border);
+    color: var(--pp);
   }
 }
 

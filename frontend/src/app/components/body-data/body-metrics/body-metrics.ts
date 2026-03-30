@@ -99,7 +99,7 @@ export class BodyMetrics implements OnInit {
     timestamps: [],
     streamData: {},
     descriptors: [
-      { key: 'weight', label: 'Weight', color: '#b9f20d', unit: 'kg' },
+      { key: 'weight', label: 'Weight', color: 'var(--pp)', unit: 'kg' },
       { key: 'fat', label: 'Body Fat', color: 'rgba(255,255,255,0.5)', unit: '%' },
       { key: 'muscle', label: 'Muscle', color: '#60a5fa', unit: 'kg' },
     ],

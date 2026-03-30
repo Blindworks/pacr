@@ -1,21 +1,13 @@
-$primary: #b9f20d;
-$bg: #0d1117;
-$surface: #161b22;
-$surface2: #1c2128;
-$border: rgba(#b9f20d, 0.1);
-$text: #e6edf3;
-$muted: #8b949e;
-$danger: #f85149;
 $success: #3fb950;
 
 /* ── Dialog backdrop & container ── */
 .prd-dialog {
   margin: auto;
   padding: 0;
-  border: 1px solid $border;
+  border: 1px solid var(--border);
   border-radius: 16px;
-  background: $surface;
-  color: $text;
+  background: var(--bg-card);
+  color: var(--text);
   width: min(640px, 96vw);
   max-height: 90vh;
   overflow: hidden;
@@ -41,7 +33,7 @@ $success: #3fb950;
   align-items: center;
   justify-content: space-between;
   padding: 1.25rem 1.5rem;
-  border-bottom: 1px solid $border;
+  border-bottom: 1px solid var(--border);
   flex-shrink: 0;
 }
 
@@ -53,7 +45,7 @@ $success: #3fb950;
 
   .prd-icon {
     font-size: 22px;
-    color: $primary;
+    color: var(--pp);
     flex-shrink: 0;
   }
 }
@@ -68,7 +60,7 @@ $success: #3fb950;
 .prd-title {
   font-size: 1rem;
   font-weight: 600;
-  color: $text;
+  color: var(--text);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -76,7 +68,7 @@ $success: #3fb950;
 
 .prd-subtitle {
   font-size: 0.8125rem;
-  color: $muted;
+  color: var(--text-muted);
 }
 
 .prd-close {
@@ -88,7 +80,7 @@ $success: #3fb950;
   background: transparent;
   border: none;
   border-radius: 8px;
-  color: $muted;
+  color: var(--text-muted);
   cursor: pointer;
   flex-shrink: 0;
   transition: background 0.15s, color 0.15s;
@@ -98,15 +90,15 @@ $success: #3fb950;
   }
 
   &:hover {
-    background: rgba($primary, 0.08);
-    color: $text;
+    background: var(--pp-hover);
+    color: var(--text);
   }
 }
 
 /* ── Tab bar ── */
 .prd-tabs {
   display: flex;
-  border-bottom: 1px solid $border;
+  border-bottom: 1px solid var(--border);
   flex-shrink: 0;
   padding: 0 1.5rem;
   gap: 0;
@@ -120,7 +112,7 @@ $success: #3fb950;
   background: transparent;
   border: none;
   border-bottom: 2px solid transparent;
-  color: $muted;
+  color: var(--text-muted);
   font-size: 0.875rem;
   font-weight: 500;
   font-family: inherit;
@@ -133,12 +125,12 @@ $success: #3fb950;
   }
 
   &:hover {
-    color: $text;
+    color: var(--text);
   }
 
   &--active {
-    color: $primary;
-    border-bottom-color: $primary;
+    color: var(--pp);
+    border-bottom-color: var(--pp);
   }
 }
 
@@ -158,7 +150,7 @@ $success: #3fb950;
     background: transparent;
   }
   &::-webkit-scrollbar-thumb {
-    background: rgba($primary, 0.3);
+    background: var(--pp-active-border);
     border-radius: 2px;
   }
 }
@@ -170,7 +162,7 @@ $success: #3fb950;
   justify-content: center;
   gap: 0.5rem;
   padding: 2rem 0;
-  color: $muted;
+  color: var(--text-muted);
   font-size: 0.875rem;
 
   .material-symbols-outlined {
@@ -192,7 +184,7 @@ $success: #3fb950;
   justify-content: center;
   gap: 0.5rem;
   padding: 2.5rem 0;
-  color: $muted;
+  color: var(--text-muted);
   text-align: center;
 
   .material-symbols-outlined {
@@ -209,7 +201,7 @@ $success: #3fb950;
 /* ── Table ── */
 .prd-table-wrapper {
   overflow-x: auto;
-  border: 1px solid $border;
+  border: 1px solid var(--border);
   border-radius: 10px;
 }
 
@@ -219,7 +211,7 @@ $success: #3fb950;
   font-size: 0.875rem;
 
   thead tr {
-    border-bottom: 1px solid $border;
+    border-bottom: 1px solid var(--border);
   }
 
   th {
@@ -228,14 +220,14 @@ $success: #3fb950;
     font-size: 0.6875rem;
     font-weight: 600;
     letter-spacing: 0.07em;
-    color: $muted;
+    color: var(--text-muted);
     white-space: nowrap;
   }
 
   td {
     padding: 0.625rem 0.875rem;
-    color: $text;
-    border-bottom: 1px solid rgba($border, 0.5);
+    color: var(--text);
+    border-bottom: 1px solid var(--border);
   }
 
   tbody tr:last-child td {
@@ -246,7 +238,7 @@ $success: #3fb950;
     transition: background 0.1s;
 
     &:hover {
-      background: rgba($primary, 0.03);
+      background: var(--pp-hover);
     }
   }
 }
@@ -258,7 +250,7 @@ $success: #3fb950;
 .prd-td-time {
   font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
   font-weight: 600;
-  color: $primary;
+  color: var(--pp);
 }
 
 .prd-td-actions {
@@ -275,8 +267,8 @@ $success: #3fb950;
   font-weight: 600;
 
   &--manual {
-    background: rgba($primary, 0.1);
-    color: $primary;
+    background: var(--pp-hover);
+    color: var(--pp);
   }
 
   &--activity {
@@ -304,11 +296,11 @@ $success: #3fb950;
   }
 
   &--danger {
-    color: $muted;
+    color: var(--text-muted);
 
     &:hover:not(:disabled) {
-      background: rgba($danger, 0.1);
-      color: $danger;
+      background: color-mix(in srgb, var(--error) 10%, transparent);
+      color: var(--error);
     }
 
     &:disabled {
@@ -331,18 +323,18 @@ $success: #3fb950;
   gap: 0.5rem;
   font-size: 0.9375rem;
   font-weight: 600;
-  color: $text;
+  color: var(--text);
   margin: 0;
 
   .material-symbols-outlined {
     font-size: 18px;
-    color: $primary;
+    color: var(--pp);
   }
 }
 
 .prd-divider {
   height: 1px;
-  background: $border;
+  background: var(--border);
   margin: 0.25rem 0;
 }
 
@@ -358,12 +350,12 @@ $success: #3fb950;
   font-size: 0.6875rem;
   font-weight: 600;
   letter-spacing: 0.08em;
-  color: $muted;
+  color: var(--text-muted);
 }
 
 .prd-hint {
   font-size: 0.75rem;
-  color: $muted;
+  color: var(--text-muted);
   opacity: 0.7;
 }
 
@@ -378,11 +370,11 @@ $success: #3fb950;
 
 /* ── Input ── */
 .prd-input {
-  background: $surface2;
-  border: 1px solid $border;
+  background: var(--panel-soft);
+  border: 1px solid var(--border);
   border-radius: 10px;
   padding: 0.625rem 0.875rem;
-  color: $text;
+  color: var(--text);
   font-size: 0.9375rem;
   font-family: inherit;
   outline: none;
@@ -391,11 +383,11 @@ $success: #3fb950;
   box-sizing: border-box;
 
   &::placeholder {
-    color: rgba($muted, 0.5);
+    color: var(--text-muted);
   }
 
   &:focus {
-    border-color: rgba($primary, 0.5);
+    border-color: var(--pp);
   }
 
   /* Date input calendar icon color */
@@ -409,10 +401,10 @@ $success: #3fb950;
 .prd-error {
   margin: 0;
   font-size: 0.8125rem;
-  color: $danger;
+  color: var(--error);
   padding: 0.5rem 0.75rem;
-  background: rgba($danger, 0.08);
-  border: 1px solid rgba($danger, 0.2);
+  background: color-mix(in srgb, var(--error) 8%, transparent);
+  border: 1px solid color-mix(in srgb, var(--error) 20%, transparent);
   border-radius: 8px;
 }
 
@@ -437,7 +429,7 @@ $success: #3fb950;
   display: flex;
   justify-content: flex-end;
   padding: 1rem 1.5rem;
-  border-top: 1px solid $border;
+  border-top: 1px solid var(--border);
   flex-shrink: 0;
 }
 
@@ -454,23 +446,23 @@ $success: #3fb950;
 
   &--ghost {
     background: transparent;
-    border-color: $border;
-    color: $muted;
+    border-color: var(--border);
+    color: var(--text-muted);
 
     &:hover {
-      background: rgba($primary, 0.06);
-      color: $text;
-      border-color: rgba($primary, 0.25);
+      background: var(--pp-hover);
+      color: var(--text);
+      border-color: var(--pp-active-border);
     }
   }
 
   &--primary {
-    background: $primary;
-    color: #0d1117;
-    border-color: $primary;
+    background: var(--pp);
+    color: var(--btn-active-text);
+    border-color: var(--pp);
 
     &:hover:not(:disabled) {
-      background: lighten($primary, 8%);
+      background: var(--pp);
     }
 
     &:disabled {

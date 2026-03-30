@@ -23,6 +23,7 @@ export interface UserProfile {
   asthmaTrackingEnabled: boolean;
   cycleTrackingEnabled: boolean;
   communityRoutesEnabled: boolean;
+  theme: string;
   role: string | null;
   subscriptionPlan: string | null;
   subscriptionExpiresAt: string | null;
@@ -53,6 +54,7 @@ export interface UpdateUserRequest {
   subscriptionExpiresAt?: string | null;
   targetDistance?: string | null;
   weeklyVolumeKm?: string | null;
+  theme?: string;
 }
 
 @Injectable({ providedIn: 'root' })

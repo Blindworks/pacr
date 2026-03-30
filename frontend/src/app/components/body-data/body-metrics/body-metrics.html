@@ -217,7 +217,7 @@
               <ng-container *ngIf="streamRange(data) as range">
                 <path
                   [attr.d]="buildStreamPath(data, range)"
-                  [attr.stroke]="d.color"
+                  [style.stroke]="d.color"
                   fill="none"
                   stroke-width="2"
                   stroke-linecap="round"
@@ -232,7 +232,7 @@
             <line
               [attr.x1]="hoverX(ctx, ctx.tooltipIndex)" y1="0"
               [attr.x2]="hoverX(ctx, ctx.tooltipIndex)" [attr.y2]="plotH"
-              stroke="#b9f20d" stroke-width="1.5" stroke-opacity="0.8"
+              style="stroke: var(--pp)" stroke-width="1.5" stroke-opacity="0.8"
             />
             <ng-container *ngFor="let d of availableActiveStreams(ctx); let first = first">
               <ng-container *ngIf="first">
@@ -240,7 +240,7 @@
                   [attr.cx]="hoverX(ctx, ctx.tooltipIndex)"
                   [attr.cy]="dotY"
                   r="5"
-                  fill="#b9f20d"
+                  style="fill: var(--pp)"
                   style="filter: drop-shadow(0 0 6px rgba(185,242,13,0.9))"
                 />
               </ng-container>
@@ -254,7 +254,7 @@
               text-anchor="end"
               font-size="10"
               font-family="Lexend, sans-serif"
-              [attr.fill]="item.color"
+              [style.fill]="item.color"
               fill-opacity="0.85"
             >{{ tick.label }}</text>
           </ng-container>

@@ -80,7 +80,8 @@ public class UserController {
             String subscriptionPlan,
             LocalDateTime subscriptionExpiresAt,
             String targetDistance,
-            String weeklyVolumeKm
+            String weeklyVolumeKm,
+            String theme
     ) {}
 
     @GetMapping("/me")
@@ -152,7 +153,7 @@ public class UserController {
                     Boolean.TRUE.equals(request.cycleTrackingEnabled()),
                     Boolean.TRUE.equals(request.communityRoutesEnabled()),
                     request.role(), request.subscriptionPlan(), request.subscriptionExpiresAt(),
-                    request.targetDistance(), request.weeklyVolumeKm());
+                    request.targetDistance(), request.weeklyVolumeKm(), request.theme());
             return ResponseEntity.ok(updated);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().build();

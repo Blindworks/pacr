@@ -16,7 +16,7 @@
 }
 
 .btn-primary {
-  background: var(--color-primary, #1976d2);
+  background: var(--pp);
   color: white;
   border: none;
   padding: 0.5rem 1rem;
@@ -34,7 +34,7 @@
   th, td {
     padding: 0.75rem 1rem;
     text-align: left;
-    border-bottom: 1px solid var(--color-border, rgba(255,255,255,0.1));
+    border-bottom: 1px solid var(--border);
     font-size: 0.875rem;
   }
 
@@ -102,7 +102,7 @@
   padding: 0.2rem 0.6rem;
   border-radius: 12px;
   font-size: 0.75rem;
-  background: rgba(255,255,255,0.1);
+  background: var(--border);
 
   &--category {
     background: rgba(56, 139, 253, 0.15);
@@ -120,8 +120,8 @@
   }
 
   &--expired {
-    background: rgba(255,255,255,0.06);
-    color: #7d8590;
+    background: var(--panel-soft);
+    color: var(--text-muted);
   }
 
   &--planned {
@@ -144,7 +144,7 @@
   opacity: 0.7;
   color: inherit;
 
-  &:hover { opacity: 1; background: rgba(255,255,255,0.08); }
+  &:hover { opacity: 1; background: var(--border); }
 
   &--danger { color: #f44336; }
 }
@@ -157,10 +157,10 @@
 
 // Users Dialog
 .users-dialog {
-  background: #161b22;
-  border: 1px solid #30363d;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
   border-radius: 12px;
-  color: #e6edf3;
+  color: var(--text);
   padding: 0;
   max-width: 600px;
   width: 90vw;
@@ -194,7 +194,7 @@
   .dialog-subtitle {
     margin: 0.25rem 0 0;
     font-size: 0.8rem;
-    color: #7d8590;
+    color: var(--text-muted);
   }
 }
 
@@ -206,7 +206,7 @@
   th, td {
     padding: 0.6rem 0.75rem;
     text-align: left;
-    border-bottom: 1px solid rgba(255,255,255,0.06);
+    border-bottom: 1px solid var(--panel-soft);
     font-size: 0.825rem;
   }
 
@@ -244,7 +244,7 @@
 
 .in-progress-label {
   font-size: 0.8rem;
-  color: #7d8590;
+  color: var(--text-muted);
 }
 
 .empty-users {
@@ -261,12 +261,12 @@
 
 .btn-secondary {
   background: transparent;
-  border: 1px solid var(--color-border, rgba(255,255,255,0.15));
+  border: 1px solid var(--border);
   color: inherit;
   padding: 0.6rem 1.5rem;
   border-radius: 6px;
   cursor: pointer;
   font-size: 0.875rem;
 
-  &:hover { background: rgba(255,255,255,0.05); }
+  &:hover { background: var(--panel-soft); }
 }

@@ -1,10 +1,4 @@
 :host {
-  --pp: #b9f20d;
-  --bg: #0d1117;
-  --bg-card: #161b22;
-  --border: rgba(185, 242, 13, 0.12);
-  --text: #e6edf3;
-  --text-muted: #8b949e;
   display: block;
 }
 
@@ -22,7 +16,7 @@
 .toolbar-left { display: flex; align-items: center; gap: 10px; }
 
 .count-badge {
-  background: rgba(185, 242, 13, 0.15);
+  background: var(--pp-dim);
   color: var(--pp);
   font-size: 12px;
   font-weight: 600;
@@ -35,7 +29,7 @@
   align-items: center;
   gap: 6px;
   background: var(--pp);
-  color: #0d1117;
+  color: var(--btn-active-text);
   border: none;
   border-radius: 8px;
   padding: 8px 16px;
@@ -106,7 +100,7 @@
   gap: 12px;
   transition: border-color 0.15s;
 
-  &:hover { border-color: rgba(185, 242, 13, 0.25); }
+  &:hover { border-color: var(--pp-active-border); }
 }
 
 .comp-card-header {
@@ -135,7 +129,7 @@
 
 .type-badge {
   display: inline-block;
-  background: rgba(185, 242, 13, 0.12);
+  background: var(--pp-dim);
   color: var(--pp);
   font-size: 11px;
   font-weight: 600;
@@ -193,7 +187,7 @@
   transition: background 0.15s, color 0.15s;
 
   .material-symbols-outlined { font-size: 18px; }
-  &:hover { background: rgba(255,255,255,0.07); color: var(--text); }
+  &:hover { background: var(--panel-soft); color: var(--text); }
   &--danger:hover { background: rgba(231,76,60,0.1); color: #e74c3c; }
 }
 

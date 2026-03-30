@@ -1,18 +1,10 @@
-$primary: #b9f20d;
-$bg: #0d1117;
-$surface: #161b22;
-$surface2: #1c2128;
-$border: rgba(#b9f20d, 0.1);
-$text: #e6edf3;
-$muted: #8b949e;
-
 .about-dialog {
   margin: auto;
   padding: 0;
-  border: 1px solid $border;
+  border: 1px solid var(--border);
   border-radius: 16px;
-  background: $surface;
-  color: $text;
+  background: var(--bg-card);
+  color: var(--text);
   width: min(420px, 92vw);
   max-height: 85vh;
   overflow: hidden;
@@ -36,10 +28,10 @@ $muted: #8b949e;
   align-items: center;
   justify-content: space-between;
   padding: 1.25rem 1.5rem;
-  border-bottom: 1px solid $border;
+  border-bottom: 1px solid var(--border);
   position: sticky;
   top: 0;
-  background: $surface;
+  background: var(--bg-card);
   z-index: 1;
 }
 
@@ -49,11 +41,11 @@ $muted: #8b949e;
   gap: 0.625rem;
   font-size: 1rem;
   font-weight: 600;
-  color: $text;
+  color: var(--text);
 
   .about-icon {
     font-size: 20px;
-    color: $primary;
+    color: var(--pp);
   }
 }
 
@@ -66,7 +58,7 @@ $muted: #8b949e;
   background: transparent;
   border: none;
   border-radius: 8px;
-  color: $muted;
+  color: var(--text-muted);
   cursor: pointer;
   transition: background 0.15s, color 0.15s;
 
@@ -75,8 +67,8 @@ $muted: #8b949e;
   }
 
   &:hover {
-    background: rgba($primary, 0.08);
-    color: $text;
+    background: var(--pp-hover);
+    color: var(--text);
   }
 }
 
@@ -98,14 +90,14 @@ $muted: #8b949e;
     font-size: 1.75rem;
     font-weight: 800;
     letter-spacing: 0.05em;
-    color: $text;
+    color: var(--text);
     margin: 0;
   }
 }
 
 .about-tagline {
   font-size: 0.875rem;
-  color: $muted;
+  color: var(--text-muted);
   margin: 0;
   font-weight: 500;
 }
@@ -114,21 +106,21 @@ $muted: #8b949e;
   width: 56px;
   height: 56px;
   border-radius: 14px;
-  background: rgba($primary, 0.1);
+  background: var(--pp-hover);
   display: flex;
   align-items: center;
   justify-content: center;
 
   .material-symbols-outlined {
     font-size: 28px;
-    color: $primary;
+    color: var(--pp);
   }
 }
 
 .about-details {
   width: 100%;
-  background: $surface2;
-  border: 1px solid $border;
+  background: var(--panel-soft);
+  border: 1px solid var(--border);
   border-radius: 12px;
   padding: 1rem 1.25rem;
   display: flex;
@@ -146,18 +138,18 @@ $muted: #8b949e;
   font-size: 0.6875rem;
   font-weight: 600;
   letter-spacing: 0.08em;
-  color: $muted;
+  color: var(--text-muted);
 }
 
 .about-value {
   font-size: 0.875rem;
   font-weight: 600;
-  color: $text;
+  color: var(--text);
   font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
 }
 
 .about-value--version {
-  color: $primary;
+  color: var(--pp);
   font-weight: 700;
 }
 
@@ -167,10 +159,10 @@ $muted: #8b949e;
   align-items: center;
   gap: 0.5rem;
   padding: 0.625rem 1.25rem;
-  background: $surface2;
-  border: 1px solid $border;
+  background: var(--panel-soft);
+  border: 1px solid var(--border);
   border-radius: 10px;
-  color: $muted;
+  color: var(--text-muted);
   font-size: 0.8125rem;
   font-weight: 600;
   cursor: pointer;
@@ -181,9 +173,9 @@ $muted: #8b949e;
   }
 
   &:hover {
-    background: rgba($primary, 0.08);
-    color: $text;
-    border-color: rgba($primary, 0.2);
+    background: var(--pp-hover);
+    color: var(--text);
+    border-color: var(--pp-border);
   }
 }
 
@@ -192,8 +184,8 @@ $muted: #8b949e;
   width: 100%;
   max-height: 320px;
   overflow-y: auto;
-  background: $surface2;
-  border: 1px solid $border;
+  background: var(--panel-soft);
+  border: 1px solid var(--border);
   border-radius: 12px;
   padding: 1rem 1.25rem;
 
@@ -204,14 +196,14 @@ $muted: #8b949e;
     background: transparent;
   }
   &::-webkit-scrollbar-thumb {
-    background: rgba($muted, 0.3);
+    background: var(--scrollbar-thumb);
     border-radius: 3px;
   }
 }
 
 .changelog-loading {
   text-align: center;
-  color: $muted;
+  color: var(--text-muted);
   font-size: 0.8125rem;
   padding: 1rem 0;
 }
@@ -223,10 +215,10 @@ $muted: #8b949e;
   :global(.cl-version) {
     font-size: 0.9375rem;
     font-weight: 700;
-    color: $primary;
+    color: var(--pp);
     margin: 1.25rem 0 0.5rem 0;
     padding-bottom: 0.375rem;
-    border-bottom: 1px solid $border;
+    border-bottom: 1px solid var(--border);
 
     &:first-child {
       margin-top: 0;
@@ -236,7 +228,7 @@ $muted: #8b949e;
   :global(.cl-category) {
     font-size: 0.75rem;
     font-weight: 600;
-    color: $text;
+    color: var(--text);
     text-transform: uppercase;
     letter-spacing: 0.06em;
     margin: 0.75rem 0 0.375rem 0;
@@ -250,14 +242,14 @@ $muted: #8b949e;
     li {
       position: relative;
       padding-left: 1rem;
-      color: $muted;
+      color: var(--text-muted);
       margin-bottom: 0.25rem;
 
       &::before {
         content: '•';
         position: absolute;
         left: 0;
-        color: rgba($primary, 0.5);
+        color: var(--pp);
       }
     }
   }
@@ -266,7 +258,7 @@ $muted: #8b949e;
 .about-footer {
   p {
     font-size: 0.75rem;
-    color: $muted;
+    color: var(--text-muted);
     margin: 0;
   }
 }

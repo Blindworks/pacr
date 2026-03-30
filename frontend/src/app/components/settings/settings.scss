@@ -1,19 +1,10 @@
-:host {
-  --primary: #b9f20d;
-  --bg: #0d1117;
-  --panel: #161b22;
-  --panel-soft: rgba(255, 255, 255, 0.04);
-  --border: rgba(255, 255, 255, 0.08);
-  --text: #e6edf3;
-  --muted: #8b949e;
-}
 
 .settings-view {
   max-width: 960px;
   margin: 0 auto;
   padding: 2rem 1.5rem 3rem;
   color: var(--text);
-  font-family: 'Lexend', 'Inter', sans-serif;
+  font-family: var(--font-family);
   display: grid;
   gap: 1.5rem;
 }
@@ -28,7 +19,7 @@
 
   p {
     margin: 0.35rem 0 0;
-    color: var(--muted);
+    color: var(--text-muted);
     font-size: 0.95rem;
   }
 }
@@ -40,7 +31,7 @@
 
 /* ── Section ─────────────────────────────── */
 .section {
-  background: var(--panel);
+  background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: 1rem;
   padding: 1.5rem;
@@ -56,7 +47,7 @@
   border-bottom: 1px solid var(--border);
 
   span.material-symbols-outlined {
-    color: var(--primary);
+    color: var(--pp);
     font-size: 1.2rem;
   }
 
@@ -88,7 +79,7 @@
   transition: border-color 0.2s;
 
   &:hover {
-    border-color: var(--primary);
+    border-color: var(--pp);
 
     .avatar-overlay {
       opacity: 1;
@@ -113,7 +104,7 @@
 
   .material-symbols-outlined {
     font-size: 2.5rem;
-    color: var(--muted);
+    color: var(--text-muted);
   }
 }
 
@@ -160,7 +151,7 @@
   color: var(--text);
 
   &.muted {
-    color: var(--muted);
+    color: var(--text-muted);
     font-size: 0.75rem;
   }
 }
@@ -192,7 +183,7 @@
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.07em;
-    color: var(--muted);
+    color: var(--text-muted);
   }
 
   input,
@@ -209,7 +200,7 @@
     appearance: none;
 
     &:focus {
-      border-color: var(--primary);
+      border-color: var(--pp);
     }
   }
 }
@@ -237,7 +228,7 @@
 
     .material-symbols-outlined {
       font-size: 1rem;
-      color: var(--muted);
+      color: var(--text-muted);
     }
   }
 }
@@ -252,7 +243,7 @@
     border-radius: 0.5rem;
     border: 1px solid var(--border);
     background: transparent;
-    color: var(--muted);
+    color: var(--text-muted);
     font-family: inherit;
     font-size: 0.78rem;
     font-weight: 600;
@@ -260,14 +251,14 @@
     transition: background 0.15s, color 0.15s, border-color 0.15s;
 
     &.active {
-      background: var(--primary);
-      color: #0d1117;
-      border-color: var(--primary);
+      background: var(--pp);
+      color: var(--btn-active-text);
+      border-color: var(--pp);
       font-weight: 800;
     }
 
     &:not(.active):hover {
-      border-color: rgba(185, 242, 13, 0.3);
+      border-color: var(--pp-active-border);
     }
   }
 }
@@ -300,7 +291,7 @@
 
 .toggle-sub {
   font-size: 0.72rem;
-  color: var(--muted);
+  color: var(--text-muted);
 }
 
 /* Custom toggle switch */
@@ -341,7 +332,7 @@
 }
 
 .switch input:checked + .track {
-  background: var(--primary);
+  background: var(--pp);
 
   &::after {
     transform: translateX(1.25rem);
@@ -407,16 +398,16 @@
 
   span {
     font-size: 0.72rem;
-    color: var(--muted);
+    color: var(--text-muted);
   }
 }
 
 .int-btn {
   padding: 0.45rem 0.95rem;
   border-radius: 0.6rem;
-  border: 1px solid var(--primary);
+  border: 1px solid var(--pp);
   background: transparent;
-  color: var(--primary);
+  color: var(--pp);
   font-family: inherit;
   font-size: 0.78rem;
   font-weight: 700;
@@ -428,13 +419,13 @@
   gap: 0.3rem;
 
   &:hover:not(.int-btn--connected) {
-    background: var(--primary);
-    color: #0d1117;
+    background: var(--pp);
+    color: var(--btn-active-text);
   }
 
   &--connected {
-    background: rgba(185, 242, 13, 0.12);
-    border-color: rgba(185, 242, 13, 0.3);
+    background: var(--pp-dim);
+    border-color: var(--pp-active-border);
 
     .material-symbols-outlined {
       font-size: 0.95rem;
@@ -496,19 +487,19 @@
 .btn-change-password {
   padding: 0.7rem 1.5rem;
   background: transparent;
-  color: var(--primary);
+  color: var(--pp);
   font-family: inherit;
   font-size: 0.8rem;
   font-weight: 800;
-  border: 1px solid var(--primary);
+  border: 1px solid var(--pp);
   border-radius: 0.65rem;
   cursor: pointer;
   letter-spacing: 0.03em;
   transition: background 0.15s, color 0.15s;
 
   &:hover:not(:disabled) {
-    background: var(--primary);
-    color: #0d1117;
+    background: var(--pp);
+    color: var(--btn-active-text);
   }
 
   &:disabled {

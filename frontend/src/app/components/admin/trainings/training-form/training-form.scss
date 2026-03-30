@@ -1,12 +1,4 @@
 :host {
-  --pp: #b9f20d;
-  --bg: #0d1117;
-  --bg-card: #161b22;
-  --bg-item: #1c2128;
-  --border: rgba(185, 242, 13, 0.12);
-  --border-input: rgba(255,255,255,0.12);
-  --text: #e6edf3;
-  --text-muted: #8b949e;
   display: block;
 }
 
@@ -47,7 +39,7 @@
   position: sticky;
   top: -24px;
   z-index: 50;
-  background: #0d1117;
+  background: var(--bg);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -92,7 +84,7 @@
   align-items: center;
   gap: 6px;
   background: var(--pp);
-  color: #0d1117;
+  color: var(--btn-active-text);
   border: none;
   border-radius: 8px;
   padding: 8px 18px;
@@ -120,7 +112,7 @@
   transition: color 0.15s, border-color 0.15s;
 
   .material-symbols-outlined { font-size: 18px; }
-  &:hover:not(:disabled) { color: var(--text); border-color: rgba(255,255,255,0.2); }
+  &:hover:not(:disabled) { color: var(--text); border-color: var(--border); }
   &:disabled { opacity: 0.4; cursor: not-allowed; }
 
   &.icon-only { padding: 8px; border: none; }
@@ -177,7 +169,7 @@
   min-width: 20px;
   height: 20px;
   padding: 0 6px;
-  background: rgba(185,242,13,0.15);
+  background: var(--pp-dim);
   color: var(--pp);
   border-radius: 10px;
   font-size: 11px;
@@ -212,7 +204,7 @@
 .required { color: #e74c3c; }
 
 .input {
-  background: #0d1117;
+  background: var(--bg);
   border: 1px solid var(--border-input);
   border-radius: 8px;
   padding: 10px 12px;
@@ -229,7 +221,7 @@
 
   &.textarea { resize: vertical; min-height: 80px; }
 
-  option { background: #161b22; }
+  option { background: var(--bg-card); }
 }
 
 select.input { appearance: none; cursor: pointer; }
@@ -272,8 +264,8 @@ select.input { appearance: none; cursor: pointer; }
 
 /* Array items */
 .array-item {
-  background: var(--bg-item);
-  border: 1px solid rgba(255,255,255,0.06);
+  background: var(--panel-soft);
+  border: 1px solid var(--panel-soft);
   border-radius: 10px;
   padding: 16px;
   margin-bottom: 12px;
@@ -294,7 +286,7 @@ select.input { appearance: none; cursor: pointer; }
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(185,242,13,0.12);
+  background: var(--pp-dim);
   color: var(--pp);
   border-radius: 50%;
   font-size: 12px;
@@ -322,7 +314,7 @@ select.input { appearance: none; cursor: pointer; }
 
   .material-symbols-outlined { font-size: 17px; }
 
-  &:hover:not(:disabled) { background: rgba(255,255,255,0.07); color: var(--text); }
+  &:hover:not(:disabled) { background: var(--panel-soft); color: var(--text); }
   &--danger:hover:not(:disabled) { background: rgba(231,76,60,0.1); color: #e74c3c; }
   &:disabled { opacity: 0.3; cursor: not-allowed; }
 }

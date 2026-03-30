@@ -1,11 +1,4 @@
 :host {
-  --pp: #b9f20d;
-  --bg: #0d1117;
-  --bg-card: #161b22;
-  --border: rgba(185, 242, 13, 0.12);
-  --border-input: rgba(255,255,255,0.12);
-  --text: #e6edf3;
-  --text-muted: #8b949e;
   display: block;
 }
 
@@ -15,7 +8,7 @@
   position: sticky;
   top: -24px;
   z-index: 50;
-  background: #0d1117;
+  background: var(--bg);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -44,7 +37,7 @@
   align-items: center;
   gap: 6px;
   background: var(--pp);
-  color: #0d1117;
+  color: var(--btn-active-text);
   border: none;
   border-radius: 8px;
   padding: 8px 18px;
@@ -132,7 +125,7 @@
 .required { color: #e74c3c; }
 
 .input {
-  background: #0d1117;
+  background: var(--bg);
   border: 1px solid var(--border-input);
   border-radius: 8px;
   padding: 10px 12px;
@@ -147,7 +140,7 @@
   &:focus { border-color: var(--pp); }
   &.invalid { border-color: #e74c3c; }
   &.textarea { resize: vertical; min-height: 80px; }
-  option { background: #161b22; }
+  option { background: var(--bg-card); }
 }
 
 select.input { appearance: none; cursor: pointer; }

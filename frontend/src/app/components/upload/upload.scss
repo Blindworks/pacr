@@ -1,17 +1,6 @@
-// PACR Theme Colors
-$primary: #b9f20d;
-$bg-dark: #121408;
-$bg-card: rgba(255, 255, 255, 0.05);
-$border-subtle: rgba(255, 255, 255, 0.08);
-$border-primary: rgba(185, 242, 13, 0.25);
-$text-main: #f1f5f9;
-$text-muted: #64748b;
-$text-secondary: #94a3b8;
-$primary-bg: rgba(185, 242, 13, 0.08);
-
 .upload-page {
   min-height: 100%;
-  background: $bg-dark;
+  background: var(--bg);
   display: flex;
   flex-direction: column;
 }
@@ -22,9 +11,9 @@ $primary-bg: rgba(185, 242, 13, 0.08);
   top: 0;
   z-index: 20;
   padding: 1.5rem 2rem;
-  background: rgba(18, 20, 8, 0.85);
+  background: color-mix(in srgb, var(--bg) 85%, transparent);
   backdrop-filter: blur(20px);
-  border-bottom: 1px solid rgba(185, 242, 13, 0.05);
+  border-bottom: 1px solid var(--pp-hover);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -34,7 +23,7 @@ $primary-bg: rgba(185, 242, 13, 0.08);
   margin: 0;
   font-size: 1.75rem;
   font-weight: 900;
-  color: $text-main;
+  color: var(--text);
   text-transform: uppercase;
   letter-spacing: -0.02em;
   line-height: 1;
@@ -43,7 +32,7 @@ $primary-bg: rgba(185, 242, 13, 0.08);
 .page-subtitle {
   margin: 0.375rem 0 0;
   font-size: 0.875rem;
-  color: $text-muted;
+  color: var(--text-muted);
   font-weight: 500;
 }
 
@@ -61,36 +50,36 @@ $primary-bg: rgba(185, 242, 13, 0.08);
 // ── Drop Zone ─────────────────────────────────────────────────
 .drop-zone {
   position: relative;
-  border: 2px dashed $border-primary;
+  border: 2px dashed var(--pp-border);
   border-radius: 1.25rem;
   padding: 5rem 2rem;
-  background: $primary-bg;
+  background: var(--pp-hover);
   cursor: pointer;
   overflow: hidden;
   transition: border-color 0.2s, background 0.2s;
 
   &:hover,
   &.drag-over {
-    border-color: $primary;
-    background: rgba(185, 242, 13, 0.12);
+    border-color: var(--pp);
+    background: var(--pp-dim);
 
     .drop-icon-wrap {
       transform: scale(1.1);
-      box-shadow: 0 0 40px rgba(185, 242, 13, 0.18);
+      box-shadow: 0 0 40px var(--pp-active-bg);
     }
   }
 
   &.has-file {
     border-style: solid;
-    border-color: $primary;
-    background: rgba(185, 242, 13, 0.07);
+    border-color: var(--pp);
+    background: var(--pp-hover);
   }
 }
 
 .drop-glow {
   position: absolute;
   inset: 0;
-  background: rgba(185, 242, 13, 0.04);
+  background: var(--pp-hover);
   border-radius: 1.25rem;
   filter: blur(40px);
   pointer-events: none;
@@ -114,28 +103,28 @@ $primary-bg: rgba(185, 242, 13, 0.08);
   width: 5.5rem;
   height: 5.5rem;
   border-radius: 50%;
-  background: rgba(185, 242, 13, 0.15);
+  background: var(--pp-dim);
   display: flex;
   align-items: center;
   justify-content: center;
   transition: transform 0.25s, box-shadow 0.25s;
 
   &--file {
-    background: rgba(185, 242, 13, 0.2);
-    box-shadow: 0 0 30px rgba(185, 242, 13, 0.15);
+    background: var(--pp-active-bg);
+    box-shadow: 0 0 30px var(--pp-dim);
   }
 }
 
 .drop-icon {
   font-size: 3rem;
-  color: $primary;
+  color: var(--pp);
 }
 
 .drop-title {
   margin: 0;
   font-size: 1.35rem;
   font-weight: 900;
-  color: $text-main;
+  color: var(--text);
   text-transform: uppercase;
   letter-spacing: -0.01em;
 }
@@ -143,7 +132,7 @@ $primary-bg: rgba(185, 242, 13, 0.08);
 .drop-sub {
   margin: 0;
   font-size: 0.9rem;
-  color: $text-secondary;
+  color: var(--text-muted);
   font-weight: 500;
 }
 
@@ -159,7 +148,7 @@ $primary-bg: rgba(185, 242, 13, 0.08);
 .drop-divider-line {
   flex: 1;
   height: 1px;
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--border);
 }
 
 .drop-divider-text {
@@ -167,7 +156,7 @@ $primary-bg: rgba(185, 242, 13, 0.08);
   font-weight: 900;
   text-transform: uppercase;
   letter-spacing: 0.15em;
-  color: $text-muted;
+  color: var(--text-muted);
 }
 
 .browse-btn {
@@ -175,8 +164,8 @@ $primary-bg: rgba(185, 242, 13, 0.08);
   align-items: center;
   gap: 0.5rem;
   padding: 0.875rem 2.5rem;
-  background: $primary;
-  color: #0f110a;
+  background: var(--pp);
+  color: var(--btn-active-text);
   border: none;
   border-radius: 0.75rem;
   font-size: 0.875rem;
@@ -185,7 +174,7 @@ $primary-bg: rgba(185, 242, 13, 0.08);
   letter-spacing: 0.03em;
   cursor: pointer;
   transition: transform 0.15s, box-shadow 0.15s;
-  box-shadow: 0 4px 20px rgba(185, 242, 13, 0.2);
+  box-shadow: 0 4px 20px var(--pp-active-bg);
 
   .material-symbols-outlined {
     font-size: 1.2rem;
@@ -193,7 +182,7 @@ $primary-bg: rgba(185, 242, 13, 0.08);
 
   &:hover {
     transform: scale(1.02);
-    box-shadow: 0 6px 28px rgba(185, 242, 13, 0.3);
+    box-shadow: 0 6px 28px var(--pp-active-border);
   }
 
   &:active {
@@ -223,9 +212,9 @@ $primary-bg: rgba(185, 242, 13, 0.08);
   }
 
   &--success {
-    background: rgba(185, 242, 13, 0.1);
-    border: 1px solid rgba(185, 242, 13, 0.3);
-    color: $primary;
+    background: var(--pp-hover);
+    border: 1px solid var(--pp-active-border);
+    color: var(--pp);
   }
 }
 
@@ -237,8 +226,8 @@ $primary-bg: rgba(185, 242, 13, 0.08);
   gap: 0.5rem;
   width: 100%;
   padding: 1rem;
-  background: $primary;
-  color: #0f110a;
+  background: var(--pp);
+  color: var(--btn-active-text);
   border: none;
   border-radius: 0.75rem;
   font-size: 1rem;
@@ -247,7 +236,7 @@ $primary-bg: rgba(185, 242, 13, 0.08);
   letter-spacing: 0.03em;
   cursor: pointer;
   transition: transform 0.15s, opacity 0.2s, box-shadow 0.15s;
-  box-shadow: 0 4px 20px rgba(185, 242, 13, 0.2);
+  box-shadow: 0 4px 20px var(--pp-active-bg);
 
   .material-symbols-outlined {
     font-size: 1.25rem;
@@ -255,7 +244,7 @@ $primary-bg: rgba(185, 242, 13, 0.08);
 
   &:hover:not(:disabled) {
     transform: scale(1.01);
-    box-shadow: 0 6px 28px rgba(185, 242, 13, 0.3);
+    box-shadow: 0 6px 28px var(--pp-active-border);
   }
 
   &:disabled {
@@ -283,7 +272,7 @@ $primary-bg: rgba(185, 242, 13, 0.08);
   margin: 0;
   font-size: 0.875rem;
   font-weight: 900;
-  color: $text-main;
+  color: var(--text);
   text-transform: uppercase;
   letter-spacing: 0.12em;
 }
@@ -291,7 +280,7 @@ $primary-bg: rgba(185, 242, 13, 0.08);
 .view-all-link {
   font-size: 0.75rem;
   font-weight: 900;
-  color: $primary;
+  color: var(--pp);
   text-decoration: none;
   text-transform: uppercase;
   letter-spacing: 0.1em;
@@ -304,8 +293,8 @@ $primary-bg: rgba(185, 242, 13, 0.08);
 .table-wrap {
   overflow: hidden;
   border-radius: 1rem;
-  border: 1px solid $border-subtle;
-  background: $bg-card;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
 }
 
 .uploads-table {
@@ -313,15 +302,15 @@ $primary-bg: rgba(185, 242, 13, 0.08);
   border-collapse: collapse;
 
   thead tr {
-    background: rgba(255, 255, 255, 0.04);
-    border-bottom: 1px solid $border-subtle;
+    background: var(--panel-soft);
+    border-bottom: 1px solid var(--border);
   }
 
   th {
     padding: 1rem 1.5rem;
     font-size: 0.65rem;
     font-weight: 900;
-    color: $text-muted;
+    color: var(--text-muted);
     text-transform: uppercase;
     letter-spacing: 0.12em;
     text-align: left;
@@ -332,7 +321,7 @@ $primary-bg: rgba(185, 242, 13, 0.08);
   }
 
   tbody tr {
-    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    border-bottom: 1px solid var(--panel-soft);
 
     &:last-child {
       border-bottom: none;
@@ -343,7 +332,7 @@ $primary-bg: rgba(185, 242, 13, 0.08);
       transition: background 0.15s;
 
       &:hover {
-        background: rgba(255, 255, 255, 0.04);
+        background: var(--panel-soft);
       }
     }
   }
@@ -362,16 +351,16 @@ $primary-bg: rgba(185, 242, 13, 0.08);
 
 .activity-icon {
   font-size: 1.1rem;
-  color: rgba(185, 242, 13, 0.5);
+  color: var(--pp);
 }
 
 .activity-name {
   font-weight: 700;
-  color: $text-main;
+  color: var(--text);
 }
 
 .td-muted {
-  color: $text-secondary;
+  color: var(--text-muted);
   font-weight: 500;
 }
 
@@ -381,7 +370,7 @@ $primary-bg: rgba(185, 242, 13, 0.08);
 
 .empty-row {
   text-align: center;
-  color: $text-muted;
+  color: var(--text-muted);
   padding: 2rem !important;
   font-style: italic;
 }
@@ -402,9 +391,9 @@ $primary-bg: rgba(185, 242, 13, 0.08);
   }
 
   &--success {
-    background: rgba(185, 242, 13, 0.1);
-    color: $primary;
-    border: 1px solid rgba(185, 242, 13, 0.2);
+    background: var(--pp-hover);
+    color: var(--pp);
+    border: 1px solid var(--pp-border);
   }
 }
 
@@ -425,16 +414,16 @@ $primary-bg: rgba(185, 242, 13, 0.08);
   gap: 1.25rem;
   padding: 1.75rem;
   border-radius: 1rem;
-  background: $bg-card;
-  border: 1px solid $border-subtle;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
   transition: border-color 0.2s;
 
   &:hover {
-    border-color: $border-primary;
+    border-color: var(--pp-border);
 
     .help-icon {
-      background: $primary;
-      color: #0f110a;
+      background: var(--pp);
+      color: var(--btn-active-text);
     }
   }
 }
@@ -442,8 +431,8 @@ $primary-bg: rgba(185, 242, 13, 0.08);
 .help-icon {
   padding: 0.75rem;
   border-radius: 0.75rem;
-  background: rgba(185, 242, 13, 0.1);
-  color: $primary;
+  background: var(--pp-hover);
+  color: var(--pp);
   flex-shrink: 0;
   transition: background 0.2s, color 0.2s;
 
@@ -457,7 +446,7 @@ $primary-bg: rgba(185, 242, 13, 0.08);
   margin: 0 0 0.5rem;
   font-size: 1rem;
   font-weight: 900;
-  color: $text-main;
+  color: var(--text);
   text-transform: uppercase;
   letter-spacing: -0.01em;
 }
@@ -465,7 +454,7 @@ $primary-bg: rgba(185, 242, 13, 0.08);
 .help-desc {
   margin: 0;
   font-size: 0.85rem;
-  color: $text-secondary;
+  color: var(--text-muted);
   line-height: 1.6;
   font-weight: 500;
 }
@@ -475,7 +464,7 @@ $primary-bg: rgba(185, 242, 13, 0.08);
   margin-top: 0.875rem;
   font-size: 0.7rem;
   font-weight: 900;
-  color: $primary;
+  color: var(--pp);
   text-decoration: none;
   text-transform: uppercase;
   letter-spacing: 0.12em;

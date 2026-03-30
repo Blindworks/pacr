@@ -1,20 +1,11 @@
-$primary: #b9f20d;
-$bg: #0d1117;
-$surface: #161b22;
-$surface2: #1c2128;
-$border: rgba(#b9f20d, 0.1);
-$text: #e6edf3;
-$muted: #8b949e;
-$danger: #f85149;
-
 /* ── Dialog backdrop & container ── */
 .apr-dialog {
   margin: auto;
   padding: 0;
-  border: 1px solid $border;
+  border: 1px solid var(--border);
   border-radius: 16px;
-  background: $surface;
-  color: $text;
+  background: var(--bg-card);
+  color: var(--text);
   width: min(480px, 96vw);
   overflow: hidden;
   box-shadow: 0 24px 64px rgba(0, 0, 0, 0.6);
@@ -37,7 +28,7 @@ $danger: #f85149;
   align-items: center;
   justify-content: space-between;
   padding: 1.25rem 1.5rem;
-  border-bottom: 1px solid $border;
+  border-bottom: 1px solid var(--border);
 }
 
 .apr-header-title {
@@ -46,11 +37,11 @@ $danger: #f85149;
   gap: 0.625rem;
   font-size: 1rem;
   font-weight: 600;
-  color: $text;
+  color: var(--text);
 
   .apr-icon {
     font-size: 20px;
-    color: $primary;
+    color: var(--pp);
   }
 }
 
@@ -63,7 +54,7 @@ $danger: #f85149;
   background: transparent;
   border: none;
   border-radius: 8px;
-  color: $muted;
+  color: var(--text-muted);
   cursor: pointer;
   transition: background 0.15s, color 0.15s;
 
@@ -72,8 +63,8 @@ $danger: #f85149;
   }
 
   &:hover {
-    background: rgba($primary, 0.08);
-    color: $text;
+    background: var(--pp-hover);
+    color: var(--text);
   }
 }
 
@@ -96,31 +87,31 @@ $danger: #f85149;
   font-size: 0.6875rem;
   font-weight: 600;
   letter-spacing: 0.08em;
-  color: $muted;
+  color: var(--text-muted);
 }
 
 .apr-optional {
   font-weight: 400;
   letter-spacing: 0;
   text-transform: none;
-  color: $muted;
+  color: var(--text-muted);
   opacity: 0.7;
 }
 
 .apr-hint {
   font-size: 0.75rem;
-  color: $muted;
+  color: var(--text-muted);
   opacity: 0.7;
   margin-top: 0.125rem;
 }
 
 /* ── Input ── */
 .apr-input {
-  background: $surface2;
-  border: 1px solid $border;
+  background: var(--panel-soft);
+  border: 1px solid var(--border);
   border-radius: 10px;
   padding: 0.625rem 0.875rem;
-  color: $text;
+  color: var(--text);
   font-size: 0.9375rem;
   font-family: inherit;
   outline: none;
@@ -129,11 +120,11 @@ $danger: #f85149;
   box-sizing: border-box;
 
   &::placeholder {
-    color: rgba($muted, 0.5);
+    color: var(--text-muted);
   }
 
   &:focus {
-    border-color: rgba($primary, 0.5);
+    border-color: var(--pp);
   }
 
   /* Remove native number spinner arrows */
@@ -158,11 +149,11 @@ $danger: #f85149;
 .apr-select {
   appearance: none;
   -webkit-appearance: none;
-  background: $surface2;
-  border: 1px solid $border;
+  background: var(--panel-soft);
+  border: 1px solid var(--border);
   border-radius: 10px;
   padding: 0.625rem 2.5rem 0.625rem 0.875rem;
-  color: $text;
+  color: var(--text);
   font-size: 0.9375rem;
   font-family: inherit;
   outline: none;
@@ -172,12 +163,12 @@ $danger: #f85149;
   transition: border-color 0.15s;
 
   &:focus {
-    border-color: rgba($primary, 0.5);
+    border-color: var(--pp);
   }
 
   option {
-    background: $surface2;
-    color: $text;
+    background: var(--panel-soft);
+    color: var(--text);
   }
 }
 
@@ -185,7 +176,7 @@ $danger: #f85149;
   position: absolute;
   right: 0.75rem;
   font-size: 20px;
-  color: $muted;
+  color: var(--text-muted);
   pointer-events: none;
 }
 
@@ -202,11 +193,11 @@ $danger: #f85149;
 /* ── Error ── */
 .apr-error {
   font-size: 0.8125rem;
-  color: $danger;
+  color: var(--error);
   margin: 0;
   padding: 0.5rem 0.75rem;
-  background: rgba($danger, 0.08);
-  border: 1px solid rgba($danger, 0.2);
+  background: color-mix(in srgb, var(--error) 8%, transparent);
+  border: 1px solid color-mix(in srgb, var(--error) 20%, transparent);
   border-radius: 8px;
 }
 
@@ -216,7 +207,7 @@ $danger: #f85149;
   justify-content: flex-end;
   gap: 0.75rem;
   padding: 1rem 1.5rem 1.25rem;
-  border-top: 1px solid $border;
+  border-top: 1px solid var(--border);
 }
 
 /* ── Buttons ── */
@@ -232,23 +223,23 @@ $danger: #f85149;
 
   &--ghost {
     background: transparent;
-    border-color: $border;
-    color: $muted;
+    border-color: var(--border);
+    color: var(--text-muted);
 
     &:hover {
-      background: rgba($primary, 0.06);
-      color: $text;
-      border-color: rgba($primary, 0.25);
+      background: var(--pp-hover);
+      color: var(--text);
+      border-color: var(--pp-active-border);
     }
   }
 
   &--primary {
-    background: $primary;
-    color: #0d1117;
-    border-color: $primary;
+    background: var(--pp);
+    color: var(--btn-active-text);
+    border-color: var(--pp);
 
     &:hover:not(:disabled) {
-      background: lighten($primary, 8%);
+      background: var(--pp);
     }
 
     &:disabled {

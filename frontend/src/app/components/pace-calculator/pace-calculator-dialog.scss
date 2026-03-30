@@ -1,19 +1,11 @@
-$primary: #b9f20d;
-$bg: #0d1117;
-$surface: #161b22;
-$surface2: #1c2128;
-$border: rgba(#b9f20d, 0.1);
-$text: #e6edf3;
-$muted: #8b949e;
-
 /* ── Dialog backdrop & container ── */
 .pace-dialog {
   margin: auto;
   padding: 0;
-  border: 1px solid $border;
+  border: 1px solid var(--border);
   border-radius: 16px;
-  background: $surface;
-  color: $text;
+  background: var(--bg-card);
+  color: var(--text);
   width: min(680px, 96vw);
   max-height: 90vh;
   overflow: hidden;
@@ -39,7 +31,7 @@ $muted: #8b949e;
     background: transparent;
   }
   &::-webkit-scrollbar-thumb {
-    background: rgba($primary, 0.3);
+    background: var(--pp-active-border);
     border-radius: 2px;
   }
 }
@@ -50,10 +42,10 @@ $muted: #8b949e;
   align-items: center;
   justify-content: space-between;
   padding: 1.25rem 1.5rem;
-  border-bottom: 1px solid $border;
+  border-bottom: 1px solid var(--border);
   position: sticky;
   top: 0;
-  background: $surface;
+  background: var(--bg-card);
   z-index: 1;
 }
 
@@ -63,11 +55,11 @@ $muted: #8b949e;
   gap: 0.625rem;
   font-size: 1rem;
   font-weight: 600;
-  color: $text;
+  color: var(--text);
 
   .pace-icon {
     font-size: 20px;
-    color: $primary;
+    color: var(--pp);
   }
 }
 
@@ -80,7 +72,7 @@ $muted: #8b949e;
   background: transparent;
   border: none;
   border-radius: 8px;
-  color: $muted;
+  color: var(--text-muted);
   cursor: pointer;
   transition: background 0.15s, color 0.15s;
 
@@ -89,8 +81,8 @@ $muted: #8b949e;
   }
 
   &:hover {
-    background: rgba($primary, 0.08);
-    color: $text;
+    background: var(--pp-hover);
+    color: var(--text);
   }
 }
 
@@ -107,20 +99,20 @@ $muted: #8b949e;
   h2 {
     font-size: 1.5rem;
     font-weight: 700;
-    color: $text;
+    color: var(--text);
     margin: 0 0 0.375rem;
   }
 
   p {
     font-size: 0.875rem;
-    color: $muted;
+    color: var(--text-muted);
     margin: 0;
     line-height: 1.5;
   }
 }
 
 .pace-highlight {
-  color: $primary;
+  color: var(--pp);
   font-weight: 500;
 }
 
@@ -135,7 +127,7 @@ $muted: #8b949e;
   font-size: 0.6875rem;
   font-weight: 600;
   letter-spacing: 0.08em;
-  color: $muted;
+  color: var(--text-muted);
 }
 
 .presets {
@@ -146,10 +138,10 @@ $muted: #8b949e;
 
 .preset-btn {
   padding: 0.5rem 1.125rem;
-  background: $surface2;
-  border: 1px solid $border;
+  background: var(--panel-soft);
+  border: 1px solid var(--border);
   border-radius: 8px;
-  color: $text;
+  color: var(--text);
   font-size: 0.875rem;
   font-weight: 600;
   font-family: inherit;
@@ -157,9 +149,9 @@ $muted: #8b949e;
   transition: background 0.15s, border-color 0.15s, color 0.15s;
 
   &:hover {
-    background: rgba($primary, 0.1);
-    border-color: rgba($primary, 0.4);
-    color: $primary;
+    background: var(--pp-hover);
+    border-color: var(--pp-active-border);
+    color: var(--pp);
   }
 }
 
@@ -175,8 +167,8 @@ $muted: #8b949e;
 }
 
 .field-card {
-  background: $surface2;
-  border: 1px solid $border;
+  background: var(--panel-soft);
+  border: 1px solid var(--border);
   border-radius: 12px;
   padding: 1rem 1.125rem;
   display: flex;
@@ -185,7 +177,7 @@ $muted: #8b949e;
   transition: border-color 0.15s;
 
   &:focus-within {
-    border-color: rgba($primary, 0.5);
+    border-color: var(--pp);
   }
 }
 
@@ -193,14 +185,14 @@ $muted: #8b949e;
   font-size: 0.6875rem;
   font-weight: 600;
   letter-spacing: 0.08em;
-  color: $muted;
+  color: var(--text-muted);
 }
 
 .field-input {
   background: transparent;
   border: none;
   outline: none;
-  color: $text;
+  color: var(--text);
   font-size: 1.5rem;
   font-weight: 700;
   font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
@@ -208,7 +200,7 @@ $muted: #8b949e;
   padding: 0;
 
   &::placeholder {
-    color: rgba($muted, 0.4);
+    color: var(--text-muted);
   }
 }
 
@@ -216,10 +208,10 @@ $muted: #8b949e;
 .reset-btn {
   width: 100%;
   padding: 0.75rem;
-  background: $surface2;
-  border: 1px solid $border;
+  background: var(--panel-soft);
+  border: 1px solid var(--border);
   border-radius: 10px;
-  color: $muted;
+  color: var(--text-muted);
   font-size: 0.875rem;
   font-weight: 500;
   font-family: inherit;
@@ -227,9 +219,9 @@ $muted: #8b949e;
   transition: background 0.15s, color 0.15s, border-color 0.15s;
 
   &:hover {
-    background: rgba($primary, 0.06);
-    color: $text;
-    border-color: rgba($primary, 0.25);
+    background: var(--pp-hover);
+    color: var(--text);
+    border-color: var(--pp-active-border);
   }
 }
 
@@ -239,14 +231,14 @@ $muted: #8b949e;
   flex-direction: column;
   gap: 0.75rem;
   padding-top: 0.25rem;
-  border-top: 1px solid $border;
+  border-top: 1px solid var(--border);
 }
 
 .splits-header {
   h3 {
     font-size: 0.9375rem;
     font-weight: 600;
-    color: $text;
+    color: var(--text);
     margin: 0;
   }
 }
@@ -262,8 +254,8 @@ $muted: #8b949e;
 }
 
 .split-card {
-  background: $surface2;
-  border: 1px solid $border;
+  background: var(--panel-soft);
+  border: 1px solid var(--border);
   border-radius: 10px;
   padding: 0.75rem 0.625rem;
   display: flex;
@@ -277,12 +269,12 @@ $muted: #8b949e;
   font-size: 0.6875rem;
   font-weight: 600;
   letter-spacing: 0.05em;
-  color: $muted;
+  color: var(--text-muted);
 }
 
 .split-time {
   font-size: 0.875rem;
   font-weight: 700;
-  color: $primary;
+  color: var(--pp);
   font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
 }

@@ -40,7 +40,7 @@ export class ActivityDetail implements OnInit {
 
   // Stream registry — defines each stream's display properties
   readonly streamDescriptors = [
-    { key: 'heartRate',        hasKey: 'hasHeartRate', label: 'HEART RATE', unit: 'bpm', color: '#b9f20d', axis: 'left'  as const, invert: false, dashed: false },
+    { key: 'heartRate',        hasKey: 'hasHeartRate', label: 'HEART RATE', unit: 'bpm', color: 'var(--pp)', axis: 'left'  as const, invert: false, dashed: false },
     { key: 'altitude',         hasKey: 'hasAltitude',  label: 'ELEVATION',  unit: 'm',   color: '#94a3b8', axis: 'left'  as const, invert: false, dashed: true  },
     { key: 'paceSecondsPerKm', hasKey: 'hasPace',      label: 'PACE',       unit: '/km', color: '#22d3ee', axis: 'left'  as const, invert: true,  dashed: false },
     { key: 'cadence',          hasKey: 'hasCadence',   label: 'CADENCE',    unit: 'spm', color: '#a78bfa', axis: 'left'  as const, invert: false, dashed: false },

@@ -16,7 +16,7 @@
 }
 
 .btn-primary {
-  background: var(--color-primary, #1976d2);
+  background: var(--pp);
   color: white;
   border: none;
   padding: 0.5rem 1rem;
@@ -34,7 +34,7 @@
   th, td {
     padding: 0.75rem 1rem;
     text-align: left;
-    border-bottom: 1px solid var(--color-border, rgba(255,255,255,0.1));
+    border-bottom: 1px solid var(--border);
     font-size: 0.875rem;
   }
 
@@ -46,7 +46,7 @@
   padding: 0.2rem 0.6rem;
   border-radius: 12px;
   font-size: 0.75rem;
-  background: rgba(255,255,255,0.1);
+  background: var(--border);
 
   &--published {
     background: rgba(76, 175, 80, 0.2);
@@ -68,7 +68,7 @@
   opacity: 0.7;
   color: inherit;
 
-  &:hover { opacity: 1; background: rgba(255,255,255,0.08); }
+  &:hover { opacity: 1; background: var(--border); }
 
   &--publish { color: #4caf50; }
   &--danger { color: #f44336; }

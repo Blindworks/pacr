@@ -97,12 +97,12 @@
             <svg viewBox="0 0 400 150" preserveAspectRatio="none">
               <defs>
                 <linearGradient id="trend-fill" x1="0%" x2="0%" y1="0%" y2="100%">
-                  <stop offset="0%" stop-color="#b9f20d" stop-opacity="0.25" />
-                  <stop offset="100%" stop-color="#b9f20d" stop-opacity="0" />
+                  <stop offset="0%" style="stop-color: var(--pp)" stop-opacity="0.25" />
+                  <stop offset="100%" style="stop-color: var(--pp)" stop-opacity="0" />
                 </linearGradient>
               </defs>
               <path [attr.d]="fitnessTrendArea" fill="url(#trend-fill)"></path>
-              <path [attr.d]="fitnessTrendPath" fill="none" stroke="#b9f20d" stroke-width="4" stroke-linecap="round"></path>
+              <path [attr.d]="fitnessTrendPath" fill="none" style="stroke: var(--pp)" stroke-width="4" stroke-linecap="round"></path>
               @if (trendMarkerVisible) {
                 <g class="trend-marker">
                   <line class="trend-marker__line"

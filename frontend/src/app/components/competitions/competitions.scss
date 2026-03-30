@@ -1,8 +1,3 @@
-$primary: #b9f20d;
-$bg-dark: #0d1117;
-$card-bg: #161b22;
-$text-muted: #8b949e;
-
 .competitions-page {
   max-width: 1024px;
   margin: 0 auto;
@@ -17,13 +12,13 @@ $text-muted: #8b949e;
     font-size: 2.25rem;
     font-weight: 900;
     letter-spacing: -0.02em;
-    color: #f0f6fc;
+    color: var(--text);
     margin: 0 0 0.5rem;
   }
 
   .page-subtitle {
     font-size: 1rem;
-    color: $text-muted;
+    color: var(--text-muted);
     margin: 0;
   }
 }
@@ -34,7 +29,7 @@ $text-muted: #8b949e;
   align-items: center;
   gap: 12px;
   padding: 60px 20px;
-  color: $text-muted;
+  color: var(--text-muted);
   text-align: center;
 
   &--error { color: #e74c3c; .state-icon { color: #e74c3c; } }
@@ -57,17 +52,17 @@ $text-muted: #8b949e;
     cursor: pointer;
     font-size: 0.875rem;
     font-weight: 600;
-    background: #21262d;
-    color: #c9d1d9;
+    background: var(--panel-soft);
+    color: var(--text);
     transition: background 0.15s;
 
     &:hover {
-      background: #30363d;
+      background: var(--border);
     }
 
     &.active {
-      background: $primary;
-      color: $bg-dark;
+      background: var(--pp);
+      color: var(--bg);
     }
 
     &--past {
@@ -75,23 +70,23 @@ $text-muted: #8b949e;
       align-items: center;
       gap: 0.35rem;
       margin-left: auto;
-      color: $text-muted;
+      color: var(--text-muted);
       background: transparent;
-      border: 1px solid #30363d;
+      border: 1px solid var(--border);
 
       .material-symbols-outlined {
         font-size: 1rem;
       }
 
       &:hover {
-        background: #21262d;
-        color: #c9d1d9;
+        background: var(--panel-soft);
+        color: var(--text);
       }
 
       &.active {
-        background: #21262d;
-        color: #c9d1d9;
-        border-color: $text-muted;
+        background: var(--panel-soft);
+        color: var(--text);
+        border-color: var(--text-muted);
       }
     }
   }
@@ -106,14 +101,14 @@ $text-muted: #8b949e;
 .race-card {
   position: relative;
   border-radius: 0.75rem;
-  background: $card-bg;
-  border: 1px solid #30363d;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
   overflow: hidden;
   transition: border-color 0.2s, box-shadow 0.2s;
   cursor: pointer;
 
   &:hover {
-    border-color: rgba($primary, 0.5);
+    border-color: var(--pp-active-border);
 
     .race-image {
       transform: scale(1.03);
@@ -121,8 +116,8 @@ $text-muted: #8b949e;
   }
 
   &--selected {
-    border: 2px solid $primary;
-    box-shadow: 0 0 24px rgba($primary, 0.12);
+    border: 2px solid var(--pp);
+    box-shadow: 0 0 24px var(--pp-dim);
   }
 
   &__check-badge {
@@ -130,8 +125,8 @@ $text-muted: #8b949e;
     top: 0.75rem;
     right: 0.75rem;
     z-index: 10;
-    background: $primary;
-    color: $bg-dark;
+    background: var(--pp);
+    color: var(--bg);
     border-radius: 9999px;
     width: 2rem;
     height: 2rem;
@@ -181,19 +176,19 @@ $text-muted: #8b949e;
     letter-spacing: 0.05em;
 
     &.tag-major {
-      background: $primary;
-      color: $bg-dark;
+      background: var(--pp);
+      color: var(--bg);
     }
 
     &.tag-city {
-      background: #21262d;
-      color: #8b949e;
+      background: var(--panel-soft);
+      color: var(--text-muted);
     }
   }
 
   .race-date {
     font-size: 0.75rem;
-    color: $text-muted;
+    color: var(--text-muted);
     text-transform: uppercase;
     letter-spacing: 0.08em;
     font-weight: 500;
@@ -202,7 +197,7 @@ $text-muted: #8b949e;
   .race-name {
     font-size: 1.5rem;
     font-weight: 700;
-    color: #f0f6fc;
+    color: var(--text);
     margin: 0;
   }
 
@@ -213,13 +208,13 @@ $text-muted: #8b949e;
   .race-distance {
     font-size: 1.25rem;
     font-weight: 900;
-    color: $primary;
+    color: var(--pp);
     margin: 0;
   }
 
   .race-location {
     font-size: 0.75rem;
-    color: $text-muted;
+    color: var(--text-muted);
     margin: 0;
     font-weight: 500;
   }
@@ -238,9 +233,9 @@ $text-muted: #8b949e;
     gap: 0.375rem;
     padding: 0.5rem 0.75rem;
     border-radius: 0.5rem;
-    border: 1px solid #30363d;
+    border: 1px solid var(--border);
     background: transparent;
-    color: $text-muted;
+    color: var(--text-muted);
     font-size: 0.8rem;
     font-weight: 600;
     cursor: pointer;
@@ -252,14 +247,14 @@ $text-muted: #8b949e;
     }
 
     &:hover {
-      border-color: $primary;
-      color: $primary;
+      border-color: var(--pp);
+      color: var(--pp);
     }
 
     &--active {
-      border-color: $primary;
+      border-color: var(--pp);
       background: rgba(185, 242, 13, 0.1);
-      color: $primary;
+      color: var(--pp);
 
       &:hover {
         background: rgba(185, 242, 13, 0.05);
@@ -269,8 +264,8 @@ $text-muted: #8b949e;
 
   .btn-select {
     flex: 1;
-    background: $primary;
-    color: $bg-dark;
+    background: var(--pp);
+    color: var(--bg);
     border: none;
     border-radius: 0.5rem;
     padding: 0.75rem;
@@ -293,8 +288,8 @@ $text-muted: #8b949e;
     }
 
     &--selected {
-      background: #21262d;
-      color: $primary;
+      background: var(--panel-soft);
+      color: var(--pp);
       cursor: default;
 
       &:hover {
@@ -306,8 +301,8 @@ $text-muted: #8b949e;
   .btn-info {
     padding: 0.75rem 1rem;
     border-radius: 0.5rem;
-    background: #21262d;
-    color: #c9d1d9;
+    background: var(--panel-soft);
+    color: var(--text);
     border: none;
     cursor: pointer;
     display: flex;
@@ -315,7 +310,7 @@ $text-muted: #8b949e;
     transition: background 0.15s;
 
     &:hover {
-      background: #30363d;
+      background: var(--border);
     }
 
     .material-symbols-outlined {
@@ -329,14 +324,14 @@ $text-muted: #8b949e;
   .section-title {
     font-size: 1.5rem;
     font-weight: 900;
-    color: #f0f6fc;
+    color: var(--text);
     display: flex;
     align-items: center;
     gap: 0.75rem;
     margin: 0 0 1.5rem;
 
     .material-symbols-outlined {
-      color: $primary;
+      color: var(--pp);
     }
   }
 }
@@ -350,24 +345,24 @@ $text-muted: #8b949e;
 .strategy-card {
   padding: 1.5rem;
   border-radius: 0.75rem;
-  background: rgba(#21262d, 0.5);
+  background: var(--panel-soft);
   border: 2px solid transparent;
   cursor: pointer;
   transition: border-color 0.2s;
 
   &:hover {
-    border-color: rgba($primary, 0.3);
+    border-color: var(--pp-active-border);
   }
 
   &.active {
-    background: rgba($primary, 0.1);
-    border-color: $primary;
-    box-shadow: 0 0 20px rgba($primary, 0.05);
+    background: var(--pp-active-bg);
+    border-color: var(--pp);
+    box-shadow: 0 0 20px var(--pp-hover);
   }
 
   .strategy-icon {
     font-size: 1.75rem;
-    color: $primary;
+    color: var(--pp);
     display: block;
     margin-bottom: 1rem;
   }
@@ -375,13 +370,13 @@ $text-muted: #8b949e;
   .strategy-name {
     font-size: 1.125rem;
     font-weight: 700;
-    color: #f0f6fc;
+    color: var(--text);
     margin: 0 0 0.5rem;
   }
 
   .strategy-desc {
     font-size: 0.75rem;
-    color: $text-muted;
+    color: var(--text-muted);
     line-height: 1.5;
     margin: 0 0 1rem;
   }
@@ -391,37 +386,37 @@ $text-muted: #8b949e;
     align-items: center;
     justify-content: space-between;
     padding-top: 1rem;
-    border-top: 1px solid #30363d;
+    border-top: 1px solid var(--border);
 
     .active & {
-      border-color: rgba($primary, 0.2);
+      border-color: var(--pp-active-border);
     }
   }
 
   .strategy-sessions {
     font-size: 0.625rem;
     font-weight: 700;
-    color: $text-muted;
+    color: var(--text-muted);
     text-transform: uppercase;
     letter-spacing: 0.05em;
 
     .active & {
-      color: $primary;
+      color: var(--pp);
     }
   }
 
   .strategy-arrow {
     font-size: 1rem;
-    color: #30363d;
+    color: var(--border);
     transition: color 0.15s;
 
     .active & {
-      color: $primary;
+      color: var(--pp);
     }
   }
 
   &:not(.active):hover .strategy-arrow {
-    color: $primary;
+    color: var(--pp);
   }
 }
 
@@ -438,8 +433,8 @@ $text-muted: #8b949e;
   align-items: center;
   gap: 1rem;
   padding: 0.875rem 2rem;
-  border-bottom: 1px solid #21262d;
-  background: rgba(#0d1117, 0.6);
+  border-bottom: 1px solid var(--panel-soft);
+  background: var(--overlay);
   backdrop-filter: blur(8px);
   position: sticky;
   top: 0;
@@ -453,14 +448,14 @@ $text-muted: #8b949e;
     height: 2.25rem;
     border-radius: 9999px;
     border: none;
-    background: #21262d;
-    color: #c9d1d9;
+    background: var(--panel-soft);
+    color: var(--text);
     cursor: pointer;
     transition: background 0.15s;
     flex-shrink: 0;
 
     &:hover {
-      background: #30363d;
+      background: var(--border);
     }
 
     .material-symbols-outlined {
@@ -477,7 +472,7 @@ $text-muted: #8b949e;
   .plan-subheader-label {
     font-size: 0.6875rem;
     font-weight: 700;
-    color: $primary;
+    color: var(--pp);
     text-transform: uppercase;
     letter-spacing: 0.1em;
   }
@@ -485,13 +480,13 @@ $text-muted: #8b949e;
   .plan-subheader-divider {
     width: 1px;
     height: 1rem;
-    background: #30363d;
+    background: var(--border);
   }
 
   .plan-subheader-name {
     font-size: 0.875rem;
     font-weight: 500;
-    color: #c9d1d9;
+    color: var(--text);
   }
 }
 
@@ -510,13 +505,13 @@ $text-muted: #8b949e;
     font-size: 2.25rem;
     font-weight: 900;
     letter-spacing: -0.02em;
-    color: #f0f6fc;
+    color: var(--text);
     margin: 0 0 0.5rem;
   }
 
   .plan-main-subtitle {
     font-size: 1rem;
-    color: $text-muted;
+    color: var(--text-muted);
     max-width: 600px;
     line-height: 1.6;
     margin: 0;
@@ -524,7 +519,7 @@ $text-muted: #8b949e;
 
   .plan-main-hint {
     margin: 0.875rem 0 0;
-    color: $primary;
+    color: var(--pp);
     font-size: 0.875rem;
     font-weight: 600;
   }
@@ -537,11 +532,11 @@ $text-muted: #8b949e;
     gap: 0.5rem;
     font-size: 1.125rem;
     font-weight: 700;
-    color: #f0f6fc;
+    color: var(--text);
     margin: 0 0 1rem;
 
     .material-symbols-outlined {
-      color: $primary;
+      color: var(--pp);
       font-size: 1.25rem;
     }
   }
@@ -555,25 +550,25 @@ $text-muted: #8b949e;
   .time-btn {
     padding: 0.625rem 1.5rem;
     border-radius: 0.75rem;
-    border: 2px solid #30363d;
+    border: 2px solid var(--border);
     background: transparent;
-    color: #8b949e;
+    color: var(--text-muted);
     font-size: 0.875rem;
     font-weight: 600;
     cursor: pointer;
     transition: border-color 0.15s, color 0.15s, background 0.15s;
 
     &:hover {
-      border-color: rgba($primary, 0.5);
-      color: #c9d1d9;
+      border-color: var(--pp-active-border);
+      color: var(--text);
     }
 
     &.active {
-      border-color: $primary;
-      background: rgba($primary, 0.1);
-      color: $primary;
+      border-color: var(--pp);
+      background: var(--pp-active-bg);
+      color: var(--pp);
       font-weight: 700;
-      box-shadow: 0 0 16px rgba($primary, 0.08);
+      box-shadow: 0 0 16px var(--pp-hover);
     }
   }
 }
@@ -586,18 +581,18 @@ $text-muted: #8b949e;
 
 .plan-card {
   position: relative;
-  background: $card-bg;
+  background: var(--bg-card);
   border-radius: 0.875rem;
-  border: 1px solid #30363d;
+  border: 1px solid var(--border);
   padding: 1.75rem;
   overflow: hidden;
   transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
   cursor: pointer;
 
   &:hover {
-    border-color: rgba($primary, 0.4);
+    border-color: var(--pp-active-border);
     transform: translateY(-3px);
-    box-shadow: 0 12px 32px rgba($primary, 0.05);
+    box-shadow: 0 12px 32px var(--pp-hover);
 
     .plan-card__glow {
       opacity: 1;
@@ -605,16 +600,16 @@ $text-muted: #8b949e;
   }
 
   &--recommended {
-    border-color: rgba($primary, 0.35);
+    border-color: var(--pp-active-border);
 
     &:hover {
-      border-color: $primary;
+      border-color: var(--pp);
     }
   }
 
   &--selected {
-    border-color: $primary;
-    box-shadow: 0 0 0 1px rgba($primary, 0.35), 0 14px 36px rgba($primary, 0.09);
+    border-color: var(--pp);
+    box-shadow: 0 0 0 1px var(--pp-active-border), 0 14px 36px var(--pp-hover);
 
     .plan-card__glow {
       opacity: 1;
@@ -625,8 +620,8 @@ $text-muted: #8b949e;
     position: absolute;
     top: 0;
     left: 0;
-    background: $primary;
-    color: $bg-dark;
+    background: var(--pp);
+    color: var(--bg);
     font-size: 0.625rem;
     font-weight: 900;
     letter-spacing: 0.05em;
@@ -644,8 +639,8 @@ $text-muted: #8b949e;
     gap: 0.375rem;
     padding: 0.35rem 0.7rem;
     border-radius: 9999px;
-    background: rgba($primary, 0.18);
-    color: $primary;
+    background: var(--pp-dim);
+    color: var(--pp);
     font-size: 0.6875rem;
     font-weight: 800;
     letter-spacing: 0.04em;
@@ -663,7 +658,7 @@ $text-muted: #8b949e;
     right: -3rem;
     width: 8rem;
     height: 8rem;
-    background: rgba($primary, 0.06);
+    background: var(--pp-hover);
     border-radius: 9999px;
     filter: blur(2rem);
     opacity: 0;
@@ -682,12 +677,12 @@ $text-muted: #8b949e;
   &__icon {
     width: 3rem;
     height: 3rem;
-    background: rgba($primary, 0.15);
+    background: var(--pp-dim);
     border-radius: 0.625rem;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: $primary;
+    color: var(--pp);
 
     .material-symbols-outlined {
       font-size: 1.375rem;
@@ -703,37 +698,37 @@ $text-muted: #8b949e;
     border-radius: 9999px;
 
     &.level-advanced {
-      background: #21262d;
-      color: $text-muted;
+      background: var(--panel-soft);
+      color: var(--text-muted);
     }
 
     &.level-intermediate {
-      background: rgba($primary, 0.15);
-      color: $primary;
+      background: var(--pp-dim);
+      color: var(--pp);
     }
 
     &.level-balanced {
-      background: #21262d;
-      color: $text-muted;
+      background: var(--panel-soft);
+      color: var(--text-muted);
     }
 
     &.level-beginner {
-      background: #21262d;
-      color: $text-muted;
+      background: var(--panel-soft);
+      color: var(--text-muted);
     }
   }
 
   &__title {
     font-size: 1.25rem;
     font-weight: 800;
-    color: #f0f6fc;
+    color: var(--text);
     margin: 0 0 0.375rem;
     line-height: 1.3;
   }
 
   &__desc {
     font-size: 0.8125rem;
-    color: $text-muted;
+    color: var(--text-muted);
     margin: 0 0 1.5rem;
     line-height: 1.5;
   }
@@ -748,8 +743,8 @@ $text-muted: #8b949e;
   &__select-btn {
     width: 100%;
     padding: 0.875rem;
-    background: $primary;
-    color: $bg-dark;
+    background: var(--pp);
+    color: var(--bg);
     border: none;
     border-radius: 0.5rem;
     font-size: 0.875rem;
@@ -767,8 +762,8 @@ $text-muted: #8b949e;
     }
 
     &--selected {
-      background: #21262d;
-      color: $primary;
+      background: var(--panel-soft);
+      color: var(--pp);
     }
   }
 }
@@ -779,7 +774,7 @@ $text-muted: #8b949e;
   gap: 0.75rem;
 
   &__icon {
-    color: $primary;
+    color: var(--pp);
     font-size: 1rem;
     margin-top: 0.125rem;
     flex-shrink: 0;
@@ -788,7 +783,7 @@ $text-muted: #8b949e;
   &__label {
     font-size: 0.625rem;
     font-weight: 700;
-    color: $text-muted;
+    color: var(--text-muted);
     text-transform: uppercase;
     letter-spacing: 0.08em;
     margin: 0 0 0.125rem;
@@ -797,7 +792,7 @@ $text-muted: #8b949e;
   &__value {
     font-size: 0.875rem;
     font-weight: 600;
-    color: #c9d1d9;
+    color: var(--text);
     margin: 0;
   }
 }
@@ -826,7 +821,7 @@ $text-muted: #8b949e;
   &__overlay {
     position: absolute;
     inset: 0;
-    background: linear-gradient(to top, #0d1117 0%, rgba(#0d1117, 0.35) 60%, transparent 100%);
+    background: linear-gradient(to top, var(--bg) 0%, color-mix(in srgb, var(--bg) 35%, transparent) 60%, transparent 100%);
   }
 
   &__content {
@@ -837,8 +832,8 @@ $text-muted: #8b949e;
 
   &__badge {
     display: inline-block;
-    background: rgba($primary, 0.92);
-    color: $bg-dark;
+    background: var(--pp);
+    color: var(--bg);
     font-size: 0.625rem;
     font-weight: 900;
     text-transform: uppercase;
@@ -851,7 +846,7 @@ $text-muted: #8b949e;
   &__title {
     font-size: 3rem;
     font-weight: 900;
-    color: #f0f6fc;
+    color: var(--text);
     letter-spacing: -0.03em;
     line-height: 1;
     margin: 0 0 0.5rem;
@@ -859,7 +854,7 @@ $text-muted: #8b949e;
 
   &__subtitle {
     font-size: 1.125rem;
-    color: #c9d1d9;
+    color: var(--text);
     font-weight: 500;
     margin: 0;
   }
@@ -880,15 +875,15 @@ $text-muted: #8b949e;
 }
 
 .confirmation-card {
-  background: $card-bg;
-  border: 1px solid #30363d;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
   border-radius: 1rem;
   padding: 1.75rem 2rem;
 
   &__heading {
     font-size: 0.625rem;
     font-weight: 900;
-    color: $primary;
+    color: var(--pp);
     text-transform: uppercase;
     letter-spacing: 0.12em;
     margin: 0 0 1.5rem;
@@ -914,12 +909,12 @@ $text-muted: #8b949e;
 .overview-icon {
   width: 2.75rem;
   height: 2.75rem;
-  background: #21262d;
+  background: var(--panel-soft);
   border-radius: 0.75rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: $primary;
+  color: var(--pp);
   flex-shrink: 0;
 
   .material-symbols-outlined {
@@ -929,7 +924,7 @@ $text-muted: #8b949e;
 
 .overview-label {
   font-size: 0.75rem;
-  color: $text-muted;
+  color: var(--text-muted);
   margin: 0 0 0.125rem;
   font-weight: 500;
 }
@@ -937,7 +932,7 @@ $text-muted: #8b949e;
 .overview-value {
   font-size: 1.125rem;
   font-weight: 700;
-  color: #f0f6fc;
+  color: var(--text);
   margin: 0;
 }
 
@@ -950,7 +945,7 @@ $text-muted: #8b949e;
 
 .milestone-week {
   font-size: 0.75rem;
-  color: $text-muted;
+  color: var(--text-muted);
   font-weight: 500;
 }
 
@@ -958,8 +953,8 @@ $text-muted: #8b949e;
   display: flex;
   align-items: center;
   gap: 1.25rem;
-  background: rgba(#0d1117, 0.5);
-  border: 1px solid #21262d;
+  background: color-mix(in srgb, var(--bg) 50%, transparent);
+  border: 1px solid var(--panel-soft);
   border-radius: 0.875rem;
   padding: 1.25rem;
 }
@@ -967,12 +962,12 @@ $text-muted: #8b949e;
 .milestone-icon {
   width: 3.5rem;
   height: 3.5rem;
-  background: rgba($primary, 0.15);
+  background: var(--pp-dim);
   border-radius: 9999px;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: $primary;
+  color: var(--pp);
   flex-shrink: 0;
 
   .material-symbols-outlined {
@@ -988,13 +983,13 @@ $text-muted: #8b949e;
 .milestone-title {
   font-size: 1.0625rem;
   font-weight: 700;
-  color: #f0f6fc;
+  color: var(--text);
   margin: 0 0 0.25rem;
 }
 
 .milestone-desc {
   font-size: 0.8125rem;
-  color: $text-muted;
+  color: var(--text-muted);
   margin: 0;
   line-height: 1.5;
 }
@@ -1012,14 +1007,14 @@ $text-muted: #8b949e;
   &__value {
     font-size: 1.125rem;
     font-weight: 900;
-    color: $primary;
+    color: var(--pp);
     margin: 0 0 0.125rem;
   }
 
   &__label {
     font-size: 0.5625rem;
     font-weight: 900;
-    color: $text-muted;
+    color: var(--text-muted);
     text-transform: uppercase;
     letter-spacing: 0.08em;
     margin: 0;
@@ -1029,7 +1024,7 @@ $text-muted: #8b949e;
 .milestone-stat-divider {
   width: 1px;
   height: 2.5rem;
-  background: #30363d;
+  background: var(--border);
 }
 
 .commitment-card {
@@ -1049,7 +1044,7 @@ $text-muted: #8b949e;
   &__value {
     font-size: 2.5rem;
     font-weight: 900;
-    color: #f0f6fc;
+    color: var(--text);
     line-height: 1;
     margin: 0 0 0.25rem;
   }
@@ -1057,7 +1052,7 @@ $text-muted: #8b949e;
   &__label {
     font-size: 0.6875rem;
     font-weight: 700;
-    color: $text-muted;
+    color: var(--text-muted);
     text-transform: uppercase;
     letter-spacing: 0.1em;
     margin: 0;
@@ -1066,12 +1061,12 @@ $text-muted: #8b949e;
 
 .commitment-divider {
   height: 1px;
-  background: #21262d;
+  background: var(--panel-soft);
   margin: 0 1rem;
 }
 
 .action-card {
-  background: $primary;
+  background: var(--pp);
   border-radius: 1rem;
   padding: 1.75rem;
   display: flex;
@@ -1082,14 +1077,14 @@ $text-muted: #8b949e;
   &__title {
     font-size: 1.0625rem;
     font-weight: 700;
-    color: $bg-dark;
+    color: var(--bg);
     margin: 0;
   }
 
   &__start-btn {
     width: 100%;
-    background: $bg-dark;
-    color: $primary;
+    background: var(--bg);
+    color: var(--pp);
     border: none;
     border-radius: 0.75rem;
     padding: 1rem;
@@ -1098,7 +1093,7 @@ $text-muted: #8b949e;
     text-transform: uppercase;
     letter-spacing: 0.1em;
     cursor: pointer;
-    box-shadow: 0 4px 16px rgba($bg-dark, 0.3);
+    box-shadow: 0 4px 16px color-mix(in srgb, var(--bg) 30%, transparent);
     transition: transform 0.15s;
 
     &:hover {
@@ -1110,7 +1105,7 @@ $text-muted: #8b949e;
     width: 100%;
     background: transparent;
     border: none;
-    color: rgba($bg-dark, 0.75);
+    color: color-mix(in srgb, var(--bg) 75%, transparent);
     font-size: 0.875rem;
     font-weight: 700;
     cursor: pointer;
@@ -1125,7 +1120,7 @@ $text-muted: #8b949e;
     width: 100%;
     background: transparent;
     border: none;
-    color: rgba($bg-dark, 0.55);
+    color: color-mix(in srgb, var(--bg) 55%, transparent);
     font-size: 0.75rem;
     font-weight: 600;
     cursor: pointer;
@@ -1143,7 +1138,7 @@ $text-muted: #8b949e;
   position: fixed;
   inset: 0;
   z-index: 1000;
-  background: rgba(13, 17, 23, 0.7);
+  background: var(--overlay);
   backdrop-filter: blur(6px);
   display: flex;
   align-items: center;
@@ -1153,8 +1148,8 @@ $text-muted: #8b949e;
 
 .confirm-dialog {
   width: min(100%, 28rem);
-  background: $card-bg;
-  border: 1px solid rgba($primary, 0.25);
+  background: var(--bg-card);
+  border: 1px solid var(--pp-active-border);
   border-radius: 1rem;
   padding: 1.75rem;
   box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
@@ -1163,8 +1158,8 @@ $text-muted: #8b949e;
     width: 3rem;
     height: 3rem;
     border-radius: 9999px;
-    background: rgba($primary, 0.14);
-    color: $primary;
+    background: var(--pp-dim);
+    color: var(--pp);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1177,14 +1172,14 @@ $text-muted: #8b949e;
 
   &__title {
     margin: 0 0 0.75rem;
-    color: #f0f6fc;
+    color: var(--text);
     font-size: 1.25rem;
     font-weight: 800;
   }
 
   &__text {
     margin: 0;
-    color: $text-muted;
+    color: var(--text-muted);
     line-height: 1.6;
     font-size: 0.9375rem;
   }
@@ -1216,13 +1211,13 @@ $text-muted: #8b949e;
     }
 
     &--secondary {
-      background: #21262d;
-      color: #c9d1d9;
+      background: var(--panel-soft);
+      color: var(--text);
     }
 
     &--primary {
-      background: $primary;
-      color: $bg-dark;
+      background: var(--pp);
+      color: var(--bg);
     }
   }
 }
@@ -1233,7 +1228,7 @@ $text-muted: #8b949e;
   position: fixed;
   inset: 0;
   z-index: 1000;
-  background: rgba(13, 17, 23, 0.7);
+  background: var(--overlay);
   backdrop-filter: blur(6px);
   display: flex;
   align-items: center;
@@ -1243,8 +1238,8 @@ $text-muted: #8b949e;
 
 .info-dialog {
   width: min(100%, 30rem);
-  background: $card-bg;
-  border: 1px solid #30363d;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
   border-radius: 1rem;
   overflow: hidden;
   box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
@@ -1264,8 +1259,8 @@ $text-muted: #8b949e;
     height: 2rem;
     border-radius: 9999px;
     border: none;
-    background: rgba(13, 17, 23, 0.6);
-    color: #f0f6fc;
+    background: var(--overlay);
+    color: var(--text);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1274,7 +1269,7 @@ $text-muted: #8b949e;
     transition: background 0.15s;
 
     &:hover {
-      background: rgba(13, 17, 23, 0.85);
+      background: color-mix(in srgb, var(--bg) 85%, transparent);
     }
 
     .material-symbols-outlined {
@@ -1292,7 +1287,7 @@ $text-muted: #8b949e;
   &__title {
     font-size: 1.5rem;
     font-weight: 800;
-    color: #f0f6fc;
+    color: var(--text);
     margin: 0;
     line-height: 1.2;
   }
@@ -1305,7 +1300,7 @@ $text-muted: #8b949e;
 
   &__desc {
     font-size: 0.9375rem;
-    color: $text-muted;
+    color: var(--text-muted);
     line-height: 1.6;
     margin: 0;
   }
@@ -1314,11 +1309,11 @@ $text-muted: #8b949e;
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    color: $primary;
+    color: var(--pp);
     font-size: 0.875rem;
     font-weight: 600;
     padding-top: 0.5rem;
-    border-top: 1px solid #21262d;
+    border-top: 1px solid var(--panel-soft);
 
     .material-symbols-outlined {
       font-size: 1rem;
@@ -1330,12 +1325,12 @@ $text-muted: #8b949e;
   display: flex;
   align-items: center;
   gap: 0.625rem;
-  color: $text-muted;
+  color: var(--text-muted);
   font-size: 0.875rem;
 
   .material-symbols-outlined {
     font-size: 1rem;
-    color: $text-muted;
+    color: var(--text-muted);
     flex-shrink: 0;
   }
 }
@@ -1343,7 +1338,7 @@ $text-muted: #8b949e;
 .cta-banner {
   padding: 2rem;
   border-radius: 1rem;
-  background: linear-gradient(135deg, $primary, #a8e00c);
+  background: linear-gradient(135deg, var(--pp), #a8e00c);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -1351,7 +1346,7 @@ $text-muted: #8b949e;
   flex-wrap: wrap;
 
   .cta-text {
-    color: $bg-dark;
+    color: var(--bg);
   }
 
   .cta-title {
@@ -1370,8 +1365,8 @@ $text-muted: #8b949e;
   }
 
   .cta-btn {
-    background: $bg-dark;
-    color: $primary;
+    background: var(--bg);
+    color: var(--pp);
     border: none;
     padding: 1rem 2rem;
     border-radius: 0.75rem;
