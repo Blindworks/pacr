@@ -1,3 +1,6 @@
+@use 'variables' as v;
+@use 'mixins' as m;
+
 .td-page {
   min-height: 100vh;
   background: var(--bg);
@@ -55,9 +58,7 @@
 }
 
 .td-back-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  @include m.flex-center;
   width: 40px;
   height: 40px;
   border-radius: 50%;
@@ -73,9 +74,7 @@
 }
 
 .td-icon-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  @include m.flex-center;
   width: 40px;
   height: 40px;
   border-radius: 10px;
@@ -144,16 +143,13 @@
 }
 
 .td-difficulty-badge {
-  display: inline-block;
+  @include m.badge;
   background: var(--pp);
   color: var(--btn-active-text);
   font-size: 10px;
   font-weight: 900;
-  text-transform: uppercase;
   letter-spacing: 0.12em;
   padding: 4px 10px;
-  border-radius: 4px;
-  width: fit-content;
 }
 
 .td-hero__title {
@@ -238,7 +234,7 @@
   align-items: center;
   gap: 14px;
   padding: 14px 16px;
-  border-radius: 12px;
+  border-radius: v.$radius-lg;
   border-left: 4px solid var(--pp-active-border);
   background: var(--panel-soft);
 
@@ -270,9 +266,7 @@
   }
 
   &__icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    @include m.flex-center;
     width: 40px;
     height: 40px;
     border-radius: 10px;
@@ -382,12 +376,10 @@
 
   &__secondary {
     flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    @include m.flex-center;
     gap: 8px;
     height: 52px;
-    border-radius: 12px;
+    border-radius: v.$radius-lg;
     background: rgba(255, 255, 255, 0.08);
     border: 1px solid var(--border);
     color: var(--text);
@@ -403,12 +395,10 @@
 
   &__primary {
     flex: 2;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    @include m.flex-center;
     gap: 8px;
     height: 52px;
-    border-radius: 12px;
+    border-radius: v.$radius-lg;
     background: var(--pp);
     border: none;
     color: var(--btn-active-text);
@@ -428,26 +418,22 @@
 
 // ── Not Found ─────────────────────────────────────────────────────
 .td-not-found {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
+  @include m.state-display;
   min-height: 60vh;
-  color: var(--text-muted);
+  justify-content: center;
 
   .material-symbols-outlined { font-size: 48px; }
   p { margin: 0; font-size: 15px; }
 }
 
 // ── Responsive ────────────────────────────────────────────────────
-@media (max-width: 700px) {
+@include m.respond-to(700px) {
   .td-hero { aspect-ratio: 16 / 9; }
   .td-stats-grid { grid-template-columns: repeat(2, 1fr); }
   .td-tips__grid { grid-template-columns: 1fr; }
 }
 
-@media (max-width: 480px) {
+@include m.respond-to(v.$bp-xs) {
   .td-main { padding: 16px 16px 120px; }
   .td-header { padding: 14px 16px; }
   .td-cta-bar { padding: 16px; }

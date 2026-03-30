@@ -1,0 +1,27 @@
+// ── Breakpoints ──
+$bp-xl: 1200px;
+$bp-lg: 900px;
+$bp-md: 768px;
+$bp-sm: 640px;
+$bp-xs: 480px;
+
+// ── Border Radius ──
+$radius-xs: 4px;
+$radius-sm: 6px;
+$radius-md: 8px;
+$radius-lg: 12px;
+$radius-xl: 16px;
+$radius-2xl: 20px;
+$radius-pill: 999px;
+
+// ── Transitions ──
+$transition-fast: 0.15s;
+$transition-normal: 0.2s;
+$transition-slow: 0.3s;
+
+// ── Z-Index Scale ──
+$z-sticky: 10;
+$z-dropdown: 20;
+$z-modal: 50;
+$z-overlay: 100;
+$z-toast: 200;

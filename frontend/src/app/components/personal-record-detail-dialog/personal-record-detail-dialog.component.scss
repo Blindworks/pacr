@@ -1,3 +1,6 @@
+@use 'mixins' as m;
+@use 'variables' as v;
+
 $success: #3fb950;
 
 /* ── Dialog backdrop & container ── */
@@ -5,7 +8,7 @@ $success: #3fb950;
   margin: auto;
   padding: 0;
   border: 1px solid var(--border);
-  border-radius: 16px;
+  border-radius: v.$radius-xl;
   background: var(--bg-card);
   color: var(--text);
   width: min(640px, 96vw);
@@ -72,18 +75,8 @@ $success: #3fb950;
 }
 
 .prd-close {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  background: transparent;
-  border: none;
-  border-radius: 8px;
-  color: var(--text-muted);
-  cursor: pointer;
+  @include m.btn-icon;
   flex-shrink: 0;
-  transition: background 0.15s, color 0.15s;
 
   .material-symbols-outlined {
     font-size: 20px;
@@ -117,7 +110,7 @@ $success: #3fb950;
   font-weight: 500;
   font-family: inherit;
   cursor: pointer;
-  transition: color 0.15s, border-color 0.15s;
+  transition: color v.$transition-fast, border-color v.$transition-fast;
   margin-bottom: -1px;
 
   .material-symbols-outlined {
@@ -143,16 +136,7 @@ $success: #3fb950;
   flex-direction: column;
   gap: 1.25rem;
 
-  &::-webkit-scrollbar {
-    width: 4px;
-  }
-  &::-webkit-scrollbar-track {
-    background: transparent;
-  }
-  &::-webkit-scrollbar-thumb {
-    background: var(--pp-active-border);
-    border-radius: 2px;
-  }
+  @include m.custom-scrollbar(4px);
 }
 
 /* ── Loading ── */
@@ -167,13 +151,8 @@ $success: #3fb950;
 
   .material-symbols-outlined {
     font-size: 20px;
-    animation: prd-spin 1s linear infinite;
+    animation: spin 1s linear infinite;
   }
-}
-
-@keyframes prd-spin {
-  from { transform: rotate(0deg); }
-  to   { transform: rotate(360deg); }
 }
 
 /* ── Empty state ── */
@@ -262,7 +241,7 @@ $success: #3fb950;
   display: inline-flex;
   align-items: center;
   padding: 0.125rem 0.5rem;
-  border-radius: 6px;
+  border-radius: v.$radius-sm;
   font-size: 0.75rem;
   font-weight: 600;
 
@@ -279,21 +258,8 @@ $success: #3fb950;
 
 /* ── Icon button ── */
 .prd-icon-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 30px;
-  height: 30px;
-  background: transparent;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background 0.15s, color 0.15s;
+  @include m.btn-icon(30px);
   margin-left: auto;
-
-  .material-symbols-outlined {
-    font-size: 18px;
-  }
 
   &--danger {
     color: var(--text-muted);
@@ -363,7 +329,7 @@ $success: #3fb950;
   display: flex;
   gap: 0.75rem;
 
-  @media (max-width: 480px) {
+  @include m.respond-to(v.$bp-xs) {
     flex-direction: column;
   }
 }
@@ -378,7 +344,7 @@ $success: #3fb950;
   font-size: 0.9375rem;
   font-family: inherit;
   outline: none;
-  transition: border-color 0.15s;
+  transition: border-color v.$transition-fast;
   width: 100%;
   box-sizing: border-box;
 
@@ -405,7 +371,7 @@ $success: #3fb950;
   padding: 0.5rem 0.75rem;
   background: color-mix(in srgb, var(--error) 8%, transparent);
   border: 1px solid color-mix(in srgb, var(--error) 20%, transparent);
-  border-radius: 8px;
+  border-radius: v.$radius-md;
 }
 
 .prd-success {
@@ -415,7 +381,7 @@ $success: #3fb950;
   padding: 0.5rem 0.75rem;
   background: rgba($success, 0.08);
   border: 1px solid rgba($success, 0.2);
-  border-radius: 8px;
+  border-radius: v.$radius-md;
 }
 
 /* ── Form actions ── */
@@ -436,12 +402,12 @@ $success: #3fb950;
 /* ── Buttons ── */
 .prd-btn {
   padding: 0.5625rem 1.25rem;
-  border-radius: 8px;
+  border-radius: v.$radius-md;
   font-size: 0.875rem;
   font-weight: 600;
   font-family: inherit;
   cursor: pointer;
-  transition: background 0.15s, color 0.15s, border-color 0.15s, opacity 0.15s;
+  transition: background v.$transition-fast, color v.$transition-fast, border-color v.$transition-fast, opacity v.$transition-fast;
   border: 1px solid transparent;
 
   &--ghost {

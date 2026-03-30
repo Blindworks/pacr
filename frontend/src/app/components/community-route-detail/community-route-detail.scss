@@ -1,3 +1,6 @@
+@use 'mixins' as m;
+@use 'variables' as v;
+
 .route-detail {
   max-width: 900px;
   margin: 0 auto;
@@ -13,13 +16,13 @@
   h1 {
     font-size: 1.5rem;
     font-weight: 600;
-    color: var(--text-primary, #fff);
+    color: var(--text);
     margin: 0;
   }
 
   .creator {
     font-size: 0.875rem;
-    color: var(--text-secondary, #9ca3af);
+    color: var(--text-muted);
   }
 }
 
@@ -30,20 +33,20 @@
   width: 2.5rem;
   height: 2.5rem;
   border-radius: 0.5rem;
-  border: 1px solid var(--border, #1e293b);
-  background: var(--surface-1, #111827);
-  color: var(--text-primary, #fff);
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  color: var(--text);
   cursor: pointer;
-  transition: background 0.15s;
+  transition: background v.$transition-fast;
 
-  &:hover { background: var(--surface-2, #1e293b); }
+  &:hover { background: var(--panel-soft); }
 }
 
 .route-map {
   width: 100%;
   height: 350px;
   border-radius: 0.75rem;
-  border: 1px solid var(--border, #1e293b);
+  border: 1px solid var(--border);
   margin-bottom: 1.5rem;
   z-index: 0;
 }
@@ -59,26 +62,26 @@
   flex: 1;
   min-width: 120px;
   padding: 1rem;
-  background: var(--surface-1, #111827);
-  border: 1px solid var(--border, #1e293b);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
   border-radius: 0.75rem;
   text-align: center;
 
   .material-symbols-outlined {
     font-size: 1.5rem;
-    color: var(--text-secondary, #9ca3af);
+    color: var(--text-muted);
     margin-bottom: 0.25rem;
   }
 
   .stat-value {
     font-size: 1.25rem;
     font-weight: 600;
-    color: var(--text-primary, #fff);
+    color: var(--text);
   }
 
   .stat-label {
     font-size: 0.75rem;
-    color: var(--text-secondary, #9ca3af);
+    color: var(--text-muted);
     margin-top: 0.125rem;
   }
 
@@ -101,14 +104,14 @@
   gap: 0.75rem;
   padding: 1rem;
   background: rgba(59, 130, 246, 0.1);
-  border: 1px solid var(--accent, #3b82f6);
+  border: 1px solid var(--pp);
   border-radius: 0.75rem;
-  color: var(--accent, #3b82f6);
+  color: var(--pp);
   font-weight: 500;
 }
 
 .attempt-note {
-  color: var(--text-secondary, #9ca3af);
+  color: var(--text-muted);
   font-size: 0.875rem;
 }
 
@@ -122,7 +125,7 @@
   font-weight: 500;
   cursor: pointer;
   border: none;
-  transition: background 0.15s;
+  transition: background v.$transition-fast;
 
   .material-symbols-outlined { font-size: 1.125rem; }
 
@@ -130,15 +133,15 @@
 }
 
 .btn-primary {
-  background: var(--accent, #3b82f6);
+  background: var(--pp);
   color: #fff;
-  &:hover:not(:disabled) { background: var(--accent-hover, #2563eb); }
+  &:hover:not(:disabled) { background: var(--pp-hover); }
 }
 
 .btn-secondary {
-  background: var(--surface-2, #1e293b);
-  color: var(--text-primary, #fff);
-  &:hover { background: var(--surface-3, #334155); }
+  background: var(--panel-soft);
+  color: var(--text);
+  &:hover { background: var(--surface-high); }
 }
 
 .btn-lg {
@@ -147,8 +150,8 @@
 }
 
 .leaderboard-section {
-  background: var(--surface-1, #111827);
-  border: 1px solid var(--border, #1e293b);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
   border-radius: 0.75rem;
   overflow: hidden;
 }
@@ -158,19 +161,19 @@
   justify-content: space-between;
   align-items: center;
   padding: 1rem 1.25rem;
-  border-bottom: 1px solid var(--border, #1e293b);
+  border-bottom: 1px solid var(--border);
 
   h2 {
     font-size: 1.125rem;
     font-weight: 600;
-    color: var(--text-primary, #fff);
+    color: var(--text);
     margin: 0;
   }
 }
 
 .period-tabs {
   display: flex;
-  background: var(--surface-2, #1e293b);
+  background: var(--panel-soft);
   border-radius: 0.375rem;
   overflow: hidden;
 
@@ -178,13 +181,13 @@
     padding: 0.375rem 0.625rem;
     border: none;
     background: transparent;
-    color: var(--text-secondary, #9ca3af);
+    color: var(--text-muted);
     font-size: 0.75rem;
     cursor: pointer;
-    transition: all 0.15s;
+    transition: all v.$transition-fast;
 
     &.active {
-      background: var(--accent, #3b82f6);
+      background: var(--pp);
       color: #fff;
     }
   }
@@ -193,7 +196,7 @@
 .empty-leaderboard {
   padding: 2rem;
   text-align: center;
-  color: var(--text-secondary, #9ca3af);
+  color: var(--text-muted);
   font-size: 0.875rem;
 }
 
@@ -208,17 +211,17 @@
   }
 
   th {
-    color: var(--text-secondary, #9ca3af);
+    color: var(--text-muted);
     font-weight: 500;
     font-size: 0.75rem;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    border-bottom: 1px solid var(--border, #1e293b);
+    border-bottom: 1px solid var(--border);
   }
 
   td {
-    color: var(--text-primary, #fff);
-    border-bottom: 1px solid var(--border, #1e293b);
+    color: var(--text);
+    border-bottom: 1px solid var(--border);
   }
 
   tr:last-child td { border-bottom: none; }
@@ -226,7 +229,7 @@
   tr.top-3 td { font-weight: 600; }
 
   .rank-col { width: 3rem; text-align: center; }
-  .date-col { color: var(--text-secondary, #9ca3af); }
+  .date-col { color: var(--text-muted); }
 }
 
 .medal {
@@ -247,16 +250,11 @@
 .loading-state {
   text-align: center;
   padding: 4rem 1rem;
-  color: var(--text-secondary, #9ca3af);
+  color: var(--text-muted);
 
   .material-symbols-outlined { font-size: 3rem; display: block; margin-bottom: 1rem; }
 }
 
 .spinning {
   animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
 }

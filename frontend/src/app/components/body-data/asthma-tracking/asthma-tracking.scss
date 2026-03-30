@@ -1,3 +1,6 @@
+@use 'mixins' as m;
+@use 'variables' as v;
+
 // ── Intentional status colors ────────────────────────
 $orange:   #f97316;
 $yellow:   #eab308;
@@ -106,10 +109,7 @@ $red:      #f87171;
 
 // ══ ENV CARD ═════════════════════════════════════════
 .env-card {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 1.5rem;
+  @include m.card(v.$radius-lg, 1.5rem);
 }
 
 .env-card-top {
@@ -314,10 +314,7 @@ $red:      #f87171;
 
 // ══ LOG CARD ══════════════════════════════════════════
 .log-card {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 1.5rem;
+  @include m.card(v.$radius-lg, 1.5rem);
 }
 
 .field-group {
@@ -352,7 +349,7 @@ $red:      #f87171;
   font-weight: 500;
   cursor: pointer;
   text-align: center;
-  transition: border-color 0.18s, background 0.18s, color 0.18s;
+  transition: border-color v.$transition-fast, background v.$transition-fast, color v.$transition-fast;
 
   &:hover {
     border-color: var(--pp-active-border);
@@ -431,7 +428,7 @@ $red:      #f87171;
   font-size: 0.9375rem;
   font-family: inherit;
   outline: none;
-  transition: border-color 0.18s;
+  transition: border-color v.$transition-fast;
   width: 100%;
   box-sizing: border-box;
 
@@ -461,7 +458,7 @@ $red:      #f87171;
   font-size: 0.875rem;
   font-weight: 500;
   cursor: pointer;
-  transition: background 0.18s, color 0.18s;
+  transition: background v.$transition-fast, color v.$transition-fast;
   text-align: center;
 
   & + & { border-left: 1px solid var(--border); }
@@ -488,7 +485,7 @@ $red:      #f87171;
   font-weight: 800;
   letter-spacing: 0.06em;
   cursor: pointer;
-  transition: opacity 0.2s;
+  transition: opacity v.$transition-normal;
 
   &:disabled { opacity: 0.55; cursor: not-allowed; }
   &:hover:not(:disabled) { opacity: 0.88; }
@@ -498,9 +495,7 @@ $red:      #f87171;
 .right-col { position: sticky; top: 0; }
 
 .right-card {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: 12px;
+  @include m.card(v.$radius-lg, 0);
   overflow: hidden;
 }
 
@@ -578,7 +573,7 @@ $red:      #f87171;
   border-radius: 3px 3px 0 0;
   min-height: 3px;
   opacity: 0.8;
-  transition: height 0.3s ease, opacity 0.2s;
+  transition: height v.$transition-slow ease, opacity v.$transition-normal;
 
   &:hover { opacity: 1; }
 }
@@ -705,7 +700,7 @@ $red:      #f87171;
   }
 }
 
-@media (max-width: 700px) {
+@include m.respond-to(700px) {
   .symptom-grid {
     grid-template-columns: repeat(2, 1fr);
   }

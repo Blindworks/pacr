@@ -1,3 +1,5 @@
+@use 'mixins' as m;
+
 .overview-page {
   padding: 24px;
   display: flex;
@@ -145,15 +147,7 @@
   }
 }
 
-.details-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.4);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-}
+.details-overlay { @include m.dialog-overlay; }
 
 .details-dialog {
   background: #fff;

@@ -1,9 +1,12 @@
+@use 'mixins' as m;
+@use 'variables' as v;
+
 /* ── Dialog backdrop & container ── */
 .apr-dialog {
   margin: auto;
   padding: 0;
   border: 1px solid var(--border);
-  border-radius: 16px;
+  border-radius: v.$radius-xl;
   background: var(--bg-card);
   color: var(--text);
   width: min(480px, 96vw);
@@ -46,17 +49,7 @@
 }
 
 .apr-close {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  background: transparent;
-  border: none;
-  border-radius: 8px;
-  color: var(--text-muted);
-  cursor: pointer;
-  transition: background 0.15s, color 0.15s;
+  @include m.btn-icon;
 
   .material-symbols-outlined {
     font-size: 20px;
@@ -115,7 +108,7 @@
   font-size: 0.9375rem;
   font-family: inherit;
   outline: none;
-  transition: border-color 0.15s;
+  transition: border-color v.$transition-fast;
   width: 100%;
   box-sizing: border-box;
 
@@ -160,7 +153,7 @@
   cursor: pointer;
   width: 100%;
   box-sizing: border-box;
-  transition: border-color 0.15s;
+  transition: border-color v.$transition-fast;
 
   &:focus {
     border-color: var(--pp);
@@ -198,7 +191,7 @@
   padding: 0.5rem 0.75rem;
   background: color-mix(in srgb, var(--error) 8%, transparent);
   border: 1px solid color-mix(in srgb, var(--error) 20%, transparent);
-  border-radius: 8px;
+  border-radius: v.$radius-md;
 }
 
 /* ── Actions footer ── */
@@ -213,12 +206,12 @@
 /* ── Buttons ── */
 .apr-btn {
   padding: 0.5625rem 1.25rem;
-  border-radius: 8px;
+  border-radius: v.$radius-md;
   font-size: 0.875rem;
   font-weight: 600;
   font-family: inherit;
   cursor: pointer;
-  transition: background 0.15s, color 0.15s, border-color 0.15s, opacity 0.15s;
+  transition: background v.$transition-fast, color v.$transition-fast, border-color v.$transition-fast, opacity v.$transition-fast;
   border: 1px solid transparent;
 
   &--ghost {

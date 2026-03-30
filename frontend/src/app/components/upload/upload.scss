@@ -1,3 +1,6 @@
+@use 'variables' as v;
+@use 'mixins' as m;
+
 .upload-page {
   min-height: 100%;
   background: var(--bg);
@@ -104,9 +107,7 @@
   height: 5.5rem;
   border-radius: 50%;
   background: var(--pp-dim);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  @include m.flex-center;
   transition: transform 0.25s, box-shadow 0.25s;
 
   &--file {
@@ -173,7 +174,7 @@
   text-transform: uppercase;
   letter-spacing: 0.03em;
   cursor: pointer;
-  transition: transform 0.15s, box-shadow 0.15s;
+  transition: transform v.$transition-fast, box-shadow v.$transition-fast;
   box-shadow: 0 4px 20px var(--pp-active-bg);
 
   .material-symbols-outlined {
@@ -235,7 +236,7 @@
   text-transform: uppercase;
   letter-spacing: 0.03em;
   cursor: pointer;
-  transition: transform 0.15s, opacity 0.2s, box-shadow 0.15s;
+  transition: transform v.$transition-fast, opacity 0.2s, box-shadow v.$transition-fast;
   box-shadow: 0 4px 20px var(--pp-active-bg);
 
   .material-symbols-outlined {
@@ -329,7 +330,7 @@
 
     &.table-row {
       cursor: pointer;
-      transition: background 0.15s;
+      transition: background v.$transition-fast;
 
       &:hover {
         background: var(--panel-soft);
@@ -380,7 +381,7 @@
   align-items: center;
   gap: 0.35rem;
   padding: 0.25rem 0.75rem;
-  border-radius: 9999px;
+  border-radius: v.$radius-pill;
   font-size: 0.65rem;
   font-weight: 900;
   text-transform: uppercase;
@@ -403,24 +404,19 @@
   grid-template-columns: 1fr 1fr;
   gap: 1.25rem;
 
-  @media (max-width: 640px) {
+  @include m.respond-to(v.$bp-sm) {
     grid-template-columns: 1fr;
   }
 }
 
 .help-card {
+  @include m.card(1rem, 1.75rem);
   display: flex;
   align-items: flex-start;
   gap: 1.25rem;
-  padding: 1.75rem;
-  border-radius: 1rem;
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  transition: border-color 0.2s;
+  @include m.card-hover;
 
   &:hover {
-    border-color: var(--pp-border);
-
     .help-icon {
       background: var(--pp);
       color: var(--btn-active-text);
@@ -472,14 +468,4 @@
   &:hover {
     text-decoration: underline;
   }
-}
-
-// ── Animations ────────────────────────────────────────────────
-@keyframes spin {
-  from { transform: rotate(0deg); }
-  to   { transform: rotate(360deg); }
-}
-
-.spin {
-  animation: spin 1s linear infinite;
 }

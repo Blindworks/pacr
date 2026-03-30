@@ -1,0 +1,27 @@
+@use 'sass:map';
+
+// ── Training Zone Colors ──
+$zone-colors: (
+  z1: #3fb950,
+  z2: #58a6ff,
+  z3: #d29922,
+  z4: #f0883e,
+  z5: #f85149,
+);
+
+// ── Cycle Phase Colors ──
+$phase-colors: (
+  menstrual: #f87171,
+  follicular: #4ade80,
+  ovulation: #facc15,
+  luteal: #fb923c,
+);
+
+// ── Helper Functions ──
+@function zone-color($zone) {
+  @return map.get($zone-colors, $zone);
+}
+
+@function phase-color($phase) {
+  @return map.get($phase-colors, $phase);
+}

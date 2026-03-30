@@ -1,8 +1,11 @@
+@use 'mixins' as m;
+@use 'variables' as v;
+
 .map-dialog {
   margin: auto;
   padding: 0;
   border: 1px solid var(--border);
-  border-radius: 16px;
+  border-radius: v.$radius-xl;
   background: var(--bg-card);
   color: var(--text);
   width: min(1200px, 96vw);
@@ -58,7 +61,7 @@
   display: flex;
   gap: 4px;
   background: var(--panel-soft);
-  border-radius: 8px;
+  border-radius: v.$radius-md;
   padding: 3px;
 }
 
@@ -69,9 +72,9 @@
   font-size: 12px;
   font-weight: 600;
   padding: 5px 12px;
-  border-radius: 6px;
+  border-radius: v.$radius-sm;
   cursor: pointer;
-  transition: background 0.2s, color 0.2s;
+  transition: background v.$transition-normal, color v.$transition-normal;
   font-family: var(--font-family);
 
   &:hover {
@@ -91,11 +94,11 @@
   justify-content: center;
   background: transparent;
   border: 1px solid var(--border);
-  border-radius: 8px;
+  border-radius: v.$radius-md;
   padding: 6px;
   color: var(--text-muted);
   cursor: pointer;
-  transition: background 0.2s, color 0.2s;
+  transition: background v.$transition-normal, color v.$transition-normal;
 
   .material-symbols-outlined { font-size: 20px; }
 

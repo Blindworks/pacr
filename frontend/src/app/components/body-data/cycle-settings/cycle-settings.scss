@@ -1,8 +1,12 @@
-// Intentional cycle phase colors
-$menstrual: #f87171;
-$follicular: #4ade80;
-$ovulation: #facc15;
-$luteal: #fb923c;
+@use 'mixins' as m;
+@use 'variables' as v;
+@use 'colors' as c;
+@use 'sass:map';
+
+$menstrual: map.get(c.$phase-colors, menstrual);
+$follicular: map.get(c.$phase-colors, follicular);
+$ovulation: map.get(c.$phase-colors, ovulation);
+$luteal: map.get(c.$phase-colors, luteal);
 
 :host {
   display: block;
@@ -53,7 +57,7 @@ $luteal: #fb923c;
   color: var(--text);
   cursor: pointer;
   flex-shrink: 0;
-  transition: background 0.2s;
+  transition: background v.$transition-normal;
 
   &:hover {
     background: rgba(255, 255, 255, 0.12);
@@ -73,10 +77,7 @@ $luteal: #fb923c;
 
 /* ── Card Base ── */
 .card {
-  background: var(--bg-card);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  border-radius: 1.5rem;
-  padding: 1.5rem;
+  @include m.card(1.5rem, 1.5rem);
 }
 
 .card-title {
@@ -131,7 +132,7 @@ $luteal: #fb923c;
   font-size: 0.9375rem;
   padding: 0.75rem 1rem;
   outline: none;
-  transition: border-color 0.2s;
+  transition: border-color v.$transition-normal;
   width: 100%;
   box-sizing: border-box;
 
@@ -203,7 +204,7 @@ $luteal: #fb923c;
   font-weight: 700;
   font-family: inherit;
   cursor: pointer;
-  transition: box-shadow 0.2s, filter 0.2s;
+  transition: box-shadow v.$transition-normal, filter v.$transition-normal;
 
   .material-symbols-outlined {
     font-size: 20px;
@@ -253,7 +254,7 @@ $luteal: #fb923c;
 
 .phase-seg {
   height: 100%;
-  transition: width 0.3s;
+  transition: width v.$transition-slow;
 
   &.phase-bg-menstrual { background: $menstrual; }
   &.phase-bg-follicular { background: $follicular; }
@@ -321,7 +322,7 @@ $luteal: #fb923c;
 }
 
 /* ── Responsive ── */
-@media (max-width: 640px) {
+@include m.respond-to(v.$bp-sm) {
   .settings-page { padding: 1rem; }
   .status-grid { grid-template-columns: 1fr; }
 }

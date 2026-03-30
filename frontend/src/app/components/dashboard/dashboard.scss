@@ -1,3 +1,6 @@
+@use 'variables' as v;
+@use 'mixins' as m;
+
 .pulse-dashboard {
   min-height: 100vh;
   background: var(--bg);
@@ -138,10 +141,7 @@
 }
 
 .metric-card {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 20px;
+  @include m.card(v.$radius-xl, 20px);
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -246,9 +246,7 @@
 // ── Gauge ────────────────────────────────────────────────────────
 .gauge-container {
   flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  @include m.flex-center;
   position: relative;
 }
 
@@ -336,9 +334,7 @@
   width: 48px;
   height: 48px;
   border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  @include m.flex-center;
   flex-shrink: 0;
 
   &--orange { background: rgba(255, 106, 0, 0.12); color: #ff6a00; }
@@ -406,9 +402,7 @@
 // ── No Data ───────────────────────────────────────────────────────
 .no-data-hint {
   flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  @include m.flex-center;
   font-size: 13px;
   color: var(--text-muted);
   font-style: italic;
@@ -416,10 +410,7 @@
 
 // ── Next Competition ─────────────────────────────────────────────
 .competition-card {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 24px;
+  @include m.card(v.$radius-xl, 24px);
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -514,10 +505,7 @@
 }
 
 .progress-item {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 16px;
+  @include m.card(v.$radius-lg, 16px);
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -548,10 +536,7 @@
 
 // ── Last Run ──────────────────────────────────────────────────────
 .last-run-card {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 24px;
+  @include m.card(v.$radius-xl, 24px);
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -716,7 +701,7 @@
 }
 
 // ── Responsive ────────────────────────────────────────────────────
-@media (max-width: 900px) {
+@include m.respond-to(v.$bp-lg) {
   .main-grid { grid-template-columns: 1fr 1fr; }
   .metric-card:first-child { grid-column: 1 / -1; }
 }

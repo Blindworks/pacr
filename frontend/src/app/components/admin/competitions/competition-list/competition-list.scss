@@ -1,88 +1,23 @@
+@use 'mixins' as m;
+@use 'variables' as v;
+
 :host {
   display: block;
 }
 
 .list-page { max-width: 1100px; }
 
-.toolbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 24px;
-
-  h2 { font-size: 20px; font-weight: 600; color: var(--text); margin: 0; }
-}
+.toolbar { @include m.toolbar; }
 
 .toolbar-left { display: flex; align-items: center; gap: 10px; }
 
-.count-badge {
-  background: var(--pp-dim);
-  color: var(--pp);
-  font-size: 12px;
-  font-weight: 600;
-  padding: 2px 8px;
-  border-radius: 10px;
-}
+.count-badge { @include m.count-badge; }
 
-.btn-primary {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  background: var(--pp);
-  color: var(--btn-active-text);
-  border: none;
-  border-radius: 8px;
-  padding: 8px 16px;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: opacity 0.15s;
+.btn-primary { @include m.btn-primary; }
+.btn-ghost { @include m.btn-ghost; }
+.btn-danger { @include m.btn-danger; }
 
-  .material-symbols-outlined { font-size: 18px; }
-  &:hover { opacity: 0.88; }
-}
-
-.btn-ghost {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  background: transparent;
-  color: var(--text-muted);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 8px 14px;
-  font-size: 14px;
-  cursor: pointer;
-  &:hover { color: var(--text); }
-}
-
-.btn-danger {
-  background: #c0392b;
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  padding: 8px 16px;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  &:hover { opacity: 0.88; }
-}
-
-.state-box {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
-  padding: 60px 20px;
-  color: var(--text-muted);
-  text-align: center;
-
-  .material-symbols-outlined { font-size: 40px; }
-  &--error { color: #e74c3c; .material-symbols-outlined { color: #e74c3c; } }
-}
-
-@keyframes spin { to { transform: rotate(360deg); } }
-.spin { animation: spin 1s linear infinite; }
+.state-box { @include m.state-display; }
 
 .comp-grid {
   display: grid;
@@ -91,16 +26,11 @@
 }
 
 .comp-card {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 20px;
+  @include m.card(v.$radius-lg, 20px);
   display: flex;
   flex-direction: column;
   gap: 12px;
-  transition: border-color 0.15s;
-
-  &:hover { border-color: var(--pp-active-border); }
+  @include m.card-hover;
 }
 
 .comp-card-header {
@@ -127,18 +57,7 @@
   }
 }
 
-.type-badge {
-  display: inline-block;
-  background: var(--pp-dim);
-  color: var(--pp);
-  font-size: 11px;
-  font-weight: 600;
-  padding: 2px 8px;
-  border-radius: 4px;
-  text-transform: uppercase;
-  letter-spacing: 0.4px;
-  width: fit-content;
-}
+.type-badge { @include m.badge; }
 
 .comp-actions {
   display: flex;
@@ -173,49 +92,10 @@
   overflow: hidden;
 }
 
-.icon-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  background: transparent;
-  border: none;
-  border-radius: 6px;
-  color: var(--text-muted);
-  cursor: pointer;
-  transition: background 0.15s, color 0.15s;
+.icon-btn { @include m.btn-icon; }
 
-  .material-symbols-outlined { font-size: 18px; }
-  &:hover { background: var(--panel-soft); color: var(--text); }
-  &--danger:hover { background: rgba(231,76,60,0.1); color: #e74c3c; }
-}
-
-.dialog-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.6);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-}
-
-.dialog {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 32px;
-  width: 380px;
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
-
-  h3 { color: var(--text); margin: 0; font-size: 18px; }
-  p { color: var(--text-muted); margin: 0; font-size: 14px; }
-}
+.dialog-overlay { @include m.dialog-overlay; }
+.dialog { @include m.dialog; }
 
 .dialog-icon { font-size: 40px; color: #f39c12; }
 .dialog-actions { display: flex; gap: 12px; margin-top: 8px; }

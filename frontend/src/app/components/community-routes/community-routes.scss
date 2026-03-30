@@ -1,21 +1,10 @@
-:host {
-  --k-bg: #0e0e0e;
-  --k-surface: #131313;
-  --k-surface-container: #1a1a1a;
-  --k-surface-high: #20201f;
-  --k-surface-bright: #2c2c2c;
-  --k-accent: #cafd00;
-  --k-accent-dim: #beee00;
-  --k-on-accent: #516700;
-  --k-text: #ffffff;
-  --k-text-muted: #adaaaa;
-  --k-outline: #767575;
-  --k-outline-variant: #484847;
-  --k-error: #ff7351;
+@use 'mixins' as m;
+@use 'variables' as v;
 
+:host {
   display: block;
   font-family: 'Manrope', sans-serif;
-  color: var(--k-text);
+  color: var(--text);
 }
 
 .community-routes {
@@ -46,7 +35,7 @@
     margin: 0 0 0.75rem;
 
     .accent {
-      color: var(--k-accent);
+      color: var(--pp);
     }
   }
 
@@ -55,7 +44,7 @@
     font-size: 0.6875rem;
     text-transform: uppercase;
     letter-spacing: 0.3em;
-    color: var(--k-text-muted);
+    color: var(--text-muted);
     margin: 0;
   }
 }
@@ -64,7 +53,7 @@
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  background: var(--k-surface);
+  background: var(--bg-card);
   padding: 0.5rem 0.75rem;
   border-radius: 0.25rem;
 
@@ -73,22 +62,22 @@
     font-size: 0.625rem;
     text-transform: uppercase;
     letter-spacing: 0.2em;
-    color: var(--k-text-muted);
+    color: var(--text-muted);
   }
 
   .toggle-track {
     width: 3rem;
     height: 1.5rem;
-    background: var(--k-outline-variant);
+    background: var(--border);
     border-radius: 1rem;
     position: relative;
     cursor: pointer;
-    transition: background 0.2s;
+    transition: background v.$transition-normal;
     border: none;
     padding: 0;
 
     &.active {
-      background: var(--k-accent);
+      background: var(--pp);
     }
 
     .toggle-thumb {
@@ -97,9 +86,9 @@
       left: 0.25rem;
       width: 1rem;
       height: 1rem;
-      background: var(--k-on-accent);
+      background: var(--btn-active-text);
       border-radius: 50%;
-      transition: transform 0.2s;
+      transition: transform v.$transition-normal;
     }
 
     &.active .toggle-thumb {
@@ -116,7 +105,7 @@
   margin-bottom: 3rem;
   align-items: center;
 
-  @media (min-width: 768px) {
+  @include m.respond-to(v.$bp-md) {
     grid-template-columns: 2fr 1fr 1fr;
   }
 }
@@ -129,14 +118,14 @@
     left: 1rem;
     top: 50%;
     transform: translateY(-50%);
-    color: var(--k-accent);
+    color: var(--pp);
     font-size: 1.25rem;
     pointer-events: none;
   }
 
   input {
     width: 100%;
-    background: var(--k-surface);
+    background: var(--bg-card);
     border: none;
     border-radius: 0.25rem;
     padding: 1rem 1rem 1rem 3rem;
@@ -144,17 +133,17 @@
     font-size: 0.6875rem;
     text-transform: uppercase;
     letter-spacing: 0.2em;
-    color: var(--k-text);
+    color: var(--text);
     outline: none;
-    transition: background 0.2s;
+    transition: background v.$transition-normal;
     box-sizing: border-box;
 
     &::placeholder {
-      color: var(--k-outline);
+      color: var(--text-muted);
     }
 
     &:focus {
-      background: var(--k-surface-container);
+      background: var(--panel-soft);
     }
   }
 }
@@ -165,7 +154,7 @@
   select {
     width: 100%;
     appearance: none;
-    background: var(--k-surface);
+    background: var(--bg-card);
     border: none;
     border-radius: 0.25rem;
     padding: 1rem 2.5rem 1rem 1.5rem;
@@ -173,13 +162,13 @@
     font-size: 0.6875rem;
     text-transform: uppercase;
     letter-spacing: 0.2em;
-    color: var(--k-text);
+    color: var(--text);
     cursor: pointer;
     outline: none;
     box-sizing: border-box;
 
     option {
-      background: var(--k-surface-container);
+      background: var(--panel-soft);
     }
   }
 
@@ -188,7 +177,7 @@
     right: 1rem;
     top: 50%;
     transform: translateY(-50%);
-    color: var(--k-accent);
+    color: var(--pp);
     font-size: 1rem;
     pointer-events: none;
   }
@@ -200,22 +189,22 @@
   grid-template-columns: 1fr;
   gap: 2rem;
 
-  @media (min-width: 768px) {
+  @include m.respond-to(v.$bp-md) {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 
 .route-card {
   display: block;
-  background: var(--k-surface);
+  background: var(--bg-card);
   border-radius: 0.25rem;
   overflow: hidden;
   text-decoration: none;
   color: inherit;
-  transition: background 0.2s;
+  transition: background v.$transition-normal;
 
   &:hover {
-    background: var(--k-surface-container);
+    background: var(--panel-soft);
 
     .card-image .image-placeholder {
       transform: scale(1.05);
@@ -231,14 +220,14 @@
   .image-placeholder {
     width: 100%;
     height: 100%;
-    background: linear-gradient(135deg, var(--k-surface-container) 0%, var(--k-surface-high) 50%, var(--k-accent)/8 100%);
+    background: linear-gradient(135deg, var(--panel-soft) 0%, var(--surface-high) 50%, var(--pp)/8 100%);
     transition: transform 0.7s;
   }
 
   .image-overlay {
     position: absolute;
     inset: 0;
-    background: linear-gradient(to top, var(--k-surface) 0%, transparent 100%);
+    background: linear-gradient(to top, var(--bg-card) 0%, transparent 100%);
   }
 
   .card-title {
@@ -263,7 +252,7 @@
       font-size: 0.5625rem;
       text-transform: uppercase;
       letter-spacing: 0.15em;
-      color: var(--k-text-muted);
+      color: var(--text-muted);
       margin-top: 0.25rem;
     }
   }
@@ -291,7 +280,7 @@
     font-size: 0.5625rem;
     text-transform: uppercase;
     letter-spacing: 0.2em;
-    color: var(--k-text-muted);
+    color: var(--text-muted);
     margin-bottom: 0.25rem;
   }
 
@@ -301,7 +290,7 @@
     font-size: 1.25rem;
 
     &.accent {
-      color: var(--k-accent);
+      color: var(--pp);
     }
   }
 }
@@ -315,17 +304,17 @@
 }
 
 .tag {
-  background: var(--k-surface-high);
+  background: var(--surface-high);
   padding: 0.25rem 0.5rem;
   border-radius: 1rem;
   font-family: 'Lexend', sans-serif;
   font-size: 0.5625rem;
   text-transform: uppercase;
   letter-spacing: 0.15em;
-  color: var(--k-text-muted);
+  color: var(--text-muted);
 
   &.primary {
-    color: var(--k-accent);
+    color: var(--pp);
     border: 1px solid rgba(202, 253, 0, 0.2);
   }
 }
@@ -335,7 +324,7 @@
   align-items: center;
   gap: 0.5rem;
   margin-bottom: 2rem;
-  color: var(--k-text-muted);
+  color: var(--text-muted);
 
   .material-symbols-outlined {
     font-size: 0.875rem;
@@ -357,8 +346,8 @@
 .btn-view {
   flex: 1;
   padding: 0.75rem;
-  background: var(--k-accent);
-  color: var(--k-on-accent);
+  background: var(--pp);
+  color: var(--btn-active-text);
   border: none;
   border-radius: 0.25rem;
   font-family: 'Space Grotesk', sans-serif;
@@ -367,7 +356,7 @@
   text-transform: uppercase;
   letter-spacing: 0.2em;
   cursor: pointer;
-  transition: filter 0.2s;
+  transition: filter v.$transition-normal;
   text-decoration: none;
   text-align: center;
 
@@ -381,16 +370,16 @@
   align-items: center;
   justify-content: center;
   width: 2.75rem;
-  background: var(--k-surface-high);
-  color: var(--k-accent);
+  background: var(--surface-high);
+  color: var(--pp);
   border: none;
   border-radius: 0.25rem;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: background v.$transition-normal;
   text-decoration: none;
 
   &:hover {
-    background: var(--k-surface-bright);
+    background: var(--surface-bright);
   }
 
   .material-symbols-outlined {
@@ -403,7 +392,7 @@
   display: inline-flex;
   align-items: center;
   gap: 0.375rem;
-  background: var(--k-surface-high);
+  background: var(--surface-high);
   padding: 0.25rem 0.625rem;
   border-radius: 1rem;
   margin-bottom: 1rem;
@@ -411,7 +400,7 @@
 
   .material-symbols-outlined {
     font-size: 0.875rem;
-    color: var(--k-accent);
+    color: var(--pp);
   }
 
   span:last-child {
@@ -419,7 +408,7 @@
     font-size: 0.5625rem;
     text-transform: uppercase;
     letter-spacing: 0.1em;
-    color: var(--k-accent);
+    color: var(--pp);
   }
 }
 
@@ -429,20 +418,20 @@
 .empty-state {
   text-align: center;
   padding: 5rem 2rem;
-  color: var(--k-text-muted);
+  color: var(--text-muted);
 
   .material-symbols-outlined {
     font-size: 3.5rem;
     margin-bottom: 1.5rem;
     display: block;
-    color: var(--k-outline);
+    color: var(--text-muted);
   }
 
   h3 {
     font-family: 'Space Grotesk', sans-serif;
     font-weight: 700;
     font-size: 1.25rem;
-    color: var(--k-text);
+    color: var(--text);
     margin: 0 0 0.5rem;
     text-transform: uppercase;
     letter-spacing: -0.02em;
@@ -459,8 +448,8 @@
 .btn-retry {
   margin-top: 1.5rem;
   padding: 0.75rem 2rem;
-  background: var(--k-accent);
-  color: var(--k-on-accent);
+  background: var(--pp);
+  color: var(--btn-active-text);
   border: none;
   border-radius: 0.25rem;
   font-family: 'Space Grotesk', sans-serif;
@@ -479,11 +468,6 @@
   animation: spin 1s linear infinite;
 }
 
-@keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
 // === MY ROUTES LINK (Header) ===
 .header-actions {
   display: flex;
@@ -495,9 +479,9 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.625rem 1.25rem;
-  background: var(--k-surface);
-  color: var(--k-text);
-  border: 1px solid var(--k-outline-variant);
+  background: var(--bg-card);
+  color: var(--text);
+  border: 1px solid var(--border);
   border-radius: 0.25rem;
   font-family: 'Lexend', sans-serif;
   font-size: 0.625rem;
@@ -505,15 +489,15 @@
   letter-spacing: 0.2em;
   text-decoration: none;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all v.$transition-normal;
 
   .material-symbols-outlined {
     font-size: 1rem;
   }
 
   &:hover {
-    background: var(--k-surface-container);
-    border-color: var(--k-accent);
-    color: var(--k-accent);
+    background: var(--panel-soft);
+    border-color: var(--pp);
+    color: var(--pp);
   }
 }

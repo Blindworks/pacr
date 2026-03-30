@@ -1,3 +1,5 @@
+@use 'variables' as v;
+
 :host {
   display: block;
   height: 100%;
@@ -62,7 +64,7 @@
   font-size: 14px;
   font-weight: 500;
   border-bottom: 2px solid transparent;
-  transition: color 0.15s, border-color 0.15s;
+  transition: color v.$transition-fast, border-color v.$transition-fast;
 
   .material-symbols-outlined {
     font-size: 18px;

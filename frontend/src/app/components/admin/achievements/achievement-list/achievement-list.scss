@@ -1,3 +1,5 @@
+@use 'mixins' as m;
+
 .list-page {
   padding: 1.5rem;
 }
@@ -15,17 +17,7 @@
   }
 }
 
-.btn-primary {
-  background: var(--pp);
-  color: white;
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 0.875rem;
-
-  &:hover { opacity: 0.9; }
-}
+.btn-primary { @include m.btn-primary; }
 
 .data-table {
   width: 100%;
@@ -157,11 +149,8 @@
 
 // Users Dialog
 .users-dialog {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: 12px;
+  @include m.card(12px, 0);
   color: var(--text);
-  padding: 0;
   max-width: 600px;
   width: 90vw;
 
@@ -260,13 +249,8 @@
 }
 
 .btn-secondary {
-  background: transparent;
-  border: 1px solid var(--border);
-  color: inherit;
+  @include m.btn-ghost;
   padding: 0.6rem 1.5rem;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 0.875rem;
 
   &:hover { background: var(--panel-soft); }
 }

@@ -1,3 +1,5 @@
+@use 'mixins' as m;
+
 .list-page {
   padding: 1.5rem;
 }
@@ -15,17 +17,7 @@
   }
 }
 
-.btn-primary {
-  background: var(--pp);
-  color: white;
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 0.875rem;
-
-  &:hover { opacity: 0.9; }
-}
+.btn-primary { @include m.btn-primary; }
 
 .data-table {
   width: 100%;

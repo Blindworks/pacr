@@ -6,8 +6,8 @@
       <div class="prd-header-title">
         <span class="material-symbols-outlined prd-icon">emoji_events</span>
         <div class="prd-header-text">
-          <span class="prd-title">{{ record?.distanceLabel }}</span>
-          <span class="prd-subtitle" *ngIf="record?.bestTimeSeconds">
+          <span class="prd-title">{{ record.distanceLabel }}</span>
+          <span class="prd-subtitle" *ngIf="record.bestTimeSeconds">
             Bestzeit: {{ formatTime(record.bestTimeSeconds!) }}
           </span>
         </div>

@@ -1,3 +1,5 @@
+@use 'variables' as v;
+
 .verify-page {
   position: relative;
   min-height: 100vh;
@@ -120,7 +122,7 @@
   font-weight: 700;
   text-align: center;
   outline: none;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  transition: border-color v.$transition-normal, box-shadow v.$transition-normal;
 
   &:focus {
     border-color: transparent;
@@ -153,7 +155,7 @@
   cursor: pointer;
   letter-spacing: 0.05em;
   box-shadow: 0 8px 24px var(--pp-active-bg);
-  transition: transform 0.15s, box-shadow 0.15s, opacity 0.15s;
+  transition: transform v.$transition-fast, box-shadow v.$transition-fast, opacity v.$transition-fast;
 
   &:hover:not(:disabled) {
     transform: scale(1.02);
@@ -195,7 +197,7 @@
   font-weight: 700;
   cursor: pointer;
   padding: 0;
-  transition: opacity 0.2s;
+  transition: opacity v.$transition-normal;
 
   &:hover:not(:disabled) { text-decoration: underline; }
   &:disabled { opacity: 0.5; cursor: not-allowed; }
@@ -208,7 +210,7 @@
   color: var(--text-muted);
   font-size: 0.875rem;
   text-decoration: none;
-  transition: color 0.2s;
+  transition: color v.$transition-normal;
 
   &:hover { color: var(--pp); }
 

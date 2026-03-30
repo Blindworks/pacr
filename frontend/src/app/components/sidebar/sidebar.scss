@@ -1,3 +1,6 @@
+@use 'variables' as v;
+@use 'mixins' as m;
+
 :host {
   display: flex;
   flex-direction: column;
@@ -32,9 +35,7 @@
   height: 40px;
   border-radius: 10px;
   background: var(--pp);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  @include m.flex-center;
   flex-shrink: 0;
 
   .material-symbols-outlined {
@@ -80,23 +81,7 @@
   // Custom scrollbar
   scrollbar-width: thin;
   scrollbar-color: var(--scrollbar-thumb) transparent;
-
-  &::-webkit-scrollbar {
-    width: 4px;
-  }
-
-  &::-webkit-scrollbar-track {
-    background: transparent;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background: var(--scrollbar-thumb);
-    border-radius: 2px;
-
-    &:hover {
-      background: var(--scrollbar-hover);
-    }
-  }
+  @include m.custom-scrollbar(4px);
 }
 
 .nav-item {
@@ -104,19 +89,19 @@
   align-items: center;
   gap: 0.75rem;
   padding: 0.625rem 0.75rem;
-  border-radius: 8px;
+  border-radius: v.$radius-md;
   color: var(--text-muted);
   text-decoration: none;
   font-size: 0.875rem;
   font-weight: 500;
-  transition: background 0.15s, color 0.15s;
+  transition: background v.$transition-fast, color v.$transition-fast;
   border: 1px solid transparent;
   flex-shrink: 0;
 
   .material-symbols-outlined {
     font-size: 22px;
     font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-    transition: font-variation-settings 0.15s;
+    transition: font-variation-settings v.$transition-fast;
   }
 
   &:hover {
@@ -200,7 +185,7 @@
 .upgrade-card {
   background: var(--bg-card);
   border: 1px solid var(--pp-border);
-  border-radius: 12px;
+  border-radius: v.$radius-lg;
   padding: 1rem;
 
   h3 {
@@ -224,12 +209,12 @@
   background: var(--pp);
   color: var(--btn-active-text);
   border: none;
-  border-radius: 8px;
+  border-radius: v.$radius-md;
   font-size: 0.75rem;
   font-weight: 700;
   font-family: inherit;
   cursor: pointer;
-  transition: filter 0.15s;
+  transition: filter v.$transition-fast;
 
   &:hover {
     filter: brightness(1.1);
@@ -255,7 +240,7 @@
   right: 0;
   background: var(--bg-card);
   border: 1px solid var(--pp-border);
-  border-radius: 12px;
+  border-radius: v.$radius-lg;
   overflow: hidden;
   opacity: 0;
   visibility: hidden;
@@ -273,7 +258,7 @@
   text-decoration: none;
   font-size: 0.875rem;
   font-weight: 500;
-  transition: background 0.15s, color 0.15s;
+  transition: background v.$transition-fast, color v.$transition-fast;
 
   .material-symbols-outlined {
     font-size: 20px;
@@ -313,11 +298,11 @@
   align-items: center;
   gap: 0.75rem;
   padding: 0.625rem 0.75rem;
-  border-radius: 12px;
+  border-radius: v.$radius-lg;
   background: var(--bg-card);
   border: 1px solid var(--pp-border);
   cursor: pointer;
-  transition: border-color 0.15s;
+  transition: border-color v.$transition-fast;
 
   &:hover {
     border-color: var(--pp-active-border);
@@ -332,9 +317,7 @@
   border: 2px solid var(--pp-active-border);
   flex-shrink: 0;
   overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  @include m.flex-center;
 
   img {
     width: 100%;

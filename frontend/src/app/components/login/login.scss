@@ -1,3 +1,5 @@
+@use 'variables' as v;
+
 .login-page {
   position: relative;
   min-height: 100vh;
@@ -143,7 +145,7 @@
     font-family: inherit;
     font-size: 0.95rem;
     outline: none;
-    transition: border-color 0.2s, box-shadow 0.2s;
+    transition: border-color v.$transition-normal, box-shadow v.$transition-normal;
     box-sizing: border-box;
 
     &::placeholder { color: var(--text-muted); }
@@ -177,7 +179,7 @@
   cursor: pointer;
   margin-top: 0.5rem;
   box-shadow: 0 8px 24px var(--pp-active-bg);
-  transition: background 0.2s, transform 0.1s;
+  transition: background v.$transition-normal, transform 0.1s;
 
   &:hover { filter: brightness(1.05); }
   &:active { transform: scale(0.98); }
@@ -229,7 +231,7 @@
   border-radius: 0.5rem;
   color: #e2e8f0;
   cursor: pointer;
-  transition: border-color 0.2s;
+  transition: border-color v.$transition-normal;
 
   &:hover { border-color: var(--pp); }
 
@@ -268,7 +270,7 @@
     letter-spacing: 0.1em;
     color: var(--text-muted);
     text-decoration: none;
-    transition: color 0.2s;
+    transition: color v.$transition-normal;
 
     &:hover { color: var(--pp); }
   }

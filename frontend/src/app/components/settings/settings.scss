@@ -1,3 +1,5 @@
+@use 'variables' as v;
+@use 'mixins' as m;
 
 .settings-view {
   max-width: 960px;
@@ -31,10 +33,7 @@
 
 /* ── Section ─────────────────────────────── */
 .section {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: 1rem;
-  padding: 1.5rem;
+  @include m.card(1rem, 1.5rem);
   display: grid;
   gap: 1.25rem;
 }
@@ -98,9 +97,7 @@
   width: 100%;
   height: 100%;
   background: var(--panel-soft);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  @include m.flex-center;
 
   .material-symbols-outlined {
     font-size: 2.5rem;
@@ -112,9 +109,7 @@
   position: absolute;
   inset: 0;
   background: rgba(0, 0, 0, 0.55);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  @include m.flex-center;
   opacity: 0;
   transition: opacity 0.2s;
   border-radius: 50%;
@@ -132,11 +127,6 @@
 
 .avatar-spin {
   animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
 }
 
 .avatar-info {
@@ -174,16 +164,11 @@
 }
 
 .field {
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
+  @include m.form-field;
 
   label {
     font-size: 0.72rem;
-    font-weight: 700;
-    text-transform: uppercase;
     letter-spacing: 0.07em;
-    color: var(--text-muted);
   }
 
   input,
@@ -196,7 +181,7 @@
     font-family: inherit;
     font-size: 0.9rem;
     outline: none;
-    transition: border-color 0.15s;
+    transition: border-color v.$transition-fast;
     appearance: none;
 
     &:focus {
@@ -248,7 +233,7 @@
     font-size: 0.78rem;
     font-weight: 600;
     cursor: pointer;
-    transition: background 0.15s, color 0.15s, border-color 0.15s;
+    transition: background v.$transition-fast, color v.$transition-fast, border-color v.$transition-fast;
 
     &.active {
       background: var(--pp);
@@ -353,7 +338,7 @@
   border: 1px solid var(--border);
   border-radius: 0.85rem;
   gap: 1rem;
-  transition: background 0.15s;
+  transition: background v.$transition-fast;
 
   &:hover {
     background: var(--panel-soft);
@@ -370,9 +355,7 @@
   width: 2.5rem;
   height: 2.5rem;
   border-radius: 0.6rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  @include m.flex-center;
   flex-shrink: 0;
   color: #fff;
 
@@ -412,7 +395,7 @@
   font-size: 0.78rem;
   font-weight: 700;
   cursor: pointer;
-  transition: background 0.15s, color 0.15s;
+  transition: background v.$transition-fast, color v.$transition-fast;
   white-space: nowrap;
   display: flex;
   align-items: center;
@@ -458,7 +441,7 @@
   border: none;
   border-radius: 0.75rem;
   cursor: pointer;
-  transition: background 0.15s;
+  transition: background v.$transition-fast;
 
   &:hover {
     background: rgba(248, 113, 113, 0.1);
@@ -495,7 +478,7 @@
   border-radius: 0.65rem;
   cursor: pointer;
   letter-spacing: 0.03em;
-  transition: background 0.15s, color 0.15s;
+  transition: background v.$transition-fast, color v.$transition-fast;
 
   &:hover:not(:disabled) {
     background: var(--pp);
@@ -519,7 +502,7 @@
   }
 }
 
-@media (max-width: 520px) {
+@include m.respond-to(520px) {
   .settings-view {
     padding: 1.2rem 1rem 2rem;
   }

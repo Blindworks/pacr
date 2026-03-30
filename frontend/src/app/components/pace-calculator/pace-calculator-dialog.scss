@@ -1,9 +1,12 @@
+@use 'mixins' as m;
+@use 'variables' as v;
+
 /* ── Dialog backdrop & container ── */
 .pace-dialog {
   margin: auto;
   padding: 0;
   border: 1px solid var(--border);
-  border-radius: 16px;
+  border-radius: v.$radius-xl;
   background: var(--bg-card);
   color: var(--text);
   width: min(680px, 96vw);
@@ -24,16 +27,7 @@
   max-height: 90vh;
   overflow-y: auto;
 
-  &::-webkit-scrollbar {
-    width: 4px;
-  }
-  &::-webkit-scrollbar-track {
-    background: transparent;
-  }
-  &::-webkit-scrollbar-thumb {
-    background: var(--pp-active-border);
-    border-radius: 2px;
-  }
+  @include m.custom-scrollbar(4px);
 }
 
 /* ── Header ── */
@@ -64,17 +58,7 @@
 }
 
 .pace-close {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  background: transparent;
-  border: none;
-  border-radius: 8px;
-  color: var(--text-muted);
-  cursor: pointer;
-  transition: background 0.15s, color 0.15s;
+  @include m.btn-icon;
 
   .material-symbols-outlined {
     font-size: 20px;
@@ -140,13 +124,13 @@
   padding: 0.5rem 1.125rem;
   background: var(--panel-soft);
   border: 1px solid var(--border);
-  border-radius: 8px;
+  border-radius: v.$radius-md;
   color: var(--text);
   font-size: 0.875rem;
   font-weight: 600;
   font-family: inherit;
   cursor: pointer;
-  transition: background 0.15s, border-color 0.15s, color 0.15s;
+  transition: background v.$transition-fast, border-color v.$transition-fast, color v.$transition-fast;
 
   &:hover {
     background: var(--pp-hover);
@@ -161,7 +145,7 @@
   grid-template-columns: 1fr 1fr;
   gap: 0.75rem;
 
-  @media (max-width: 480px) {
+  @include m.respond-to(v.$bp-xs) {
     grid-template-columns: 1fr;
   }
 }
@@ -169,12 +153,12 @@
 .field-card {
   background: var(--panel-soft);
   border: 1px solid var(--border);
-  border-radius: 12px;
+  border-radius: v.$radius-lg;
   padding: 1rem 1.125rem;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  transition: border-color 0.15s;
+  transition: border-color v.$transition-fast;
 
   &:focus-within {
     border-color: var(--pp);
@@ -216,7 +200,7 @@
   font-weight: 500;
   font-family: inherit;
   cursor: pointer;
-  transition: background 0.15s, color 0.15s, border-color 0.15s;
+  transition: background v.$transition-fast, color v.$transition-fast, border-color v.$transition-fast;
 
   &:hover {
     background: var(--pp-hover);

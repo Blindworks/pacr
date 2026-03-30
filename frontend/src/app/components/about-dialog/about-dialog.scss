@@ -1,8 +1,11 @@
+@use 'mixins' as m;
+@use 'variables' as v;
+
 .about-dialog {
   margin: auto;
   padding: 0;
   border: 1px solid var(--border);
-  border-radius: 16px;
+  border-radius: v.$radius-xl;
   background: var(--bg-card);
   color: var(--text);
   width: min(420px, 92vw);
@@ -50,17 +53,7 @@
 }
 
 .about-close {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  background: transparent;
-  border: none;
-  border-radius: 8px;
-  color: var(--text-muted);
-  cursor: pointer;
-  transition: background 0.15s, color 0.15s;
+  @include m.btn-icon;
 
   .material-symbols-outlined {
     font-size: 20px;
@@ -107,9 +100,7 @@
   height: 56px;
   border-radius: 14px;
   background: var(--pp-hover);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  @include m.flex-center;
 
   .material-symbols-outlined {
     font-size: 28px;
@@ -121,7 +112,7 @@
   width: 100%;
   background: var(--panel-soft);
   border: 1px solid var(--border);
-  border-radius: 12px;
+  border-radius: v.$radius-lg;
   padding: 1rem 1.25rem;
   display: flex;
   flex-direction: column;
@@ -166,7 +157,7 @@
   font-size: 0.8125rem;
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.15s, color 0.15s, border-color 0.15s;
+  transition: background v.$transition-fast, color v.$transition-fast, border-color v.$transition-fast;
 
   .material-symbols-outlined {
     font-size: 18px;
@@ -186,19 +177,10 @@
   overflow-y: auto;
   background: var(--panel-soft);
   border: 1px solid var(--border);
-  border-radius: 12px;
+  border-radius: v.$radius-lg;
   padding: 1rem 1.25rem;
 
-  &::-webkit-scrollbar {
-    width: 6px;
-  }
-  &::-webkit-scrollbar-track {
-    background: transparent;
-  }
-  &::-webkit-scrollbar-thumb {
-    background: var(--scrollbar-thumb);
-    border-radius: 3px;
-  }
+  @include m.custom-scrollbar;
 }
 
 .changelog-loading {

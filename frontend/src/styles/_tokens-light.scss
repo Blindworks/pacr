@@ -1,0 +1,55 @@
+body[data-theme="light"] {
+  --font-family: 'Be Vietnam Pro', 'Inter', 'Segoe UI', sans-serif;
+
+  // ── Primary Accent ──
+  --pp: #9370DB;
+  --pp-container: #a688e3;
+  --pp-dim: rgba(147, 112, 219, 0.12);
+  --pp-border: rgba(147, 112, 219, 0.15);
+  --pp-hover: rgba(147, 112, 219, 0.06);
+  --pp-active-bg: rgba(147, 112, 219, 0.12);
+  --pp-active-border: rgba(147, 112, 219, 0.25);
+  --pp-glow: 0 0 20px rgba(147, 112, 219, 0.2);
+
+  // ── Backgrounds & Surfaces ──
+  --bg: #FDFBF7;
+  --bg-card: #ffffff;
+  --panel-soft: #f5f3ef;
+  --surface-high: #f0ede8;
+  --surface-bright: #faf8f5;
+  --input-bg: #f5f3ef;
+
+  // ── Borders ──
+  --border: rgba(0, 0, 0, 0.08);
+
+  // ── Text ──
+  --text: #1b1c1a;
+  --text-muted: #6b7280;
+  --btn-active-text: #ffffff;
+
+  // ── Shadows ──
+  --shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+
+  // ── Scrollbar ──
+  --scrollbar-thumb: rgba(0, 0, 0, 0.10);
+  --scrollbar-hover: rgba(0, 0, 0, 0.18);
+
+  // ── Overlay ──
+  --overlay: rgba(0, 0, 0, 0.3);
+
+  // ── Semantic Status ──
+  --error: #FF7F50;
+  --error-dim: rgba(255, 127, 80, 0.12);
+  --success: #20B2AA;
+  --success-dim: rgba(32, 178, 170, 0.12);
+  --warning: #FF7F50;
+  --warning-dim: rgba(255, 127, 80, 0.12);
+
+  // ── Risk Levels ──
+  --risk-low: #20B2AA;
+  --risk-low-dim: rgba(32, 178, 170, 0.12);
+  --risk-medium: #FF7F50;
+  --risk-medium-dim: rgba(255, 127, 80, 0.12);
+  --risk-high: #e74c3c;
+  --risk-high-dim: rgba(231, 76, 60, 0.12);
+}

@@ -1,3 +1,5 @@
+@use 'variables' as v;
+
 .signup-page {
   position: relative;
   min-height: 100vh;
@@ -75,7 +77,7 @@
   font-size: 0.875rem;
   font-weight: 700;
   text-decoration: none;
-  transition: background 0.2s;
+  transition: background v.$transition-normal;
 
   &:hover { background: rgba(185, 242, 13, 0.15); }
 }
@@ -142,7 +144,7 @@
     font-family: inherit;
     font-size: 0.95rem;
     outline: none;
-    transition: border-color 0.2s, box-shadow 0.2s;
+    transition: border-color v.$transition-normal, box-shadow v.$transition-normal;
     box-sizing: border-box;
 
     &::placeholder { color: var(--text-muted); }
@@ -171,7 +173,7 @@
     padding: 0;
     display: flex;
     align-items: center;
-    transition: color 0.2s;
+    transition: color v.$transition-normal;
 
     &:hover { color: var(--pp); }
 
@@ -192,7 +194,7 @@
   cursor: pointer;
   letter-spacing: 0.05em;
   box-shadow: 0 8px 24px var(--pp-active-bg);
-  transition: transform 0.15s, box-shadow 0.15s;
+  transition: transform v.$transition-fast, box-shadow v.$transition-fast;
 
   &:hover {
     transform: scale(1.02);
@@ -254,7 +256,7 @@
   border-radius: 0.75rem;
   color: var(--text-muted);
   cursor: pointer;
-  transition: border-color 0.2s, color 0.2s;
+  transition: border-color v.$transition-normal, color v.$transition-normal;
 
   &:hover {
     border-color: var(--pp);
@@ -299,6 +301,6 @@
     width: 6rem;
     height: 0.25rem;
     background: var(--pp);
-    border-radius: 9999px;
+    border-radius: v.$radius-pill;
   }
 }

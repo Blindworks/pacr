@@ -1,24 +1,10 @@
-:host {
-  --risk-low: var(--pp);
-  --risk-low-dim: var(--pp-dim);
-  --risk-medium: #f2a60d;
-  --risk-medium-dim: rgba(242, 166, 13, 0.12);
-  --risk-high: #ff4444;
-  --risk-high-dim: rgba(255, 68, 68, 0.12);
-}
+@use 'variables' as v;
+@use 'mixins' as m;
 
 // ── Keyframes ────────────────────────────────────────────────────────
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(8px); }
   to   { opacity: 1; transform: translateY(0); }
-}
-
-.spin {
-  animation: spin 1s linear infinite;
 }
 
 // ── Page Container ───────────────────────────────────────────────────
@@ -87,10 +73,8 @@
 .date-btn {
   width: 36px;
   height: 36px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 8px;
+  @include m.flex-center;
+  border-radius: v.$radius-md;
   border: 1px solid var(--pp-border);
   background: transparent;
   color: var(--text-muted);
@@ -130,7 +114,7 @@
     letter-spacing: 0.1em;
     background: var(--pp);
     color: var(--btn-active-text);
-    border-radius: 999px;
+    border-radius: v.$radius-pill;
     padding: 1px 8px;
     line-height: 1.6;
   }
@@ -142,7 +126,7 @@
   align-items: flex-start;
   gap: 12px;
   padding: 16px 20px;
-  border-radius: 12px;
+  border-radius: v.$radius-lg;
   font-size: 14px;
   animation: fadeIn 0.3s ease;
 
@@ -213,10 +197,7 @@
 
 // ── Section Card ─────────────────────────────────────────────────────
 .section-card {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 24px;
+  @include m.card(v.$radius-xl, 24px);
   display: flex;
   flex-direction: column;
   gap: 18px;
@@ -249,11 +230,7 @@
 }
 
 .session-count-badge {
-  font-size: 11px;
-  font-weight: 800;
-  background: var(--pp-dim);
-  color: var(--pp);
-  border-radius: 999px;
+  @include m.count-badge;
   padding: 2px 9px;
 }
 
@@ -289,7 +266,7 @@
   padding: 16px;
   background: var(--panel-soft);
   border: 1px solid var(--border);
-  border-radius: 12px;
+  border-radius: v.$radius-lg;
   transition: border-color 0.2s;
 
   &:hover {
@@ -301,9 +278,7 @@
     height: 42px;
     border-radius: 10px;
     background: var(--pp-dim);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    @include m.flex-center;
     flex-shrink: 0;
   }
 
@@ -360,7 +335,7 @@
     font-weight: 700;
     color: var(--text-muted);
     background: rgba(255, 255, 255, 0.06);
-    border-radius: 999px;
+    border-radius: v.$radius-pill;
     padding: 2px 8px;
   }
 
@@ -385,7 +360,7 @@
   letter-spacing: 0.06em;
   background: rgba(45, 123, 255, 0.12);
   color: #5b9aff;
-  border-radius: 999px;
+  border-radius: v.$radius-pill;
   padding: 2px 8px;
 }
 
@@ -394,7 +369,7 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  border-radius: 999px;
+  border-radius: v.$radius-pill;
   padding: 2px 8px;
   background: rgba(255, 255, 255, 0.08);
   color: var(--text-muted);
@@ -421,7 +396,7 @@
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  border-radius: 999px;
+  border-radius: v.$radius-pill;
   padding: 3px 10px;
 
   &.risk-low {
@@ -456,12 +431,12 @@
   flex: 1;
   height: 8px;
   background: rgba(255, 255, 255, 0.06);
-  border-radius: 999px;
+  border-radius: v.$radius-pill;
   overflow: hidden;
 
   &__fill {
     height: 100%;
-    border-radius: 999px;
+    border-radius: v.$radius-pill;
     transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 
     &.risk-low    { background: var(--risk-low); }
@@ -487,7 +462,7 @@
   letter-spacing: 0.08em;
   background: rgba(185, 242, 13, 0.12);
   color: var(--pp);
-  border-radius: 999px;
+  border-radius: v.$radius-pill;
   padding: 3px 10px;
 }
 
@@ -512,13 +487,13 @@
   flex: 1;
   height: 8px;
   background: rgba(255, 255, 255, 0.06);
-  border-radius: 999px;
+  border-radius: v.$radius-pill;
   overflow: hidden;
 
   &__fill {
     height: 100%;
     background: linear-gradient(90deg, var(--pp-dim), var(--pp));
-    border-radius: 999px;
+    border-radius: v.$radius-pill;
     transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
   }
 }
@@ -573,7 +548,7 @@
   padding: 14px 8px;
   background: var(--panel-soft);
   border: 1px solid var(--border);
-  border-radius: 12px;
+  border-radius: v.$radius-lg;
   cursor: pointer;
   transition: border-color 0.2s, background 0.2s, transform 0.1s;
 
@@ -644,28 +619,16 @@
 
 // ── Ask Button ───────────────────────────────────────────────────────
 .ask-btn {
-  display: flex;
-  align-items: center;
+  @include m.btn-primary;
   justify-content: center;
-  gap: 8px;
   align-self: flex-end;
   padding: 14px 32px;
-  background: var(--pp);
-  color: var(--btn-active-text);
-  border: none;
-  border-radius: 12px;
+  border-radius: v.$radius-lg;
   font-size: 15px;
   font-weight: 800;
-  cursor: pointer;
-  transition: opacity 0.2s, transform 0.1s;
   letter-spacing: 0.02em;
 
-  .material-symbols-outlined {
-    font-size: 20px;
-  }
-
   &:hover:not(:disabled) {
-    opacity: 0.9;
     transform: translateY(-1px);
   }
 
@@ -691,9 +654,7 @@
     border-radius: 10px;
     background: var(--pp);
     color: var(--btn-active-text);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    @include m.flex-center;
     flex-shrink: 0;
 
     .material-symbols-outlined {
@@ -715,7 +676,7 @@
   padding: 16px 18px;
   background: rgba(45, 123, 255, 0.07);
   border: 1px solid rgba(45, 123, 255, 0.2);
-  border-radius: 12px;
+  border-radius: v.$radius-lg;
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -866,7 +827,7 @@
   padding: 28px 28px;
   background: linear-gradient(135deg, rgba(185, 242, 13, 0.1) 0%, rgba(185, 242, 13, 0.04) 100%);
   border: 1px solid var(--pp-border);
-  border-radius: 16px;
+  border-radius: v.$radius-xl;
   animation: fadeIn 0.4s ease;
 
   &__icon {
@@ -990,47 +951,23 @@
 }
 
 .nav-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
+  @include m.btn-primary;
   padding: 13px 24px;
-  background: var(--pp);
-  color: var(--btn-active-text);
-  border-radius: 12px;
+  border-radius: v.$radius-lg;
   font-size: 14px;
   font-weight: 800;
   text-decoration: none;
-  cursor: pointer;
-  transition: opacity 0.2s, transform 0.1s;
-
-  .material-symbols-outlined {
-    font-size: 18px;
-  }
 
   &:hover {
-    opacity: 0.9;
     transform: translateY(-1px);
   }
 }
 
 .secondary-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
+  @include m.btn-ghost;
   padding: 12px 22px;
-  background: transparent;
-  color: var(--text);
-  border: 1px solid var(--border);
-  border-radius: 12px;
+  border-radius: v.$radius-lg;
   font-size: 14px;
-  font-weight: 700;
-  cursor: pointer;
-  font-family: inherit;
-  transition: border-color 0.2s, background 0.2s;
-
-  .material-symbols-outlined {
-    font-size: 18px;
-  }
 
   &:hover {
     border-color: var(--pp-border);
@@ -1039,7 +976,7 @@
 }
 
 // ── Responsive ───────────────────────────────────────────────────────
-@media (max-width: 700px) {
+@include m.respond-to(700px) {
   .ai-trainer-container {
     padding: 24px 16px 48px;
   }

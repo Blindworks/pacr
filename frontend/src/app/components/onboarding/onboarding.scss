@@ -1,7 +1,7 @@
+@use 'mixins' as m;
+@use 'variables' as v;
+
 :host {
-  --accent: #cafd00;
-  --accent-dim: rgba(202, 253, 0, 0.15);
-  --accent-glow: rgba(202, 253, 0, 0.3);
   --panel-border: rgba(202, 253, 0, 0.12);
   --panel-hover: #1a1a1a;
   --font-display: 'Space Grotesk', 'Lexend', sans-serif;
@@ -30,7 +30,7 @@
   font-weight: 800;
   font-size: 1.1rem;
   letter-spacing: 0.15em;
-  color: var(--accent);
+  color: var(--pp);
   font-style: italic;
 }
 
@@ -48,9 +48,9 @@
 
 .progress-fill {
   height: 100%;
-  background: var(--accent);
+  background: var(--pp);
   transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 0 12px var(--accent-glow);
+  box-shadow: 0 0 12px var(--pp-glow);
 }
 
 /* ── Main ────────────────────────────────── */
@@ -106,13 +106,13 @@
 }
 
 .accent {
-  color: var(--accent);
+  color: var(--pp);
   font-style: italic;
-  text-shadow: 0 0 20px var(--accent-glow);
+  text-shadow: 0 0 20px var(--pp-glow);
 }
 
 .accent-text {
-  color: var(--accent);
+  color: var(--pp);
   font-weight: 700;
 }
 
@@ -154,7 +154,7 @@
   border-radius: 0.75rem;
   color: var(--text-muted);
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all v.$transition-normal;
   font-family: var(--font-display);
   font-size: 0.7rem;
   font-weight: 700;
@@ -170,9 +170,9 @@
   }
 
   &.selected {
-    background: var(--accent);
+    background: var(--pp);
     color: #0a0a0a;
-    border-color: var(--accent);
+    border-color: var(--pp);
 
     .material-symbols-outlined {
       color: #0a0a0a;
@@ -244,10 +244,10 @@
   font-size: 0.85rem;
   font-weight: 600;
   font-style: italic;
-  color: var(--accent);
+  color: var(--pp);
   text-align: center;
   margin-top: 1rem;
-  text-shadow: 0 0 20px var(--accent-glow);
+  text-shadow: 0 0 20px var(--pp-glow);
 }
 
 /* ── Step 2: Intel Cards ─────────────────── */
@@ -265,7 +265,7 @@
   padding: 1.25rem;
   text-align: left;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all v.$transition-normal;
   color: var(--text);
 
   &:hover {
@@ -274,8 +274,8 @@
   }
 
   &.selected {
-    border-color: var(--accent);
-    background: var(--accent-dim);
+    border-color: var(--pp);
+    background: var(--pp-dim);
   }
 
   h3 {
@@ -301,7 +301,7 @@
 
   > .material-symbols-outlined {
     font-size: 1.3rem;
-    color: var(--accent);
+    color: var(--pp);
   }
 }
 
@@ -313,7 +313,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.2s;
+  transition: all v.$transition-normal;
 
   .material-symbols-outlined {
     font-size: 14px;
@@ -321,8 +321,8 @@
   }
 
   &.active {
-    background: var(--accent);
-    border-color: var(--accent);
+    background: var(--pp);
+    border-color: var(--pp);
   }
 }
 
@@ -337,7 +337,7 @@
 
   .material-symbols-outlined {
     font-size: 1rem;
-    color: var(--accent);
+    color: var(--pp);
   }
 }
 
@@ -363,7 +363,7 @@
   border-radius: 0.75rem;
   padding: 1rem 1.25rem;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all v.$transition-normal;
   text-align: left;
   color: var(--text);
 
@@ -373,8 +373,8 @@
   }
 
   &.selected {
-    border-color: var(--accent);
-    background: var(--accent-dim);
+    border-color: var(--pp);
+    background: var(--pp-dim);
   }
 
   .dist-info {
@@ -397,7 +397,7 @@
   }
 
   .check-icon {
-    color: var(--accent);
+    color: var(--pp);
     font-size: 1.2rem;
   }
 }
@@ -424,7 +424,7 @@
   font-size: 0.78rem;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all v.$transition-normal;
   text-align: center;
 
   &:hover {
@@ -433,9 +433,9 @@
   }
 
   &.selected {
-    background: var(--accent);
+    background: var(--pp);
     color: #0a0a0a;
-    border-color: var(--accent);
+    border-color: var(--pp);
   }
 }
 
@@ -475,7 +475,7 @@
   padding: 1.5rem;
   text-align: left;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all v.$transition-normal;
   color: var(--text);
 
   &:hover {
@@ -484,8 +484,8 @@
   }
 
   &.selected {
-    border-color: var(--accent);
-    background: var(--accent-dim);
+    border-color: var(--pp);
+    background: var(--pp-dim);
   }
 
   h3 {
@@ -500,7 +500,7 @@
     position: absolute;
     top: 1rem;
     right: 1rem;
-    color: var(--accent);
+    color: var(--pp);
     font-size: 1.3rem;
   }
 
@@ -509,7 +509,7 @@
     font-size: 0.6rem;
     font-weight: 700;
     letter-spacing: 0.12em;
-    background: var(--accent);
+    background: var(--pp);
     color: #0a0a0a;
     padding: 0.2rem 0.6rem;
     border-radius: 0.25rem;
@@ -566,7 +566,7 @@
 
     .material-symbols-outlined {
       font-size: 1rem;
-      color: var(--accent);
+      color: var(--pp);
     }
   }
 }
@@ -584,7 +584,7 @@
   border-radius: 0.5rem;
   padding: 0.75rem;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all v.$transition-normal;
   text-align: left;
   color: var(--text);
 
@@ -607,8 +607,8 @@
   }
 
   &.selected {
-    border-color: var(--accent);
-    background: var(--accent-dim);
+    border-color: var(--pp);
+    background: var(--pp-dim);
   }
 }
 
@@ -624,7 +624,7 @@
   outline: none;
 
   &:focus {
-    border-color: var(--accent);
+    border-color: var(--pp);
   }
 }
 
@@ -639,7 +639,7 @@
   margin-top: 1rem;
 
   .material-symbols-outlined {
-    color: var(--accent);
+    color: var(--pp);
     font-size: 1.3rem;
     flex-shrink: 0;
   }
@@ -669,7 +669,7 @@
   border-radius: 0.5rem;
   padding: 0.75rem;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all v.$transition-normal;
   color: var(--text-muted);
   font-family: var(--font-display);
   font-size: 0.7rem;
@@ -687,9 +687,9 @@
   }
 
   &.selected {
-    border-color: var(--accent);
-    background: var(--accent-dim);
-    color: var(--accent);
+    border-color: var(--pp);
+    background: var(--pp-dim);
+    color: var(--pp);
   }
 }
 
@@ -712,7 +712,7 @@
   border-radius: 0.75rem;
   padding: 0.85rem 1rem;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all v.$transition-normal;
   text-align: left;
   color: var(--text);
   width: 100%;
@@ -723,11 +723,11 @@
   }
 
   &.selected {
-    border-color: var(--accent);
-    background: var(--accent-dim);
+    border-color: var(--pp);
+    background: var(--pp-dim);
 
     .comp-check {
-      color: var(--accent);
+      color: var(--pp);
     }
   }
 
@@ -760,8 +760,8 @@
     font-weight: 600;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: var(--accent);
-    background: var(--accent-dim);
+    color: var(--pp);
+    background: var(--pp-dim);
     padding: 0.2rem 0.5rem;
     border-radius: 0.25rem;
   }
@@ -777,7 +777,7 @@
   padding: 1.25rem;
 
   .material-symbols-outlined {
-    color: var(--accent);
+    color: var(--pp);
     font-size: 1.1rem;
     flex-shrink: 0;
   }
@@ -804,7 +804,7 @@
 
   .status-icon {
     font-size: 2rem;
-    color: var(--accent);
+    color: var(--pp);
   }
 
   .status-label {
@@ -835,7 +835,7 @@
     font-size: 0.6rem;
     font-weight: 700;
     letter-spacing: 0.12em;
-    color: var(--accent);
+    color: var(--pp);
     margin-bottom: 0.5rem;
   }
 
@@ -861,7 +861,7 @@
   max-width: 420px;
   margin: 0 auto 0.75rem;
   padding: 1rem 2rem;
-  background: var(--accent);
+  background: var(--pp);
   color: #0a0a0a;
   border: none;
   border-radius: 0.75rem;
@@ -870,11 +870,11 @@
   font-weight: 800;
   letter-spacing: 0.15em;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all v.$transition-normal;
   text-transform: uppercase;
 
   &:hover:not(:disabled) {
-    box-shadow: 0 0 24px var(--accent-glow), 0 4px 16px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 0 24px var(--pp-glow), 0 4px 16px rgba(0, 0, 0, 0.4);
     transform: translateY(-1px);
   }
 
@@ -889,7 +889,7 @@
   font-size: 0.65rem;
   font-weight: 600;
   letter-spacing: 0.15em;
-  color: var(--accent);
+  color: var(--pp);
   opacity: 0.6;
 }
 
@@ -915,7 +915,7 @@
   font-weight: 700;
   letter-spacing: 0.12em;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all v.$transition-normal;
   text-transform: uppercase;
 
   .material-symbols-outlined {
@@ -940,12 +940,12 @@
 }
 
 .nav-next {
-  background: var(--accent);
+  background: var(--pp);
   border: none;
   color: #0a0a0a;
 
   &:hover:not(:disabled) {
-    box-shadow: 0 0 16px var(--accent-glow);
+    box-shadow: 0 0 16px var(--pp-glow);
     transform: translateY(-1px);
   }
 
@@ -956,7 +956,7 @@
 }
 
 /* ── Responsive ──────────────────────────── */
-@media (max-width: 768px) {
+@include m.respond-to(v.$bp-md) {
   .ob-main {
     padding: 1.5rem 1rem 1rem;
   }

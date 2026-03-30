@@ -1,3 +1,6 @@
+@use 'variables' as v;
+@use 'mixins' as m;
+
 .achievements-page {
   padding: 2rem;
   max-width: 1000px;
@@ -28,14 +31,6 @@
   color: var(--text-muted);
   padding: 3rem 0;
   justify-content: center;
-
-  .spin {
-    animation: spin 1s linear infinite;
-  }
-}
-
-@keyframes spin {
-  to { transform: rotate(360deg); }
 }
 
 .category-section {
@@ -68,10 +63,8 @@
 }
 
 .badge-card {
-  background: var(--bg-card);
-  border: 1px solid var(--panel-soft);
-  border-radius: 12px;
-  padding: 1.25rem;
+  @include m.card(v.$radius-lg, 1.25rem);
+  border-color: var(--panel-soft);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -123,9 +116,7 @@
   width: 56px;
   height: 56px;
   border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  @include m.flex-center;
   background: var(--panel-soft);
   transition: all 0.3s;
 
@@ -226,7 +217,7 @@
 .detail-dialog {
   background: var(--bg-card);
   border: 1px solid var(--border);
-  border-radius: 16px;
+  border-radius: v.$radius-xl;
   color: var(--text);
   padding: 0;
   max-width: 360px;
@@ -263,9 +254,7 @@
   width: 72px;
   height: 72px;
   border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  @include m.flex-center;
   background: var(--panel-soft);
 
   .material-symbols-outlined {
@@ -294,7 +283,7 @@
   gap: 0.5rem;
   font-size: 0.85rem;
   padding: 0.5rem 1rem;
-  border-radius: 8px;
+  border-radius: v.$radius-md;
   margin-top: 0.5rem;
 
   &.unlocked {
@@ -333,15 +322,9 @@
 }
 
 .dialog-close-btn {
+  @include m.btn-ghost;
   margin-top: 1rem;
   padding: 0.5rem 2rem;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  background: transparent;
-  color: var(--text);
-  font-size: 0.85rem;
-  cursor: pointer;
-  font-family: inherit;
 
   &:hover {
     background: var(--panel-soft);
