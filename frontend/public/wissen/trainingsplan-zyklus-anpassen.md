@@ -47,6 +47,13 @@ Du musst keine Zyklusexpertin werden, um davon zu profitieren. Drei einfache Sch
 
 Oder du lässt es automatisch machen: PACR erstellt Trainingspläne, die sich in Echtzeit an deine Zyklusphase und Tagesform anpassen — ohne dass du selbst umplanen musst.
 
+## Weiterlesen
+
+- [Welches Training passt in welche Zyklusphase?](/wissen/training-nach-zyklusphase)
+- [Soll ich während meiner Periode laufen gehen?](/wissen/laufen-waehrend-periode)
+- [Zyklustracking für Läuferinnen: Was bringt es wirklich?](/wissen/zyklustracking-laeuferinnen)
+- [Laufen nach Erkältung: Wann darf ich wieder starten?](/wissen/laufen-nach-erkaeltung)
+
 ## Quellen
 
 - McNulty, K. L. et al. (2020): "The Effects of Menstrual Cycle Phase on Exercise Performance in Eumenorrheic Women: A Systematic Review and Meta-Analysis." *Sports Medicine*.

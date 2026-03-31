@@ -80,6 +80,13 @@ schema: "FAQPage"
 - Harte Intervallserien mit kurzen Pausen
 - Zu wenig Schlaf — die Regeneration braucht jetzt besonders viel davon
 
+## Weiterlesen
+
+- [Laufen in der Follikelphase: Warum du jetzt Vollgas geben kannst](/wissen/laufen-follikelphase)
+- [Laufen in der Lutealphase: Warum weniger mehr ist](/wissen/laufen-lutealphase)
+- [Verletzungsrisiko beim Laufen: Wann ist es im Zyklus am höchsten?](/wissen/verletzungsrisiko-zyklus)
+- [Laufen nach Erkältung: Wann darf ich wieder starten?](/wissen/laufen-nach-erkaeltung)
+
 ## Quellen
 
 - Hackney, A. C. et al. (2019): "Menstrual Cycle Hormonal Changes and Energy Substrate Metabolism in Exercising Women." *International Journal of Environmental Research and Public Health*.
