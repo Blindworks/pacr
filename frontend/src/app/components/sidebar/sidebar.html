@@ -1,14 +1,10 @@
 <aside class="sidebar">
   <!-- Brand (fixed top) -->
   <div class="brand">
-    <img src="">
-    <div class="brand-icon">
-      <span class="material-symbols-outlined">bolt</span>
-    </div>
-    <div class="brand-text">
-      <h1>PACR</h1>
-      <p>Premium Running</p>
-    </div>
+    <img [src]="themeService.resolved() === 'dark'
+      ? 'assets/logo/PACR_logo_dark_text_transparent_cut.png'
+      : 'assets/logo/PACR_logo_light_text_transparent_cut.png'"
+      alt="PACR Logo" class="brand-logo" />
   </div>
 
   <!-- Scrollable Navigation -->

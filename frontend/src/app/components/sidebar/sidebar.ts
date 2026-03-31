@@ -5,6 +5,7 @@ import { PaceCalculatorService } from '../../services/pace-calculator.service';
 import { AboutDialogService } from '../../services/about-dialog.service';
 import { UserService } from '../../services/user.service';
 import { AuthService } from '../../services/auth.service';
+import { ThemeService } from '../../services/theme.service';
 
 @Component({
   selector: 'app-sidebar',
@@ -22,6 +23,7 @@ export class Sidebar implements OnInit, OnDestroy {
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
   protected readonly userService = inject(UserService);
+  protected readonly themeService = inject(ThemeService);
 
   readonly isAdmin = computed(() => {
     const role = this.userService.currentUser()?.role ?? this.authService.getRole();

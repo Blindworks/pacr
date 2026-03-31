@@ -30,40 +30,9 @@
   flex-shrink: 0;
 }
 
-.brand-icon {
-  width: 40px;
-  height: 40px;
-  border-radius: 10px;
-  background: var(--pp);
-  @include m.flex-center;
-  flex-shrink: 0;
-
-  .material-symbols-outlined {
-    color: var(--btn-active-text);
-    font-size: 24px;
-    font-variation-settings: 'FILL' 1, 'wght' 700, 'GRAD' 0, 'opsz' 24;
-  }
-}
-
-.brand-text {
-  h1 {
-    font-size: 1.25rem;
-    font-weight: 700;
-    letter-spacing: -0.02em;
-    color: var(--text);
-    margin: 0;
-    line-height: 1.2;
-  }
-
-  p {
-    font-size: 0.625rem;
-    font-weight: 600;
-    color: var(--pp);
-    opacity: 0.7;
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-    margin: 0;
-  }
+.brand-logo {
+  width: 100%;
+  height: auto;
 }
 
 /* ── Navigation (scrollable) ── */
