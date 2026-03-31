@@ -154,7 +154,7 @@
         <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg>
       </div>
       <div class="stat-body">
-        <p class="stat-label">Trainingsbelastungsstatus</p>
+        <p class="stat-label">Trainingsbelastungsstatus <button class="stat-info-link" (click)="acwrInfoService.open()">Was bedeutet das?</button></p>
         <p class="stat-value">{{ data.loadStatus.acwr | number:'1.2-2' }} <span class="stat-unit">ACWR · {{ loadFlagLabel() }}</span></p>
       </div>
     </div>
@@ -235,3 +235,5 @@
   </div>
 
 </div>
+
+<app-acwr-info-dialog></app-acwr-info-dialog>

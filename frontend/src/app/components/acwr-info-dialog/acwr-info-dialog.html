@@ -1,0 +1,78 @@
+<dialog #dialog class="acwr-dialog" (click)="onBackdropClick($event)">
+  <div class="acwr-inner" (click)="$event.stopPropagation()">
+
+    <header class="acwr-header">
+      <div class="acwr-header-title">
+        <span class="material-symbols-outlined acwr-header-icon">info</span>
+        <span>Was bedeutet der ACWR?</span>
+      </div>
+      <button class="acwr-close" (click)="close()">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </header>
+
+    <div class="acwr-body">
+      <p class="acwr-intro">
+        Der <strong>ACWR</strong> (Acute:Chronic Workload Ratio) vergleicht deine
+        kurzfristige Trainingsbelastung (letzte 7 Tage) mit der langfristigen
+        (letzte 28 Tage). Er zeigt, ob du dein Training sicher steigerst oder
+        dich überbelastest.
+      </p>
+
+      <div class="acwr-zones">
+        <div class="acwr-zone acwr-zone--info">
+          <div class="acwr-zone-header">
+            <span class="acwr-zone-dot"></span>
+            <span class="acwr-zone-range">&lt; 0.8</span>
+            <span class="acwr-zone-label">Aufbau</span>
+          </div>
+          <p class="acwr-zone-desc">
+            Unterbelastung — du trainierst deutlich weniger als gewohnt.
+            Dein Trainingsumfang kann gesteigert werden.
+          </p>
+        </div>
+
+        <div class="acwr-zone acwr-zone--good">
+          <div class="acwr-zone-header">
+            <span class="acwr-zone-dot"></span>
+            <span class="acwr-zone-range">0.8 – 1.3</span>
+            <span class="acwr-zone-label">Optimal</span>
+          </div>
+          <p class="acwr-zone-desc">
+            Sweet Spot — gute Balance zwischen Belastung und Erholung.
+            Dein Verletzungsrisiko ist gering.
+          </p>
+        </div>
+
+        <div class="acwr-zone acwr-zone--warn">
+          <div class="acwr-zone-header">
+            <span class="acwr-zone-dot"></span>
+            <span class="acwr-zone-range">1.3 – 1.5</span>
+            <span class="acwr-zone-label">Vorsicht</span>
+          </div>
+          <p class="acwr-zone-desc">
+            Erhöhtes Verletzungsrisiko — du steigerst dein Training schneller als empfohlen.
+            Stabilisiere deinen Umfang.
+          </p>
+        </div>
+
+        <div class="acwr-zone acwr-zone--bad">
+          <div class="acwr-zone-header">
+            <span class="acwr-zone-dot"></span>
+            <span class="acwr-zone-range">&gt; 1.5</span>
+            <span class="acwr-zone-label">Überlastung</span>
+          </div>
+          <p class="acwr-zone-desc">
+            Hohes Verletzungsrisiko — dein Körper ist stark überbelastet.
+            Reduziere den Trainingsumfang.
+          </p>
+        </div>
+      </div>
+
+      <div class="acwr-tip">
+        <span class="material-symbols-outlined acwr-tip-icon">lightbulb</span>
+        <p>Steigere dein Trainingsvolumen idealerweise um maximal 10 % pro Woche, um im optimalen Bereich zu bleiben.</p>
+      </div>
+    </div>
+  </div>
+</dialog>

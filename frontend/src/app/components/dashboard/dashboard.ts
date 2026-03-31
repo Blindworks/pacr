@@ -3,19 +3,22 @@ import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { DashboardService, DashboardData } from '../../services/dashboard.service';
 import { AchievementService, StreakInfo } from '../../services/achievement.service';
+import { AcwrInfoDialogService } from '../../services/acwr-info-dialog.service';
+import { AcwrInfoDialog } from '../acwr-info-dialog/acwr-info-dialog';
 
 const DAYS_DE = ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'];
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, AcwrInfoDialog],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss'
 })
 export class Dashboard implements OnInit {
   private readonly dashboardService = inject(DashboardService);
   private readonly achievementService = inject(AchievementService);
+  protected readonly acwrInfoService = inject(AcwrInfoDialogService);
 
   data: DashboardData | null = null;
   profileError = signal<string | null>(null);
