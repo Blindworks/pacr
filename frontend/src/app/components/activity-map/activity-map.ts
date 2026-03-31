@@ -1,10 +1,11 @@
 import {
   Component, Input, Output, EventEmitter,
   AfterViewInit, OnDestroy, OnChanges, SimpleChanges,
-  ChangeDetectionStrategy
+  ChangeDetectionStrategy, inject, effect
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { GpsStreamDto } from '../../services/activity.service';
+import { ThemeService } from '../../services/theme.service';
 import * as L from 'leaflet';
 
 // Make L available globally for leaflet-hotline UMD module
@@ -27,14 +28,30 @@ export class ActivityMapComponent implements AfterViewInit, OnDestroy, OnChanges
   @Input() fullscreen = false;
   @Output() colorModeChange = new EventEmitter<'pace' | 'hr'>();
 
+  private readonly themeService = inject(ThemeService);
   readonly mapContainerId = 'activity-map-' + Math.random().toString(36).slice(2, 8);
 
   private map: L.Map | null = null;
+  private tileLayer: L.TileLayer | null = null;
+  private glowLayer: L.Polyline | null = null;
   private hotlineLayer: any = null;
   private clickLayer: L.Polyline | null = null;
   private markerGroup: L.LayerGroup | null = null;
+  private currentTheme: 'light' | 'dark' = 'dark';
+
+  constructor() {
+    effect(() => {
+      const theme = this.themeService.resolved();
+      if (this.map && theme !== this.currentTheme) {
+        this.currentTheme = theme;
+        this.updateTileLayer();
+        this.drawRoute();
+      }
+    });
+  }
 
   ngAfterViewInit(): void {
+    this.currentTheme = this.themeService.resolved();
     setTimeout(() => this.initMap(), 0);
   }
 
@@ -72,12 +89,8 @@ export class ActivityMapComponent implements AfterViewInit, OnDestroy, OnChanges
       L.control.zoom({ position: 'topleft' }).addTo(this.map);
     }
 
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}{r}.png', {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/">CARTO</a>',
-      subdomains: 'abcd',
-      maxZoom: 19,
-      className: 'map-tiles-brighten'
-    }).addTo(this.map);
+    this.tileLayer = this.createTileLayer();
+    this.tileLayer.addTo(this.map);
 
     this.markerGroup = L.layerGroup().addTo(this.map);
     this.drawRoute();
@@ -88,6 +101,10 @@ export class ActivityMapComponent implements AfterViewInit, OnDestroy, OnChanges
     if (!this.map || !this.gpsData?.latlng?.length) return;
 
     // Remove previous layers
+    if (this.glowLayer) {
+      this.map.removeLayer(this.glowLayer);
+      this.glowLayer = null;
+    }
     if (this.hotlineLayer) {
       this.map.removeLayer(this.hotlineLayer);
       this.hotlineLayer = null;
@@ -118,29 +135,34 @@ export class ActivityMapComponent implements AfterViewInit, OnDestroy, OnChanges
     const min = validValues.length ? Math.min(...validValues) : 0;
     const max = validValues.length ? Math.max(...validValues) : 1;
 
-    // Gradient palette: green (easy) → yellow (moderate) → red (intense)
-    const palette: Record<number, string> = {
-      0.0: '#3fb950',
-      0.5: '#d29922',
-      1.0: '#f85149'
-    };
+    const isDark = this.currentTheme === 'dark';
+
+    // Gradient palette: easy → moderate → intense
+    const palette: Record<number, string> = isDark
+      ? { 0.0: '#3fb950', 0.5: '#d29922', 1.0: '#f85149' }
+      : { 0.0: '#20B2AA', 0.5: '#9370DB', 1.0: '#e74c3c' };
+    const pp = isDark ? '#b9f20d' : '#9370DB';
+
+    // Visible glow polyline underneath (SVG-based, always renders)
+    this.glowLayer = L.polyline(latlngs, {
+      color: pp,
+      weight: 8,
+      opacity: 0.5,
+      lineCap: 'round',
+      lineJoin: 'round'
+    }).addTo(this.map);
 
     try {
       this.hotlineLayer = (L as any).hotline(hotlineData, {
         min,
         max,
         palette,
-        weight: 5,
+        weight: 6,
         outlineWidth: 1,
-        outlineColor: 'rgba(0, 0, 0, 0.3)'
+        outlineColor: isDark ? 'rgba(255, 255, 255, 0.25)' : 'rgba(0, 0, 0, 0.3)'
       }).addTo(this.map);
     } catch {
-      // Fallback to regular polyline if hotline fails
-      this.hotlineLayer = L.polyline(latlngs, {
-        color: getComputedStyle(document.documentElement).getPropertyValue('--pp').trim(),
-        weight: 4,
-        opacity: 0.9
-      }).addTo(this.map);
+      // Hotline failed — glow layer already provides route visibility
     }
 
     // Invisible click layer for interaction
@@ -198,6 +220,28 @@ export class ActivityMapComponent implements AfterViewInit, OnDestroy, OnChanges
         nextKm += 1000;
       }
     }
+  }
+
+  private createTileLayer(): L.TileLayer {
+    const isDark = this.currentTheme === 'dark';
+    const tileUrl = isDark
+      ? 'https://{s}.basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}{r}.png'
+      : 'https://{s}.basemaps.cartocdn.com/rastertiles/light_all/{z}/{x}/{y}{r}.png';
+    return L.tileLayer(tileUrl, {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/">CARTO</a>',
+      subdomains: 'abcd',
+      maxZoom: 19,
+      className: isDark ? 'map-tiles-brighten' : ''
+    });
+  }
+
+  private updateTileLayer(): void {
+    if (!this.map) return;
+    if (this.tileLayer) {
+      this.map.removeLayer(this.tileLayer);
+    }
+    this.tileLayer = this.createTileLayer();
+    this.tileLayer.addTo(this.map);
   }
 
   private onRouteClick(e: L.LeafletMouseEvent): void {

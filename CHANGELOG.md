@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.6] - 2026-03-31
+
+### Fixed
+- Activity map route line not visible: added SVG glow polyline underneath hotline canvas for guaranteed visibility
+- Activity map now uses light tiles (CARTO light_all) in light theme instead of always using dark tiles
+- Route gradient palette adapts to theme (teal/purple/red for light, green/yellow/red for dark)
+- Route outline color provides contrast on both themes (white on dark, black on light)
+- Map tiles and route update live on theme switch
+
 ## [0.4.5] - 2026-03-31
 
 ### Added
