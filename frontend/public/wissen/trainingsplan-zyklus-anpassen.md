@@ -53,6 +53,7 @@ Oder du lässt es automatisch machen: PACR erstellt Trainingspläne, die sich in
 - [Soll ich während meiner Periode laufen gehen?](/wissen/laufen-waehrend-periode)
 - [Zyklustracking für Läuferinnen: Was bringt es wirklich?](/wissen/zyklustracking-laeuferinnen)
 - [Laufen nach Erkältung: Wann darf ich wieder starten?](/wissen/laufen-nach-erkaeltung)
+- [Warum ein starrer Trainingsplan nicht funktioniert](/wissen/starrer-trainingsplan-probleme)
 
 ## Quellen
 

@@ -52,6 +52,12 @@ Statt dich über schlechtere Zeiten zu ärgern, nutze diese Phase bewusst für R
 
 PACR erkennt deine Zyklusphase und fährt die Trainingsintensität in der Lutealphase automatisch runter. So trainierst du nie gegen deinen Körper.
 
+## Weiterlesen
+
+- [Soll ich laufen, wenn ich müde bin?](/wissen/laufen-wenn-muede)
+- [Laufen in der Follikelphase: Warum du jetzt Vollgas geben kannst](/wissen/laufen-follikelphase)
+- [Wie passe ich meinen Trainingsplan an meinen Zyklus an?](/wissen/trainingsplan-zyklus-anpassen)
+
 ## Quellen
 
 - Janse de Jonge, X. A. K. (2003): "Effects of the Menstrual Cycle on Exercise Performance." *Sports Medicine*.

@@ -60,6 +60,7 @@ PACR plant deinen Wiedereinstieg adaptiv — der Trainingsplan wird an deinen ak
 
 - [Wie passe ich meinen Trainingsplan an meinen Zyklus an?](/wissen/trainingsplan-zyklus-anpassen)
 - [Kann ich mit Asthma joggen gehen?](/wissen/joggen-mit-asthma)
+- [Regeneration nach dem Laufen: Was wirklich hilft](/wissen/regeneration-nach-laufen)
 
 ## Quellen
 

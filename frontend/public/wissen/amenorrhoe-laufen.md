@@ -54,6 +54,7 @@ PACR berücksichtigt deine Zyklusdaten im Trainingsplan und warnt dich, wenn dei
 
 - [Wie passe ich meinen Trainingsplan an meinen Zyklus an?](/wissen/trainingsplan-zyklus-anpassen)
 - [Was sagt die Wissenschaft zu zyklusbasiertem Training?](/wissen/wissenschaft-zyklusbasiertes-training)
+- [Wie erkenne ich, ob ich übertrainiert bin?](/wissen/uebertraining-erkennen)
 
 ---
 
