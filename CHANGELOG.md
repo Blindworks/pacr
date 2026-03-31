@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.2] - 2026-03-31
+
+### Changed
+- Dashboard training load chart now shows current calendar week (Mon–Sun) instead of last 7 days
+- Bar heights represent daily distance (km) with a 50 km default scale
+- Day labels centered below each bar
+
+### Added
+- Stylish glassmorphism hover tooltip on load chart bars showing distance (km) and strain
+- Daily distance (km) added to load trend API response (LoadTrendPointDto)
+
 ## [0.4.1] - 2026-03-30
 
 ### Added

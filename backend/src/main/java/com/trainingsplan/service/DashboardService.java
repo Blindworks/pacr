@@ -120,12 +120,21 @@ public class DashboardService {
                 .max(Comparator.comparing(DailyMetrics::getDate))
                 .orElse(null);
 
+        List<CompletedTraining> completedInRange = completedTrainingRepository
+                .findByUserIdAndTrainingDateBetweenOrderByTrainingDate(user.getId(), startDate, today);
+        Map<LocalDate, Double> distanceByDate = new HashMap<>();
+        for (CompletedTraining ct : completedInRange) {
+            double km = ct.getDistanceKm() != null ? ct.getDistanceKm() : 0.0;
+            distanceByDate.merge(ct.getTrainingDate(), km, Double::sum);
+        }
+
         List<DashboardDto.LoadTrendPointDto> loadTrend = new ArrayList<>();
         for (int i = 0; i < DAYS; i++) {
             LocalDate date = startDate.plusDays(i);
             DailyMetrics daily = dailyByDate.get(date);
             double strain = daily != null && daily.getDailyStrain21() != null ? daily.getDailyStrain21() : 0.0;
-            loadTrend.add(new DashboardDto.LoadTrendPointDto(date, strain));
+            double distKm = distanceByDate.getOrDefault(date, 0.0);
+            loadTrend.add(new DashboardDto.LoadTrendPointDto(date, strain, distKm));
         }
 
         List<ActivityMetrics> efMetrics = activityMetricsRepository

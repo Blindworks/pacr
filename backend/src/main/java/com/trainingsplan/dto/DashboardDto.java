@@ -129,10 +129,12 @@ public class DashboardDto {
     public static class LoadTrendPointDto {
         private final LocalDate date;
         private final double strain21;
+        private final double distanceKm;
 
-        public LoadTrendPointDto(LocalDate date, double strain21) {
+        public LoadTrendPointDto(LocalDate date, double strain21, double distanceKm) {
             this.date = date;
             this.strain21 = strain21;
+            this.distanceKm = distanceKm;
         }
 
         public LocalDate getDate() {
@@ -141,6 +143,10 @@ public class DashboardDto {
 
         public double getStrain21() {
             return strain21;
+        }
+
+        public double getDistanceKm() {
+            return distanceKm;
         }
     }
 

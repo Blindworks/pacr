@@ -54,16 +54,48 @@ export class Dashboard implements OnInit {
     });
   }
 
-  // ── Load Trend Bar Chart ─────────────────────────────────────────
-  barPoints(): Array<{ height: number; label: string; active: boolean }> {
+  // ── Load Trend Bar Chart (aktuelle Woche Mo–So) ──────────────────
+  barPoints(): Array<{ height: number; label: string; active: boolean; future: boolean; strain: number; distanceKm: number }> {
     const trend = this.data?.loadTrend ?? [];
-    const recent = trend.slice(-7);
-    const max = Math.max(...recent.map(p => p.strain21), 0.1);
-    const today = new Date().toISOString().slice(0, 10);
-    return recent.map(p => ({
-      height: Math.max(4, Math.round(p.strain21 / max * 100)),
-      label: DAYS_DE[new Date(p.date).getDay()],
-      active: p.date === today
+    const todayDate = new Date();
+    const today = todayDate.toISOString().slice(0, 10);
+
+    // Montag der aktuellen Woche berechnen (JS: 0=So, 1=Mo, ...)
+    const dayOfWeek = todayDate.getDay();
+    const diffToMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+    const monday = new Date(todayDate);
+    monday.setDate(todayDate.getDate() - diffToMonday);
+
+    // 7 Tage Mo-So als ISO-Strings
+    const weekDates: string[] = [];
+    for (let i = 0; i < 7; i++) {
+      const d = new Date(monday);
+      d.setDate(monday.getDate() + i);
+      weekDates.push(d.toISOString().slice(0, 10));
+    }
+
+    // Trend-Daten als Map fuer schnellen Zugriff
+    const trendMap = new Map(trend.map(p => [p.date, p]));
+
+    const weekPoints = weekDates.map(date => {
+      const p = trendMap.get(date);
+      return {
+        date,
+        strain21: p?.strain21 ?? 0,
+        distanceKm: p?.distanceKm ?? 0
+      };
+    });
+
+    const max = Math.max(...weekPoints.map(p => p.distanceKm), 50);
+    const WEEK_LABELS = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'];
+
+    return weekPoints.map((p, i) => ({
+      height: p.date > today ? 0 : Math.max(4, Math.round(p.distanceKm / max * 100)),
+      label: WEEK_LABELS[i],
+      active: p.date === today,
+      future: p.date > today,
+      strain: p.strain21,
+      distanceKm: p.distanceKm
     }));
   }
 

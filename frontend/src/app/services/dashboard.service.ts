@@ -8,6 +8,7 @@ const BASE = apiUrl('/dashboard');
 export interface LoadTrendPoint {
   date: string;
   strain21: number;
+  distanceKm: number;
 }
 
 export interface EfTrendPoint {

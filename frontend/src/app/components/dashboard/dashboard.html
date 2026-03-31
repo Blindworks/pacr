@@ -38,21 +38,25 @@
   <!-- ── Main 3-column Grid ── -->
   <div class="main-grid">
 
-    <!-- Load Trend Bar Chart (letzte 7 Tage) -->
+    <!-- Load Trend Bar Chart (aktuelle Woche) -->
     <div class="metric-card">
       <div class="card-head">
         <h4>Trainingsbelastung</h4>
-        <span class="card-tag">LETZTE 7 TAGE</span>
+        <span class="card-tag">AKTUELLE WOCHE</span>
       </div>
       <div class="bar-chart-wrap">
-        <div class="bar"
-             *ngFor="let bar of barPoints()"
-             [class.bar--active]="bar.active"
-             [style.height.%]="bar.height">
+        <div class="bar-col" *ngFor="let bar of barPoints()">
+          <div class="bar"
+               [class.bar--active]="bar.active"
+               [class.bar--future]="bar.future"
+               [style.height.%]="bar.height">
+            <div class="bar-tooltip" *ngIf="bar.distanceKm > 0 || bar.strain > 0">
+              <span class="tooltip-km">{{ bar.distanceKm | number:'1.1-1' }} km</span>
+              <span class="tooltip-strain">Strain {{ bar.strain | number:'1.0-0' }}</span>
+            </div>
+          </div>
+          <span class="bar-label">{{ bar.label }}</span>
         </div>
-      </div>
-      <div class="bar-labels">
-        <span *ngFor="let bar of barPoints()">{{ bar.label }}</span>
       </div>
       <div class="chart-footer">
         <span class="chart-stat">Strain21: <strong>{{ data.strain21 | number:'1.1-1' }}</strong></span>
