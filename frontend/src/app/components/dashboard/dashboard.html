@@ -16,7 +16,7 @@
            [class.readiness-hero--red]="(data.readinessScore) < 50">
     <div class="hero-blob"></div>
     <div class="hero-left">
-      <h3 class="hero-eyebrow">Readiness Score</h3>
+      <h3 class="hero-eyebrow">Readiness Score <button class="stat-info-link" (click)="readinessInfoService.open()">Was bedeutet das?</button></h3>
       <div class="hero-score-row">
         <span class="hero-number">{{ data.readinessScore }}</span>
         <span class="hero-denom">/100</span>
@@ -238,3 +238,4 @@
 
 <app-acwr-info-dialog></app-acwr-info-dialog>
 <app-strain-info-dialog></app-strain-info-dialog>
+<app-readiness-info-dialog></app-readiness-info-dialog>

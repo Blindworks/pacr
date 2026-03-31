@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.5] - 2026-03-31
+
+### Added
+- Readiness Score info dialog on dashboard: explains score zones (excellent/good/moderate/low) with color-coded ranges and practical tips
+
 ## [0.4.4] - 2026-03-31
 
 ### Added

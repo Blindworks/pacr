@@ -1,0 +1,78 @@
+<dialog #dialog class="readiness-dialog" (click)="onBackdropClick($event)">
+  <div class="readiness-inner" (click)="$event.stopPropagation()">
+
+    <header class="readiness-header">
+      <div class="readiness-header-title">
+        <span class="material-symbols-outlined readiness-header-icon">info</span>
+        <span>Was bedeutet der Readiness Score?</span>
+      </div>
+      <button class="readiness-close" (click)="close()">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </header>
+
+    <div class="readiness-body">
+      <p class="readiness-intro">
+        Der <strong>Readiness Score</strong> zeigt auf einer Skala von 0 bis 100,
+        wie bereit dein Körper für die nächste Trainingseinheit ist. Er berücksichtigt
+        deine aktuelle Trainingsbelastung, Erholungszeit und Belastungstrends der
+        letzten Tage.
+      </p>
+
+      <div class="readiness-zones">
+        <div class="readiness-zone readiness-zone--excellent">
+          <div class="readiness-zone-header">
+            <span class="readiness-zone-dot"></span>
+            <span class="readiness-zone-range">90 – 100</span>
+            <span class="readiness-zone-label">Exzellent</span>
+          </div>
+          <p class="readiness-zone-desc">
+            Dein Körper ist voll erholt und leistungsbereit — idealer Zeitpunkt
+            für intensive Einheiten, Intervalle oder Wettkämpfe.
+          </p>
+        </div>
+
+        <div class="readiness-zone readiness-zone--good">
+          <div class="readiness-zone-header">
+            <span class="readiness-zone-dot"></span>
+            <span class="readiness-zone-range">70 – 89</span>
+            <span class="readiness-zone-label">Gut</span>
+          </div>
+          <p class="readiness-zone-desc">
+            Gute Trainingsbereitschaft — du kannst normal trainieren und
+            moderate bis hohe Belastungen gut verkraften.
+          </p>
+        </div>
+
+        <div class="readiness-zone readiness-zone--moderate">
+          <div class="readiness-zone-header">
+            <span class="readiness-zone-dot"></span>
+            <span class="readiness-zone-range">50 – 69</span>
+            <span class="readiness-zone-label">Moderat</span>
+          </div>
+          <p class="readiness-zone-desc">
+            Leichte Ermüdung erkennbar — passe die Intensität an und setze
+            auf lockere Läufe oder aktive Erholung.
+          </p>
+        </div>
+
+        <div class="readiness-zone readiness-zone--low">
+          <div class="readiness-zone-header">
+            <span class="readiness-zone-dot"></span>
+            <span class="readiness-zone-range">&lt; 50</span>
+            <span class="readiness-zone-label">Niedrig</span>
+          </div>
+          <p class="readiness-zone-desc">
+            Deutliche Ermüdung — dein Körper braucht Erholung. Priorisiere
+            Ruhetage, Schlaf und Regeneration, um Übertraining zu vermeiden.
+          </p>
+        </div>
+      </div>
+
+      <div class="readiness-tip">
+        <span class="material-symbols-outlined readiness-tip-icon">lightbulb</span>
+        <p>Der Readiness Score ist ein Richtwert — höre immer auch auf dein eigenes Körpergefühl und passe dein Training entsprechend an.</p>
+      </div>
+    </div>
+  </div>
+</dialog>
