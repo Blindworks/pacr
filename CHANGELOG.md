@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.4] - 2026-03-31
+
+### Added
+- Strain info dialog on dashboard: explains 21-day training load zones with color-coded ranges (low/moderate/high/very high)
+
 ## [0.4.3] - 2026-03-31
 
 ### Added

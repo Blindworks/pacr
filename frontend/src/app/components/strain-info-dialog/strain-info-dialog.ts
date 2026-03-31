@@ -1,0 +1,39 @@
+import { Component, ElementRef, ViewChild, effect, inject, OnDestroy } from '@angular/core';
+import { StrainInfoDialogService } from '../../services/strain-info-dialog.service';
+
+@Component({
+  selector: 'app-strain-info-dialog',
+  standalone: true,
+  templateUrl: './strain-info-dialog.html',
+  styleUrl: './strain-info-dialog.scss'
+})
+export class StrainInfoDialog implements OnDestroy {
+  @ViewChild('dialog') private dialogRef!: ElementRef<HTMLDialogElement>;
+
+  private readonly service = inject(StrainInfoDialogService);
+
+  private readonly openEffect = effect(() => {
+    const open = this.service.isOpen();
+    if (!this.dialogRef) return;
+    const dialog = this.dialogRef.nativeElement;
+    if (open && !dialog.open) {
+      dialog.showModal();
+    } else if (!open && dialog.open) {
+      dialog.close();
+    }
+  });
+
+  close(): void {
+    this.service.close();
+  }
+
+  onBackdropClick(event: MouseEvent): void {
+    const rect = this.dialogRef.nativeElement.getBoundingClientRect();
+    const outside =
+      event.clientX < rect.left || event.clientX > rect.right ||
+      event.clientY < rect.top || event.clientY > rect.bottom;
+    if (outside) this.close();
+  }
+
+  ngOnDestroy(): void {}
+}

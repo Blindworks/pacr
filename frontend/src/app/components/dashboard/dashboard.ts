@@ -5,13 +5,15 @@ import { DashboardService, DashboardData } from '../../services/dashboard.servic
 import { AchievementService, StreakInfo } from '../../services/achievement.service';
 import { AcwrInfoDialogService } from '../../services/acwr-info-dialog.service';
 import { AcwrInfoDialog } from '../acwr-info-dialog/acwr-info-dialog';
+import { StrainInfoDialogService } from '../../services/strain-info-dialog.service';
+import { StrainInfoDialog } from '../strain-info-dialog/strain-info-dialog';
 
 const DAYS_DE = ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'];
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterLink, AcwrInfoDialog],
+  imports: [CommonModule, RouterLink, AcwrInfoDialog, StrainInfoDialog],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss'
 })
@@ -19,6 +21,7 @@ export class Dashboard implements OnInit {
   private readonly dashboardService = inject(DashboardService);
   private readonly achievementService = inject(AchievementService);
   protected readonly acwrInfoService = inject(AcwrInfoDialogService);
+  protected readonly strainInfoService = inject(StrainInfoDialogService);
 
   data: DashboardData | null = null;
   profileError = signal<string | null>(null);
