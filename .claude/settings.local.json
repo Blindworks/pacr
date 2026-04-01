@@ -47,7 +47,10 @@
       "Bash(cp -r \"C:/Users/bened/IdeaProjects/Smart_Trainingsplan/webpage/\"* \"C:/Users/bened/IdeaProjects/Smart_Trainingsplan/frontend/public/landing/\")",
       "Bash(find /c/Users/bened/IdeaProjects/Smart_Trainingsplan -type f \\\\\\(-name Dockerfile* -o -name docker-compose* -o -name Jenkinsfile -o -name .gitlab-ci.yml -o -name deploy.sh -o -name start.sh -o -name *-prod.* -o -name *.service \\\\\\))",
       "Bash(npx ng:*)",
-      "Bash(npm install:*)"
+      "Bash(npm install:*)",
+      "Bash(magick --version)",
+      "Bash(convert --version)",
+      "Bash(npx sharp-cli:*)"
     ],
     "deny": [],
     "ask": []
