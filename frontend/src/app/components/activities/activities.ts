@@ -1,8 +1,9 @@
 import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { ActivityService, CompletedTraining } from '../../services/activity.service';
+import { ActivityService, CompletedTraining, GpsStreamDto } from '../../services/activity.service';
 import { StravaService } from '../../services/strava.service';
+import { ActivityMapComponent } from '../activity-map/activity-map';
 import { timeout } from 'rxjs';
 
 interface Activity {
@@ -20,7 +21,7 @@ interface Activity {
 @Component({
   selector: 'app-activities',
   standalone: true,
-  imports: [RouterModule, CommonModule],
+  imports: [RouterModule, CommonModule, ActivityMapComponent],
   templateUrl: './activities.html',
   styleUrl: './activities.scss'
 })
@@ -43,6 +44,7 @@ export class Activities implements OnInit {
   ];
 
   activities: Activity[] = [];
+  featuredGpsData: GpsStreamDto | null = null;
 
   /** Offset in weeks from current week (0 = this week, -1 = last week, ...) */
   weekOffset = 0;
@@ -123,6 +125,7 @@ export class Activities implements OnInit {
     this.activityService.getByDateRange(start, end).subscribe({
       next: (data) => {
         this.activities = (data as CompletedTraining[]).map(ct => this.mapToActivity(ct));
+        this.loadFeaturedGps();
       },
       error: (err) => {
         console.error('[Activities] error loading activities:', err);
@@ -174,6 +177,29 @@ export class Activities implements OnInit {
     const e = new Date(end);
     const fmt = (d: Date) => d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
     return `${fmt(s)} – ${fmt(e)}, ${e.getFullYear()}`;
+  }
+
+  get hasFeaturedMap(): boolean {
+    return !!this.featuredGpsData?.latlng?.length;
+  }
+
+  private loadFeaturedGps(): void {
+    this.featuredGpsData = null;
+    const featured = this.featuredActivity;
+    if (!featured) return;
+
+    this.activityService.getGpsStream(featured.id).subscribe({
+      next: (gps) => {
+        if (this.featuredActivity?.id === featured.id) {
+          this.featuredGpsData = gps?.latlng?.length ? gps : null;
+        }
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.featuredGpsData = null;
+        this.cdr.detectChanges();
+      }
+    });
   }
 
   private mapToActivity(ct: CompletedTraining): Activity {

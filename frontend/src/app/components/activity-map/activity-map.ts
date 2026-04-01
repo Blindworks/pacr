@@ -26,6 +26,7 @@ export class ActivityMapComponent implements AfterViewInit, OnDestroy, OnChanges
   @Input({ required: true }) gpsData!: GpsStreamDto;
   @Input() colorMode: 'pace' | 'hr' = 'pace';
   @Input() fullscreen = false;
+  @Input() preview = false;
   @Output() colorModeChange = new EventEmitter<'pace' | 'hr'>();
 
   private readonly themeService = inject(ThemeService);
@@ -78,11 +79,11 @@ export class ActivityMapComponent implements AfterViewInit, OnDestroy, OnChanges
 
     this.map = L.map(container, {
       zoomControl: false,
-      attributionControl: true,
+      attributionControl: !this.preview,
       scrollWheelZoom: this.fullscreen,
-      dragging: true,
+      dragging: !this.preview,
       doubleClickZoom: this.fullscreen,
-      touchZoom: true
+      touchZoom: !this.preview
     });
 
     if (this.fullscreen) {
@@ -94,7 +95,9 @@ export class ActivityMapComponent implements AfterViewInit, OnDestroy, OnChanges
 
     this.markerGroup = L.layerGroup().addTo(this.map);
     this.drawRoute();
-    this.addKmMarkers();
+    if (!this.preview) {
+      this.addKmMarkers();
+    }
   }
 
   private drawRoute(): void {
@@ -165,14 +168,16 @@ export class ActivityMapComponent implements AfterViewInit, OnDestroy, OnChanges
       // Hotline failed — glow layer already provides route visibility
     }
 
-    // Invisible click layer for interaction
-    this.clickLayer = L.polyline(latlngs, {
-      weight: 20,
-      opacity: 0,
-      interactive: true
-    }).addTo(this.map);
+    // Invisible click layer for interaction (skip in preview mode)
+    if (!this.preview) {
+      this.clickLayer = L.polyline(latlngs, {
+        weight: 20,
+        opacity: 0,
+        interactive: true
+      }).addTo(this.map);
 
-    this.clickLayer.on('click', (e: L.LeafletMouseEvent) => this.onRouteClick(e));
+      this.clickLayer.on('click', (e: L.LeafletMouseEvent) => this.onRouteClick(e));
+    }
 
     // Fit bounds
     const bounds = L.latLngBounds(latlngs as L.LatLngExpression[]);

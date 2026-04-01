@@ -248,6 +248,7 @@
   width: 33%;
   flex-shrink: 0;
   min-height: 220px;
+  overflow: hidden;
 
   img {
     width: 100%;
@@ -255,12 +256,18 @@
     object-fit: cover;
     display: block;
   }
+
+  app-activity-map {
+    border-radius: inherit;
+    overflow: hidden;
+  }
 }
 
 .featured-badge {
   position: absolute;
   top: 14px;
   left: 14px;
+  z-index: 10;
   background: var(--pp);
   color: var(--btn-active-text);
   font-size: 10px;

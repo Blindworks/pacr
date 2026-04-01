@@ -83,8 +83,15 @@
       <!-- Featured Card (latest activity) -->
       @if (showFeatured() && filteredFeatured) {
         <div class="featured-card">
-          <div class="featured-map sport-placeholder">
-            <span class="material-symbols-outlined sport-icon-large">{{ filteredFeatured.sportIcon }}</span>
+          <div class="featured-map" [class.sport-placeholder]="!hasFeaturedMap">
+            @if (hasFeaturedMap) {
+              <app-activity-map
+                [gpsData]="featuredGpsData!"
+                [preview]="true"
+              />
+            } @else {
+              <span class="material-symbols-outlined sport-icon-large">{{ filteredFeatured.sportIcon }}</span>
+            }
             <span class="featured-badge">Latest</span>
           </div>
           <div class="featured-body">
