@@ -50,6 +50,39 @@
         </div>
       }
 
+      <button class="changelog-toggle" (click)="toggleDisclaimer()">
+        <span class="material-symbols-outlined">{{ showDisclaimer() ? 'expand_less' : 'gavel' }}</span>
+        <span>{{ showDisclaimer() ? 'Hide Disclaimer' : 'Disclaimer' }}</span>
+      </button>
+
+      @if (showDisclaimer()) {
+        <div class="disclaimer-container">
+          <div class="disclaimer-content">
+            <h4>Liability Disclaimer</h4>
+            <p>
+              The training plans, recommendations, and information provided by PACR are for
+              general informational purposes only. They do not constitute medical advice and
+              are not a substitute for professional medical consultation, diagnosis, or treatment.
+            </p>
+            <p>
+              <strong>Use at your own risk.</strong> You are solely responsible for your training
+              decisions and physical activities. PACR and its operators assume no liability for
+              injuries, health issues, or any other damages that may result from following
+              training plans or recommendations provided through this application.
+            </p>
+            <p>
+              We strongly recommend consulting a qualified physician before starting any new
+              exercise program, especially if you have pre-existing health conditions.
+            </p>
+            <p>
+              Data imported from FIT files is processed for display purposes only and does not
+              represent a medical evaluation. Any metrics shown (heart rate, pace, power, etc.)
+              should not be used for medical decision-making.
+            </p>
+          </div>
+        </div>
+      }
+
       <div class="about-footer">
         <p>&copy; {{ currentYear }} PACR. All rights reserved.</p>
       </div>

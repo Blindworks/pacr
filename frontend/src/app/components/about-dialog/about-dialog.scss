@@ -237,6 +237,45 @@
   }
 }
 
+// Disclaimer content area
+.disclaimer-container {
+  width: 100%;
+  max-height: 320px;
+  overflow-y: auto;
+  background: var(--panel-soft);
+  border: 1px solid var(--border);
+  border-radius: v.$radius-lg;
+  padding: 1rem 1.25rem;
+
+  @include m.custom-scrollbar;
+}
+
+.disclaimer-content {
+  font-size: 0.8125rem;
+  line-height: 1.6;
+  color: var(--text-muted);
+
+  h4 {
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: var(--text);
+    margin: 0 0 0.75rem 0;
+  }
+
+  p {
+    margin: 0 0 0.625rem 0;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  strong {
+    color: var(--text);
+    font-weight: 600;
+  }
+}
+
 .about-footer {
   p {
     font-size: 0.75rem;
