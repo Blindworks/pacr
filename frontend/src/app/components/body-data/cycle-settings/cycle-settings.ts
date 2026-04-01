@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CycleSettingsService, CycleSettings, CycleStatusDto } from '../../../services/cycle-settings.service';
+import { ProOverlay } from '../../shared/pro-overlay/pro-overlay';
 
 @Component({
   selector: 'app-cycle-settings',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, ProOverlay],
   templateUrl: './cycle-settings.html',
   styleUrl: './cycle-settings.scss'
 })

@@ -1,9 +1,11 @@
 import { Component, OnInit, inject, signal, ElementRef, ViewChild } from '@angular/core';
 import { AchievementService, Achievement } from '../../services/achievement.service';
+import { ProOverlay } from '../shared/pro-overlay/pro-overlay';
 
 @Component({
   selector: 'app-achievements',
   standalone: true,
+  imports: [ProOverlay],
   templateUrl: './achievements.html',
   styleUrl: './achievements.scss'
 })

@@ -1,6 +1,8 @@
 package com.trainingsplan.controller;
 
+import com.trainingsplan.annotation.RequiresSubscription;
 import com.trainingsplan.entity.BloodPressure;
+import com.trainingsplan.entity.SubscriptionPlan;
 import com.trainingsplan.service.BloodPressureService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,6 +12,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/blood-pressure")
+@RequiresSubscription(SubscriptionPlan.PRO)
 public class BloodPressureController {
 
     private final BloodPressureService bloodPressureService;

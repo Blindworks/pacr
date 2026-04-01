@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { CycleSettingsService } from '../../../services/cycle-settings.service';
 import { CycleEntryService } from '../../../services/cycle-entry.service';
+import { ProOverlay } from '../../shared/pro-overlay/pro-overlay';
 
 export type CyclePhase = 'menstrual' | 'follicular' | 'ovulation' | 'luteal';
 
@@ -15,7 +16,7 @@ export interface CycleDay {
 @Component({
   selector: 'app-cycle-tracking',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, ProOverlay],
   templateUrl: './cycle-tracking.html',
   styleUrl: './cycle-tracking.scss'
 })

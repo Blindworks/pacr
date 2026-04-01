@@ -4,6 +4,7 @@ import { StatisticsService, TrainingStatsDto, StatsBucket, Vo2MaxPoint } from '.
 import { PersonalRecordService, PersonalRecord } from '../../services/personal-record.service';
 import { PersonalRecordDetailDialogComponent } from '../personal-record-detail-dialog/personal-record-detail-dialog.component';
 import { AddPersonalRecordDialogComponent } from '../add-personal-record-dialog/add-personal-record-dialog.component';
+import { ProOverlay } from '../shared/pro-overlay/pro-overlay';
 
 type MonthlyBar = {
   month: string;
@@ -31,7 +32,7 @@ const PERIOD_MAP: Record<string, string> = {
 @Component({
   selector: 'app-statistics',
   standalone: true,
-  imports: [CommonModule, DecimalPipe, PersonalRecordDetailDialogComponent, AddPersonalRecordDialogComponent],
+  imports: [CommonModule, DecimalPipe, PersonalRecordDetailDialogComponent, AddPersonalRecordDialogComponent, ProOverlay],
   templateUrl: './statistics.html',
   styleUrl: './statistics.scss'
 })

@@ -1,6 +1,8 @@
 package com.trainingsplan.controller;
 
+import com.trainingsplan.annotation.RequiresSubscription;
 import com.trainingsplan.entity.CycleEntry;
+import com.trainingsplan.entity.SubscriptionPlan;
 import com.trainingsplan.service.CycleEntryService;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -12,6 +14,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/cycle-entries")
+@RequiresSubscription(SubscriptionPlan.PRO)
 public class CycleEntryController {
 
     private final CycleEntryService cycleEntryService;

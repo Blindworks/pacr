@@ -1,7 +1,9 @@
 package com.trainingsplan.controller;
 
+import com.trainingsplan.annotation.RequiresSubscription;
 import com.trainingsplan.dto.AchievementDto;
 import com.trainingsplan.entity.Achievement;
+import com.trainingsplan.entity.SubscriptionPlan;
 import com.trainingsplan.entity.User;
 import com.trainingsplan.entity.UserAchievement;
 import com.trainingsplan.repository.AchievementRepository;
@@ -21,6 +23,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/achievements")
+@RequiresSubscription(SubscriptionPlan.PRO)
 public class AchievementController {
 
     private final AchievementRepository achievementRepository;

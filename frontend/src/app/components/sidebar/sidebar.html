@@ -28,21 +28,25 @@
     <a routerLink="/statistics" routerLinkActive="active" class="nav-item">
       <span class="material-symbols-outlined">analytics</span>
       <span>Analytics</span>
+      @if (!isPro()) { <span class="pro-nav-badge">PRO</span> }
     </a>
     <a routerLink="/achievements" routerLinkActive="active" class="nav-item">
       <span class="material-symbols-outlined">military_tech</span>
       <span>Achievements</span>
+      @if (!isPro()) { <span class="pro-nav-badge">PRO</span> }
     </a>
     @if (userService.currentUser()?.communityRoutesEnabled) {
       <a routerLink="/community-routes" routerLinkActive="active" class="nav-item">
         <span class="material-symbols-outlined">explore</span>
         <span>Community</span>
+        @if (!isPro()) { <span class="pro-nav-badge">PRO</span> }
       </a>
     }
     <div class="nav-group">
       <button class="nav-item nav-item--group" (click)="toggleBodyData()" [ngClass]="{'open': bodyDataOpen}">
         <span class="material-symbols-outlined">monitoring</span>
         <span>Body Data</span>
+        @if (!isPro()) { <span class="pro-nav-badge">PRO</span> }
         <span class="material-symbols-outlined nav-group-arrow">expand_more</span>
       </button>
       <div class="nav-submenu" [ngClass]="{'open': bodyDataOpen}">
@@ -67,10 +71,12 @@
     <a routerLink="/ai-trainer" routerLinkActive="active" class="nav-item">
       <span class="material-symbols-outlined">psychology</span>
       <span>AI Trainer</span>
+      @if (!isPro()) { <span class="pro-nav-badge">PRO</span> }
     </a>
     <a routerLink="/insights" routerLinkActive="active" class="nav-item">
       <span class="material-symbols-outlined">lightbulb</span>
       <span>Insights</span>
+      @if (!isPro()) { <span class="pro-nav-badge">PRO</span> }
     </a>
     @if (isAdmin()) {
       <a routerLink="/admin" routerLinkActive="active" class="nav-item">
@@ -83,11 +89,13 @@
   <!-- Bottom Section (fixed) -->
   <div class="sidebar-bottom">
     <!-- Upgrade Card -->
-    <div class="upgrade-card">
-      <h3>Upgrade to Pro</h3>
-      <p>Unlock advanced analytics and personal coaching.</p>
-      <button class="upgrade-btn" routerLink="/elite-upgrade">Get Started</button>
-    </div>
+    @if (!isPro()) {
+      <div class="upgrade-card">
+        <h3>Upgrade to Pro</h3>
+        <p>Unlock advanced analytics and personal coaching.</p>
+        <button class="upgrade-btn" routerLink="/elite-upgrade">Get Started</button>
+      </div>
+    }
 
     <!-- User Profile with hover popup menu -->
     <div class="user-section">

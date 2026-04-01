@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { forkJoin, of } from 'rxjs';
 import { BloodPressureEntry, BloodPressureService } from '../../../services/blood-pressure.service';
+import { ProOverlay } from '../../shared/pro-overlay/pro-overlay';
 import { BodyMeasurementEntry, BodyMeasurementService } from '../../../services/body-measurement.service';
 import { SleepDataEntry, SleepDataService } from '../../../services/sleep-data.service';
 
@@ -16,7 +17,7 @@ interface LatestEntryMetric {
 @Component({
   selector: 'app-log-body-metrics',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, ProOverlay],
   templateUrl: './log-body-metrics.html',
   styleUrl: './log-body-metrics.scss'
 })

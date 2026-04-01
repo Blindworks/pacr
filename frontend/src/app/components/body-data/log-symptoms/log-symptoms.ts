@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CycleEntryService, CycleEntry } from '../../../services/cycle-entry.service';
+import { ProOverlay } from '../../shared/pro-overlay/pro-overlay';
 
 export type FlowIntensity = 'LIGHT' | 'MEDIUM' | 'HEAVY' | 'SPOTTING' | null;
 export type SleepQuality = 'EXCELLENT' | 'GOOD' | 'FAIR' | 'POOR' | null;
@@ -27,7 +28,7 @@ interface FlowOption {
 @Component({
   selector: 'app-log-symptoms',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, ProOverlay],
   templateUrl: './log-symptoms.html',
   styleUrl: './log-symptoms.scss'
 })

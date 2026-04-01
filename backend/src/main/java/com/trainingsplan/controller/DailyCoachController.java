@@ -1,11 +1,13 @@
 package com.trainingsplan.controller;
 
+import com.trainingsplan.annotation.RequiresSubscription;
 import com.trainingsplan.dto.DailyCoachContextDto;
 import com.trainingsplan.dto.DailyCoachExecuteRequest;
 import com.trainingsplan.dto.DailyCoachExecuteResponse;
 import com.trainingsplan.dto.DailyCoachRecommendationRequest;
 import com.trainingsplan.dto.DailyCoachRecommendationResponse;
 import com.trainingsplan.entity.DailyCoachSession;
+import com.trainingsplan.entity.SubscriptionPlan;
 import com.trainingsplan.repository.DailyCoachSessionRepository;
 import com.trainingsplan.security.SecurityUtils;
 import com.trainingsplan.service.DailyCoachContextService;
@@ -25,6 +27,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/ai-trainer")
 @ConditionalOnProperty(name = "pacr.ai.enabled", havingValue = "true")
+@RequiresSubscription(SubscriptionPlan.PRO)
 public class DailyCoachController {
 
     private static final Logger log = LoggerFactory.getLogger(DailyCoachController.class);

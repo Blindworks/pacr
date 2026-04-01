@@ -1,8 +1,10 @@
 package com.trainingsplan.controller;
 
+import com.trainingsplan.annotation.RequiresSubscription;
 import com.trainingsplan.dto.AITrainingPlanDTO;
 import com.trainingsplan.dto.AITrainingPlanGenerateRequest;
 import com.trainingsplan.dto.MessageResponse;
+import com.trainingsplan.entity.SubscriptionPlan;
 import com.trainingsplan.logging.CorrelationIdFilter;
 import com.trainingsplan.service.AIPlanGeneratorService;
 import com.trainingsplan.service.AIPlanPersistenceService;
@@ -23,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/ai/training-plan")
 @ConditionalOnProperty(name = "pacr.ai.enabled", havingValue = "true")
+@RequiresSubscription(SubscriptionPlan.PRO)
 public class AITrainingPlanController {
 
     private static final Logger log = LoggerFactory.getLogger(AITrainingPlanController.class);

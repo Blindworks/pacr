@@ -2,6 +2,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
+import { ProOverlay } from '../shared/pro-overlay/pro-overlay';
 import {
   DailyCoachService,
   DailyCoachContextDto,
@@ -12,7 +13,7 @@ import {
 @Component({
   selector: 'app-ai-trainer',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [CommonModule, FormsModule, RouterModule, ProOverlay],
   templateUrl: './ai-trainer.component.html',
   styleUrls: ['./ai-trainer.component.scss']
 })

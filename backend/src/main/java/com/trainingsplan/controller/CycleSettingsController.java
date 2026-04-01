@@ -1,7 +1,9 @@
 package com.trainingsplan.controller;
 
+import com.trainingsplan.annotation.RequiresSubscription;
 import com.trainingsplan.dto.CycleStatusDto;
 import com.trainingsplan.entity.CycleSettings;
+import com.trainingsplan.entity.SubscriptionPlan;
 import com.trainingsplan.security.SecurityUtils;
 import com.trainingsplan.service.CycleSettingsService;
 import org.springframework.http.HttpStatus;
@@ -11,6 +13,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @RequestMapping("/api/cycle-settings")
+@RequiresSubscription(SubscriptionPlan.PRO)
 public class CycleSettingsController {
 
     private final CycleSettingsService cycleSettingsService;

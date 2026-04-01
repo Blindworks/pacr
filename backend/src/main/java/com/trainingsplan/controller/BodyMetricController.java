@@ -1,6 +1,8 @@
 package com.trainingsplan.controller;
 
+import com.trainingsplan.annotation.RequiresSubscription;
 import com.trainingsplan.entity.BodyMetric;
+import com.trainingsplan.entity.SubscriptionPlan;
 import com.trainingsplan.service.BodyMetricService;
 import com.trainingsplan.service.RaceTimePredictionService;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +14,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/body-metrics")
+@RequiresSubscription(SubscriptionPlan.PRO)
 public class BodyMetricController {
 
     private final BodyMetricService          bodyMetricService;

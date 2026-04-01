@@ -2,6 +2,7 @@ import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AsthmaService, AsthmaEntry, BioWeatherDto } from '../../../services/asthma.service';
+import { ProOverlay } from '../../shared/pro-overlay/pro-overlay';
 
 interface ChartSlot {
   label: string;
@@ -12,7 +13,7 @@ interface ChartSlot {
 @Component({
   selector: 'app-asthma-tracking',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, ProOverlay],
   templateUrl: './asthma-tracking.html',
   styleUrl: './asthma-tracking.scss'
 })

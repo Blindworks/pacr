@@ -1,6 +1,8 @@
 package com.trainingsplan.controller;
 
+import com.trainingsplan.annotation.RequiresSubscription;
 import com.trainingsplan.dto.*;
+import com.trainingsplan.entity.SubscriptionPlan;
 import com.trainingsplan.entity.User;
 import com.trainingsplan.security.SecurityUtils;
 import com.trainingsplan.service.CommunityRouteService;
@@ -13,6 +15,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/community-routes")
+@RequiresSubscription(SubscriptionPlan.PRO)
 public class CommunityRouteController {
 
     private final CommunityRouteService communityRouteService;

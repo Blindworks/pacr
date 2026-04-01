@@ -1,6 +1,8 @@
 package com.trainingsplan.controller;
 
+import com.trainingsplan.annotation.RequiresSubscription;
 import com.trainingsplan.entity.SleepData;
+import com.trainingsplan.entity.SubscriptionPlan;
 import com.trainingsplan.service.SleepDataService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +14,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/sleep-data")
+@RequiresSubscription(SubscriptionPlan.PRO)
 public class SleepDataController {
 
     private final SleepDataService sleepDataService;

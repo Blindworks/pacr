@@ -1,7 +1,9 @@
 package com.trainingsplan.controller;
 
+import com.trainingsplan.annotation.RequiresSubscription;
 import com.trainingsplan.dto.BioWeatherDto;
 import com.trainingsplan.entity.AsthmaEntry;
+import com.trainingsplan.entity.SubscriptionPlan;
 import com.trainingsplan.service.AsthmaEntryService;
 import com.trainingsplan.service.DwdWeatherService;
 import org.springframework.http.ResponseEntity;
@@ -11,6 +13,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/asthma")
+@RequiresSubscription(SubscriptionPlan.PRO)
 public class AsthmaController {
 
     private final AsthmaEntryService asthmaEntryService;

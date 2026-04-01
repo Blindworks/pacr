@@ -4,11 +4,12 @@ import { RouterModule, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CommunityRouteService, CommunityRouteDto } from '../../services/community-route.service';
 import { UserService } from '../../services/user.service';
+import { ProOverlay } from '../shared/pro-overlay/pro-overlay';
 
 @Component({
   selector: 'app-community-routes',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule],
+  imports: [CommonModule, RouterModule, FormsModule, ProOverlay],
   templateUrl: './community-routes.html',
   styleUrl: './community-routes.scss'
 })

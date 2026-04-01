@@ -6,6 +6,7 @@ import { AboutDialogService } from '../../services/about-dialog.service';
 import { UserService } from '../../services/user.service';
 import { AuthService } from '../../services/auth.service';
 import { ThemeService } from '../../services/theme.service';
+import { SubscriptionService } from '../../services/subscription.service';
 
 @Component({
   selector: 'app-sidebar',
@@ -24,16 +25,19 @@ export class Sidebar implements OnInit, OnDestroy {
   private readonly router = inject(Router);
   protected readonly userService = inject(UserService);
   protected readonly themeService = inject(ThemeService);
+  protected readonly subscriptionService = inject(SubscriptionService);
 
   readonly isAdmin = computed(() => {
     const role = this.userService.currentUser()?.role ?? this.authService.getRole();
     return role === 'ADMIN';
   });
 
+  readonly isPro = computed(() => this.subscriptionService.isPro() || this.subscriptionService.isAdmin());
+
   readonly membershipLabel = computed(() => {
     const role = this.userService.currentUser()?.role;
     if (role === 'ADMIN') return 'Admin';
-    if (role === 'USER') return 'Member';
+    if (this.subscriptionService.isPro()) return 'Pro Member';
     return 'Member';
   });
 

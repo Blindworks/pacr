@@ -1,7 +1,9 @@
 package com.trainingsplan.controller;
 
+import com.trainingsplan.annotation.RequiresSubscription;
 import com.trainingsplan.dto.RouteAttemptDto;
 import com.trainingsplan.dto.SelectRouteAttemptRequest;
+import com.trainingsplan.entity.SubscriptionPlan;
 import com.trainingsplan.entity.User;
 import com.trainingsplan.security.SecurityUtils;
 import com.trainingsplan.service.RouteAttemptService;
@@ -13,6 +15,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/route-attempts")
+@RequiresSubscription(SubscriptionPlan.PRO)
 public class RouteAttemptController {
 
     private final RouteAttemptService routeAttemptService;

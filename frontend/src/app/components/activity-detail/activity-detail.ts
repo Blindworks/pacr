@@ -5,11 +5,12 @@ import { ActivityService, ActivityStreamDto, CompletedTraining, ActivityMetrics,
 import { ActivityMapComponent } from '../activity-map/activity-map';
 import { MapDialogComponent } from '../map-dialog/map-dialog';
 import { UserService } from '../../services/user.service';
+import { ProOverlay } from '../shared/pro-overlay/pro-overlay';
 
 @Component({
   selector: 'app-activity-detail',
   standalone: true,
-  imports: [CommonModule, ActivityMapComponent, MapDialogComponent, RouterModule],
+  imports: [CommonModule, ActivityMapComponent, MapDialogComponent, RouterModule, ProOverlay],
   templateUrl: './activity-detail.html',
   styleUrl: './activity-detail.scss'
 })

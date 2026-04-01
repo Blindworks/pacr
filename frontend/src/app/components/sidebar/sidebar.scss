@@ -345,3 +345,18 @@
     transform: rotate(180deg);
   }
 }
+
+/* ── PRO Badge ── */
+.pro-nav-badge {
+  margin-left: auto;
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: #fff;
+  font-size: 9px;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: v.$radius-pill;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  flex-shrink: 0;
+  line-height: 1.4;
+}

@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { catchError, forkJoin, of } from 'rxjs';
 import { BloodPressureEntry, BloodPressureService } from '../../../services/blood-pressure.service';
+import { ProOverlay } from '../../shared/pro-overlay/pro-overlay';
 import { BodyMeasurementEntry, BodyMeasurementService } from '../../../services/body-measurement.service';
 import { SleepDataEntry, SleepDataService } from '../../../services/sleep-data.service';
 
@@ -58,7 +59,7 @@ interface ChartContext {
 @Component({
   selector: 'app-body-metrics',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, ProOverlay],
   templateUrl: './body-metrics.html',
   styleUrl: './body-metrics.scss'
 })

@@ -1,0 +1,18 @@
+<div class="pro-overlay-container" [class.locked]="locked()">
+  <div class="pro-overlay-content">
+    <ng-content />
+  </div>
+  @if (locked()) {
+    <div class="pro-overlay-backdrop">
+      <div class="pro-overlay-card">
+        <span class="pro-badge">PRO</span>
+        <h3>Pro Subscription Required</h3>
+        <p>Upgrade to PACR Pro to unlock this feature.</p>
+        <button class="pro-upgrade-btn" (click)="navigateToUpgrade()">
+          <span class="material-symbols-outlined">rocket_launch</span>
+          Upgrade to Pro
+        </button>
+      </div>
+    </div>
+  }
+</div>
