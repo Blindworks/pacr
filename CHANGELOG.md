@@ -6,6 +6,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [0.7.0] - 2026-04-01
+
+### Added
+- Progressive Web App (PWA) support: app can be installed on mobile and desktop devices
+- Service worker with offline caching for app shell and static assets
+- Network-first caching for API calls with offline fallback (1-day cache, 5s timeout)
+- Web app manifest with PACR branding, custom icons in all required sizes (72-512px)
+- Apple touch icon and iOS PWA meta tags for home screen installation
+- Google Fonts cached for offline use
+- nginx configuration for proper service worker and manifest cache headers
+
 ## [0.6.0] - 2026-04-01
 
 ### Added
