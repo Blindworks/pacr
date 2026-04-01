@@ -21,6 +21,7 @@ export class AboutDialog implements OnDestroy {
   protected readonly showChangelog = signal(false);
   protected readonly changelogHtml = signal<string>('');
   protected readonly changelogLoading = signal(false);
+  protected readonly showDisclaimer = signal(false);
 
   private readonly openEffect = effect(() => {
     const open = this.aboutService.isOpen();
@@ -56,6 +57,10 @@ export class AboutDialog implements OnDestroy {
       this.loadChangelog();
     }
     this.showChangelog.set(true);
+  }
+
+  toggleDisclaimer(): void {
+    this.showDisclaimer.set(!this.showDisclaimer());
   }
 
   private loadChangelog(): void {
