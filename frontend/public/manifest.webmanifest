@@ -5,7 +5,7 @@
   "display": "standalone",
   "orientation": "portrait-primary",
   "scope": "/",
-  "start_url": "/",
+  "start_url": "/login",
   "background_color": "#0d1117",
   "theme_color": "#0d1117",
   "id": "pacr-app",
