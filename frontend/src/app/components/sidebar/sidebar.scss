@@ -7,8 +7,17 @@
   height: 100%;
 }
 
+/* ── Backdrop (mobile overlay) ── */
+.sidebar-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 49;
+}
+
+/* ── Sidebar ── */
 .sidebar {
-  width: 256px;
+  width: v.$sidebar-width;
   flex-shrink: 0;
   background: var(--bg);
   border-right: 1px solid var(--pp-border);
@@ -18,6 +27,120 @@
   padding: 1.5rem;
   font-family: var(--font-family);
   overflow: hidden;
+  transition: width 0.3s ease, padding 0.3s ease;
+
+  /* Collapsed state (tablet / manual toggle) */
+  &.collapsed {
+    width: v.$sidebar-collapsed-width;
+    padding: 1rem 0.5rem;
+
+    .brand {
+      padding: 0;
+      margin-bottom: 1rem;
+      justify-content: center;
+    }
+
+    .brand-logo {
+      width: 36px;
+      height: 36px;
+      object-fit: contain;
+    }
+
+    .nav-item {
+      justify-content: center;
+      padding: 0.625rem;
+      gap: 0;
+    }
+
+    .sidebar-bottom {
+      align-items: center;
+    }
+
+    .user-profile {
+      justify-content: center;
+      padding: 0.5rem;
+    }
+
+    .user-menu {
+      left: calc(100% + 0.5rem);
+      bottom: 0;
+      right: auto;
+      min-width: 200px;
+    }
+  }
+
+  /* Mobile: hidden by default */
+  &.mobile-hidden {
+    display: none;
+  }
+
+  /* Mobile: open as overlay */
+  &.mobile-open {
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: 100vh;
+    z-index: 50;
+    width: v.$sidebar-width;
+    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.3);
+  }
+}
+
+/* ── Collapse Toggle Button ── */
+.collapse-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: v.$radius-sm;
+  border: 1px solid var(--pp-border);
+  background: var(--bg-card);
+  color: var(--text-muted);
+  cursor: pointer;
+  margin-bottom: 0.75rem;
+  flex-shrink: 0;
+  transition: color v.$transition-fast, border-color v.$transition-fast;
+  align-self: flex-end;
+
+  .sidebar.collapsed & {
+    align-self: center;
+  }
+
+  .material-symbols-outlined {
+    font-size: 18px;
+  }
+
+  &:hover {
+    color: var(--pp);
+    border-color: var(--pp-active-border);
+  }
+}
+
+/* ── Mobile Close Button ── */
+.mobile-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: v.$radius-sm;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  z-index: 1;
+
+  .material-symbols-outlined {
+    font-size: 22px;
+  }
+
+  &:hover {
+    color: var(--pp);
+  }
 }
 
 /* ── Brand ── */
@@ -28,6 +151,7 @@
   padding: 0 0.5rem;
   margin-bottom: 2rem;
   flex-shrink: 0;
+  transition: padding 0.3s ease, margin 0.3s ease;
 
   :host-context(body[data-theme="light"]) & {
     background: #c4c9d1;
@@ -39,6 +163,7 @@
 .brand-logo {
   width: 100%;
   height: auto;
+  transition: width 0.3s ease, height 0.3s ease;
 }
 
 /* ── Navigation (scrollable) ── */
@@ -69,7 +194,7 @@
   text-decoration: none;
   font-size: 0.875rem;
   font-weight: 500;
-  transition: background v.$transition-fast, color v.$transition-fast;
+  transition: background v.$transition-fast, color v.$transition-fast, gap 0.3s ease, padding 0.3s ease;
   border: 1px solid transparent;
   flex-shrink: 0;
 
@@ -77,6 +202,7 @@
     font-size: 22px;
     font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
     transition: font-variation-settings v.$transition-fast;
+    flex-shrink: 0;
   }
 
   &:hover {
@@ -277,7 +403,7 @@
   background: var(--bg-card);
   border: 1px solid var(--pp-border);
   cursor: pointer;
-  transition: border-color v.$transition-fast;
+  transition: border-color v.$transition-fast, padding 0.3s ease, gap 0.3s ease;
 
   &:hover {
     border-color: var(--pp-active-border);

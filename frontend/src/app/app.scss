@@ -1,3 +1,5 @@
+@use 'variables' as v;
+
 .app-shell {
   display: flex;
   height: 100vh;
@@ -8,4 +10,39 @@
   flex: 1;
   overflow-y: auto;
   background: var(--bg);
+  transition: margin-left 0.3s ease;
+  position: relative;
+
+  &--mobile {
+    margin-left: 0;
+  }
+}
+
+/* ── Mobile Hamburger Button ── */
+.mobile-hamburger {
+  position: sticky;
+  top: 0;
+  left: 0;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  margin: 0.75rem;
+  border-radius: v.$radius-md;
+  border: 1px solid var(--pp-border);
+  background: var(--bg-card);
+  color: var(--text);
+  cursor: pointer;
+  transition: color v.$transition-fast, border-color v.$transition-fast;
+
+  .material-symbols-outlined {
+    font-size: 24px;
+  }
+
+  &:hover {
+    color: var(--pp);
+    border-color: var(--pp-active-border);
+  }
 }

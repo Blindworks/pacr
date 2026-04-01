@@ -1,8 +1,13 @@
 <div [class]="showSidebar() ? 'app-shell' : ''">
   @if (showSidebar()) {
-    <app-sidebar />
+    <app-sidebar (collapsedChange)="onSidebarCollapsed($event)" />
   }
-  <main [class]="showSidebar() ? 'app-main' : ''">
+  <main [class]="showSidebar() ? 'app-main' : ''" [ngClass]="{ 'app-main--collapsed': sidebarCollapsed(), 'app-main--mobile': isMobile() }">
+    @if (showSidebar() && isMobile()) {
+      <button class="mobile-hamburger" (click)="openMobileSidebar()">
+        <span class="material-symbols-outlined">menu</span>
+      </button>
+    }
     <router-outlet />
   </main>
 </div>

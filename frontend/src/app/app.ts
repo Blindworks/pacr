@@ -1,5 +1,6 @@
-import { Component, signal, inject, effect } from '@angular/core';
+import { Component, signal, inject, effect, ViewChild } from '@angular/core';
 import { Router, RouterOutlet, NavigationEnd } from '@angular/router';
+import { NgClass } from '@angular/common';
 import { Sidebar } from './components/sidebar/sidebar';
 import { PaceCalculatorDialog } from './components/pace-calculator/pace-calculator-dialog';
 import { AboutDialog } from './components/about-dialog/about-dialog';
@@ -13,16 +14,23 @@ import { ThemeService } from './services/theme.service';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, Sidebar, PaceCalculatorDialog, AboutDialog, Toast, FeedbackFab, FeedbackDialog],
+  imports: [RouterOutlet, NgClass, Sidebar, PaceCalculatorDialog, AboutDialog, Toast, FeedbackFab, FeedbackDialog],
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })
 export class App {
   protected readonly title = signal('frontend');
+  protected readonly sidebarCollapsed = signal(false);
+  protected readonly isMobile = signal(false);
+
+  @ViewChild(Sidebar) private sidebarComponent?: Sidebar;
 
   private readonly router = inject(Router);
   private readonly userService = inject(UserService);
   private readonly themeService = inject(ThemeService);
+
+  private mobileQuery!: MediaQueryList;
+  private mobileListener = (e: MediaQueryListEvent) => this.isMobile.set(e.matches);
 
   constructor() {
     effect(() => {
@@ -31,6 +39,10 @@ export class App {
         this.themeService.initFromProfile(user.theme);
       }
     });
+
+    this.mobileQuery = window.matchMedia('(max-width: 767px)');
+    this.isMobile.set(this.mobileQuery.matches);
+    this.mobileQuery.addEventListener('change', this.mobileListener);
   }
 
   private readonly hideSidebarPaths = ['/login', '/signup', '/forgot-password', '/new-password', '/onboarding'];
@@ -46,4 +58,12 @@ export class App {
       startWith(this.shouldShowSidebar(this.router.url))
     )
   );
+
+  onSidebarCollapsed(collapsed: boolean): void {
+    this.sidebarCollapsed.set(collapsed);
+  }
+
+  openMobileSidebar(): void {
+    this.sidebarComponent?.toggleMobile();
+  }
 }
