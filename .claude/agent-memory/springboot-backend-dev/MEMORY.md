@@ -144,5 +144,14 @@
 - API endpoints: GET /api/ai-trainer/context, POST /api/ai-trainer/recommendation, POST /api/ai-trainer/execute, GET /api/ai-trainer/sessions
 - Controller uses `@Autowired SecurityUtils` + `securityUtils.getCurrentUserId()` (follows UserTrainingEntryController pattern)
 
+## Subscription Guard (added 2026-04)
+- `annotation/RequiresSubscription.java` — @Target(METHOD, TYPE), @Retention(RUNTIME); value() is SubscriptionPlan
+- `aspect/SubscriptionAspect.java` — @Aspect @Component; @Around on @RequiresSubscription; uses SecurityUtils (no extra DB call — principal IS User)
+- ADMIN role always bypasses; expired PRO (subscriptionExpiresAt in past) treated as FREE; missing auth → 401, wrong plan → 403
+- Method-level annotation wins over class-level if both present
+- pom.xml: spring-boot-starter-aop added (was absent before)
+- PRO-only controllers (class-level annotation): DailyCoachController, AITrainingPlanController, CommunityRouteController, RouteAttemptController, BodyMetricController, BodyMeasurementController, BloodPressureController, SleepDataController, CycleEntryController, CycleSettingsController, AsthmaController, AchievementController
+- AdminAchievementController intentionally NOT annotated (admin management, not user feature)
+
 ## Compilation
 - `mvn compile -q -f /path/to/pom.xml` (clean output = success; use Unix paths in bash)

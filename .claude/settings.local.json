@@ -45,7 +45,8 @@
       "Bash(timeout:*)",
       "Bash(mkdir -p \"C:/Users/bened/IdeaProjects/Smart_Trainingsplan/frontend/public/landing/en\")",
       "Bash(cp -r \"C:/Users/bened/IdeaProjects/Smart_Trainingsplan/webpage/\"* \"C:/Users/bened/IdeaProjects/Smart_Trainingsplan/frontend/public/landing/\")",
-      "Bash(find /c/Users/bened/IdeaProjects/Smart_Trainingsplan -type f \\\\\\(-name Dockerfile* -o -name docker-compose* -o -name Jenkinsfile -o -name .gitlab-ci.yml -o -name deploy.sh -o -name start.sh -o -name *-prod.* -o -name *.service \\\\\\))"
+      "Bash(find /c/Users/bened/IdeaProjects/Smart_Trainingsplan -type f \\\\\\(-name Dockerfile* -o -name docker-compose* -o -name Jenkinsfile -o -name .gitlab-ci.yml -o -name deploy.sh -o -name start.sh -o -name *-prod.* -o -name *.service \\\\\\))",
+      "Bash(npx ng:*)"
     ],
     "deny": [],
     "ask": []
