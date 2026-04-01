@@ -6,7 +6,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
-
 ## [0.5.0] - 2026-04-01
 
 ### Added
@@ -14,6 +13,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Admin feedback management: new "Feedback" tab in admin panel with status filtering, expandable detail rows, and inline status/notes editing
 - Backend: UserFeedback entity, REST endpoints for users (POST /api/feedback) and admins (GET/PUT /api/admin/feedback)
 - Liquibase migration 080: user_feedback table with indexes on user_id, status, and created_at
+
+## [0.4.7] - 2026-04-01
+
+### Added
+- Liability disclaimer section in the About dialog with expandable toggle, covering training plan usage, health risks, and FIT data processing
 
 ## [0.4.6] - 2026-03-31
 
