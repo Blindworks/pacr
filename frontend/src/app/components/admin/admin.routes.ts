@@ -78,6 +78,10 @@ export const adminRoutes: Routes = [
       {
         path: 'news/:id/edit',
         loadComponent: () => import('./news/news-form/news-form').then(m => m.NewsForm)
+      },
+      {
+        path: 'feedback',
+        loadComponent: () => import('./feedback/feedback-list/feedback-list').then(m => m.FeedbackList)
       }
     ]
   }

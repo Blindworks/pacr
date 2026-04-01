@@ -4,6 +4,8 @@ import { Sidebar } from './components/sidebar/sidebar';
 import { PaceCalculatorDialog } from './components/pace-calculator/pace-calculator-dialog';
 import { AboutDialog } from './components/about-dialog/about-dialog';
 import { Toast } from './components/toast/toast';
+import { FeedbackFab } from './components/feedback-fab/feedback-fab';
+import { FeedbackDialog } from './components/feedback-dialog/feedback-dialog';
 import { filter, map, startWith } from 'rxjs/operators';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { UserService } from './services/user.service';
@@ -11,7 +13,7 @@ import { ThemeService } from './services/theme.service';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, Sidebar, PaceCalculatorDialog, AboutDialog, Toast],
+  imports: [RouterOutlet, Sidebar, PaceCalculatorDialog, AboutDialog, Toast, FeedbackFab, FeedbackDialog],
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })

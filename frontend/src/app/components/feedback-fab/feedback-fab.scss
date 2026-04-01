@@ -1,0 +1,30 @@
+@use 'variables' as v;
+
+.fab {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  z-index: 100;
+  width: 52px;
+  height: 52px;
+  border-radius: v.$radius-pill;
+  background: var(--pp);
+  color: var(--btn-active-text);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  transition: transform 0.15s, opacity 0.15s, box-shadow 0.15s;
+
+  .material-symbols-outlined { font-size: 22px; }
+
+  &:hover {
+    transform: scale(1.08);
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.4);
+    opacity: 0.92;
+  }
+
+  &:active { transform: scale(0.97); }
+}

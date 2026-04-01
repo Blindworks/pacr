@@ -1,0 +1,83 @@
+<div class="list-page">
+  <div class="list-header">
+    <h2>User Feedback</h2>
+    <div class="filter-bar">
+      <select class="filter-select" [ngModel]="selectedStatus()" (ngModelChange)="onStatusFilter($event)">
+        <option value="">All</option>
+        <option value="NEW">New</option>
+        <option value="IN_PROGRESS">In Progress</option>
+        <option value="RESOLVED">Resolved</option>
+        <option value="CLOSED">Closed</option>
+      </select>
+    </div>
+  </div>
+
+  @if (isLoading()) {
+    <p class="loading">Loading...</p>
+  } @else if (items().length === 0) {
+    <p class="empty">No feedback submitted yet.</p>
+  } @else {
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>User</th>
+          <th>Category</th>
+          <th>Subject</th>
+          <th>Status</th>
+          <th>Date</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (item of items(); track item.id) {
+          <tr class="feedback-row" [class.expanded]="expandedId() === item.id"
+              (click)="toggleExpand(item)">
+            <td>{{ item.username }}</td>
+            <td><span class="badge badge--{{ item.category | lowercase }}">{{ categoryLabel(item.category) }}</span></td>
+            <td class="subject-cell">{{ item.subject }}</td>
+            <td><span class="badge badge--{{ item.status | lowercase }}">{{ statusLabel(item.status) }}</span></td>
+            <td>{{ item.createdAt | date:'dd.MM.yyyy HH:mm' }}</td>
+            <td class="expand-cell">
+              <span class="material-symbols-outlined">
+                {{ expandedId() === item.id ? 'expand_less' : 'expand_more' }}
+              </span>
+            </td>
+          </tr>
+          @if (expandedId() === item.id) {
+            <tr class="detail-row">
+              <td colspan="6">
+                <div class="detail-content">
+                  <div class="detail-message">
+                    <label class="field-label">MESSAGE</label>
+                    <p class="message-text">{{ item.message }}</p>
+                  </div>
+                  <div class="detail-admin">
+                    <div class="admin-field">
+                      <label class="field-label">STATUS</label>
+                      <select [(ngModel)]="editingStatus" class="admin-select" (click)="$event.stopPropagation()">
+                        <option value="NEW">New</option>
+                        <option value="IN_PROGRESS">In Progress</option>
+                        <option value="RESOLVED">Resolved</option>
+                        <option value="CLOSED">Closed</option>
+                      </select>
+                    </div>
+                    <div class="admin-field">
+                      <label class="field-label">ADMIN NOTES</label>
+                      <textarea [(ngModel)]="editingNotes" class="admin-textarea"
+                                placeholder="Add notes..." rows="3"
+                                (click)="$event.stopPropagation()"></textarea>
+                    </div>
+                    <button class="btn-save" (click)="save(item.id); $event.stopPropagation()"
+                            [disabled]="isSaving()">
+                      @if (isSaving()) { Saving... } @else { Save Changes }
+                    </button>
+                  </div>
+                </div>
+              </td>
+            </tr>
+          }
+        }
+      </tbody>
+    </table>
+  }
+</div>

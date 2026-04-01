@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-04-01
+
+### Added
+- User feedback system: floating action button (bottom-right) opens a dialog to submit bug reports, feature requests, and general feedback
+- Admin feedback management: new "Feedback" tab in admin panel with status filtering, expandable detail rows, and inline status/notes editing
+- Backend: UserFeedback entity, REST endpoints for users (POST /api/feedback) and admins (GET/PUT /api/admin/feedback)
+- Liquibase migration 080: user_feedback table with indexes on user_id, status, and created_at
+
 ## [0.4.6] - 2026-03-31
 
 ### Fixed

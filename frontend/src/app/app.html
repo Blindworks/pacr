@@ -9,4 +9,9 @@
 
 <app-pace-calculator-dialog />
 <app-about-dialog />
+<app-feedback-dialog />
 <app-toast />
+
+@if (showSidebar()) {
+  <app-feedback-fab />
+}

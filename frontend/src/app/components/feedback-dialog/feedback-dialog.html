@@ -1,0 +1,60 @@
+<dialog #dialog class="feedback-dialog" (click)="onBackdropClick($event)">
+  <div class="feedback-inner" (click)="$event.stopPropagation()">
+
+    <header class="feedback-header">
+      <div class="feedback-header-title">
+        <span class="material-symbols-outlined feedback-icon">feedback</span>
+        <span>Send Feedback</span>
+      </div>
+      <button class="feedback-close" (click)="close()">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </header>
+
+    <div class="feedback-body">
+      @if (submitSuccess()) {
+        <div class="feedback-success">
+          <span class="material-symbols-outlined success-icon">check_circle</span>
+          <p>Thank you! Your feedback has been sent.</p>
+        </div>
+      } @else {
+        <form (ngSubmit)="submit()" novalidate>
+
+          <div class="feedback-field">
+            <label class="field-label">CATEGORY</label>
+            <select [(ngModel)]="category" name="category" class="field-select">
+              <option value="BUG">Bug Report</option>
+              <option value="FEATURE_REQUEST">Feature Request</option>
+              <option value="GENERAL">General Feedback</option>
+            </select>
+          </div>
+
+          <div class="feedback-field">
+            <label class="field-label">SUBJECT</label>
+            <input type="text" [(ngModel)]="subject" name="subject"
+                   placeholder="Brief summary..." maxlength="255" class="field-input" />
+          </div>
+
+          <div class="feedback-field">
+            <label class="field-label">MESSAGE</label>
+            <textarea [(ngModel)]="message" name="message"
+                      placeholder="Describe your feedback in detail..."
+                      rows="5" class="field-textarea"></textarea>
+          </div>
+
+          @if (submitError()) {
+            <p class="feedback-error">{{ submitError() }}</p>
+          }
+
+          <div class="feedback-actions">
+            <button type="button" class="btn-cancel" (click)="close()">Cancel</button>
+            <button type="submit" class="btn-submit" [disabled]="isSubmitting()">
+              @if (isSubmitting()) { Sending... } @else { Send Feedback }
+            </button>
+          </div>
+
+        </form>
+      }
+    </div>
+  </div>
+</dialog>
