@@ -53,7 +53,7 @@ export class Activities implements OnInit {
     return this.weekOffset === 0;
   }
 
-  private get weekRange(): { start: string; end: string } {
+  private getWeekDates(): { monday: Date; sunday: Date } {
     const today = new Date();
     const day = today.getDay();
     const diffToMonday = (day === 0 ? -6 : 1 - day);
@@ -61,6 +61,11 @@ export class Activities implements OnInit {
     monday.setDate(today.getDate() + diffToMonday + this.weekOffset * 7);
     const sunday = new Date(monday);
     sunday.setDate(monday.getDate() + 6);
+    return { monday, sunday };
+  }
+
+  private get weekRange(): { start: string; end: string } {
+    const { monday, sunday } = this.getWeekDates();
     return {
       start: this.toIsoDate(monday),
       end: this.toIsoDate(sunday),
@@ -78,8 +83,10 @@ export class Activities implements OnInit {
     this.loadWeek();
   }
 
+  private static readonly isoDateFormatter = new Intl.DateTimeFormat('sv-SE');
+
   private toIsoDate(d: Date): string {
-    return d.toISOString().slice(0, 10);
+    return Activities.isoDateFormatter.format(d);
   }
 
   syncDone = false;
@@ -172,11 +179,9 @@ export class Activities implements OnInit {
   }
 
   get weekLabel(): string {
-    const { start, end } = this.weekRange;
-    const s = new Date(start);
-    const e = new Date(end);
+    const { monday, sunday } = this.getWeekDates();
     const fmt = (d: Date) => d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-    return `${fmt(s)} – ${fmt(e)}, ${e.getFullYear()}`;
+    return `${fmt(monday)} – ${fmt(sunday)}, ${sunday.getFullYear()}`;
   }
 
   get hasFeaturedMap(): boolean {

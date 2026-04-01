@@ -24,7 +24,7 @@ export class Upload implements OnInit {
   uploadSuccess = signal(false);
   recentActivities = signal<CompletedTraining[]>([]);
 
-  today = new Date().toISOString().split('T')[0];
+  today = new Intl.DateTimeFormat('sv-SE').format(new Date());
 
   ngOnInit() {
     this.activityService.getActivities(0, 5).subscribe({

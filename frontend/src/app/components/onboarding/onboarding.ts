@@ -290,7 +290,7 @@ export class Onboarding implements OnInit {
     const daysUntilMonday = day === 0 ? 1 : 8 - day;
     const nextMonday = new Date(today);
     nextMonday.setDate(today.getDate() + daysUntilMonday);
-    return nextMonday.toISOString().split('T')[0];
+    return new Intl.DateTimeFormat('sv-SE').format(nextMonday);
   }
 
   protected selectGender(g: string): void {

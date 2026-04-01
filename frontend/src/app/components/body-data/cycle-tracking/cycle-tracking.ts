@@ -115,9 +115,9 @@ export class CycleTracking implements OnInit {
   }
 
   confirmNewCycle(): void {
-    const today = this.today.toISOString().split('T')[0];
+    const todayStr = new Intl.DateTimeFormat('sv-SE').format(this.today);
     this.cycleEntryService.create({
-      entryDate: today,
+      entryDate: todayStr,
       flowIntensity: 'MEDIUM',
     }).subscribe({
       next: () => {
@@ -142,7 +142,7 @@ export class CycleTracking implements OnInit {
 
   dismissNewCyclePrompt(): void {
     this.showNewCyclePrompt = false;
-    sessionStorage.setItem('newCyclePromptDismissed', this.today.toISOString().split('T')[0]);
+    sessionStorage.setItem('newCyclePromptDismissed', new Intl.DateTimeFormat('sv-SE').format(this.today));
   }
 
   private buildCalendar(): void {

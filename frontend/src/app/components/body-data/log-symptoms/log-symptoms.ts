@@ -133,7 +133,7 @@ export class LogSymptoms implements OnInit {
     this.error = null;
 
     const entry: Partial<CycleEntry> = {
-      entryDate: this.today.toISOString().split('T')[0],
+      entryDate: new Intl.DateTimeFormat('sv-SE').format(this.today),
       physicalSymptoms: Array.from(this.selectedSymptoms).join(','),
       mood: this.selectedMood ?? undefined,
       energyLevel: this.energyLevel,

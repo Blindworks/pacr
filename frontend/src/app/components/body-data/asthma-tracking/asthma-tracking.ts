@@ -260,7 +260,7 @@ export class AsthmaTracking implements OnInit {
     for (let i = 6; i >= 0; i--) {
       const d = new Date(now);
       d.setDate(d.getDate() - i);
-      const dStr = d.toISOString().split('T')[0];
+      const dStr = new Intl.DateTimeFormat('sv-SE').format(d);
       const entry = days.find(e => e.loggedAt?.startsWith(dStr));
       const val = entry?.peakFlowLMin ?? null;
       slots.push({

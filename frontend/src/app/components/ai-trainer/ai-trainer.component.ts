@@ -39,7 +39,7 @@ export class AiTrainerComponent implements OnInit {
   }
 
   get formattedDate(): string {
-    return this.selectedDate.toISOString().split('T')[0];
+    return new Intl.DateTimeFormat('sv-SE').format(this.selectedDate);
   }
 
   get isToday(): boolean {

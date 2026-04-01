@@ -159,8 +159,10 @@ export class TrainingPlan implements OnInit {
     return { monday, sunday };
   }
 
+  private static readonly isoDateFormatter = new Intl.DateTimeFormat('sv-SE');
+
   private toIso(date: Date): string {
-    return date.toISOString().split('T')[0];
+    return TrainingPlan.isoDateFormatter.format(date);
   }
 
   private loadWeek(): void {
@@ -254,9 +256,10 @@ export class TrainingPlan implements OnInit {
 
     const entriesByDate = new Map<string, UserTrainingEntry[]>();
     for (const entry of entries) {
-      const dayEntries = entriesByDate.get(entry.trainingDate) ?? [];
+      const dateKey = this.toIso(new Date(entry.trainingDate));
+      const dayEntries = entriesByDate.get(dateKey) ?? [];
       dayEntries.push(entry);
-      entriesByDate.set(entry.trainingDate, dayEntries);
+      entriesByDate.set(dateKey, dayEntries);
     }
 
     this.days = [];
@@ -300,7 +303,8 @@ export class TrainingPlan implements OnInit {
     // Ghost-Einträge für KI-verschobene Trainings auf dem Original-Datum
     for (const entry of entries) {
       if (!entry.originalTrainingDate) continue;
-      const origDay = this.days.find(d => d.isoDate === entry.originalTrainingDate);
+      const origIso = this.toIso(new Date(entry.originalTrainingDate!));
+      const origDay = this.days.find(d => d.isoDate === origIso);
       if (!origDay) continue;
       const ghostSession: TrainingSession = {
         id: entry.training.id,

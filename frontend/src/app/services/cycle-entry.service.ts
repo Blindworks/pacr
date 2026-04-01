@@ -30,7 +30,7 @@ export class CycleEntryService {
   }
 
   getByDate(date: Date): Observable<CycleEntry> {
-    const params = new HttpParams().set('date', date.toISOString().split('T')[0]);
+    const params = new HttpParams().set('date', new Intl.DateTimeFormat('sv-SE').format(date));
     return this.http.get<CycleEntry>(`${this.base}/by-date`, { params });
   }
 

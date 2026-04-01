@@ -31,7 +31,7 @@ export class LogBodyMetrics {
   private readonly sleepDataService = inject(SleepDataService);
   private readonly now = new Date();
 
-  entryDate = this.now.toISOString().split('T')[0];
+  entryDate = new Intl.DateTimeFormat('sv-SE').format(this.now);
   entryTime = `${this.now.getHours().toString().padStart(2, '0')}:${this.now.getMinutes().toString().padStart(2, '0')}`;
   weight = '';
   bodyFat = '';

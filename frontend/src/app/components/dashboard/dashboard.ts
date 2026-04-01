@@ -67,7 +67,8 @@ export class Dashboard implements OnInit {
   barPoints(): Array<{ height: number; label: string; active: boolean; future: boolean; strain: number; distanceKm: number }> {
     const trend = this.data?.loadTrend ?? [];
     const todayDate = new Date();
-    const today = todayDate.toISOString().slice(0, 10);
+    const isoFmt = new Intl.DateTimeFormat('sv-SE');
+    const today = isoFmt.format(todayDate);
 
     // Montag der aktuellen Woche berechnen (JS: 0=So, 1=Mo, ...)
     const dayOfWeek = todayDate.getDay();
@@ -80,11 +81,11 @@ export class Dashboard implements OnInit {
     for (let i = 0; i < 7; i++) {
       const d = new Date(monday);
       d.setDate(monday.getDate() + i);
-      weekDates.push(d.toISOString().slice(0, 10));
+      weekDates.push(isoFmt.format(d));
     }
 
-    // Trend-Daten als Map fuer schnellen Zugriff
-    const trendMap = new Map(trend.map(p => [p.date, p]));
+    // Trend-Daten als Map fuer schnellen Zugriff (API-Daten auf lokales Datumsformat normalisieren)
+    const trendMap = new Map(trend.map(p => [isoFmt.format(new Date(p.date)), p]));
 
     const weekPoints = weekDates.map(date => {
       const p = trendMap.get(date);
