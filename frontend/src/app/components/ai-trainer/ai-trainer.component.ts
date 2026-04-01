@@ -31,7 +31,7 @@ export class AiTrainerComponent implements OnInit {
   error: string | null = null;
   aiDisabled: boolean = false;
 
-  readonly feelingEmojis = ['😩', '😕', '😐', '🙂', '💪'];
+  readonly feelingEmojis = ['sentiment_very_dissatisfied', 'sentiment_dissatisfied', 'sentiment_neutral', 'sentiment_satisfied', 'sentiment_very_satisfied'];
   readonly feelingLabels = ['Sehr schlecht', 'Schlecht', 'Okay', 'Gut', 'Sehr gut'];
 
   ngOnInit(): void {
