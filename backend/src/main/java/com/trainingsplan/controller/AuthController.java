@@ -14,6 +14,7 @@ import com.trainingsplan.repository.UserRepository;
 import com.trainingsplan.security.JwtService;
 import com.trainingsplan.service.AuditLogService;
 import com.trainingsplan.service.EmailService;
+import com.trainingsplan.service.TokenBlacklistService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -37,17 +38,20 @@ public class AuthController {
     private final AuthenticationManager authenticationManager;
     private final EmailService emailService;
     private final AuditLogService auditLogService;
+    private final TokenBlacklistService tokenBlacklistService;
     private final SecureRandom secureRandom = new SecureRandom();
 
     public AuthController(UserRepository userRepository, PasswordEncoder passwordEncoder,
                           JwtService jwtService, AuthenticationManager authenticationManager,
-                          EmailService emailService, AuditLogService auditLogService) {
+                          EmailService emailService, AuditLogService auditLogService,
+                          TokenBlacklistService tokenBlacklistService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
         this.authenticationManager = authenticationManager;
         this.emailService = emailService;
         this.auditLogService = auditLogService;
+        this.tokenBlacklistService = tokenBlacklistService;
     }
 
     @PostMapping("/register")
@@ -167,6 +171,21 @@ public class AuthController {
             case INACTIVE -> "Dein Konto ist inaktiv.";
             case ACTIVE -> "Konto ist aktiv.";
         };
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<MessageResponse> logout(HttpServletRequest request) {
+        String authHeader = request.getHeader("Authorization");
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            String token = authHeader.substring(7);
+            try {
+                java.util.Date expiration = jwtService.extractClaim(token, io.jsonwebtoken.Claims::getExpiration);
+                tokenBlacklistService.blacklist(token, expiration);
+            } catch (Exception e) {
+                // Token already expired or invalid — nothing to blacklist
+            }
+        }
+        return ResponseEntity.ok(new MessageResponse("Logged out successfully"));
     }
 
     private String generateVerificationCode() {

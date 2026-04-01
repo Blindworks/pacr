@@ -6,6 +6,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+## [0.6.0] - 2026-04-01
+
+### Added
+- Backend: `POST /api/auth/logout` endpoint that blacklists the current JWT token server-side
+- Token blacklist system: `BlacklistedToken` entity, repository, and `TokenBlacklistService` with SHA-256 hashing
+- Scheduled cleanup of expired blacklisted tokens (hourly)
+- Liquibase migration 081: `blacklisted_tokens` table with index on `token_hash`
+
+### Fixed
+- Critical session bug: logging out as User 1 and logging in as User 2 still showed User 1's data — `UserService.currentUser` signal was not cleared on logout
+- JWT tokens now invalidated server-side on logout — previously tokens remained valid for 24h after logout
+- `JwtAuthenticationFilter` now checks token blacklist before granting access
+- Frontend logout now fully resets all cached state (user profile, theme)
+
 ## [0.5.0] - 2026-04-01
 
 ### Added

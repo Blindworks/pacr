@@ -84,5 +84,6 @@
     <include file="db/changelog/changes/078-add-user-community-routes-enabled.xml"/>
     <include file="db/changelog/changes/079-add-user-theme.xml"/>
     <include file="db/changelog/changes/080-add-user-feedback.xml"/>
+    <include file="db/changelog/changes/081-add-blacklisted-tokens.xml"/>
 
 </databaseChangeLog>

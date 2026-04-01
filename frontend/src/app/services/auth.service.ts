@@ -1,8 +1,10 @@
 import { apiUrl } from '../core/api-base';
 import { Injectable, inject, signal } from '@angular/core';
-import { HttpClient, HttpContext } from '@angular/common/http';
+import { HttpClient, HttpContext, HttpHeaders } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 import { SKIP_AUTH_LOGOUT } from '../interceptors/auth.interceptor';
+import { UserService } from './user.service';
+import { ThemeService } from './theme.service';
 
 const TOKEN_KEY = 'auth_token';
 const ROLE_KEY = 'auth_role';
@@ -24,6 +26,8 @@ export interface MessageResponse {
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private readonly http = inject(HttpClient);
+  private readonly userService = inject(UserService);
+  private readonly themeService = inject(ThemeService);
   private _isLoggedIn = signal(!!localStorage.getItem(TOKEN_KEY));
 
   get isLoggedIn() {
@@ -57,9 +61,22 @@ export class AuthService {
   }
 
   logout() {
+    const token = this.getToken();
+
+    // Clear local state immediately
     localStorage.removeItem(TOKEN_KEY);
     localStorage.removeItem(ROLE_KEY);
     this._isLoggedIn.set(false);
+    this.userService.clearUser();
+    this.themeService.setTheme('dark');
+
+    // Fire-and-forget: blacklist token on backend (use captured token directly)
+    if (token) {
+      this.http.post(`${BASE}/logout`, {}, {
+        headers: new HttpHeaders({ Authorization: `Bearer ${token}` }),
+        context: new HttpContext().set(SKIP_AUTH_LOGOUT, true)
+      }).subscribe({ error: () => {} });
+    }
   }
 
   getToken(): string | null {

@@ -64,6 +64,10 @@ export class UserService {
   /** Shared reactive user state — updated after getMe() and updateUser(). */
   readonly currentUser = signal<UserProfile | null>(null);
 
+  clearUser(): void {
+    this.currentUser.set(null);
+  }
+
   getMe(): Observable<UserProfile> {
     return this.http.get<UserProfile>(`${BASE}/me`).pipe(
       tap(user => this.currentUser.set(user))
