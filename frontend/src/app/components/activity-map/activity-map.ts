@@ -144,7 +144,7 @@ export class ActivityMapComponent implements AfterViewInit, OnDestroy, OnChanges
     const palette: Record<number, string> = isDark
       ? { 0.0: '#3fb950', 0.5: '#d29922', 1.0: '#f85149' }
       : { 0.0: '#20B2AA', 0.5: '#9370DB', 1.0: '#e74c3c' };
-    const pp = isDark ? '#b9f20d' : '#9370DB';
+    const pp = isDark ? '#8ffc2e' : '#9370DB';
 
     // Visible glow polyline underneath (SVG-based, always renders)
     this.glowLayer = L.polyline(latlngs, {
