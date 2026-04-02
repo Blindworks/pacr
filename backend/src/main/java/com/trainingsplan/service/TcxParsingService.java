@@ -82,6 +82,10 @@ public class TcxParsingService {
                 if (date != null) {
                     training.setTrainingDate(date);
                 }
+                java.time.LocalTime time = parseIsoToLocalTime(idText);
+                if (time != null) {
+                    training.setStartTime(time);
+                }
             }
         }
 
@@ -325,6 +329,19 @@ public class TcxParsingService {
             } catch (Exception ex) {
                 return null;
             }
+        }
+    }
+
+    /**
+     * Parses an ISO-8601 date-time string to a {@link java.time.LocalTime}.
+     * Returns null if parsing fails or the string contains no time component.
+     */
+    private java.time.LocalTime parseIsoToLocalTime(String text) {
+        try {
+            String normalized = text.replace("Z", "+00:00");
+            return java.time.OffsetDateTime.parse(normalized).toLocalTime();
+        } catch (DateTimeParseException e) {
+            return null;
         }
     }
 

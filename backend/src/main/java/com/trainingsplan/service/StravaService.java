@@ -274,6 +274,7 @@ public class StravaService {
                     LocalDateTime startDateTime = parseStravaStartDateTime(dto);
                     if (startDateTime != null && (ct.getUploadDate() == null || !startDateTime.equals(ct.getUploadDate()))) {
                         ct.setUploadDate(startDateTime);
+                        ct.setStartTime(startDateTime.toLocalTime());
                         dirty = true;
                     }
                     if (dirty) {
@@ -490,6 +491,7 @@ public class StravaService {
         LocalDateTime startDateTime = parseStravaStartDateTime(dto);
         if (startDateTime != null) {
             ct.setUploadDate(startDateTime);
+            ct.setStartTime(startDateTime.toLocalTime());
         }
 
         if (dto.getDistanceMeters() != null && dto.getDistanceMeters() > 0) {

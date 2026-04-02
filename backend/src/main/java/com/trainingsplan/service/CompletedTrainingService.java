@@ -184,6 +184,9 @@ public class CompletedTrainingService {
                 ? collector.getParsedStartDate()
                 : trainingDate;
         training.setTrainingDate(effectiveDate);
+        if (collector.getParsedStartTime() != null) {
+            training.setStartTime(collector.getParsedStartTime());
+        }
 
         User currentUser = securityUtils.getCurrentUser();
         training.setUser(currentUser);
@@ -279,6 +282,8 @@ public class CompletedTrainingService {
 
         /** Activity start date parsed from the FIT file (may be null if not present). */
         private LocalDate parsedStartDate = null;
+        /** Activity start time (local) parsed from the FIT file (may be null if not present). */
+        private java.time.LocalTime parsedStartTime = null;
 
         /** FIT epoch offset: seconds between 1989-12-31T00:00:00Z and 1970-01-01T00:00:00Z. */
         private static final long FIT_EPOCH_OFFSET = 631065600L;
@@ -358,9 +363,9 @@ public class CompletedTrainingService {
                 Long fitTs = startTimeField.getLongValue();
                 if (fitTs != null && fitTs > 0) {
                     long unixSeconds = fitTs + FIT_EPOCH_OFFSET;
-                    parsedStartDate = LocalDateTime
-                            .ofEpochSecond(unixSeconds, 0, ZoneOffset.UTC)
-                            .toLocalDate();
+                    LocalDateTime startDt = LocalDateTime.ofEpochSecond(unixSeconds, 0, ZoneOffset.UTC);
+                    parsedStartDate = startDt.toLocalDate();
+                    parsedStartTime = startDt.toLocalTime();
                 }
             }
 
@@ -476,6 +481,9 @@ public class CompletedTrainingService {
 
         /** Start date from the FIT file's session message, or {@code null} if not present. */
         public LocalDate getParsedStartDate() { return parsedStartDate; }
+
+        /** Start time from the FIT file's session message, or {@code null} if not present. */
+        public java.time.LocalTime getParsedStartTime() { return parsedStartTime; }
 
         public List<Double>  getDistances()  { return distances; }
         public List<Double>  getAltitudes()  { return altitudes; }

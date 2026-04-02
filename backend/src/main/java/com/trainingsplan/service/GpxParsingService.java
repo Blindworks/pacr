@@ -203,11 +203,15 @@ public class GpxParsingService {
             training.setAveragePaceSecondsPerKm((int) (durationSeconds / distanceKm));
         }
 
-        // Training date from start time
+        // Training date and start time from start time
         if (startTimeRaw != null) {
             LocalDate date = parseIsoToLocalDate(startTimeRaw);
             if (date != null) {
                 training.setTrainingDate(date);
+            }
+            java.time.LocalTime time = parseIsoToLocalTime(startTimeRaw);
+            if (time != null) {
+                training.setStartTime(time);
             }
         }
 
@@ -278,6 +282,19 @@ public class GpxParsingService {
             } catch (Exception ex) {
                 return null;
             }
+        }
+    }
+
+    /**
+     * Parses an ISO-8601 date-time string to a {@link java.time.LocalTime}.
+     * Returns null if parsing fails or the string contains no time component.
+     */
+    private java.time.LocalTime parseIsoToLocalTime(String text) {
+        try {
+            String normalized = text.replace("Z", "+00:00");
+            return java.time.OffsetDateTime.parse(normalized).toLocalTime();
+        } catch (DateTimeParseException e) {
+            return null;
         }
     }
 }

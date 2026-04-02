@@ -85,5 +85,6 @@
     <include file="db/changelog/changes/079-add-user-theme.xml"/>
     <include file="db/changelog/changes/080-add-user-feedback.xml"/>
     <include file="db/changelog/changes/081-add-blacklisted-tokens.xml"/>
+    <include file="db/changelog/changes/082-add-start-time-to-completed-trainings.xml"/>
 
 </databaseChangeLog>

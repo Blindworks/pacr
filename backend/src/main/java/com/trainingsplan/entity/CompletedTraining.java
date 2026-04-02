@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Entity
 @Table(name = "completed_trainings")
@@ -20,6 +21,9 @@ public class CompletedTraining {
 
     @Column(name = "upload_date", nullable = false)
     private LocalDateTime uploadDate;
+
+    @Column(name = "start_time")
+    private LocalTime startTime;
 
     // Basic Training Metrics
     @Column(name = "distance_km")
@@ -200,6 +204,14 @@ public class CompletedTraining {
 
     public void setUploadDate(LocalDateTime uploadDate) {
         this.uploadDate = uploadDate;
+    }
+
+    public LocalTime getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(LocalTime startTime) {
+        this.startTime = startTime;
     }
 
     public Double getDistanceKm() {

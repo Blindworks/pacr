@@ -134,13 +134,10 @@ public class CorosWebhookService {
         // Training date from start time + timezone
         if (data.getStartTime() != null) {
             ZoneOffset offset = timezoneToOffset(data.getStartTimezone());
-            LocalDate trainingDate = Instant.ofEpochSecond(data.getStartTime())
-                    .atOffset(offset)
-                    .toLocalDate();
-            ct.setTrainingDate(trainingDate);
-            ct.setUploadDate(Instant.ofEpochSecond(data.getStartTime())
-                    .atOffset(offset)
-                    .toLocalDateTime());
+            java.time.OffsetDateTime startOffsetDt = Instant.ofEpochSecond(data.getStartTime()).atOffset(offset);
+            ct.setTrainingDate(startOffsetDt.toLocalDate());
+            ct.setStartTime(startOffsetDt.toLocalTime());
+            ct.setUploadDate(startOffsetDt.toLocalDateTime());
         } else {
             ct.setTrainingDate(LocalDate.now());
         }
