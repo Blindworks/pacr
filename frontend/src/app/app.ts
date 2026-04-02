@@ -11,6 +11,7 @@ import { filter, map, startWith } from 'rxjs/operators';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { UserService } from './services/user.service';
 import { ThemeService } from './services/theme.service';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-root',
@@ -28,11 +29,14 @@ export class App {
   private readonly router = inject(Router);
   private readonly userService = inject(UserService);
   private readonly themeService = inject(ThemeService);
+  private readonly translate = inject(TranslateService);
 
   private mobileQuery!: MediaQueryList;
   private mobileListener = (e: MediaQueryListEvent) => this.isMobile.set(e.matches);
 
   constructor() {
+    this.translate.use(localStorage.getItem('pacr-language') || 'de');
+
     effect(() => {
       const user = this.userService.currentUser();
       if (user) {
