@@ -4,7 +4,7 @@
   <div class="breadcrumb">
     <button class="breadcrumb-link" (click)="backToPlans()">
       <span class="material-symbols-outlined">arrow_back</span>
-      Training Plans
+      {{ 'ADMIN.PLANS_TITLE' | translate }}
     </button>
     <span class="material-symbols-outlined breadcrumb-sep">chevron_right</span>
     <span class="breadcrumb-current">{{ plan()?.name ?? 'Plan' }}</span>
@@ -13,37 +13,37 @@
   <!-- Toolbar -->
   <div class="toolbar">
     <div class="toolbar-left">
-      <h2>Trainings</h2>
+      <h2>{{ 'ADMIN.TRAININGS_TITLE' | translate }}</h2>
       @if (!isLoading()) {
         <span class="count-badge">{{ trainings().length }}</span>
       }
     </div>
     <button class="btn-primary" (click)="navigateNew()">
       <span class="material-symbols-outlined">add</span>
-      New Training
+      {{ 'ADMIN.NEW_TRAINING' | translate }}
     </button>
   </div>
 
   @if (isLoading()) {
     <div class="state-box">
       <span class="material-symbols-outlined spin">progress_activity</span>
-      <span>Loading trainings…</span>
+      <span>{{ 'ADMIN.LOADING_TRAININGS' | translate }}</span>
     </div>
   }
 
   @if (hasError() && !isLoading()) {
     <div class="state-box state-box--error">
       <span class="material-symbols-outlined">error</span>
-      <span>Failed to load trainings.</span>
-      <button class="btn-ghost" (click)="loadTrainings()">Retry</button>
+      <span>{{ 'ADMIN.TRAININGS_LOAD_FAILED' | translate }}</span>
+      <button class="btn-ghost" (click)="loadTrainings()">{{ 'COMMON.RETRY' | translate }}</button>
     </div>
   }
 
   @if (!isLoading() && !hasError() && trainings().length === 0) {
     <div class="state-box">
       <span class="material-symbols-outlined">fitness_center</span>
-      <span>No trainings in this plan yet.</span>
-      <button class="btn-primary" (click)="navigateNew()">Add first training</button>
+      <span>{{ 'ADMIN.NO_TRAININGS' | translate }}</span>
+      <button class="btn-primary" (click)="navigateNew()">{{ 'ADMIN.ADD_FIRST' | translate }}</button>
     </div>
   }
 
@@ -52,15 +52,15 @@
       <table class="data-table">
         <thead>
           <tr>
-            <th>Week / Day</th>
-            <th>Name</th>
-            <th>Type</th>
-            <th>Intensity</th>
-            <th>Duration</th>
-            <th>Difficulty</th>
-            <th>Steps</th>
-            <th>Prep Tips</th>
-            <th class="col-actions">Actions</th>
+            <th>{{ 'ADMIN.WEEK_DAY' | translate }}</th>
+            <th>{{ 'COMMON.NAME' | translate }}</th>
+            <th>{{ 'COMMON.TYPE' | translate }}</th>
+            <th>{{ 'ADMIN.INTENSITY' | translate }}</th>
+            <th>{{ 'COMMON.DURATION' | translate }}</th>
+            <th>{{ 'ADMIN.DIFFICULTY' | translate }}</th>
+            <th>{{ 'ADMIN.STEPS' | translate }}</th>
+            <th>{{ 'ADMIN.PREP_TIPS' | translate }}</th>
+            <th class="col-actions">{{ 'COMMON.ACTIONS' | translate }}</th>
           </tr>
         </thead>
         <tbody>
@@ -91,10 +91,10 @@
               <td class="cell-muted">{{ t.steps.length }}</td>
               <td class="cell-muted">{{ t.prepTips.length }}</td>
               <td class="cell-actions">
-                <button class="icon-btn" title="Edit" (click)="navigateEdit(t.id)">
+                <button class="icon-btn" [title]="'COMMON.EDIT' | translate" (click)="navigateEdit(t.id)">
                   <span class="material-symbols-outlined">edit</span>
                 </button>
-                <button class="icon-btn icon-btn--danger" title="Delete" (click)="requestDelete(t.id)">
+                <button class="icon-btn icon-btn--danger" [title]="'COMMON.DELETE' | translate" (click)="requestDelete(t.id)">
                   <span class="material-symbols-outlined">delete</span>
                 </button>
               </td>
@@ -109,11 +109,11 @@
     <div class="dialog-overlay" (click)="cancelDelete()">
       <div class="dialog" (click)="$event.stopPropagation()">
         <span class="material-symbols-outlined dialog-icon">warning</span>
-        <h3>Delete Training?</h3>
-        <p>This action cannot be undone.</p>
+        <h3>{{ 'ADMIN.DELETE_TRAINING_TITLE' | translate }}</h3>
+        <p>{{ 'ADMIN.DELETE_TRAINING_MSG' | translate }}</p>
         <div class="dialog-actions">
-          <button class="btn-ghost" (click)="cancelDelete()">Cancel</button>
-          <button class="btn-danger" (click)="confirmDelete(confirmDeleteId()!)">Delete</button>
+          <button class="btn-ghost" (click)="cancelDelete()">{{ 'COMMON.CANCEL' | translate }}</button>
+          <button class="btn-danger" (click)="confirmDelete(confirmDeleteId()!)">{{ 'COMMON.DELETE' | translate }}</button>
         </div>
       </div>
     </div>

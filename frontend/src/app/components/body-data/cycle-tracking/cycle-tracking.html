@@ -59,22 +59,22 @@
     <section class="card training-impact">
       <h4 class="card-title">
         <span class="material-symbols-outlined card-title-icon">trending_up</span>
-        Training Impact
+        {{ 'BODY_DATA.TRAINING_IMPACT' | translate }}
       </h4>
       <div class="impact-grid">
         <div class="impact-details">
           <div class="impact-item impact-item--highlighted" [ngClass]="'border-' + currentPhase">
-            <p class="impact-label">Performance Outlook</p>
+            <p class="impact-label">{{ 'BODY_DATA.PERFORMANCE_OUTLOOK' | translate }}</p>
             <p class="impact-text">{{ insight.performance }}</p>
           </div>
           <div class="impact-item">
-            <p class="impact-label">Fueling Focus</p>
+            <p class="impact-label">{{ 'BODY_DATA.FUELING_FOCUS' | translate }}</p>
             <p class="impact-text">{{ insight.fueling }}</p>
           </div>
         </div>
 
         <div class="intensity-ring-wrap">
-          <p class="ring-label">Recommended Intensity</p>
+          <p class="ring-label">{{ 'BODY_DATA.RECOMMENDED_INTENSITY' | translate }}</p>
           <div class="ring-container">
             <svg viewBox="0 0 128 128" class="ring-svg">
               <circle class="ring-track" cx="64" cy="64" r="58" stroke-width="8" fill="transparent"/>
@@ -86,7 +86,7 @@
             </svg>
             <span class="ring-value">{{ insight.intensity }}%</span>
           </div>
-          <p class="ring-phase-label">{{ insight.label }}</p>
+          <p class="ring-phase-label">{{ insight.label | translate }}</p>
         </div>
       </div>
     </section>
