@@ -1,8 +1,8 @@
 <!-- Race Selection View -->
 <div class="competitions-page" *ngIf="!selectedRace">
   <header class="page-header">
-    <h2 class="page-title">Select Your Goal</h2>
-    <p class="page-subtitle">Choose a competition to unlock your personalized training path.</p>
+    <h2 class="page-title">{{ 'COMPETITIONS.TITLE' | translate }}</h2>
+    <p class="page-subtitle">{{ 'COMPETITIONS.SUBTITLE' | translate }}</p>
   </header>
 
   <!-- Filters -->
@@ -20,26 +20,26 @@
       [class.active]="showPastRaces"
       (click)="showPastRaces = !showPastRaces">
       <span class="material-symbols-outlined">history</span>
-      {{ showPastRaces ? 'Hide Past Races' : 'Show Past Races' }}
+      {{ showPastRaces ? ('COMPETITIONS.HIDE_PAST' | translate) : ('COMPETITIONS.SHOW_PAST' | translate) }}
     </button>
   </div>
 
   <!-- Loading State -->
   <div class="state-box" *ngIf="isLoading">
     <span class="material-symbols-outlined state-icon spin">progress_activity</span>
-    <span>Loading competitions…</span>
+    <span>{{ 'COMPETITIONS.LOADING' | translate }}</span>
   </div>
 
   <!-- Error State -->
   <div class="state-box state-box--error" *ngIf="hasError && !isLoading">
     <span class="material-symbols-outlined state-icon">error</span>
-    <span>Failed to load competitions.</span>
+    <span>{{ 'COMPETITIONS.LOAD_FAILED' | translate }}</span>
   </div>
 
   <!-- Empty State -->
   <div class="state-box" *ngIf="!isLoading && !hasError && filteredRaces.length === 0">
     <span class="material-symbols-outlined state-icon">emoji_events</span>
-    <span>No competitions found.</span>
+    <span>{{ 'COMPETITIONS.NO_COMPETITIONS' | translate }}</span>
   </div>
 
   <!-- Race Cards -->
@@ -72,7 +72,7 @@
             [class.btn-select--selected]="race.registered"
             (click)="selectRace(race)">
             <span class="material-symbols-outlined" *ngIf="race.registered">check_circle</span>
-            {{ race.registered ? 'Selected' : 'Select Race' }}
+            {{ race.registered ? ('COMPETITIONS.SELECTED' | translate) : ('COMPETITIONS.SELECT_RACE' | translate) }}
           </button>
           <button class="btn-info" (click)="openInfo(race)">
             <span class="material-symbols-outlined">info</span>
@@ -86,7 +86,7 @@
           <span class="material-symbols-outlined">
             {{ race.registeredWithOrganizer ? 'how_to_reg' : 'person_add' }}
           </span>
-          {{ race.registeredWithOrganizer ? 'Beim Veranstalter angemeldet' : 'Beim Veranstalter anmelden' }}
+          {{ race.registeredWithOrganizer ? ('COMPETITIONS.REGISTERED' | translate) : ('COMPETITIONS.NOT_REGISTERED' | translate) }}
         </button>
       </div>
     </div>
@@ -95,10 +95,10 @@
   <!-- CTA Banner -->
   <div class="cta-banner">
     <div class="cta-text">
-      <h4 class="cta-title">Custom Plan Required?</h4>
-      <p class="cta-subtitle">Our AI coaches can build a plan around your busy schedule.</p>
+      <h4 class="cta-title">{{ 'COMPETITIONS.CUSTOM_PLAN_TITLE' | translate }}</h4>
+      <p class="cta-subtitle">{{ 'COMPETITIONS.CUSTOM_PLAN_SUBTITLE' | translate }}</p>
     </div>
-    <button class="cta-btn">Talk to AI Coach</button>
+    <button class="cta-btn">{{ 'COMPETITIONS.TALK_TO_AI' | translate }}</button>
   </div>
 </div>
 
@@ -110,7 +110,7 @@
       <span class="material-symbols-outlined">arrow_back</span>
     </button>
     <div class="plan-subheader-race">
-      <span class="plan-subheader-label">Selected Race</span>
+      <span class="plan-subheader-label">{{ 'COMPETITIONS.SELECTED_RACE' | translate }}</span>
       <div class="plan-subheader-divider"></div>
       <span class="plan-subheader-name">{{ selectedRace.name }} | {{ selectedRace.date }}</span>
     </div>
@@ -119,12 +119,10 @@
   <div class="plan-content">
     <!-- Intro -->
     <div class="plan-intro">
-      <h1 class="plan-main-title">Select Your Training Plan</h1>
-      <p class="plan-main-subtitle">
-        Customize your journey to the finish line. Choose a target time to see tailored plans that fit your goals and schedule.
-      </p>
+      <h1 class="plan-main-title">{{ 'COMPETITIONS.SELECT_PLAN' | translate }}</h1>
+      <p class="plan-main-subtitle">{{ 'COMPETITIONS.SELECT_PLAN_SUBTITLE' | translate }}</p>
       <p class="plan-main-hint" *ngIf="selectedRace.trainingPlanId">
-        Your currently assigned training plan is already highlighted below.
+        {{ 'COMPETITIONS.CURRENT_PLAN_HINT' | translate }}
       </p>
     </div>
 
@@ -132,7 +130,7 @@
     <section class="target-time-section">
       <h2 class="section-heading">
         <span class="material-symbols-outlined">target</span>
-        Select Your Target Time
+        {{ 'COMPETITIONS.SELECT_TARGET' | translate }}
       </h2>
       <div class="target-time-btns">
         <button
@@ -152,10 +150,10 @@
         class="plan-card"
         [class.plan-card--recommended]="plan.recommended"
         [class.plan-card--selected]="isPlanSelected(plan)">
-        <div class="plan-card__recommended-badge" *ngIf="plan.recommended">RECOMMENDED</div>
+        <div class="plan-card__recommended-badge" *ngIf="plan.recommended">{{ 'COMPETITIONS.RECOMMENDED' | translate }}</div>
         <div class="plan-card__selected-badge" *ngIf="isPlanSelected(plan)">
           <span class="material-symbols-outlined">check_circle</span>
-          Selected
+          {{ 'COMPETITIONS.SELECTED' | translate }}
         </div>
         <div class="plan-card__glow"></div>
 
@@ -173,21 +171,21 @@
           <div class="plan-stat">
             <span class="material-symbols-outlined plan-stat__icon">calendar_today</span>
             <div>
-              <p class="plan-stat__label">Commitment</p>
+              <p class="plan-stat__label">{{ 'COMPETITIONS.COMMITMENT' | translate }}</p>
               <p class="plan-stat__value">{{ plan.commitment }}</p>
             </div>
           </div>
           <div class="plan-stat">
             <span class="material-symbols-outlined plan-stat__icon">distance</span>
             <div>
-              <p class="plan-stat__label">Peak Mileage</p>
+              <p class="plan-stat__label">{{ 'COMPETITIONS.PEAK_MILEAGE' | translate }}</p>
               <p class="plan-stat__value">{{ plan.peakMileage }}</p>
             </div>
           </div>
           <div class="plan-stat">
             <span class="material-symbols-outlined plan-stat__icon">psychology</span>
             <div>
-              <p class="plan-stat__label">Key Focus</p>
+              <p class="plan-stat__label">{{ 'COMPETITIONS.KEY_FOCUS' | translate }}</p>
               <p class="plan-stat__value">{{ plan.keyFocus }}</p>
             </div>
           </div>
@@ -197,7 +195,7 @@
           class="plan-card__select-btn"
           [class.plan-card__select-btn--selected]="isPlanSelected(plan)"
           (click)="selectPlan(plan)">
-          {{ isPlanSelected(plan) ? 'SELECTED PLAN' : 'SELECT PLAN' }}
+          {{ isPlanSelected(plan) ? ('COMPETITIONS.SELECTED_PLAN' | translate) : ('COMPETITIONS.SELECT_PLAN_BTN' | translate) }}
         </button>
       </div>
     </section>
@@ -210,9 +208,9 @@
   <section class="confirmation-hero" [style.background-image]="getImageStyle(selectedRace.image)">
     <div class="confirmation-hero__overlay"></div>
     <div class="confirmation-hero__content">
-      <span class="confirmation-hero__badge">Plan Confirmed</span>
-      <h1 class="confirmation-hero__title">You're all set!</h1>
-      <p class="confirmation-hero__subtitle">Your road to {{ selectedRace.name }} starts today.</p>
+      <span class="confirmation-hero__badge">{{ 'COMPETITIONS.PLAN_CONFIRMED' | translate }}</span>
+      <h1 class="confirmation-hero__title">{{ 'COMPETITIONS.ALL_SET' | translate }}</h1>
+      <p class="confirmation-hero__subtitle">{{ 'COMPETITIONS.ROAD_TO' | translate }} {{ selectedRace.name }} {{ 'COMPETITIONS.STARTS_TODAY' | translate }}</p>
     </div>
   </section>
 
@@ -222,14 +220,14 @@
     <div class="confirmation-left">
       <!-- Plan Overview -->
       <div class="confirmation-card">
-        <h2 class="confirmation-card__heading">Plan Overview</h2>
+        <h2 class="confirmation-card__heading">{{ 'COMPETITIONS.PLAN_OVERVIEW' | translate }}</h2>
         <div class="confirmation-overview">
           <div class="overview-row">
             <div class="overview-icon">
               <span class="material-symbols-outlined">location_on</span>
             </div>
             <div>
-              <p class="overview-label">Race</p>
+              <p class="overview-label">{{ 'COMPETITIONS.RACE' | translate }}</p>
               <p class="overview-value">{{ selectedRace.name }} | {{ selectedRace.date }}</p>
             </div>
           </div>
@@ -238,7 +236,7 @@
               <span class="material-symbols-outlined">timer</span>
             </div>
             <div>
-              <p class="overview-label">Target Time</p>
+              <p class="overview-label">{{ 'COMPETITIONS.TARGET_TIME' | translate }}</p>
               <p class="overview-value">{{ selectedPlan.targetTime }}</p>
             </div>
           </div>
@@ -247,7 +245,7 @@
               <span class="material-symbols-outlined">fitness_center</span>
             </div>
             <div>
-              <p class="overview-label">Plan Name</p>
+              <p class="overview-label">{{ 'COMPETITIONS.PLAN_NAME' | translate }}</p>
               <p class="overview-value">{{ selectedPlan.title }}</p>
             </div>
           </div>
@@ -257,26 +255,26 @@
       <!-- First Milestone -->
       <div class="confirmation-card">
         <div class="milestone-header">
-          <h2 class="confirmation-card__heading">First Milestone</h2>
-          <span class="milestone-week">Week 1, Day 1</span>
+          <h2 class="confirmation-card__heading">{{ 'COMPETITIONS.FIRST_MILESTONE' | translate }}</h2>
+          <span class="milestone-week">{{ 'COMPETITIONS.WEEK_1_DAY_1' | translate }}</span>
         </div>
         <div class="milestone-content">
           <div class="milestone-icon">
             <span class="material-symbols-outlined">play_circle</span>
           </div>
           <div class="milestone-info">
-            <h3 class="milestone-title">Foundation Run — 8 km</h3>
-            <p class="milestone-desc">Focus on easy pacing and building a rhythmic stride. Heart rate Zone 2.</p>
+            <h3 class="milestone-title">{{ 'COMPETITIONS.MILESTONE_TITLE' | translate }}</h3>
+            <p class="milestone-desc">{{ 'COMPETITIONS.MILESTONE_DESC' | translate }}</p>
           </div>
           <div class="milestone-stats">
             <div class="milestone-stat">
               <p class="milestone-stat__value">8 km</p>
-              <p class="milestone-stat__label">Distance</p>
+              <p class="milestone-stat__label">{{ 'COMMON.DISTANCE' | translate }}</p>
             </div>
             <div class="milestone-stat-divider"></div>
             <div class="milestone-stat">
               <p class="milestone-stat__value">45 m</p>
-              <p class="milestone-stat__label">Est. Time</p>
+              <p class="milestone-stat__label">{{ 'COMPETITIONS.EST_TIME' | translate }}</p>
             </div>
           </div>
         </div>
@@ -287,34 +285,34 @@
     <div class="confirmation-right">
       <!-- Commitment Stats -->
       <div class="confirmation-card commitment-card">
-        <h2 class="confirmation-card__heading text-center">Commitment</h2>
+        <h2 class="confirmation-card__heading text-center">{{ 'COMPETITIONS.COMMITMENT_HEADING' | translate }}</h2>
         <div class="commitment-stats">
           <div class="commitment-stat">
             <p class="commitment-stat__value">{{ planWeeks }}</p>
-            <p class="commitment-stat__label">Weeks</p>
+            <p class="commitment-stat__label">{{ 'COMPETITIONS.WEEKS' | translate }}</p>
           </div>
           <div class="commitment-divider"></div>
           <div class="commitment-stat">
             <p class="commitment-stat__value">{{ selectedPlan.commitment.split(' ')[0] }}</p>
-            <p class="commitment-stat__label">Sessions/Week</p>
+            <p class="commitment-stat__label">{{ 'COMPETITIONS.SESSIONS_WEEK' | translate }}</p>
           </div>
           <div class="commitment-divider"></div>
           <div class="commitment-stat">
             <p class="commitment-stat__value">{{ planTotalKm }}</p>
-            <p class="commitment-stat__label">Total KM</p>
+            <p class="commitment-stat__label">{{ 'COMPETITIONS.TOTAL_KM' | translate }}</p>
           </div>
         </div>
       </div>
 
       <!-- Action Card -->
       <div class="action-card">
-        <h3 class="action-card__title">Ready to chase your PB?</h3>
+        <h3 class="action-card__title">{{ 'COMPETITIONS.READY_PB' | translate }}</h3>
         <button class="action-card__start-btn" (click)="startTrainingPlan()" [disabled]="isAssigning">
-          {{ isAssigning ? 'Saving…' : 'Start Training Plan' }}
+          {{ isAssigning ? ('COMPETITIONS.CHANGING' | translate) : ('COMPETITIONS.START_PLAN' | translate) }}
         </button>
-        <p *ngIf="assignError" style="color:#ff5555;font-size:.8rem;margin:.5rem 0 0;">Fehler beim Speichern. Bitte erneut versuchen.</p>
-        <button class="action-card__schedule-btn">View Full Schedule</button>
-        <button class="action-card__change-btn" (click)="deselectPlan()">Change Plan</button>
+        <p *ngIf="assignError" style="color:#ff5555;font-size:.8rem;margin:.5rem 0 0;">{{ 'COMPETITIONS.SAVE_ERROR' | translate }}</p>
+        <button class="action-card__schedule-btn">{{ 'COMPETITIONS.VIEW_SCHEDULE' | translate }}</button>
+        <button class="action-card__change-btn" (click)="deselectPlan()">{{ 'COMPETITIONS.CHANGE_PLAN' | translate }}</button>
       </div>
     </div>
   </div>
@@ -348,7 +346,7 @@
         <span class="material-symbols-outlined">
           {{ infoRace.registeredWithOrganizer ? 'how_to_reg' : 'person_add' }}
         </span>
-        <span>{{ infoRace.registeredWithOrganizer ? 'Beim Veranstalter angemeldet' : 'Noch nicht beim Veranstalter angemeldet' }}</span>
+        <span>{{ infoRace.registeredWithOrganizer ? ('COMPETITIONS.REGISTERED' | translate) : ('COMPETITIONS.NOT_REGISTERED_INFO' | translate) }}</span>
       </div>
       <p class="info-dialog__desc" *ngIf="infoRace.description">{{ infoRace.description }}</p>
       <div class="info-dialog__plan" *ngIf="infoRace.trainingPlanName">
@@ -364,16 +362,14 @@
     <div class="confirm-dialog__icon">
       <span class="material-symbols-outlined">warning</span>
     </div>
-    <h3 class="confirm-dialog__title">Change training plan?</h3>
-    <p class="confirm-dialog__text">
-      If you continue, the current training entries for this race will be deleted and rebuilt from the newly selected plan.
-    </p>
+    <h3 class="confirm-dialog__title">{{ 'COMPETITIONS.CHANGE_PLAN_TITLE' | translate }}</h3>
+    <p class="confirm-dialog__text">{{ 'COMPETITIONS.CHANGE_PLAN_MSG' | translate }}</p>
     <div class="confirm-dialog__actions">
       <button class="confirm-dialog__btn confirm-dialog__btn--secondary" (click)="cancelPlanChange()" [disabled]="isAssigning">
-        Cancel
+        {{ 'COMMON.CANCEL' | translate }}
       </button>
       <button class="confirm-dialog__btn confirm-dialog__btn--primary" (click)="confirmPlanChange()" [disabled]="isAssigning">
-        {{ isAssigning ? 'Changing…' : 'Yes, change plan' }}
+        {{ isAssigning ? ('COMPETITIONS.CHANGING' | translate) : ('COMPETITIONS.YES_CHANGE' | translate) }}
       </button>
     </div>
   </div>

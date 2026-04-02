@@ -2,18 +2,20 @@ import { Component, signal, ViewChild, ElementRef, inject, OnInit } from '@angul
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ActivityService, CompletedTraining } from '../../services/activity.service';
 
 @Component({
   selector: 'app-upload',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, TranslateModule],
   templateUrl: './upload.html',
   styleUrl: './upload.scss'
 })
 export class Upload implements OnInit {
   readonly router = inject(Router);
   private readonly activityService = inject(ActivityService);
+  private readonly translate = inject(TranslateService);
 
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
 
