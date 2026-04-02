@@ -8,11 +8,11 @@
         <div class="prd-header-text">
           <span class="prd-title">{{ record.distanceLabel }}</span>
           <span class="prd-subtitle" *ngIf="record.bestTimeSeconds">
-            Bestzeit: {{ formatTime(record.bestTimeSeconds!) }}
+            {{ 'DIALOGS.PR_DETAIL_BEST' | translate }} {{ formatTime(record.bestTimeSeconds!) }}
           </span>
         </div>
       </div>
-      <button class="prd-close" type="button" (click)="close()" aria-label="Schließen">
+      <button class="prd-close" type="button" (click)="close()" [attr.aria-label]="'COMMON.CLOSE' | translate">
         <span class="material-symbols-outlined">close</span>
       </button>
     </header>
@@ -27,7 +27,7 @@
         (click)="selectTab('history')"
       >
         <span class="material-symbols-outlined">history</span>
-        Verlauf
+        {{ 'DIALOGS.PR_DETAIL_HISTORY' | translate }}
       </button>
       <button
         class="prd-tab"
@@ -37,7 +37,7 @@
         (click)="selectTab('edit')"
       >
         <span class="material-symbols-outlined">edit</span>
-        Bearbeiten
+        {{ 'DIALOGS.PR_DETAIL_EDIT' | translate }}
       </button>
     </nav>
 
@@ -46,23 +46,23 @@
 
       <div class="prd-loading" *ngIf="loadingEntries">
         <span class="material-symbols-outlined prd-spin">refresh</span>
-        Wird geladen …
+        {{ 'COMMON.LOADING' | translate }}
       </div>
 
       <p class="prd-error" *ngIf="entriesError">{{ entriesError }}</p>
 
       <div class="prd-empty" *ngIf="!loadingEntries && !entriesError && entries.length === 0">
         <span class="material-symbols-outlined">inbox</span>
-        <p>Noch keine Einträge vorhanden.</p>
+        <p>{{ 'DIALOGS.PR_DETAIL_NO_ENTRIES' | translate }}</p>
       </div>
 
       <div class="prd-table-wrapper" *ngIf="!loadingEntries && entries.length > 0">
         <table class="prd-table">
           <thead>
             <tr>
-              <th>Datum</th>
-              <th>Zeit</th>
-              <th>Typ</th>
+              <th>{{ 'DIALOGS.PR_DETAIL_DATE' | translate }}</th>
+              <th>{{ 'DIALOGS.PR_DETAIL_TIME' | translate }}</th>
+              <th>{{ 'DIALOGS.PR_DETAIL_TYPE' | translate }}</th>
               <th class="prd-th-actions"></th>
             </tr>
           </thead>
@@ -85,7 +85,7 @@
                   type="button"
                   [disabled]="deletingEntryId === entry.id"
                   (click)="deleteEntry(entry)"
-                  aria-label="Eintrag löschen"
+                  [attr.aria-label]="'DIALOGS.PR_DETAIL_DELETE' | translate"
                 >
                   <span class="material-symbols-outlined">delete</span>
                 </button>
@@ -103,24 +103,24 @@
       <section class="prd-section">
         <h3 class="prd-section-title">
           <span class="material-symbols-outlined">flag</span>
-          Zielzeit
+          {{ 'DIALOGS.PR_DETAIL_TARGET' | translate }}
         </h3>
 
         <div class="prd-field-group">
-          <label class="prd-label" for="goalTimeInput">ZIELZEIT</label>
+          <label class="prd-label" for="goalTimeInput">{{ 'DIALOGS.PR_DETAIL_TARGET_LABEL' | translate }}</label>
           <input
             id="goalTimeInput"
             class="prd-input"
             type="text"
             inputmode="numeric"
-            placeholder="z.B. 1:45:00 oder 25:30"
+            [placeholder]="'DIALOGS.PR_TIME_PLACEHOLDER' | translate"
             [(ngModel)]="goalTimeInput"
           />
-          <span class="prd-hint">Format: H:MM:SS oder MM:SS</span>
+          <span class="prd-hint">{{ 'DIALOGS.PR_TIME_FORMAT' | translate }}</span>
         </div>
 
         <p class="prd-error" *ngIf="goalError">{{ goalError }}</p>
-        <p class="prd-success" *ngIf="goalSuccess">Zielzeit gespeichert.</p>
+        <p class="prd-success" *ngIf="goalSuccess">{{ 'DIALOGS.PR_DETAIL_TARGET_SAVED' | translate }}</p>
 
         <div class="prd-form-actions">
           <button
@@ -129,8 +129,8 @@
             [disabled]="savingGoal"
             (click)="saveGoal()"
           >
-            <span *ngIf="!savingGoal">Speichern</span>
-            <span *ngIf="savingGoal">Wird gespeichert …</span>
+            <span *ngIf="!savingGoal">{{ 'COMMON.SAVE' | translate }}</span>
+            <span *ngIf="savingGoal">{{ 'COMMON.SAVING' | translate }}</span>
           </button>
         </div>
       </section>
@@ -141,12 +141,12 @@
       <section class="prd-section">
         <h3 class="prd-section-title">
           <span class="material-symbols-outlined">add_circle</span>
-          Manuell eintragen
+          {{ 'DIALOGS.PR_DETAIL_MANUAL_ENTRY' | translate }}
         </h3>
 
         <div class="prd-row">
           <div class="prd-field-group">
-            <label class="prd-label" for="manualDate">DATUM</label>
+            <label class="prd-label" for="manualDate">{{ 'DIALOGS.PR_DETAIL_DATE_LABEL' | translate }}</label>
             <input
               id="manualDate"
               class="prd-input"
@@ -155,16 +155,16 @@
             />
           </div>
           <div class="prd-field-group">
-            <label class="prd-label" for="manualTime">ZEIT</label>
+            <label class="prd-label" for="manualTime">{{ 'DIALOGS.PR_DETAIL_TIME_LABEL' | translate }}</label>
             <input
               id="manualTime"
               class="prd-input"
               type="text"
               inputmode="numeric"
-              placeholder="z.B. 25:30 oder 1:45:00"
+              [placeholder]="'DIALOGS.PR_TIME_PLACEHOLDER' | translate"
               [(ngModel)]="manualTimeInput"
             />
-            <span class="prd-hint">Format: MM:SS oder H:MM:SS</span>
+            <span class="prd-hint">{{ 'DIALOGS.PR_TIME_FORMAT' | translate }}</span>
           </div>
         </div>
 
@@ -177,8 +177,8 @@
             [disabled]="!canAddEntry || addingEntry"
             (click)="addEntry()"
           >
-            <span *ngIf="!addingEntry">Hinzufügen</span>
-            <span *ngIf="addingEntry">Wird gespeichert …</span>
+            <span *ngIf="!addingEntry">{{ 'DIALOGS.PR_DETAIL_ADD' | translate }}</span>
+            <span *ngIf="addingEntry">{{ 'COMMON.SAVING' | translate }}</span>
           </button>
         </div>
       </section>
@@ -188,7 +188,7 @@
     <!-- ── Footer ── -->
     <footer class="prd-footer">
       <button class="prd-btn prd-btn--ghost" type="button" (click)="close()">
-        Schließen
+        {{ 'COMMON.CLOSE' | translate }}
       </button>
     </footer>
 

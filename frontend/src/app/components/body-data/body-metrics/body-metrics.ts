@@ -66,7 +66,7 @@ interface ChartContext {
 })
 export class BodyMetrics implements OnInit {
   search = '';
-  lastUpdatedText = 'No data available';
+  lastUpdatedText = '';
   private readonly router = inject(Router);
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly translate = inject(TranslateService);
@@ -564,9 +564,9 @@ export class BodyMetrics implements OnInit {
         date: this.formatLongDate(sd.recordedAt),
         rawDate: sd.recordedAt,
         icon: 'favorite',
-        label: 'HR',
+        label: this.translate.instant('BODY_DATA.RESTING_HR'),
         values: [
-          { label: 'Resting HR', value: `${sd.restingHeartRate} bpm` },
+          { label: this.translate.instant('BODY_DATA.RESTING_HR'), value: `${sd.restingHeartRate} bpm` },
         ],
         originalEntry: sd,
         editing: false,
