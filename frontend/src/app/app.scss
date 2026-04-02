@@ -8,7 +8,9 @@
 
 .app-main {
   flex: 1;
+  min-width: 0;
   overflow-y: auto;
+  overflow-x: hidden;
   background: var(--bg);
   transition: margin-left 0.3s ease;
   position: relative;

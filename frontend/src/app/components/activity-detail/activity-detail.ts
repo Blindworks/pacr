@@ -174,12 +174,17 @@ export class ActivityDetail implements OnInit {
   get formattedDate(): string {
     const d = this.activity?.trainingDate;
     if (!d) return '—';
-    return new Date(d).toLocaleDateString('de-DE', {
+    let result = new Date(d).toLocaleDateString('de-DE', {
       weekday: 'long',
       day: '2-digit',
       month: 'long',
       year: 'numeric'
     });
+    const t = this.activity?.startTime;
+    if (t) {
+      result += ' · ' + t.substring(0, 5);
+    }
+    return result;
   }
 
   get displayName(): string {
