@@ -8,8 +8,8 @@
         <span class="material-symbols-outlined">arrow_back</span>
       </button>
       <div class="td-header__title">
-        <h2>Workout</h2>
-        <span class="td-session">Session #{{ training.sessionNumber }}</span>
+        <h2>{{ 'TRAINING_DETAIL.WORKOUT' | translate }}</h2>
+        <span class="td-session">{{ 'TRAINING_DETAIL.SESSION' | translate: { number: training.sessionNumber } }}</span>
       </div>
     </div>
     <div class="td-header__actions">
@@ -36,28 +36,28 @@
     <!-- Stats Grid -->
     <div class="td-stats-grid">
       <div class="td-stat-card">
-        <span class="td-stat-card__label">Duration</span>
+        <span class="td-stat-card__label">{{ 'COMMON.DURATION' | translate }}</span>
         <div class="td-stat-card__value">
           <span class="material-symbols-outlined">timer</span>
           {{ training.duration }}
         </div>
       </div>
       <div class="td-stat-card">
-        <span class="td-stat-card__label">Intensity</span>
+        <span class="td-stat-card__label">{{ 'TRAINING_DETAIL.INTENSITY' | translate }}</span>
         <div class="td-stat-card__value">
           <span class="material-symbols-outlined">bolt</span>
           {{ training.intensity }}
         </div>
       </div>
       <div class="td-stat-card">
-        <span class="td-stat-card__label">Est. Calories</span>
+        <span class="td-stat-card__label">{{ 'TRAINING_DETAIL.EST_CALORIES' | translate }}</span>
         <div class="td-stat-card__value">
           <span class="material-symbols-outlined">local_fire_department</span>
           {{ training.calories }}
         </div>
       </div>
       <div class="td-stat-card">
-        <span class="td-stat-card__label">Benefit</span>
+        <span class="td-stat-card__label">{{ 'TRAINING_DETAIL.BENEFIT' | translate }}</span>
         <div class="td-stat-card__value">
           <span class="material-symbols-outlined">trending_up</span>
           {{ training.benefit }}
@@ -68,8 +68,8 @@
     <!-- Workout Structure -->
     <section class="td-section">
       <div class="td-section__head">
-        <h2>Workout Structure</h2>
-        <span class="td-section__sub">{{ training.estimatedDistance }} Estimated</span>
+        <h2>{{ 'TRAINING_DETAIL.STRUCTURE' | translate }}</h2>
+        <span class="td-section__sub">{{ training.estimatedDistance }} {{ 'TRAINING_DETAIL.ESTIMATED' | translate }}</span>
       </div>
       <div class="td-steps">
         @for (step of training.steps; track $index) {
@@ -93,7 +93,7 @@
     <section class="td-tips">
       <div class="td-tips__head">
         <span class="material-symbols-outlined">lightbulb</span>
-        <h3>Smart Prep Tips</h3>
+        <h3>{{ 'TRAINING_DETAIL.PREP_TIPS' | translate }}</h3>
       </div>
       <div class="td-tips__grid">
         @for (tip of training.prepTips; track tip.title) {
@@ -114,11 +114,11 @@
   <div class="td-cta-bar">
     <button class="td-cta-bar__secondary">
       <span class="material-symbols-outlined">watch</span>
-      Sync to Watch
+      {{ 'TRAINING_DETAIL.SYNC_WATCH' | translate }}
     </button>
     <button class="td-cta-bar__primary">
       <span class="material-symbols-outlined">play_arrow</span>
-      Start Workout
+      {{ 'TRAINING_DETAIL.START_WORKOUT' | translate }}
     </button>
   </div>
 
@@ -127,6 +127,6 @@
 @if (!training) {
 <div class="td-not-found">
   <span class="material-symbols-outlined">search_off</span>
-  <p>Training not found.</p>
+  <p>{{ 'TRAINING_DETAIL.NOT_FOUND' | translate }}</p>
 </div>
 }

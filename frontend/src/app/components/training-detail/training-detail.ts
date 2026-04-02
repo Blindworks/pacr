@@ -44,6 +44,7 @@ export interface TrainingDetailData {
   styleUrl: './training-detail.scss'
 })
 export class TrainingDetail implements OnInit {
+  private readonly translate = inject(TranslateService);
   training: TrainingDetailData | null = null;
 
   constructor(
@@ -107,7 +108,7 @@ export class TrainingDetail implements OnInit {
 
   private formatStepTitle(stepType?: string): string {
     if (!stepType) {
-      return 'Step';
+      return this.translate.instant('TRAINING_DETAIL.WORKOUT');
     }
 
     return stepType

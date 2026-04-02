@@ -4,9 +4,9 @@
     <header class="apr-header">
       <div class="apr-header-title">
         <span class="material-symbols-outlined apr-icon">emoji_events</span>
-        <span>Neue Distanz hinzufügen</span>
+        <span>{{ 'DIALOGS.PR_ADD_TITLE' | translate }}</span>
       </div>
-      <button class="apr-close" type="button" (click)="onCancel()" aria-label="Schließen">
+      <button class="apr-close" type="button" (click)="onCancel()" [attr.aria-label]="'COMMON.CLOSE' | translate">
         <span class="material-symbols-outlined">close</span>
       </button>
     </header>
@@ -15,7 +15,7 @@
 
       <!-- Distance select -->
       <div class="apr-field-group">
-        <label class="apr-label" for="distanceSelect">DISTANZ AUSWÄHLEN</label>
+        <label class="apr-label" for="distanceSelect">{{ 'DIALOGS.PR_SELECT_DISTANCE' | translate }}</label>
         <div class="apr-select-wrapper">
           <select
             id="distanceSelect"
@@ -23,8 +23,8 @@
             [(ngModel)]="selectedOption"
             [compareWith]="compareOptions"
           >
-            <option [ngValue]="null" disabled hidden>Distanz wählen …</option>
-            <option *ngFor="let opt of distanceOptions" [ngValue]="opt">{{ opt.label }}</option>
+            <option [ngValue]="null" disabled hidden>{{ 'DIALOGS.PR_CHOOSE' | translate }}</option>
+            <option *ngFor="let opt of distanceOptions" [ngValue]="opt">{{ opt.labelKey | translate }}</option>
           </select>
           <span class="material-symbols-outlined apr-select-icon">expand_more</span>
         </div>
@@ -33,7 +33,7 @@
       <!-- Custom distance fields -->
       <div class="apr-custom-row" *ngIf="isCustomDistance">
         <div class="apr-field-group">
-          <label class="apr-label" for="customKm">DISTANZ IN KM</label>
+          <label class="apr-label" for="customKm">{{ 'DIALOGS.PR_DISTANCE_KM' | translate }}</label>
           <input
             id="customKm"
             class="apr-input"
@@ -41,17 +41,17 @@
             inputmode="decimal"
             min="0.1"
             step="0.1"
-            placeholder="z.B. 15"
+            [placeholder]="'DIALOGS.PR_DISTANCE_PLACEHOLDER' | translate"
             [(ngModel)]="customDistanceKm"
           />
         </div>
         <div class="apr-field-group">
-          <label class="apr-label" for="customLabel">BEZEICHNUNG</label>
+          <label class="apr-label" for="customLabel">{{ 'DIALOGS.PR_LABEL' | translate }}</label>
           <input
             id="customLabel"
             class="apr-input"
             type="text"
-            placeholder="z.B. 15K"
+            [placeholder]="'DIALOGS.PR_LABEL_PLACEHOLDER' | translate"
             [(ngModel)]="customDistanceLabel"
           />
         </div>
@@ -59,16 +59,16 @@
 
       <!-- Goal time (optional) -->
       <div class="apr-field-group">
-        <label class="apr-label" for="goalTime">ZIELZEIT <span class="apr-optional">(optional)</span></label>
+        <label class="apr-label" for="goalTime">{{ 'DIALOGS.PR_TARGET_TIME' | translate }}</label>
         <input
           id="goalTime"
           class="apr-input"
           type="text"
           inputmode="numeric"
-          placeholder="z.B. 1:45:00 oder 25:30"
+          [placeholder]="'DIALOGS.PR_TIME_PLACEHOLDER' | translate"
           [(ngModel)]="goalTimeInput"
         />
-        <span class="apr-hint">Format: H:MM:SS oder MM:SS</span>
+        <span class="apr-hint">{{ 'DIALOGS.PR_TIME_FORMAT' | translate }}</span>
       </div>
 
       <!-- Error message -->
@@ -78,7 +78,7 @@
 
     <footer class="apr-actions">
       <button class="apr-btn apr-btn--ghost" type="button" (click)="onCancel()">
-        Abbrechen
+        {{ 'COMMON.CANCEL' | translate }}
       </button>
       <button
         class="apr-btn apr-btn--primary"
@@ -86,8 +86,8 @@
         [disabled]="!canSave || saving"
         (click)="onSave()"
       >
-        <span *ngIf="!saving">Speichern</span>
-        <span *ngIf="saving">Wird gespeichert …</span>
+        <span *ngIf="!saving">{{ 'COMMON.SAVE' | translate }}</span>
+        <span *ngIf="saving">{{ 'COMMON.SAVING' | translate }}</span>
       </button>
     </footer>
 
