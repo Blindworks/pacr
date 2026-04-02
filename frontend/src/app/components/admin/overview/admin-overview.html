@@ -1,44 +1,44 @@
 <div class="overview-page">
 
   <section class="kpi-section">
-    <h2 class="section-title">User-Zahlen</h2>
+    <h2 class="section-title">{{ 'ADMIN.OVERVIEW_USERS' | translate }}</h2>
     <div class="kpi-grid" *ngIf="stats()">
       <div class="kpi-card">
-        <span class="kpi-label">Gesamt</span>
+        <span class="kpi-label">{{ 'ADMIN.TOTAL' | translate }}</span>
         <span class="kpi-value">{{ stats()!.totalUsers }}</span>
       </div>
       <div class="kpi-card kpi-green">
-        <span class="kpi-label">Aktiv</span>
+        <span class="kpi-label">{{ 'ADMIN.ACTIVE' | translate }}</span>
         <span class="kpi-value">{{ stats()!.activeUsers }}</span>
       </div>
       <div class="kpi-card kpi-yellow">
-        <span class="kpi-label">Inaktiv</span>
+        <span class="kpi-label">{{ 'ADMIN.INACTIVE' | translate }}</span>
         <span class="kpi-value">{{ stats()!.inactiveUsers }}</span>
       </div>
       <div class="kpi-card kpi-red">
-        <span class="kpi-label">Gesperrt</span>
+        <span class="kpi-label">{{ 'ADMIN.BLOCKED' | translate }}</span>
         <span class="kpi-value">{{ stats()!.blockedUsers }}</span>
       </div>
       <div class="kpi-card kpi-orange">
-        <span class="kpi-label">Ausstehend</span>
+        <span class="kpi-label">{{ 'ADMIN.PENDING' | translate }}</span>
         <span class="kpi-value">{{ stats()!.pendingVerification }}</span>
       </div>
       <div class="kpi-card">
-        <span class="kpi-label">Neu (7 Tage)</span>
+        <span class="kpi-label">{{ 'ADMIN.NEW_7' | translate }}</span>
         <span class="kpi-value">{{ stats()!.newUsersThisWeek }}</span>
       </div>
       <div class="kpi-card">
-        <span class="kpi-label">Neu (30 Tage)</span>
+        <span class="kpi-label">{{ 'ADMIN.NEW_30' | translate }}</span>
         <span class="kpi-value">{{ stats()!.newUsersThisMonth }}</span>
       </div>
     </div>
   </section>
 
   <section class="kpi-section">
-    <h2 class="section-title">Feature-Nutzung</h2>
+    <h2 class="section-title">{{ 'ADMIN.FEATURE_USAGE' | translate }}</h2>
     <div class="kpi-grid" *ngIf="stats()">
       <div class="kpi-card">
-        <span class="kpi-label">Strava verbunden</span>
+        <span class="kpi-label">{{ 'ADMIN.STRAVA_CONNECTED' | translate }}</span>
         <span class="kpi-value">{{ stats()!.stravaConnected }}</span>
       </div>
       <div class="kpi-card">
@@ -50,32 +50,32 @@
         <span class="kpi-value">{{ stats()!.cycleTrackingEnabled }}</span>
       </div>
       <div class="kpi-card">
-        <span class="kpi-label">Pace-Zonen</span>
+        <span class="kpi-label">{{ 'ADMIN.PACE_ZONES' | translate }}</span>
         <span class="kpi-value">{{ stats()!.paceZonesConfigured }}</span>
       </div>
     </div>
   </section>
 
   <section class="audit-section">
-    <h2 class="section-title">Audit-Log</h2>
+    <h2 class="section-title">{{ 'ADMIN.AUDIT_LOG' | translate }}</h2>
 
     <div class="filter-bar">
       <select [(ngModel)]="filterAction" class="filter-select">
         <option *ngFor="let cat of actionCategories" [value]="cat.value">{{ cat.label }}</option>
       </select>
-      <input type="date" [(ngModel)]="filterFrom" class="filter-date" placeholder="Von">
-      <input type="date" [(ngModel)]="filterTo" class="filter-date" placeholder="Bis">
-      <button (click)="applyFilter()" class="filter-btn">Filtern</button>
+      <input type="date" [(ngModel)]="filterFrom" class="filter-date" [placeholder]="'ADMIN.FROM' | translate">
+      <input type="date" [(ngModel)]="filterTo" class="filter-date" [placeholder]="'ADMIN.TO' | translate">
+      <button (click)="applyFilter()" class="filter-btn">{{ 'ADMIN.FILTER' | translate }}</button>
     </div>
 
     <div class="log-table-wrapper">
       <table class="log-table" *ngIf="!isLoadingLog(); else loadingTpl">
         <thead>
           <tr>
-            <th>Zeitpunkt</th>
-            <th>Actor</th>
-            <th>Aktion</th>
-            <th>Ziel</th>
+            <th>{{ 'ADMIN.TIMESTAMP' | translate }}</th>
+            <th>{{ 'ADMIN.ACTOR' | translate }}</th>
+            <th>{{ 'ADMIN.ACTION' | translate }}</th>
+            <th>{{ 'ADMIN.TARGET' | translate }}</th>
             <th>Details</th>
           </tr>
         </thead>
@@ -93,17 +93,17 @@
             </td>
           </tr>
           <tr *ngIf="auditLog().length === 0">
-            <td colspan="5" class="empty-row">Keine Einträge gefunden.</td>
+            <td colspan="5" class="empty-row">{{ 'ADMIN.NO_ENTRIES' | translate }}</td>
           </tr>
         </tbody>
       </table>
-      <ng-template #loadingTpl><p class="loading-hint">Lade...</p></ng-template>
+      <ng-template #loadingTpl><p class="loading-hint">{{ 'COMMON.LOADING' | translate }}</p></ng-template>
     </div>
 
     <div class="pagination" *ngIf="totalPages() > 1">
-      <button (click)="goToPage(currentPage - 1)" [disabled]="currentPage === 0">&#8249; Zurück</button>
-      <span>Seite {{ currentPage + 1 }} von {{ totalPages() }} ({{ totalElements() }} Einträge)</span>
-      <button (click)="goToPage(currentPage + 1)" [disabled]="currentPage >= totalPages() - 1">Weiter &#8250;</button>
+      <button (click)="goToPage(currentPage - 1)" [disabled]="currentPage === 0">&#8249; {{ 'ADMIN.BACK' | translate }}</button>
+      <span>{{ 'ADMIN.PAGE' | translate }} {{ currentPage + 1 }} {{ 'ADMIN.OF' | translate }} {{ totalPages() }} ({{ totalElements() }} {{ 'ADMIN.ENTRIES' | translate }})</span>
+      <button (click)="goToPage(currentPage + 1)" [disabled]="currentPage >= totalPages() - 1">{{ 'ADMIN.NEXT' | translate }} &#8250;</button>
     </div>
   </section>
 
@@ -116,15 +116,15 @@
       </div>
       <div class="details-dialog-body">
         <div class="details-meta">
-          <span class="details-meta-label">Zeitpunkt:</span>
+          <span class="details-meta-label">{{ 'ADMIN.TIMESTAMP' | translate }}:</span>
           <span>{{ selectedEntry()!.timestamp | date:'dd.MM.yy HH:mm:ss' }}</span>
         </div>
         <div class="details-meta" *ngIf="selectedEntry()!.actorUsername">
-          <span class="details-meta-label">Actor:</span>
+          <span class="details-meta-label">{{ 'ADMIN.ACTOR' | translate }}:</span>
           <span>{{ selectedEntry()!.actorUsername }}</span>
         </div>
         <div class="details-meta" *ngIf="selectedEntry()!.targetType">
-          <span class="details-meta-label">Ziel:</span>
+          <span class="details-meta-label">{{ 'ADMIN.TARGET' | translate }}:</span>
           <span>{{ selectedEntry()!.targetType }} #{{ selectedEntry()!.targetId }}</span>
         </div>
         <div class="details-kv-list">

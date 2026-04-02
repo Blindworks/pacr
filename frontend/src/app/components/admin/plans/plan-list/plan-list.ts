@@ -1,12 +1,13 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
+import { TranslateModule } from '@ngx-translate/core';
 
 import { TrainingPlanService, TrainingPlan } from '../../../../services/training-plan.service';
 
 @Component({
   selector: 'app-plan-list',
   standalone: true,
-  imports: [],
+  imports: [TranslateModule],
   templateUrl: './plan-list.html',
   styleUrl: './plan-list.scss'
 })

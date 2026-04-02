@@ -4,17 +4,17 @@
   <!-- Header -->
   <header class="page-header">
     <div>
-      <h2>Cycle Tracking</h2>
-      <p class="subtitle">Syncing your biology with your training.</p>
+      <h2>{{ 'BODY_DATA.CYCLE_TITLE' | translate }}</h2>
+      <p class="subtitle">{{ 'BODY_DATA.CYCLE_SUBTITLE' | translate }}</p>
     </div>
     <div class="header-actions">
       <button class="settings-btn" (click)="goToCycleSettings()">
         <span class="material-symbols-outlined">settings</span>
-        Zyklus erfassen
+        {{ 'BODY_DATA.CYCLE_LOG' | translate }}
       </button>
       <button class="log-btn" (click)="goToLogSymptoms()">
         <span class="material-symbols-outlined">add</span>
-        Log Today's Symptoms
+        {{ 'BODY_DATA.LOG_SYMPTOMS' | translate }}
       </button>
     </div>
   </header>
@@ -22,10 +22,10 @@
   <!-- New Cycle Prompt Banner -->
   <div class="new-cycle-banner" *ngIf="showNewCyclePrompt">
     <span class="material-symbols-outlined banner-icon">calendar_today</span>
-    <p class="banner-text">Hat heute dein neuer Zyklus begonnen?</p>
+    <p class="banner-text">{{ 'BODY_DATA.CYCLE_START_Q' | translate }}</p>
     <div class="banner-actions">
-      <button class="banner-btn banner-btn--confirm" (click)="confirmNewCycle()">Ja, bestätigen</button>
-      <button class="banner-btn banner-btn--dismiss" (click)="dismissNewCyclePrompt()">Überspringen</button>
+      <button class="banner-btn banner-btn--confirm" (click)="confirmNewCycle()">{{ 'BODY_DATA.CYCLE_CONFIRM' | translate }}</button>
+      <button class="banner-btn banner-btn--dismiss" (click)="dismissNewCyclePrompt()">{{ 'BODY_DATA.CYCLE_SKIP' | translate }}</button>
     </div>
   </div>
 
@@ -34,8 +34,8 @@
 
     <!-- Current Phase Card -->
     <section class="card phase-card">
-      <span class="section-label">Current Phase</span>
-      <h3 class="phase-name" [ngClass]="phaseClass(currentPhase)">{{ phaseLabels[currentPhase] }}</h3>
+      <span class="section-label">{{ 'BODY_DATA.CURRENT_PHASE' | translate }}</span>
+      <h3 class="phase-name" [ngClass]="phaseClass(currentPhase)">{{ phaseLabels[currentPhase] | translate }}</h3>
       <p class="phase-day">Day {{ currentDay }} of {{ cycleLength }}</p>
 
       <div class="phase-divider">

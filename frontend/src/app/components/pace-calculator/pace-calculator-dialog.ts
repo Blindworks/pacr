@@ -2,6 +2,7 @@ import { Component, ElementRef, ViewChild, effect, inject, OnDestroy } from '@an
 import { NgFor, NgIf } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PaceCalculatorService } from '../../services/pace-calculator.service';
+import { TranslateModule } from '@ngx-translate/core';
 
 type Field = 'distance' | 'time' | 'pace' | 'speed';
 
@@ -14,7 +15,7 @@ interface Split {
 @Component({
   selector: 'app-pace-calculator-dialog',
   standalone: true,
-  imports: [NgFor, NgIf, FormsModule],
+  imports: [NgFor, NgIf, FormsModule, TranslateModule],
   templateUrl: './pace-calculator-dialog.html',
   styleUrl: './pace-calculator-dialog.scss'
 })

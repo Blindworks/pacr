@@ -1,37 +1,37 @@
 <div class="list-page">
   <div class="toolbar">
     <div class="toolbar-left">
-      <h2>Training Plans</h2>
+      <h2>{{ 'ADMIN.PLANS_TITLE' | translate }}</h2>
       @if (!isLoading()) {
         <span class="count-badge">{{ plans().length }}</span>
       }
     </div>
     <button class="btn-primary" (click)="navigateNew()">
       <span class="material-symbols-outlined">add</span>
-      New Plan
+      {{ 'ADMIN.NEW_PLAN' | translate }}
     </button>
   </div>
 
   @if (isLoading()) {
     <div class="state-box">
       <span class="material-symbols-outlined spin">progress_activity</span>
-      <span>Loading plans…</span>
+      <span>{{ 'ADMIN.LOADING_PLANS' | translate }}</span>
     </div>
   }
 
   @if (hasError() && !isLoading()) {
     <div class="state-box state-box--error">
       <span class="material-symbols-outlined">error</span>
-      <span>Failed to load plans.</span>
-      <button class="btn-ghost" (click)="load()">Retry</button>
+      <span>{{ 'ADMIN.PLANS_LOAD_FAILED' | translate }}</span>
+      <button class="btn-ghost" (click)="load()">{{ 'COMMON.RETRY' | translate }}</button>
     </div>
   }
 
   @if (!isLoading() && !hasError() && plans().length === 0) {
     <div class="state-box">
       <span class="material-symbols-outlined">calendar_month</span>
-      <span>No training plans yet.</span>
-      <button class="btn-primary" (click)="navigateNew()">Create first plan</button>
+      <span>{{ 'ADMIN.NO_PLANS' | translate }}</span>
+      <button class="btn-primary" (click)="navigateNew()">{{ 'ADMIN.CREATE_FIRST' | translate }}</button>
     </div>
   }
 
@@ -47,10 +47,10 @@
               }
             </div>
             <div class="plan-actions">
-              <button class="icon-btn" title="Edit plan" (click)="navigateEdit(plan.id)">
+              <button class="icon-btn" [title]="'ADMIN.EDIT_PLAN' | translate" (click)="navigateEdit(plan.id)">
                 <span class="material-symbols-outlined">edit</span>
               </button>
-              <button class="icon-btn icon-btn--danger" title="Delete plan" (click)="requestDelete(plan.id)">
+              <button class="icon-btn icon-btn--danger" [title]="'ADMIN.DELETE_PLAN' | translate" (click)="requestDelete(plan.id)">
                 <span class="material-symbols-outlined">delete</span>
               </button>
             </div>
@@ -70,14 +70,14 @@
             @if (plan.trainingCount != null) {
               <span class="meta-item">
                 <span class="material-symbols-outlined">fitness_center</span>
-                {{ plan.trainingCount }} trainings
+                {{ plan.trainingCount }} {{ 'ADMIN.TRAININGS' | translate }}
               </span>
             }
           </div>
 
           <button class="btn-manage" (click)="navigateTrainings(plan.id)">
             <span class="material-symbols-outlined">fitness_center</span>
-            Manage Trainings
+            {{ 'ADMIN.TRAININGS_TITLE' | translate }}
             <span class="material-symbols-outlined arrow">arrow_forward</span>
           </button>
         </div>
@@ -89,11 +89,11 @@
     <div class="dialog-overlay" (click)="cancelDelete()">
       <div class="dialog" (click)="$event.stopPropagation()">
         <span class="material-symbols-outlined dialog-icon">warning</span>
-        <h3>Delete Training Plan?</h3>
-        <p>All associated trainings will also be deleted.</p>
+        <h3>{{ 'ADMIN.DELETE_PLAN_TITLE' | translate }}</h3>
+        <p>{{ 'ADMIN.DELETE_PLAN_MSG' | translate }}</p>
         <div class="dialog-actions">
-          <button class="btn-ghost" (click)="cancelDelete()">Cancel</button>
-          <button class="btn-danger" (click)="confirmDelete(confirmDeleteId()!)">Delete</button>
+          <button class="btn-ghost" (click)="cancelDelete()">{{ 'COMMON.CANCEL' | translate }}</button>
+          <button class="btn-danger" (click)="confirmDelete(confirmDeleteId()!)">{{ 'COMMON.DELETE' | translate }}</button>
         </div>
       </div>
     </div>
