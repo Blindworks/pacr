@@ -382,8 +382,8 @@ export class BodyMetrics implements OnInit {
 
   deleteItem(item: HistoryItem, event: Event): void {
     event.stopPropagation();
-    const typeLabel = item.type === 'body' ? 'Body Measurement' : item.type === 'bloodPressure' ? 'Blood Pressure' : 'Resting HR';
-    if (!confirm(`Delete ${typeLabel} entry from ${item.date}?`)) return;
+    const typeLabel = item.type === 'body' ? this.translate.instant('BODY_DATA.WEIGHT') : item.type === 'bloodPressure' ? this.translate.instant('BODY_DATA.BLOOD_PRESSURE') : this.translate.instant('BODY_DATA.RESTING_HR');
+    if (!confirm(`${this.translate.instant('COMMON.DELETE')} ${typeLabel} ${item.date}?`)) return;
 
     if (item.type === 'body') {
       this.bodyMeasurementService.delete(item.id).subscribe(() => this.loadData());
@@ -605,7 +605,7 @@ export class BodyMetrics implements OnInit {
     ].filter((value): value is string => !!value);
 
     if (dates.length === 0) {
-      return 'No data available';
+      return this.translate.instant('BODY_DATA.NO_DATA_AVAILABLE');
     }
 
     const latest = dates.sort((a, b) => new Date(b).getTime() - new Date(a).getTime())[0];
@@ -613,7 +613,7 @@ export class BodyMetrics implements OnInit {
   }
 
   private createSummaryCard(label: string, value: number | undefined, unit = '', previous?: number): SummaryCard {
-    let change = 'No prev.';
+    let change = this.translate.instant('BODY_DATA.NO_DATA');
     let trend: 'up' | 'down' | 'flat' = 'flat';
 
     if (value != null && previous != null) {
@@ -621,7 +621,7 @@ export class BodyMetrics implements OnInit {
       const sign = delta > 0 ? '+' : '';
       change = `${sign}${this.formatNumber(delta)}${unit ? ' ' + unit : ''}`;
       if (Math.abs(delta) < 0.05) {
-        change = 'Stable';
+        change = 'BODY_DATA.STABLE';
         trend = 'flat';
       } else {
         trend = delta > 0 ? 'up' : 'down';
