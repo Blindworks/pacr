@@ -131,7 +131,7 @@
     <section class="card adaptive-card">
       <h4 class="card-title">
         <span class="pulse-dot"></span>
-        PACR Adaptive Adjustment
+        {{ 'BODY_DATA.ADAPTIVE_ADJUSTMENT' | translate }}
       </h4>
       <div class="adaptive-items">
         <div class="adaptive-item adaptive-item--prev">
@@ -139,7 +139,7 @@
             <span class="material-symbols-outlined">arrow_downward</span>
           </div>
           <div>
-            <p class="adaptive-item-label">Previous Plan</p>
+            <p class="adaptive-item-label">{{ 'BODY_DATA.PREVIOUS_PLAN' | translate }}</p>
             <p class="adaptive-item-value">Active Recovery Walk (45 min)</p>
           </div>
         </div>
@@ -148,7 +148,7 @@
             <span class="material-symbols-outlined">arrow_upward</span>
           </div>
           <div>
-            <p class="adaptive-item-label adaptive-item-label--primary">AI Adjusted ({{ phaseLabels[currentPhase] }} Optimization)</p>
+            <p class="adaptive-item-label adaptive-item-label--primary">{{ 'BODY_DATA.AI_ADJUSTED' | translate }} ({{ phaseLabels[currentPhase] | translate }})</p>
             <p class="adaptive-item-value adaptive-item-value--large">Tempo Run: 8km @ 4:45 min/km</p>
           </div>
         </div>
@@ -159,15 +159,15 @@
 
     <!-- Physiological Insights -->
     <section class="card physio-card">
-      <h4 class="card-title">Physiological Insights</h4>
+      <h4 class="card-title">{{ 'BODY_DATA.PHYSIOLOGICAL_INSIGHTS' | translate }}</h4>
 
       <div class="physio-metric">
         <div class="physio-metric-header">
           <div>
-            <p class="physio-metric-label">Resting Heart Rate</p>
+            <p class="physio-metric-label">{{ 'BODY_DATA.RESTING_HR' | translate }}</p>
             <p class="physio-metric-value">48 <span class="physio-metric-unit">BPM</span></p>
           </div>
-          <p class="physio-metric-delta phase-follicular">-3% vs Average</p>
+          <p class="physio-metric-delta phase-follicular">-3% {{ 'BODY_DATA.VS_AVERAGE' | translate }}</p>
         </div>
         <div class="mini-bar-chart">
           <div class="mini-bar" style="height: 60%"></div>
@@ -183,10 +183,10 @@
       <div class="physio-metric physio-metric--bordered">
         <div class="physio-metric-header">
           <div>
-            <p class="physio-metric-label">Basal Body Temp</p>
+            <p class="physio-metric-label">{{ 'BODY_DATA.BASAL_TEMP' | translate }}</p>
             <p class="physio-metric-value">36.2 <span class="physio-metric-unit">°C</span></p>
           </div>
-          <p class="physio-metric-delta physio-metric-delta--neutral">Baseline Stable</p>
+          <p class="physio-metric-delta physio-metric-delta--neutral">{{ 'BODY_DATA.BASELINE_STABLE' | translate }}</p>
         </div>
         <div class="temp-bar">
           <div class="temp-bar-fill"></div>

@@ -1,7 +1,7 @@
 <div class="list-page">
   <div class="toolbar">
     <div class="toolbar-left">
-      <h2>Users</h2>
+      <h2>{{ 'ADMIN.USERS_TITLE' | translate }}</h2>
       @if (!isLoading()) {
         <span class="count-badge">{{ users().length }}</span>
       }
@@ -11,22 +11,22 @@
   @if (isLoading()) {
     <div class="state-box">
       <span class="material-symbols-outlined spin">progress_activity</span>
-      <span>Loading users…</span>
+      <span>{{ 'ADMIN.LOADING_USERS' | translate }}</span>
     </div>
   }
 
   @if (hasError() && !isLoading()) {
     <div class="state-box state-box--error">
       <span class="material-symbols-outlined">error</span>
-      <span>Failed to load users.</span>
-      <button class="btn-ghost" (click)="load()">Retry</button>
+      <span>{{ 'ADMIN.USERS_LOAD_FAILED' | translate }}</span>
+      <button class="btn-ghost" (click)="load()">{{ 'COMMON.RETRY' | translate }}</button>
     </div>
   }
 
   @if (!isLoading() && !hasError() && users().length === 0) {
     <div class="state-box">
       <span class="material-symbols-outlined">group</span>
-      <span>No users found.</span>
+      <span>{{ 'ADMIN.NO_USERS' | translate }}</span>
     </div>
   }
 
@@ -35,13 +35,13 @@
       <table class="user-table">
         <thead>
           <tr>
-            <th>Username</th>
-            <th>Email</th>
-            <th>Name</th>
-            <th>Role</th>
-            <th>Status</th>
-            <th>Abo</th>
-            <th>Letzter Login</th>
+            <th>{{ 'ADMIN.USERNAME' | translate }}</th>
+            <th>{{ 'ADMIN.EMAIL' | translate }}</th>
+            <th>{{ 'COMMON.NAME' | translate }}</th>
+            <th>{{ 'ADMIN.ROLE' | translate }}</th>
+            <th>{{ 'COMMON.STATUS' | translate }}</th>
+            <th>{{ 'ADMIN.SUBSCRIPTION' | translate }}</th>
+            <th>{{ 'ADMIN.LAST_LOGIN' | translate }}</th>
             <th></th>
           </tr>
         </thead>
@@ -64,12 +64,12 @@
                   {{ subscriptionLabel(user.subscriptionPlan) }}
                 </span>
                 @if (user.subscriptionPlan === 'PRO' && user.subscriptionExpiresAt) {
-                  <span class="sub-expires">bis {{ user.subscriptionExpiresAt | slice:0:10 }}</span>
+                  <span class="sub-expires">{{ 'ADMIN.UNTIL' | translate }} {{ user.subscriptionExpiresAt | slice:0:10 }}</span>
                 }
               </td>
               <td class="cell-last-login">{{ formatDate(user.lastLoginAt) }}</td>
               <td class="cell-actions">
-                <button class="icon-btn" title="Edit user" (click)="navigateEdit(user.id)">
+                <button class="icon-btn" [title]="'ADMIN.EDIT_USER' | translate" (click)="navigateEdit(user.id)">
                   <span class="material-symbols-outlined">edit</span>
                 </button>
               </td>

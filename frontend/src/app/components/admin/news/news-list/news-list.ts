@@ -1,12 +1,13 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { DatePipe } from '@angular/common';
+import { TranslateModule } from '@ngx-translate/core';
 import { AdminNewsService, AppNews } from '../../../../services/admin-news.service';
 
 @Component({
   selector: 'app-news-list',
   standalone: true,
-  imports: [DatePipe],
+  imports: [DatePipe, TranslateModule],
   templateUrl: './news-list.html',
   styleUrl: './news-list.scss'
 })

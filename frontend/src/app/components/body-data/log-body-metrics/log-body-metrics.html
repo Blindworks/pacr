@@ -2,7 +2,7 @@
 <div class="log-body-metrics-screen">
   <header class="page-header">
     <div class="page-header__title">
-      <h2>Log New Body Metrics</h2>
+      <h2>{{ 'BODY_DATA.LOG_TITLE' | translate }}</h2>
       <div class="date-chip">
         <button type="button" class="date-chip__trigger" (click)="openDatePicker()">
           <span class="material-symbols-outlined">calendar_today</span>
@@ -23,64 +23,64 @@
       <section class="form-column">
         <div class="form-grid">
           <div class="form-group">
-            <h3>Primary Composition</h3>
+            <h3>{{ 'BODY_DATA.PRIMARY_COMP' | translate }}</h3>
             <div class="input-list">
               <label class="input-field">
-                <span>Weight (kg)</span>
+                <span>{{ 'BODY_DATA.WEIGHT' | translate }} (kg)</span>
                 <input [(ngModel)]="weight" name="weight" type="text" placeholder="75.4">
               </label>
               <label class="input-field">
-                <span>Body Fat (%)</span>
+                <span>{{ 'BODY_DATA.BODY_FAT' | translate }} (%)</span>
                 <input [(ngModel)]="bodyFat" name="bodyFat" type="text" placeholder="14.2">
               </label>
               <label class="input-field">
-                <span>Muscle Mass (kg)</span>
+                <span>{{ 'BODY_DATA.MUSCLE_MASS' | translate }} (kg)</span>
                 <input [(ngModel)]="muscleMass" name="muscleMass" type="text" placeholder="62.1">
               </label>
             </div>
           </div>
 
           <div class="form-group">
-            <h3>Bio-Analysis</h3>
+            <h3>{{ 'BODY_DATA.BIO_ANALYSIS' | translate }}</h3>
             <div class="input-list">
               <label class="input-field">
-                <span>Bone Mass (kg)</span>
+                <span>{{ 'BODY_DATA.BONE_MASS_KG' | translate }}</span>
                 <input [(ngModel)]="boneMass" name="boneMass" type="text" placeholder="3.2">
               </label>
               <label class="input-field">
-                <span>Water Percentage (%)</span>
+                <span>{{ 'BODY_DATA.WATER_PCT' | translate }}</span>
                 <input [(ngModel)]="waterPercentage" name="waterPercentage" type="text" placeholder="60.5">
               </label>
               <label class="input-field">
-                <span>Visceral Fat Level</span>
+                <span>{{ 'BODY_DATA.VISCERAL_LEVEL' | translate }}</span>
                 <input [(ngModel)]="visceralFat" name="visceralFat" type="text" placeholder="4">
               </label>
             </div>
           </div>
 
           <div class="form-group">
-            <h3>Advanced Vitals</h3>
+            <h3>{{ 'BODY_DATA.ADVANCED_VITALS' | translate }}</h3>
             <div class="input-list">
               <label class="input-field">
-                <span>Metabolic Age</span>
+                <span>{{ 'BODY_DATA.METABOLIC_AGE' | translate }}</span>
                 <input [(ngModel)]="metabolicAge" name="metabolicAge" type="text" placeholder="24">
               </label>
               <label class="input-field">
-                <span>BMI</span>
+                <span>{{ 'BODY_DATA.BMI' | translate }}</span>
                 <input [(ngModel)]="bmi" name="bmi" type="text" placeholder="24.1">
               </label>
             </div>
           </div>
 
           <div class="form-group">
-            <h3>Cardiovascular</h3>
+            <h3>{{ 'BODY_DATA.CARDIOVASCULAR' | translate }}</h3>
             <div class="input-list">
               <label class="input-field">
-                <span>Resting Heart Rate (BPM)</span>
+                <span>{{ 'BODY_DATA.RESTING_HR' | translate }} (BPM)</span>
                 <input [(ngModel)]="restingHeartRate" name="restingHeartRate" type="text" placeholder="58">
               </label>
               <label class="input-field">
-                <span>Blood Pressure (mmHg)</span>
+                <span>{{ 'BODY_DATA.BP_LABEL' | translate }}</span>
                 <input [(ngModel)]="bloodPressure" name="bloodPressure" type="text" placeholder="120/80">
               </label>
             </div>
@@ -88,14 +88,14 @@
         </div>
 
         <div class="notes-group">
-          <h3>Session Notes</h3>
+          <h3>{{ 'BODY_DATA.SESSION_NOTES' | translate }}</h3>
           <label class="input-field input-field--notes">
-            <span>Observations &amp; Context</span>
+            <span>{{ 'BODY_DATA.OBSERVATIONS' | translate }}</span>
             <textarea
               [(ngModel)]="notes"
               name="notes"
               rows="4"
-              placeholder="How did you feel this morning? Any dietary changes or recent heavy training sessions..."
+              [placeholder]="'BODY_DATA.OBSERVATIONS_PLACEHOLDER' | translate"
             ></textarea>
           </label>
         </div>
@@ -104,17 +104,17 @@
 
         <div class="actions">
           <button type="button" class="btn-save" (click)="save()" [disabled]="saving">
-            <span *ngIf="!saving">Save Body Metrics</span>
-            <span *ngIf="saving">Saving...</span>
+            <span *ngIf="!saving">{{ 'BODY_DATA.SAVE_METRICS' | translate }}</span>
+            <span *ngIf="saving">{{ 'COMMON.SAVING' | translate }}</span>
           </button>
-          <button type="button" class="btn-discard" (click)="discard()" [disabled]="saving">Discard</button>
+          <button type="button" class="btn-discard" (click)="discard()" [disabled]="saving">{{ 'BODY_DATA.DISCARD' | translate }}</button>
         </div>
       </section>
 
       <aside class="sidebar-column">
         <section class="latest-entry-panel">
           <div class="latest-entry-panel__header">
-            <h3>Latest Entry</h3>
+            <h3>{{ 'BODY_DATA.RECENT_HISTORY' | translate }}</h3>
             <span>OCT 17, 08:15</span>
           </div>
 
@@ -138,7 +138,7 @@
           <div class="latest-entry-panel__footer">
             <button type="button">
               <span class="material-symbols-outlined">history</span>
-              View Full History
+              {{ 'BODY_DATA.VIEW_FULL_HISTORY' | translate }}
             </button>
           </div>
         </section>
@@ -158,8 +158,8 @@
   <dialog #dateDialog class="date-dialog" (click)="onDialogBackdropClick($event)">
     <div class="date-dialog__header">
       <div>
-        <p>Date Selection</p>
-        <h3>Measurement Date</h3>
+        <p>{{ 'BODY_DATA.DATE_SELECTION' | translate }}</p>
+        <h3>{{ 'BODY_DATA.MEASUREMENT_DATE' | translate }}</h3>
       </div>
       <button type="button" class="date-dialog__close" (click)="closeDatePicker()">
         <span class="material-symbols-outlined">close</span>
@@ -167,12 +167,12 @@
     </div>
 
     <label class="input-field">
-      <span>Entry Date</span>
+      <span>{{ 'BODY_DATA.ENTRY_DATE' | translate }}</span>
       <input [(ngModel)]="entryDate" name="dialogEntryDate" type="date">
     </label>
 
     <div class="date-dialog__footer">
-      <button type="button" class="date-dialog__apply" (click)="closeDatePicker()">Apply Date</button>
+      <button type="button" class="date-dialog__apply" (click)="closeDatePicker()">{{ 'BODY_DATA.APPLY_DATE' | translate }}</button>
     </div>
   </dialog>
 
@@ -181,10 +181,10 @@
       <div class="saved-dialog__icon">
         <span class="material-symbols-outlined">check_circle</span>
       </div>
-      <h3>Body Metrics Saved</h3>
-      <p>Your entry for {{ entryDate | date:'MMM d, y' }} has been saved successfully.</p>
+      <h3>{{ 'BODY_DATA.SAVED_SUCCESS' | translate }}</h3>
+      <p>{{ entryDate | date:'MMM d, y' }} {{ 'BODY_DATA.SAVED_MSG' | translate }}</p>
       <div class="saved-dialog__actions">
-        <button type="button" class="btn-save" (click)="closeSavedDialog()">Done</button>
+        <button type="button" class="btn-save" (click)="closeSavedDialog()">{{ 'BODY_DATA.DONE' | translate }}</button>
       </div>
     </div>
   </dialog>

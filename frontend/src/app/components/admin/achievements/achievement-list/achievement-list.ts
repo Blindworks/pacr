@@ -1,17 +1,19 @@
 import { Component, OnInit, inject, signal, ElementRef, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { AdminAchievementService, AdminAchievement, UnlockedUser } from '../../../../services/admin-achievement.service';
 
 @Component({
   selector: 'app-achievement-list',
   standalone: true,
-  imports: [],
+  imports: [TranslateModule],
   templateUrl: './achievement-list.html',
   styleUrl: './achievement-list.scss'
 })
 export class AchievementList implements OnInit {
   private achievementService = inject(AdminAchievementService);
   private router = inject(Router);
+  private translate = inject(TranslateService);
 
   achievements = signal<AdminAchievement[]>([]);
   isLoading = signal(false);
@@ -73,10 +75,10 @@ export class AchievementList implements OnInit {
 
   categoryLabel(cat: string): string {
     const map: Record<string, string> = {
-      DISTANCE: 'Distanz',
-      STREAK: 'Streak',
-      PR: 'Persönl. Rekord',
-      PLAN_COMPLETION: 'Plan'
+      DISTANCE: this.translate.instant('ADMIN.CAT_DISTANCE_FULL'),
+      STREAK: this.translate.instant('ADMIN.CAT_STREAK_FULL'),
+      PR: this.translate.instant('ADMIN.CAT_PR_FULL'),
+      PLAN_COMPLETION: this.translate.instant('ADMIN.CAT_PLAN_FULL')
     };
     return map[cat] ?? cat;
   }
@@ -84,7 +86,7 @@ export class AchievementList implements OnInit {
   statusLabel(a: AdminAchievement): string {
     if (!a.timeBound) return 'Permanent';
     if (a.expired) return 'Abgelaufen';
-    if (a.active) return 'Aktiv';
+    if (a.active) return this.translate.instant('ADMIN.ACTIVE');
     return 'Geplant';
   }
 

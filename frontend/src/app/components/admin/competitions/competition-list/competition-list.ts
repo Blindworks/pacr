@@ -1,12 +1,13 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
+import { TranslateModule } from '@ngx-translate/core';
 
 import { CompetitionService, Competition } from '../../../../services/competition.service';
 
 @Component({
   selector: 'app-competition-list',
   standalone: true,
-  imports: [],
+  imports: [TranslateModule],
   templateUrl: './competition-list.html',
   styleUrl: './competition-list.scss'
 })

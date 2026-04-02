@@ -1,6 +1,7 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { AsthmaService, AsthmaEntry, BioWeatherDto } from '../../../services/asthma.service';
 import { ProOverlay } from '../../shared/pro-overlay/pro-overlay';
 
@@ -13,7 +14,7 @@ interface ChartSlot {
 @Component({
   selector: 'app-asthma-tracking',
   standalone: true,
-  imports: [CommonModule, FormsModule, ProOverlay],
+  imports: [CommonModule, FormsModule, ProOverlay, TranslateModule],
   templateUrl: './asthma-tracking.html',
   styleUrl: './asthma-tracking.scss'
 })
@@ -33,19 +34,19 @@ export class AsthmaTracking implements OnInit {
   readonly todayFormatted: string;
 
   readonly symptomOptions = [
-    { key: 'SHORTNESS_OF_BREATH', label: 'Shortness of Breath' },
-    { key: 'WHEEZING',            label: 'Wheezing' },
-    { key: 'COUGHING',            label: 'Coughing' },
-    { key: 'CHEST_TIGHTNESS',     label: 'Chest Tightness' },
+    { key: 'SHORTNESS_OF_BREATH', label: 'BODY_DATA.SYMPTOM_BREATH' },
+    { key: 'WHEEZING',            label: 'BODY_DATA.SYMPTOM_WHEEZE' },
+    { key: 'COUGHING',            label: 'BODY_DATA.SYMPTOM_COUGH' },
+    { key: 'CHEST_TIGHTNESS',     label: 'BODY_DATA.SYMPTOM_CHEST' },
   ];
 
   readonly inhalerOptions: { value: 'NONE' | 'RESCUE' | 'CONTROLLER'; label: string }[] = [
-    { value: 'NONE',       label: 'None' },
-    { value: 'RESCUE',     label: 'Rescue' },
-    { value: 'CONTROLLER', label: 'Controller' },
+    { value: 'NONE',       label: 'BODY_DATA.INHALER_NONE' },
+    { value: 'RESCUE',     label: 'BODY_DATA.INHALER_RESCUE' },
+    { value: 'CONTROLLER', label: 'BODY_DATA.INHALER_CONTROLLER' },
   ];
 
-  constructor(private asthmaService: AsthmaService) {
+  constructor(private asthmaService: AsthmaService, private translate: TranslateService) {
     const now = new Date();
     this.todayFormatted = now.toLocaleDateString('en-US', {
       weekday: 'long', month: 'long', day: 'numeric'
@@ -124,13 +125,13 @@ export class AsthmaTracking implements OnInit {
   }
 
   pollenLabel(value: number | null): string {
-    if (value == null || value < 0) return 'None';
+    if (value == null || value < 0) return this.translate.instant('COMMON.NONE');
     switch (value) {
-      case 0: return 'None';
-      case 1: return 'Low';
-      case 2: return 'Medium';
-      case 3: return 'High';
-      default: return 'None';
+      case 0: return this.translate.instant('COMMON.NONE');
+      case 1: return this.translate.instant('BODY_DATA.RISK_LOW_LABEL');
+      case 2: return this.translate.instant('BODY_DATA.RISK_MEDIUM_LABEL');
+      case 3: return this.translate.instant('BODY_DATA.RISK_HIGH_LABEL');
+      default: return this.translate.instant('COMMON.NONE');
     }
   }
 
@@ -154,28 +155,35 @@ export class AsthmaTracking implements OnInit {
     }
   }
 
-  get riskBadge(): string {
+  get riskLevel(): 'elevated' | 'moderate' | 'low' {
     const bw = this.bioWeather();
-    if (!bw) return '';
+    if (!bw) return 'low';
     const idx = bw.asthmaRiskIndex;
     if (idx != null) {
-      if (idx >= 60) return 'ELEVATED RISK';
-      if (idx >= 30) return 'MODERATE RISK';
-      return 'LOW RISK';
+      if (idx >= 60) return 'elevated';
+      if (idx >= 30) return 'moderate';
+      return 'low';
     }
     const maxP = Math.max(
       bw.pollenBirch ?? 0, bw.pollenGrasses ?? 0, bw.pollenMugwort ?? 0,
       bw.pollenHazel ?? 0, bw.pollenAlder ?? 0, bw.pollenAsh ?? 0
     );
-    if (maxP >= 3) return 'ELEVATED RISK';
-    if (maxP >= 2) return 'MODERATE RISK';
-    return 'LOW RISK';
+    if (maxP >= 3) return 'elevated';
+    if (maxP >= 2) return 'moderate';
+    return 'low';
+  }
+
+  get riskBadge(): string {
+    const level = this.riskLevel;
+    if (level === 'elevated') return this.translate.instant('BODY_DATA.RISK_ELEVATED');
+    if (level === 'moderate') return this.translate.instant('BODY_DATA.RISK_MODERATE');
+    return this.translate.instant('BODY_DATA.RISK_LOW');
   }
 
   get riskBadgeClass(): string {
-    const b = this.riskBadge;
-    if (b.includes('ELEVATED')) return 'risk-elevated';
-    if (b.includes('MODERATE')) return 'risk-moderate';
+    const level = this.riskLevel;
+    if (level === 'elevated') return 'risk-elevated';
+    if (level === 'moderate') return 'risk-moderate';
     return 'risk-low';
   }
 
@@ -186,11 +194,11 @@ export class AsthmaTracking implements OnInit {
   get riskIndexLabel(): string {
     const idx = this.bioWeather()?.asthmaRiskIndex;
     if (idx == null) return '—';
-    if (idx < 20)  return 'Sehr niedrig';
-    if (idx < 40)  return 'Niedrig';
-    if (idx < 60)  return 'Mittel';
-    if (idx < 80)  return 'Hoch';
-    return 'Sehr hoch';
+    if (idx < 20)  return this.translate.instant('BODY_DATA.RISK_VERY_LOW');
+    if (idx < 40)  return this.translate.instant('BODY_DATA.RISK_LOW_LABEL');
+    if (idx < 60)  return this.translate.instant('BODY_DATA.RISK_MEDIUM_LABEL');
+    if (idx < 80)  return this.translate.instant('BODY_DATA.RISK_HIGH_LABEL');
+    return this.translate.instant('BODY_DATA.RISK_VERY_HIGH');
   }
 
   get riskIndexLabelClass(): string {
@@ -265,7 +273,7 @@ export class AsthmaTracking implements OnInit {
       const entry = days.find(e => e.loggedAt?.startsWith(dStr));
       const val = entry?.peakFlowLMin ?? null;
       slots.push({
-        label:  i === 0 ? 'Today' : dayLabels[d.getDay()],
+        label:  i === 0 ? this.translate.instant('COMMON.TODAY') : dayLabels[d.getDay()],
         value:  val,
         height: val ? Math.round((val / maxVal) * 100) : 0
       });

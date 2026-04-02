@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { CycleEntryService, CycleEntry } from '../../../services/cycle-entry.service';
 import { ProOverlay } from '../../shared/pro-overlay/pro-overlay';
 
@@ -28,7 +29,7 @@ interface FlowOption {
 @Component({
   selector: 'app-log-symptoms',
   standalone: true,
-  imports: [CommonModule, FormsModule, ProOverlay],
+  imports: [CommonModule, FormsModule, ProOverlay, TranslateModule],
   templateUrl: './log-symptoms.html',
   styleUrl: './log-symptoms.scss'
 })
@@ -38,28 +39,28 @@ export class LogSymptoms implements OnInit {
   today = new Date();
 
   physicalOptions: PhysicalSymptom[] = [
-    { id: 'BLOATING', label: 'Bloating' },
-    { id: 'CRAMPS', label: 'Cramps' },
-    { id: 'BREAST_TENDERNESS', label: 'Breast Tenderness' },
-    { id: 'HEADACHE', label: 'Headache' },
-    { id: 'ACNE', label: 'Acne' },
-    { id: 'MUSCLE_SORENESS', label: 'Muscle Soreness' },
+    { id: 'BLOATING', label: 'BODY_DATA.SYMPTOM_BLOATING' },
+    { id: 'CRAMPS', label: 'BODY_DATA.SYMPTOM_CRAMPS' },
+    { id: 'BREAST_TENDERNESS', label: 'BODY_DATA.SYMPTOM_BREAST' },
+    { id: 'HEADACHE', label: 'BODY_DATA.SYMPTOM_HEADACHE' },
+    { id: 'ACNE', label: 'BODY_DATA.SYMPTOM_ACNE' },
+    { id: 'MUSCLE_SORENESS', label: 'BODY_DATA.SYMPTOM_MUSCLE' },
   ];
 
   moodOptions: MoodOption[] = [
-    { id: 'HAPPY', label: 'Happy', icon: 'sentiment_very_satisfied' },
-    { id: 'IRRITABLE', label: 'Irritable', icon: 'sentiment_dissatisfied' },
-    { id: 'ANXIOUS', label: 'Anxious', icon: 'psychology_alt' },
-    { id: 'LOW_ENERGY', label: 'Low Energy', icon: 'battery_low' },
-    { id: 'FOCUSED', label: 'Focused', icon: 'center_focus_strong' },
-    { id: 'CALM', label: 'Calm', icon: 'self_improvement' },
+    { id: 'HAPPY', label: 'BODY_DATA.MOOD_HAPPY', icon: 'sentiment_very_satisfied' },
+    { id: 'IRRITABLE', label: 'BODY_DATA.MOOD_IRRITABLE', icon: 'sentiment_dissatisfied' },
+    { id: 'ANXIOUS', label: 'BODY_DATA.MOOD_ANXIOUS', icon: 'psychology_alt' },
+    { id: 'LOW_ENERGY', label: 'BODY_DATA.MOOD_LOW', icon: 'battery_low' },
+    { id: 'FOCUSED', label: 'BODY_DATA.MOOD_FOCUSED', icon: 'center_focus_strong' },
+    { id: 'CALM', label: 'BODY_DATA.MOOD_CALM', icon: 'self_improvement' },
   ];
 
   flowOptions: FlowOption[] = [
-    { id: 'LIGHT', label: 'Light' },
-    { id: 'MEDIUM', label: 'Medium' },
-    { id: 'HEAVY', label: 'Heavy' },
-    { id: 'SPOTTING', label: 'Spotting' },
+    { id: 'LIGHT', label: 'BODY_DATA.FLOW_LIGHT' },
+    { id: 'MEDIUM', label: 'BODY_DATA.FLOW_MEDIUM' },
+    { id: 'HEAVY', label: 'BODY_DATA.FLOW_HEAVY' },
+    { id: 'SPOTTING', label: 'BODY_DATA.FLOW_SPOTTING' },
   ];
 
   selectedSymptoms = new Set<string>();
@@ -78,6 +79,7 @@ export class LogSymptoms implements OnInit {
   constructor(
     private router: Router,
     private cycleEntryService: CycleEntryService,
+    private translate: TranslateService,
   ) {}
 
   ngOnInit(): void {
@@ -153,7 +155,7 @@ export class LogSymptoms implements OnInit {
       },
       error: () => {
         this.saving = false;
-        this.error = 'Failed to save. Please try again.';
+        this.error = this.translate.instant('BODY_DATA.SAVE_ERROR');
       }
     });
   }

@@ -1,26 +1,26 @@
 <div class="form-page">
   <header class="form-header">
     <div class="form-header-left">
-      <button class="btn-ghost icon-only" (click)="cancel()" title="Back">
+      <button class="btn-ghost icon-only" (click)="cancel()" [title]="'COMMON.BACK' | translate">
         <span class="material-symbols-outlined">arrow_back</span>
       </button>
-      <h2>{{ isEdit ? 'Edit Competition' : 'New Competition' }}</h2>
+      <h2>{{ isEdit ? ('ADMIN.EDIT_COMP_TITLE' | translate) : ('ADMIN.NEW_COMP_TITLE' | translate) }}</h2>
     </div>
     <div class="form-header-actions">
       @if (hasError()) {
         <span class="error-hint">
           <span class="material-symbols-outlined">error</span>
-          Save failed
+          {{ 'ADMIN.SAVE_FAILED' | translate }}
         </span>
       }
-      <button class="btn-ghost" (click)="cancel()" [disabled]="isSaving()">Cancel</button>
+      <button class="btn-ghost" (click)="cancel()" [disabled]="isSaving()">{{ 'COMMON.CANCEL' | translate }}</button>
       <button class="btn-primary" (click)="save()" [disabled]="isSaving()">
         @if (isSaving()) {
           <span class="material-symbols-outlined spin">progress_activity</span>
         } @else {
           <span class="material-symbols-outlined">save</span>
         }
-        {{ isSaving() ? 'Saving…' : 'Save' }}
+        {{ isSaving() ? ('COMMON.SAVING' | translate) : ('COMMON.SAVE' | translate) }}
       </button>
     </div>
   </header>
@@ -28,7 +28,7 @@
   @if (isLoading()) {
     <div class="loading-state">
       <span class="material-symbols-outlined spin">progress_activity</span>
-      <span>Loading competition…</span>
+      <span>{{ 'ADMIN.LOADING_COMPS' | translate }}</span>
     </div>
   }
 
@@ -37,31 +37,31 @@
       <section class="form-card">
         <h3 class="section-title">
           <span class="material-symbols-outlined">emoji_events</span>
-          Competition Details
+          {{ 'ADMIN.COMP_DETAILS' | translate }}
         </h3>
         <div class="field-grid">
           <div class="field field--full">
-            <label>Name <span class="required">*</span></label>
-            <input formControlName="name" type="text" placeholder="e.g. Berlin Marathon" class="input"
+            <label>{{ 'COMMON.NAME' | translate }} <span class="required">*</span></label>
+            <input formControlName="name" type="text" [placeholder]="'ADMIN.COMP_PLACEHOLDER' | translate" class="input"
               [class.invalid]="form.get('name')?.invalid && form.get('name')?.touched" />
             @if (form.get('name')?.invalid && form.get('name')?.touched) {
-              <span class="field-error">Name is required</span>
+              <span class="field-error">{{ 'ADMIN.NAME_REQUIRED' | translate }}</span>
             }
           </div>
 
           <div class="field">
-            <label>Date <span class="required">*</span></label>
+            <label>{{ 'COMMON.DATE' | translate }} <span class="required">*</span></label>
             <input formControlName="date" type="date" class="input"
               [class.invalid]="form.get('date')?.invalid && form.get('date')?.touched" />
             @if (form.get('date')?.invalid && form.get('date')?.touched) {
-              <span class="field-error">Date is required</span>
+              <span class="field-error">{{ 'ADMIN.DATE_REQUIRED' | translate }}</span>
             }
           </div>
 
           <div class="field">
-            <label>Type</label>
+            <label>{{ 'COMMON.TYPE' | translate }}</label>
             <select formControlName="type" class="input">
-              <option value="">— Select —</option>
+              <option value="">{{ 'ADMIN.SELECT' | translate }}</option>
               @for (t of competitionTypes; track t.value) {
                 <option [value]="t.value">{{ t.label }}</option>
               }
@@ -69,14 +69,14 @@
           </div>
 
           <div class="field field--full">
-            <label>Location</label>
-            <input formControlName="location" type="text" placeholder="e.g. Berlin, DE" class="input" />
+            <label>{{ 'ADMIN.LOCATION' | translate }}</label>
+            <input formControlName="location" type="text" [placeholder]="'ADMIN.LOCATION_PLACEHOLDER' | translate" class="input" />
           </div>
 
           <div class="field field--full">
-            <label>Description</label>
+            <label>{{ 'COMMON.DESCRIPTION' | translate }}</label>
             <textarea formControlName="description" rows="3"
-              placeholder="Additional notes about the competition…" class="input textarea"></textarea>
+              [placeholder]="'ADMIN.COMP_DESC_PLACEHOLDER' | translate" class="input textarea"></textarea>
           </div>
         </div>
       </section>

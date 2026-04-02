@@ -3,7 +3,7 @@
 
   <!-- ── Page Header ── -->
   <div class="page-header">
-    <h1 class="page-title">Asthma Tracking &amp; <span class="lime">Bio-Weather</span></h1>
+    <h1 class="page-title">{{ 'BODY_DATA.ASTHMA_TITLE' | translate }} <span class="lime">{{ 'BODY_DATA.ASTHMA_BIO_WEATHER' | translate }}</span></h1>
     <div class="page-meta">
       <span class="meta-item">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>
@@ -27,7 +27,7 @@
         <div class="env-card-top">
           <div class="section-heading">
             <span class="heading-bar"></span>
-            <span class="heading-text">Live Environmental Conditions</span>
+            <span class="heading-text">{{ 'BODY_DATA.LIVE_CONDITIONS' | translate }}</span>
           </div>
           <span class="risk-badge" [ngClass]="riskBadgeClass" *ngIf="bioWeather()">{{ riskBadge }}</span>
         </div>
@@ -37,7 +37,7 @@
           <!-- Left: Asthma-Risk-Index als Hauptmetrik -->
           <div class="env-left">
             <div class="aqi-block">
-              <span class="aqi-label">ASTHMA-RISK-INDEX</span>
+              <span class="aqi-label">{{ 'BODY_DATA.ASTHMA_RISK_INDEX' | translate }}</span>
               <div class="aqi-number-row">
                 <span class="aqi-value" [class.no-data]="bioWeather()!.asthmaRiskIndex == null">
                   {{ bioWeather()!.asthmaRiskIndex != null ? bioWeather()!.asthmaRiskIndex : '—' }}
@@ -53,19 +53,19 @@
 
             <div class="env-secondary-row">
               <div class="sec-metric">
-                <span class="sec-label">FEINSTAUB PM2.5</span>
+                <span class="sec-label">{{ 'BODY_DATA.PARTICULATE' | translate }}</span>
                 <span class="sec-value" [ngClass]="pm25LabelClass">{{ pm25Label }}</span>
               </div>
               <div class="sec-metric">
-                <span class="sec-label">OZON</span>
+                <span class="sec-label">{{ 'BODY_DATA.OZONE' | translate }}</span>
                 <span class="sec-value" [ngClass]="ozoneLabelClass">{{ ozoneLabel }}</span>
               </div>
               <div class="sec-metric">
-                <span class="sec-label">LUFTFEUCHTE</span>
+                <span class="sec-label">{{ 'BODY_DATA.HUMIDITY' | translate }}</span>
                 <span class="sec-value" [ngClass]="humidityLabelClass">{{ humidityLabel }}</span>
               </div>
               <div class="sec-metric">
-                <span class="sec-label">TEMPERATUR</span>
+                <span class="sec-label">{{ 'BODY_DATA.TEMP' | translate }}</span>
                 <span class="sec-value" [ngClass]="temperatureLabelClass">{{ temperatureLabel }}</span>
               </div>
             </div>
@@ -76,12 +76,12 @@
 
           <!-- Right: Pollen Count — alle 3 Zeilen immer anzeigen -->
           <div class="env-right">
-            <span class="pollen-header">POLLEN COUNT</span>
+            <span class="pollen-header">{{ 'BODY_DATA.POLLEN_COUNT' | translate }}</span>
             <div class="pollen-rows">
 
               <div class="pollen-row">
                 <div class="pollen-row-top">
-                  <span class="pollen-name">Grasses</span>
+                  <span class="pollen-name">{{ 'BODY_DATA.POLLEN_GRASSES' | translate }}</span>
                   <span class="pollen-level" [ngClass]="pollenLabelClass(bioWeather()!.pollenGrasses)">
                     {{ pollenLabel(bioWeather()!.pollenGrasses) }}
                   </span>
@@ -96,7 +96,7 @@
 
               <div class="pollen-row">
                 <div class="pollen-row-top">
-                  <span class="pollen-name">Trees</span>
+                  <span class="pollen-name">{{ 'BODY_DATA.POLLEN_TREES' | translate }}</span>
                   <span class="pollen-level" [ngClass]="pollenLabelClass(bioWeather()!.pollenBirch)">
                     {{ pollenLabel(bioWeather()!.pollenBirch) }}
                   </span>
@@ -111,7 +111,7 @@
 
               <div class="pollen-row">
                 <div class="pollen-row-top">
-                  <span class="pollen-name">Weeds</span>
+                  <span class="pollen-name">{{ 'BODY_DATA.POLLEN_WEEDS' | translate }}</span>
                   <span class="pollen-level" [ngClass]="pollenLabelClass(bioWeather()!.pollenMugwort)">
                     {{ pollenLabel(bioWeather()!.pollenMugwort) }}
                   </span>
@@ -131,7 +131,7 @@
         <ng-template #envLoading>
           <div class="env-loading">
             <span class="loading-dot"></span>
-            <span>Loading environmental data...</span>
+            <span>{{ 'BODY_DATA.LOADING_ENV' | translate }}</span>
           </div>
         </ng-template>
       </div>
@@ -140,14 +140,14 @@
       <div class="log-card">
         <div class="section-heading" style="margin-bottom: 1.5rem;">
           <span class="heading-bar"></span>
-          <span class="heading-text">Log Current Symptoms</span>
+          <span class="heading-text">{{ 'BODY_DATA.LOG_SYMPTOMS_TITLE' | translate }}</span>
         </div>
 
         <form (ngSubmit)="onSubmit()">
 
           <!-- Symptom toggles -->
           <div class="field-group">
-            <span class="field-label">Symptoms Felt Today</span>
+            <span class="field-label">{{ 'BODY_DATA.SYMPTOMS_FELT' | translate }}</span>
             <div class="symptom-grid">
               <button
                 type="button"
@@ -155,7 +155,7 @@
                 class="symptom-btn"
                 [class.active]="isSymptomSelected(s.key)"
                 (click)="toggleSymptom(s.key)">
-                {{ s.label }}
+                {{ s.label | translate }}
               </button>
             </div>
           </div>
@@ -164,7 +164,7 @@
           <div class="form-row-2">
             <div class="field-group">
               <div class="severity-label-row">
-                <span class="field-label">Severity Score</span>
+                <span class="field-label">{{ 'BODY_DATA.SEVERITY' | translate }}</span>
                 <span class="severity-display">{{ severityScore }}/10</span>
               </div>
               <input
@@ -173,7 +173,7 @@
                 class="severity-slider">
             </div>
             <div class="field-group">
-              <span class="field-label">Peak Flow Meter (L/min)</span>
+              <span class="field-label">{{ 'BODY_DATA.PEAK_FLOW' | translate }}</span>
               <input
                 type="number"
                 [(ngModel)]="peakFlow" name="peakFlow"
@@ -186,7 +186,7 @@
           <!-- Inhaler + Notes -->
           <div class="form-row-2">
             <div class="field-group">
-              <span class="field-label">Inhaler Usage</span>
+              <span class="field-label">{{ 'BODY_DATA.INHALER_USAGE' | translate }}</span>
               <div class="inhaler-group">
                 <button
                   type="button"
@@ -194,22 +194,22 @@
                   class="inhaler-btn"
                   [class.active]="inhalerUsage === opt.value"
                   (click)="setInhaler(opt.value)">
-                  {{ opt.label }}
+                  {{ opt.label | translate }}
                 </button>
               </div>
             </div>
             <div class="field-group">
-              <span class="field-label">Optional Notes</span>
+              <span class="field-label">{{ 'BODY_DATA.OPTIONAL_NOTES' | translate }}</span>
               <textarea
                 [(ngModel)]="notes" name="notes"
-                placeholder="Post-workout, dusty environment..."
+                [placeholder]="'BODY_DATA.NOTES_PLACEHOLDER' | translate"
                 class="field-textarea"
                 rows="3"></textarea>
             </div>
           </div>
 
           <button type="submit" class="submit-btn" [disabled]="saving">
-            {{ saving ? 'SAVING...' : 'UPDATE HEALTH LOG' }}
+            {{ saving ? ('COMMON.SAVING' | translate) : ('BODY_DATA.UPDATE_LOG' | translate) }}
           </button>
 
         </form>
@@ -223,10 +223,10 @@
         <!-- ── 7-Day Trends ── -->
         <div class="trends-section">
           <div class="trends-top">
-            <span class="right-section-title">7-Day Trends</span>
-            <span class="full-report-link">Full Report</span>
+            <span class="right-section-title">{{ 'BODY_DATA.TRENDS_7DAY' | translate }}</span>
+            <span class="full-report-link">{{ 'BODY_DATA.FULL_REPORT' | translate }}</span>
           </div>
-          <span class="avg-peak-label">AVG. PEAK FLOW (L/MIN)</span>
+          <span class="avg-peak-label">{{ 'BODY_DATA.AVG_PEAK_FLOW' | translate }}</span>
           <div class="bar-chart">
             <div class="bars-area">
               <div class="chart-col" *ngFor="let slot of chart7DaySlots">
@@ -238,7 +238,7 @@
             <div class="bars-x">
               <span
                 *ngFor="let slot of chart7DaySlots"
-                [class.today-lbl]="slot.label === 'Today'">
+                [class.today-lbl]="slot.label === ('COMMON.TODAY' | translate)">
                 {{ slot.label }}
               </span>
             </div>
@@ -249,7 +249,7 @@
 
         <!-- ── Recent Entries ── -->
         <div class="recent-section">
-          <span class="right-section-label">RECENT ENTRIES</span>
+          <span class="right-section-label">{{ 'BODY_DATA.RECENT_ENTRIES' | translate }}</span>
 
           <div class="recent-list" *ngIf="entries().length > 0; else noEntries">
             <div class="recent-row" *ngFor="let entry of entries().slice(0, 5)">
@@ -261,13 +261,13 @@
                 <span class="recent-flow" [ngClass]="peakFlowColorClass(entry)">
                   {{ entry.peakFlowLMin != null ? (entry.peakFlowLMin + ' L/min') : '— L/min' }}
                 </span>
-                <span class="recent-sev">Severity: {{ entry.severityScore }}</span>
+                <span class="recent-sev">{{ 'BODY_DATA.SEVERITY' | translate }}: {{ entry.severityScore }}</span>
               </div>
             </div>
           </div>
 
           <ng-template #noEntries>
-            <div class="empty-note">No entries yet. Start logging your symptoms.</div>
+            <div class="empty-note">{{ 'BODY_DATA.NO_ENTRIES' | translate }}</div>
           </ng-template>
         </div>
 
@@ -275,7 +275,7 @@
 
         <!-- ── Weekly Insight ── -->
         <div class="insight-section">
-          <span class="insight-label">WEEKLY INSIGHT</span>
+          <span class="insight-label">{{ 'BODY_DATA.WEEKLY_INSIGHT' | translate }}</span>
           <p class="insight-text">{{ weeklyInsightText }}</p>
         </div>
 

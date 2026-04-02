@@ -1,37 +1,37 @@
 <div class="list-page">
   <div class="toolbar">
     <div class="toolbar-left">
-      <h2>Competitions</h2>
+      <h2>{{ 'ADMIN.COMPETITIONS_TITLE' | translate }}</h2>
       @if (!isLoading()) {
         <span class="count-badge">{{ competitions().length }}</span>
       }
     </div>
     <button class="btn-primary" (click)="navigateNew()">
       <span class="material-symbols-outlined">add</span>
-      New Competition
+      {{ 'ADMIN.NEW_COMP' | translate }}
     </button>
   </div>
 
   @if (isLoading()) {
     <div class="state-box">
       <span class="material-symbols-outlined spin">progress_activity</span>
-      <span>Loading competitions…</span>
+      <span>{{ 'ADMIN.LOADING_COMPS' | translate }}</span>
     </div>
   }
 
   @if (hasError() && !isLoading()) {
     <div class="state-box state-box--error">
       <span class="material-symbols-outlined">error</span>
-      <span>Failed to load competitions.</span>
-      <button class="btn-ghost" (click)="load()">Retry</button>
+      <span>{{ 'ADMIN.COMPS_LOAD_FAILED' | translate }}</span>
+      <button class="btn-ghost" (click)="load()">{{ 'COMMON.RETRY' | translate }}</button>
     </div>
   }
 
   @if (!isLoading() && !hasError() && competitions().length === 0) {
     <div class="state-box">
       <span class="material-symbols-outlined">emoji_events</span>
-      <span>No competitions yet.</span>
-      <button class="btn-primary" (click)="navigateNew()">Create first competition</button>
+      <span>{{ 'ADMIN.NO_COMPS' | translate }}</span>
+      <button class="btn-primary" (click)="navigateNew()">{{ 'ADMIN.CREATE_FIRST_COMP' | translate }}</button>
     </div>
   }
 
@@ -47,10 +47,10 @@
               }
             </div>
             <div class="comp-actions">
-              <button class="icon-btn" title="Edit" (click)="navigateEdit(comp.id)">
+              <button class="icon-btn" [title]="'COMMON.EDIT' | translate" (click)="navigateEdit(comp.id)">
                 <span class="material-symbols-outlined">edit</span>
               </button>
-              <button class="icon-btn icon-btn--danger" title="Delete" (click)="requestDelete(comp.id)">
+              <button class="icon-btn icon-btn--danger" [title]="'COMMON.DELETE' | translate" (click)="requestDelete(comp.id)">
                 <span class="material-symbols-outlined">delete</span>
               </button>
             </div>
@@ -81,11 +81,11 @@
     <div class="dialog-overlay" (click)="cancelDelete()">
       <div class="dialog" (click)="$event.stopPropagation()">
         <span class="material-symbols-outlined dialog-icon">warning</span>
-        <h3>Delete Competition?</h3>
-        <p>This action cannot be undone.</p>
+        <h3>{{ 'ADMIN.DELETE_COMP_TITLE' | translate }}</h3>
+        <p>{{ 'ADMIN.DELETE_TRAINING_MSG' | translate }}</p>
         <div class="dialog-actions">
-          <button class="btn-ghost" (click)="cancelDelete()">Cancel</button>
-          <button class="btn-danger" (click)="confirmDelete(confirmDeleteId()!)">Delete</button>
+          <button class="btn-ghost" (click)="cancelDelete()">{{ 'COMMON.CANCEL' | translate }}</button>
+          <button class="btn-danger" (click)="confirmDelete(confirmDeleteId()!)">{{ 'COMMON.DELETE' | translate }}</button>
         </div>
       </div>
     </div>

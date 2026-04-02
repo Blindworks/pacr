@@ -1,25 +1,25 @@
 <div class="list-page">
   <div class="list-header">
-    <h2>Achievements</h2>
-    <button class="btn-primary" (click)="goNew()">+ Neues Achievement</button>
+    <h2>{{ 'ADMIN.ACHIEVEMENTS_TITLE' | translate }}</h2>
+    <button class="btn-primary" (click)="goNew()">{{ 'ADMIN.NEW_ACHIEVEMENT' | translate }}</button>
   </div>
 
   @if (isLoading()) {
-    <p class="loading">Wird geladen…</p>
+    <p class="loading">{{ 'ADMIN.LOADING_ACHIEVEMENTS' | translate }}</p>
   } @else if (achievements().length === 0) {
-    <p class="empty">Noch keine Achievements vorhanden.</p>
+    <p class="empty">{{ 'ADMIN.NO_ACHIEVEMENTS' | translate }}</p>
   } @else {
     <table class="data-table">
       <thead>
         <tr>
-          <th>Icon</th>
-          <th>Name</th>
-          <th>Kategorie</th>
-          <th>Schwelle</th>
-          <th>Status</th>
-          <th>Erreicht</th>
-          <th>In Arbeit</th>
-          <th>Aktionen</th>
+          <th>{{ 'ADMIN.ICON_COL' | translate }}</th>
+          <th>{{ 'COMMON.NAME' | translate }}</th>
+          <th>{{ 'ADMIN.CATEGORY' | translate }}</th>
+          <th>{{ 'ADMIN.THRESHOLD' | translate }}</th>
+          <th>{{ 'COMMON.STATUS' | translate }}</th>
+          <th>{{ 'ADMIN.UNLOCKED' | translate }}</th>
+          <th>{{ 'ADMIN.IN_PROGRESS' | translate }}</th>
+          <th>{{ 'COMMON.ACTIONS' | translate }}</th>
         </tr>
       </thead>
       <tbody>
@@ -51,10 +51,10 @@
               <span class="in-progress-count">{{ item.inProgressCount }}</span>
             </td>
             <td class="actions">
-              <button class="btn-icon" (click)="edit(item)" title="Bearbeiten">
+              <button class="btn-icon" (click)="edit(item)" [title]="'COMMON.EDIT' | translate">
                 <span class="material-symbols-outlined">edit</span>
               </button>
-              <button class="btn-icon btn-icon--danger" (click)="delete(item)" title="Löschen">
+              <button class="btn-icon btn-icon--danger" (click)="delete(item)" [title]="'COMMON.DELETE' | translate">
                 <span class="material-symbols-outlined">delete</span>
               </button>
             </td>
@@ -73,7 +73,7 @@
         <span class="material-symbols-outlined dialog-icon">{{ a.icon }}</span>
         <div>
           <h3>{{ a.name }}</h3>
-          <p class="dialog-subtitle">{{ a.unlockedCount }} erreicht · {{ a.inProgressCount }} in Arbeit</p>
+          <p class="dialog-subtitle">{{ a.unlockedCount }} {{ 'ADMIN.UNLOCKED' | translate }} · {{ a.inProgressCount }} {{ 'ADMIN.IN_PROGRESS' | translate }}</p>
         </div>
       </div>
 
@@ -81,9 +81,9 @@
         <table class="users-table">
           <thead>
             <tr>
-              <th>Benutzer</th>
-              <th>Fortschritt</th>
-              <th>Erreicht am</th>
+              <th>{{ 'ADMIN.USER' | translate }}</th>
+              <th>{{ 'ADMIN.PROGRESS' | translate }}</th>
+              <th>{{ 'ADMIN.UNLOCKED_ON' | translate }}</th>
             </tr>
           </thead>
           <tbody>
@@ -101,7 +101,7 @@
                       {{ formatDateTime(user.unlockedAt) }}
                     </span>
                   } @else {
-                    <span class="in-progress-label">In Arbeit</span>
+                    <span class="in-progress-label">{{ 'ADMIN.IN_PROGRESS' | translate }}</span>
                   }
                 </td>
               </tr>
@@ -109,10 +109,10 @@
           </tbody>
         </table>
       } @else {
-        <p class="empty-users">Noch niemand hat dieses Achievement begonnen.</p>
+        <p class="empty-users">{{ 'ADMIN.NO_ONE_STARTED' | translate }}</p>
       }
 
-      <button class="btn-secondary dialog-close" (click)="closeUsersDialog()">Schließen</button>
+      <button class="btn-secondary dialog-close" (click)="closeUsersDialog()">{{ 'COMMON.CLOSE' | translate }}</button>
     </div>
   }
 </dialog>
