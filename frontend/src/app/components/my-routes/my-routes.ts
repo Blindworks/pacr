@@ -1,12 +1,13 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { TranslateModule } from '@ngx-translate/core';
 import { CommunityRouteService, CommunityRouteDto } from '../../services/community-route.service';
 
 @Component({
   selector: 'app-my-routes',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, TranslateModule],
   templateUrl: './my-routes.html',
   styleUrl: './my-routes.scss'
 })

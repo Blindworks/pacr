@@ -1,8 +1,8 @@
 <section class="settings-view">
   <header class="settings-header">
     <div>
-      <h1>Settings</h1>
-      <p>Manage your profile, metrics, and app preferences.</p>
+      <h1>{{ 'SETTINGS.TITLE' | translate }}</h1>
+      <p>{{ 'SETTINGS.SUBTITLE' | translate }}</p>
     </div>
   </header>
 
@@ -12,7 +12,7 @@
     <article class="section">
       <div class="section-head">
         <span class="material-symbols-outlined">person</span>
-        <h2>Profile Picture</h2>
+        <h2>{{ 'SETTINGS.PROFILE_PICTURE' | translate }}</h2>
       </div>
       <div class="avatar-row">
         <div class="avatar-wrap" (click)="triggerFileInput()">
@@ -32,8 +32,8 @@
           </div>
         </div>
         <div class="avatar-info">
-          <p class="avatar-hint">Click on the avatar to upload a new profile picture.</p>
-          <p class="avatar-hint muted">Supported formats: JPG, PNG, WebP.</p>
+          <p class="avatar-hint">{{ 'SETTINGS.PROFILE_PICTURE_HINT' | translate }}</p>
+          <p class="avatar-hint muted">{{ 'SETTINGS.PROFILE_FORMATS' | translate }}</p>
           @if (imageError()) {
             <p class="avatar-error">{{ imageError() }}</p>
           }
@@ -46,16 +46,16 @@
     <article class="section">
       <div class="section-head">
         <span class="material-symbols-outlined">badge</span>
-        <h2>Account</h2>
+        <h2>{{ 'SETTINGS.ACCOUNT' | translate }}</h2>
       </div>
       <div class="metrics-grid">
         <div class="field">
-          <label>Vorname</label>
-          <input type="text" [ngModel]="firstName()" (ngModelChange)="firstName.set($event); onFieldChange()" placeholder="Max" />
+          <label>{{ 'SETTINGS.FIRST_NAME' | translate }}</label>
+          <input type="text" [ngModel]="firstName()" (ngModelChange)="firstName.set($event); onFieldChange()" [placeholder]="'Max'" />
         </div>
         <div class="field">
-          <label>Nachname</label>
-          <input type="text" [ngModel]="lastName()" (ngModelChange)="lastName.set($event); onFieldChange()" placeholder="Mustermann" />
+          <label>{{ 'SETTINGS.LAST_NAME' | translate }}</label>
+          <input type="text" [ngModel]="lastName()" (ngModelChange)="lastName.set($event); onFieldChange()" [placeholder]="'Mustermann'" />
         </div>
       </div>
     </article>
@@ -64,37 +64,37 @@
     <article class="section">
       <div class="section-head">
         <span class="material-symbols-outlined">straighten</span>
-        <h2>Body Metrics</h2>
+        <h2>{{ 'SETTINGS.BODY_METRICS' | translate }}</h2>
       </div>
       <div class="metrics-grid">
         <div class="field">
-          <label>Weight (kg)</label>
-          <input type="number" [ngModel]="weight()" (ngModelChange)="weight.set($event); onFieldChange()" placeholder="72" />
+          <label>{{ 'SETTINGS.WEIGHT_LABEL' | translate }}</label>
+          <input type="number" [ngModel]="weight()" (ngModelChange)="weight.set($event); onFieldChange()" [placeholder]="'72'" />
         </div>
         <div class="field">
-          <label>Height (cm)</label>
-          <input type="number" [ngModel]="height()" (ngModelChange)="height.set($event); onFieldChange()" placeholder="180" />
+          <label>{{ 'SETTINGS.HEIGHT_LABEL' | translate }}</label>
+          <input type="number" [ngModel]="height()" (ngModelChange)="height.set($event); onFieldChange()" [placeholder]="'180'" />
         </div>
         <div class="field">
-          <label>Date of Birth</label>
+          <label>{{ 'SETTINGS.DOB_LABEL' | translate }}</label>
           <input type="date" [ngModel]="dateOfBirth()" (ngModelChange)="dateOfBirth.set($event); onFieldChange()" />
         </div>
         <div class="field">
-          <label>Gender</label>
+          <label>{{ 'SETTINGS.GENDER_LABEL' | translate }}</label>
           <select [ngModel]="gender()" (ngModelChange)="gender.set($event); onFieldChange()">
-            <option>Male</option>
-            <option>Female</option>
-            <option>Non-binary</option>
-            <option>Prefer not to say</option>
+            <option>{{ 'SETTINGS.GENDER_MALE' | translate }}</option>
+            <option>{{ 'SETTINGS.GENDER_FEMALE' | translate }}</option>
+            <option>{{ 'SETTINGS.GENDER_NONBINARY' | translate }}</option>
+            <option>{{ 'SETTINGS.GENDER_PREFER_NOT' | translate }}</option>
           </select>
         </div>
         <div class="field">
-          <label>Resting HR (bpm)</label>
-          <input type="number" [ngModel]="restingHr()" (ngModelChange)="restingHr.set($event); onFieldChange()" placeholder="54" />
+          <label>{{ 'SETTINGS.RESTING_HR_LABEL' | translate }}</label>
+          <input type="number" [ngModel]="restingHr()" (ngModelChange)="restingHr.set($event); onFieldChange()" [placeholder]="'54'" />
         </div>
         <div class="field">
-          <label>Max HR (bpm)</label>
-          <input type="number" [ngModel]="maxHr()" (ngModelChange)="maxHr.set($event); onFieldChange()" placeholder="190" />
+          <label>{{ 'SETTINGS.MAX_HR_LABEL' | translate }}</label>
+          <input type="number" [ngModel]="maxHr()" (ngModelChange)="maxHr.set($event); onFieldChange()" [placeholder]="'190'" />
         </div>
       </div>
     </article>
@@ -103,24 +103,32 @@
     <article class="section">
       <div class="section-head">
         <span class="material-symbols-outlined">tune</span>
-        <h2>App Preferences</h2>
+        <h2>{{ 'SETTINGS.APP_PREFERENCES' | translate }}</h2>
       </div>
 
       <div class="prefs-grid">
         <div class="pref-card">
-          <h3><span class="material-symbols-outlined">distance</span>Units of Measurement</h3>
+          <h3><span class="material-symbols-outlined">distance</span>{{ 'SETTINGS.UNITS_TITLE' | translate }}</h3>
           <div class="toggle-group">
-            <button [class.active]="unit() === 'metric'" (click)="setUnit('metric')">Metric (km)</button>
-            <button [class.active]="unit() === 'imperial'" (click)="setUnit('imperial')">Imperial (mi)</button>
+            <button [class.active]="unit() === 'metric'" (click)="setUnit('metric')">{{ 'SETTINGS.UNITS_METRIC' | translate }}</button>
+            <button [class.active]="unit() === 'imperial'" (click)="setUnit('imperial')">{{ 'SETTINGS.UNITS_IMPERIAL' | translate }}</button>
           </div>
         </div>
 
         <div class="pref-card">
-          <h3><span class="material-symbols-outlined">dark_mode</span>Visual Theme</h3>
+          <h3><span class="material-symbols-outlined">dark_mode</span>{{ 'SETTINGS.THEME_TITLE' | translate }}</h3>
           <div class="toggle-group">
-            <button [class.active]="theme() === 'light'" (click)="setTheme('light')">Light</button>
-            <button [class.active]="theme() === 'dark'" (click)="setTheme('dark')">Dark</button>
-            <button [class.active]="theme() === 'auto'" (click)="setTheme('auto')">Auto</button>
+            <button [class.active]="theme() === 'light'" (click)="setTheme('light')">{{ 'SETTINGS.THEME_LIGHT' | translate }}</button>
+            <button [class.active]="theme() === 'dark'" (click)="setTheme('dark')">{{ 'SETTINGS.THEME_DARK' | translate }}</button>
+            <button [class.active]="theme() === 'auto'" (click)="setTheme('auto')">{{ 'SETTINGS.THEME_AUTO' | translate }}</button>
+          </div>
+        </div>
+
+        <div class="pref-card">
+          <h3><span class="material-symbols-outlined">language</span>{{ 'SETTINGS.LANGUAGE_TITLE' | translate }}</h3>
+          <div class="toggle-group">
+            <button [class.active]="currentLang() === 'de'" (click)="setLanguage('de')">{{ 'SETTINGS.LANGUAGE_DE' | translate }}</button>
+            <button [class.active]="currentLang() === 'en'" (click)="setLanguage('en')">{{ 'SETTINGS.LANGUAGE_EN' | translate }}</button>
           </div>
         </div>
       </div>
@@ -131,7 +139,7 @@
     <article class="section">
       <div class="section-head">
         <span class="material-symbols-outlined">hub</span>
-        <h2>Integrations</h2>
+        <h2>{{ 'SETTINGS.INTEGRATIONS' | translate }}</h2>
       </div>
       <div class="integrations">
         @for (item of integrations; track item.id) {
@@ -169,9 +177,9 @@
                 <span class="material-symbols-outlined">progress_activity</span>
               } @else if (item.connected) {
                 <span class="material-symbols-outlined">check_circle</span>
-                Connected
+                {{ 'SETTINGS.CONNECTED' | translate }}
               } @else {
-                Connect
+                {{ 'SETTINGS.CONNECT' | translate }}
               }
             </button>
           </div>

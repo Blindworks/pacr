@@ -5,14 +5,14 @@
     <div class="header-left">
       <span class="material-symbols-outlined header-icon">database</span>
       <div>
-        <h2 class="page-title">{{ isCurrentWeek ? 'This Week' : 'Week' }}</h2>
+        <h2 class="page-title">{{ isCurrentWeek ? ('ACTIVITIES.THIS_WEEK' | translate) : ('COMMON.WEEK' | translate) }}</h2>
         <p class="page-subtitle">{{ weekLabel }}</p>
       </div>
       <div class="week-nav">
-        <button class="week-nav-btn" (click)="prevWeek()" title="Previous week">
+        <button class="week-nav-btn" (click)="prevWeek()" [title]="'ACTIVITIES.PREVIOUS_WEEK' | translate">
           <span class="material-symbols-outlined">chevron_left</span>
         </button>
-        <button class="week-nav-btn" (click)="nextWeek()" [disabled]="isCurrentWeek" title="Next week">
+        <button class="week-nav-btn" (click)="nextWeek()" [disabled]="isCurrentWeek" [title]="'ACTIVITIES.NEXT_WEEK' | translate">
           <span class="material-symbols-outlined">chevron_right</span>
         </button>
       </div>
@@ -22,16 +22,16 @@
         <button class="sync-badge" [class.sync-badge--ok]="!isSyncing" [disabled]="isSyncing" (click)="manualSync()">
           @if (isSyncing) {
             <span class="material-symbols-outlined sync-spin">sync</span>
-            Syncing...
+            {{ 'ACTIVITIES.SYNCING' | translate }}
           } @else {
             <span class="material-symbols-outlined">check_circle</span>
-            Strava synced
+            {{ 'ACTIVITIES.STRAVA_SYNCED' | translate }}
           }
         </button>
       }
       <div class="search-wrap">
         <span class="material-symbols-outlined search-icon">search</span>
-        <input class="search-input" type="text" placeholder="Search activities..." />
+        <input class="search-input" type="text" [placeholder]="'ACTIVITIES.SEARCH_PLACEHOLDER' | translate" />
       </div>
     </div>
   </header>
@@ -53,7 +53,7 @@
   @if (isLoading) {
     <div class="loading-state">
       <span class="material-symbols-outlined loading-icon">sync</span>
-      <p>{{ isSyncing ? 'Syncing with Strava...' : 'Loading activities...' }}</p>
+      <p>{{ isSyncing ? ('ACTIVITIES.SYNCING_STRAVA' | translate) : ('ACTIVITIES.LOADING' | translate) }}</p>
     </div>
   }
 
@@ -61,7 +61,7 @@
   @if (hasError && !isLoading) {
     <div class="error-state">
       <span class="material-symbols-outlined">error</span>
-      <p>Could not load activities. Make sure the backend is running.</p>
+      <p>{{ 'ACTIVITIES.LOAD_ERROR' | translate }}</p>
     </div>
   }
 
@@ -69,9 +69,9 @@
   @if (!isLoading && !hasError && activities.length === 0) {
     <div class="empty-state">
       <span class="material-symbols-outlined">directions_run</span>
-      <p>No activities this week.</p>
+      <p>{{ 'ACTIVITIES.NO_ACTIVITIES' | translate }}</p>
       @if (!stravaConnected) {
-        <p class="empty-hint">Connect Strava in Settings to sync automatically.</p>
+        <p class="empty-hint">{{ 'ACTIVITIES.CONNECT_HINT' | translate }}</p>
       }
     </div>
   }
@@ -92,7 +92,7 @@
             } @else {
               <span class="material-symbols-outlined sport-icon-large">{{ filteredFeatured.sportIcon }}</span>
             }
-            <span class="featured-badge">Latest</span>
+            <span class="featured-badge">{{ 'ACTIVITIES.LATEST' | translate }}</span>
           </div>
           <div class="featured-body">
             <div class="featured-top">
@@ -103,26 +103,26 @@
             </div>
             <div class="featured-stats">
               <div class="stat-cell">
-                <span class="stat-label">Distance</span>
+                <span class="stat-label">{{ 'COMMON.DISTANCE' | translate }}</span>
                 <span class="stat-value">{{ filteredFeatured.distance }}</span>
               </div>
               <div class="stat-cell">
-                <span class="stat-label">Time</span>
+                <span class="stat-label">{{ 'COMMON.TIME' | translate }}</span>
                 <span class="stat-value">{{ filteredFeatured.time }}</span>
               </div>
               <div class="stat-cell">
-                <span class="stat-label">Avg Pace</span>
+                <span class="stat-label">{{ 'ACTIVITIES.AVG_PACE' | translate }}</span>
                 <span class="stat-value">{{ filteredFeatured.pace }}</span>
               </div>
               <div class="stat-cell">
-                <span class="stat-label">Elev Gain</span>
+                <span class="stat-label">{{ 'ACTIVITIES.ELEV_GAIN' | translate }}</span>
                 <span class="stat-value">{{ filteredFeatured.elevGain }}</span>
               </div>
             </div>
             <div class="featured-actions">
               <button class="btn-primary" [routerLink]="['/activities', filteredFeatured.id]">
                 <span class="material-symbols-outlined">visibility</span>
-                View Details
+                {{ 'ACTIVITIES.VIEW_DETAILS' | translate }}
               </button>
             </div>
           </div>
@@ -145,15 +145,15 @@
             </div>
             <div class="activity-stats">
               <div>
-                <p class="mini-label">Distance</p>
+                <p class="mini-label">{{ 'COMMON.DISTANCE' | translate }}</p>
                 <p class="mini-value">{{ activity.distance }}</p>
               </div>
               <div>
-                <p class="mini-label">Time</p>
+                <p class="mini-label">{{ 'COMMON.TIME' | translate }}</p>
                 <p class="mini-value">{{ activity.time }}</p>
               </div>
               <div>
-                <p class="mini-label">Pace</p>
+                <p class="mini-label">{{ 'COMMON.PACE' | translate }}</p>
                 <p class="mini-value">{{ activity.pace }}</p>
               </div>
             </div>

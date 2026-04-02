@@ -4,16 +4,16 @@
     <header class="map-header">
       <div class="map-header-title">
         <span class="material-symbols-outlined map-icon">map</span>
-        <span>Routenkarte</span>
+        <span>{{ 'DIALOGS.MAP_TITLE' | translate }}</span>
       </div>
       <div class="map-header-actions">
         @if (gpsData?.hasHeartRate && gpsData?.hasPace) {
           <div class="map-toggle">
             <button class="map-toggle-btn" [class.active]="colorMode === 'pace'" (click)="colorMode = 'pace'">
-              Pace
+              {{ 'DIALOGS.MAP_PACE' | translate }}
             </button>
             <button class="map-toggle-btn" [class.active]="colorMode === 'hr'" (click)="colorMode = 'hr'">
-              HF
+              {{ 'DIALOGS.MAP_HR' | translate }}
             </button>
           </div>
         }

@@ -1,13 +1,13 @@
 @if (loading) {
   <div class="not-found">
     <span class="material-symbols-outlined spinning">sync</span>
-    <p>Aktivität wird geladen...</p>
+    <p>{{ 'ACTIVITY_DETAIL.LOADING_ACTIVITY' | translate }}</p>
   </div>
 } @else if (error || !activity) {
   <div class="not-found">
     <span class="material-symbols-outlined">directions_run</span>
-    <p>Aktivität nicht gefunden.</p>
-    <button class="btn-primary" (click)="goBack()">Zurück zu Aktivitäten</button>
+    <p>{{ 'ACTIVITY_DETAIL.NOT_FOUND' | translate }}</p>
+    <button class="btn-primary" (click)="goBack()">{{ 'ACTIVITY_DETAIL.BACK_TO_ACTIVITIES' | translate }}</button>
   </div>
 } @else {
   <div class="detail-page">

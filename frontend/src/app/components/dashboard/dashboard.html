@@ -1,11 +1,11 @@
 <div class="profile-incomplete-card" *ngIf="profileError()">
   <div class="profile-incomplete-icon">&#9888;&#65039;</div>
-  <h3>Profil unvollständig</h3>
-  <p>Damit das Dashboard berechnet werden kann, müssen folgende Felder gepflegt sein:</p>
+  <h3>{{ 'DASHBOARD.PROFILE_INCOMPLETE' | translate }}</h3>
+  <p>{{ 'DASHBOARD.PROFILE_INCOMPLETE_MSG' | translate }}</p>
   <ul>
     <li *ngFor="let field of missingFields()">{{ field }}</li>
   </ul>
-  <a routerLink="/settings" class="btn-settings">Zu den Einstellungen</a>
+  <a routerLink="/settings" class="btn-settings">{{ 'DASHBOARD.GO_TO_SETTINGS' | translate }}</a>
 </div>
 
 <div class="pulse-dashboard" *ngIf="data">
@@ -16,10 +16,10 @@
            [class.readiness-hero--red]="(data.readinessScore) < 50">
     <div class="hero-blob"></div>
     <div class="hero-left">
-      <h3 class="hero-eyebrow">Readiness Score <button class="stat-info-link" (click)="readinessInfoService.open()">Was bedeutet das?</button></h3>
+      <h3 class="hero-eyebrow">{{ 'DASHBOARD.READINESS_SCORE' | translate }} <button class="stat-info-link" (click)="readinessInfoService.open()">{{ 'DASHBOARD.WHAT_DOES_IT_MEAN' | translate }}</button></h3>
       <div class="hero-score-row">
         <span class="hero-number">{{ data.readinessScore }}</span>
-        <span class="hero-denom">/100</span>
+        <span class="hero-denom">{{ 'DASHBOARD.OUT_OF_100' | translate }}</span>
       </div>
       <p class="hero-sub">{{ data.readinessRecommendation }}</p>
 
@@ -41,8 +41,8 @@
     <!-- Load Trend Bar Chart (aktuelle Woche) -->
     <div class="metric-card">
       <div class="card-head">
-        <h4>Trainingsbelastung</h4>
-        <span class="card-tag">AKTUELLE WOCHE</span>
+        <h4>{{ 'DASHBOARD.TRAINING_LOAD' | translate }}</h4>
+        <span class="card-tag">{{ 'DASHBOARD.CURRENT_WEEK' | translate }}</span>
       </div>
       <div class="bar-chart-wrap">
         <div class="bar-col" *ngFor="let bar of barPoints()">
@@ -51,17 +51,17 @@
                [class.bar--future]="bar.future"
                [style.height.%]="bar.height">
             <div class="bar-tooltip" *ngIf="bar.distanceKm > 0 || bar.strain > 0">
-              <span class="tooltip-km">{{ bar.distanceKm | number:'1.1-1' }} km</span>
-              <span class="tooltip-strain">Strain {{ bar.strain | number:'1.0-0' }}</span>
+              <span class="tooltip-km">{{ bar.distanceKm | number:'1.1-1' }} {{ 'COMMON.KM' | translate }}</span>
+              <span class="tooltip-strain">{{ 'COMMON.STRAIN' | translate }} {{ bar.strain | number:'1.0-0' }}</span>
             </div>
           </div>
           <span class="bar-label">{{ bar.label }}</span>
         </div>
       </div>
       <div class="chart-footer">
-        <span class="chart-stat">Strain21: <strong>{{ data.strain21 | number:'1.1-1' }}</strong></span>
+        <span class="chart-stat">{{ 'DASHBOARD.STRAIN_21' | translate }}: <strong>{{ data.strain21 | number:'1.1-1' }}</strong></span>
         <span class="acwr-badge" [ngClass]="'acwr-badge--' + loadFlagClass()">
-          ACWR {{ data.loadStatus.acwr | number:'1.2-2' }} · {{ loadFlagLabel() }}
+          {{ 'DASHBOARD.ACWR' | translate }} {{ data.loadStatus.acwr | number:'1.2-2' }} · {{ loadFlagLabel() }}
         </span>
       </div>
     </div>
@@ -69,7 +69,7 @@
     <!-- Body Battery -->
     <div class="metric-card">
       <div class="card-head">
-        <h4>Body Battery</h4>
+        <h4>{{ 'DASHBOARD.BODY_BATTERY' | translate }}</h4>
         <div class="metric-badge">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M7 2v11h3v9l7-12h-4l4-8z"/></svg>
           <span>{{ data.bodyBattery != null ? data.bodyBattery + '%' : '—' }}</span>
@@ -86,8 +86,8 @@
     <!-- VO2 Max Gauge -->
     <div class="metric-card metric-card--gauge">
       <div class="card-head">
-        <h4>VO2 Max</h4>
-        <span class="card-tag" *ngIf="data.vo2max != null">HF-korrigiert</span>
+        <h4>{{ 'DASHBOARD.VO2_MAX' | translate }}</h4>
+        <span class="card-tag" *ngIf="data.vo2max != null">{{ 'DASHBOARD.HR_CORRECTED' | translate }}</span>
       </div>
       <ng-container *ngIf="data.vo2max != null; else noVo2">
         <div class="gauge-container">
@@ -105,11 +105,11 @@
             <span class="gauge-sublabel" [ngClass]="'gauge-sublabel--' + gaugeClass()">{{ gaugeSublabel() }}</span>
           </div>
         </div>
-        <p class="gauge-footer">ml/kg/min</p>
+        <p class="gauge-footer">{{ 'COMMON.ML_KG_MIN' | translate }}</p>
         <p class="gauge-date" *ngIf="data.vo2maxDate">{{ formatDate(data.vo2maxDate) }}</p>
       </ng-container>
       <ng-template #noVo2>
-        <div class="no-data-hint">Noch kein Lauf hochgeladen</div>
+        <div class="no-data-hint">{{ 'DASHBOARD.NO_RUN_UPLOADED' | translate }}</div>
       </ng-template>
     </div>
 
@@ -122,8 +122,8 @@
         <span class="material-symbols-outlined">local_fire_department</span>
       </div>
       <div class="stat-body">
-        <p class="stat-label">Aktuelle Serie</p>
-        <p class="stat-value">{{ s.currentStreak }} <span class="stat-unit">Tage am Stück</span></p>
+        <p class="stat-label">{{ 'DASHBOARD.CURRENT_STREAK' | translate }}</p>
+        <p class="stat-value">{{ s.currentStreak }} <span class="stat-unit">{{ 'DASHBOARD.DAYS_IN_ROW' | translate }}</span></p>
       </div>
     </div>
     <div class="stat-card" *ngIf="s.longestStreak > 0">
@@ -131,8 +131,8 @@
         <span class="material-symbols-outlined">military_tech</span>
       </div>
       <div class="stat-body">
-        <p class="stat-label">Längste Serie</p>
-        <p class="stat-value">{{ s.longestStreak }} <span class="stat-unit">Tage</span></p>
+        <p class="stat-label">{{ 'DASHBOARD.LONGEST_STREAK' | translate }}</p>
+        <p class="stat-value">{{ s.longestStreak }} <span class="stat-unit">{{ 'COMMON.DAYS' | translate }}</span></p>
       </div>
     </div>
   </div>
@@ -144,8 +144,8 @@
         <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M13.5 5.5c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zM9.8 8.9L7 23h2.1l1.8-8 2.1 2v6h2v-7.5l-2.1-2 .6-3C14.8 12 16.8 13 19 13v-2c-1.9 0-3.5-1-4.3-2.4l-1-1.6c-.4-.6-1-1-1.7-1-.3 0-.5.1-.8.1L6 8.3V13h2V9.6l1.8-.7"/></svg>
       </div>
       <div class="stat-body">
-        <p class="stat-label">21-Tage Trainingsbelastung <button class="stat-info-link" (click)="strainInfoService.open()">Was bedeutet das?</button></p>
-        <p class="stat-value">{{ data.strain21 | number:'1.1-1' }} <span class="stat-unit">Strain</span></p>
+        <p class="stat-label">{{ 'DASHBOARD.LOAD_STATUS_21' | translate }} <button class="stat-info-link" (click)="strainInfoService.open()">{{ 'DASHBOARD.WHAT_DOES_IT_MEAN' | translate }}</button></p>
+        <p class="stat-value">{{ data.strain21 | number:'1.1-1' }} <span class="stat-unit">{{ 'COMMON.STRAIN' | translate }}</span></p>
       </div>
     </div>
 
@@ -154,8 +154,8 @@
         <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg>
       </div>
       <div class="stat-body">
-        <p class="stat-label">Trainingsbelastungsstatus <button class="stat-info-link" (click)="acwrInfoService.open()">Was bedeutet das?</button></p>
-        <p class="stat-value">{{ data.loadStatus.acwr | number:'1.2-2' }} <span class="stat-unit">ACWR · {{ loadFlagLabel() }}</span></p>
+        <p class="stat-label">{{ 'DASHBOARD.LOAD_STATUS' | translate }} <button class="stat-info-link" (click)="acwrInfoService.open()">{{ 'DASHBOARD.WHAT_DOES_IT_MEAN' | translate }}</button></p>
+        <p class="stat-value">{{ data.loadStatus.acwr | number:'1.2-2' }} <span class="stat-unit">{{ 'DASHBOARD.ACWR' | translate }} · {{ loadFlagLabel() }}</span></p>
       </div>
     </div>
   </div>
@@ -164,28 +164,28 @@
   <div class="competition-card" *ngIf="data.nextCompetition">
     <div class="competition-card__header">
       <div>
-        <p class="competition-card__eyebrow">Nächster Wettkampf</p>
+        <p class="competition-card__eyebrow">{{ 'DASHBOARD.NEXT_COMPETITION' | translate }}</p>
         <h3 class="competition-card__name">{{ data.nextCompetition!.competitionName }}</h3>
         <p class="competition-card__location">{{ data.nextCompetition!.competitionLocation }} · {{ formatDate(data.nextCompetition!.date) }}</p>
       </div>
       <div class="competition-card__countdown">
         <span class="countdown-days">{{ data.nextCompetition!.daysUntil }}</span>
-        <span class="countdown-label">Tage</span>
+        <span class="countdown-label">{{ 'COMMON.DAYS' | translate }}</span>
       </div>
     </div>
     <div class="progress-track">
       <div class="progress-bar" [style.width.%]="data.nextCompetition!.elapsedPct"></div>
     </div>
     <div class="progress-labels">
-      <span>Trainingsstart</span>
-      <span>{{ data.nextCompetition!.elapsedPct | number:'1.0-0' }}% absolviert</span>
-      <span>Wettkampftag</span>
+      <span>{{ 'DASHBOARD.TRAINING_START' | translate }}</span>
+      <span>{{ data.nextCompetition!.elapsedPct | number:'1.0-0' }}{{ 'DASHBOARD.PERCENT_COMPLETED' | translate }}</span>
+      <span>{{ 'DASHBOARD.RACE_DAY' | translate }}</span>
     </div>
   </div>
 
   <!-- ── Training Progress ── -->
   <div class="training-progress-section" *ngIf="data.trainingProgress.length > 0">
-    <h4 class="section-title">Trainingsplan-Fortschritt</h4>
+    <h4 class="section-title">{{ 'DASHBOARD.PLAN_PROGRESS' | translate }}</h4>
     <div class="progress-list">
       <div class="progress-item" *ngFor="let tp of data.trainingProgress">
         <div class="progress-item__header">
@@ -195,7 +195,7 @@
         <div class="progress-track">
           <div class="progress-bar" [style.width.%]="progressPct(tp.completed, tp.total)"></div>
         </div>
-        <div class="progress-item__meta">{{ tp.completed }} / {{ tp.total }} Einheiten</div>
+        <div class="progress-item__meta">{{ tp.completed }} / {{ tp.total }} {{ 'DASHBOARD.UNITS' | translate }}</div>
       </div>
     </div>
   </div>
@@ -203,26 +203,26 @@
   <!-- ── Last Run ── -->
   <div class="last-run-card" *ngIf="hasLastRun()">
     <div class="last-run-card__header">
-      <h4>Letzter Lauf</h4>
+      <h4>{{ 'DASHBOARD.LAST_RUN' | translate }}</h4>
       <span class="last-run-date">{{ formatDate(data.lastRun?.date) }}</span>
     </div>
 
     <div class="last-run-metrics">
       <div class="run-metric">
-        <span class="run-metric__label">Strain21</span>
+        <span class="run-metric__label">{{ 'DASHBOARD.STRAIN_21' | translate }}</span>
         <span class="run-metric__value">{{ data.lastRun?.strain21 | number:'1.1-1' }}</span>
       </div>
       <div class="run-metric" *ngIf="(data.lastRun?.driftPct ?? 0) > 0">
-        <span class="run-metric__label">Drift</span>
+        <span class="run-metric__label">{{ 'DASHBOARD.DRIFT' | translate }}</span>
         <span class="run-metric__value">{{ data.lastRun?.driftPct | number:'1.1-1' }}%</span>
       </div>
       <div class="run-metric zone-pill zone-pill--z4" *ngIf="(data.lastRun?.z4Min ?? 0) > 0">
         <span class="run-metric__label">Z4</span>
-        <span class="run-metric__value">{{ data.lastRun?.z4Min | number:'1.0-0' }} min</span>
+        <span class="run-metric__value">{{ data.lastRun?.z4Min | number:'1.0-0' }} {{ 'COMMON.MIN' | translate }}</span>
       </div>
       <div class="run-metric zone-pill zone-pill--z5" *ngIf="(data.lastRun?.z5Min ?? 0) > 0">
         <span class="run-metric__label">Z5</span>
-        <span class="run-metric__value">{{ data.lastRun?.z5Min | number:'1.0-0' }} min</span>
+        <span class="run-metric__value">{{ data.lastRun?.z5Min | number:'1.0-0' }} {{ 'COMMON.MIN' | translate }}</span>
       </div>
     </div>
 

@@ -4,7 +4,7 @@
     <header class="feedback-header">
       <div class="feedback-header-title">
         <span class="material-symbols-outlined feedback-icon">feedback</span>
-        <span>Send Feedback</span>
+        <span>{{ 'DIALOGS.FEEDBACK_TITLE' | translate }}</span>
       </div>
       <button class="feedback-close" (click)="close()">
         <span class="material-symbols-outlined">close</span>
@@ -15,30 +15,30 @@
       @if (submitSuccess()) {
         <div class="feedback-success">
           <span class="material-symbols-outlined success-icon">check_circle</span>
-          <p>Thank you! Your feedback has been sent.</p>
+          <p>{{ 'DIALOGS.FEEDBACK_THANKS' | translate }}</p>
         </div>
       } @else {
         <form (ngSubmit)="submit()" novalidate>
 
           <div class="feedback-field">
-            <label class="field-label">CATEGORY</label>
+            <label class="field-label">{{ 'DIALOGS.FEEDBACK_CATEGORY' | translate }}</label>
             <select [(ngModel)]="category" name="category" class="field-select">
-              <option value="BUG">Bug Report</option>
-              <option value="FEATURE_REQUEST">Feature Request</option>
-              <option value="GENERAL">General Feedback</option>
+              <option value="BUG">{{ 'DIALOGS.FEEDBACK_BUG' | translate }}</option>
+              <option value="FEATURE_REQUEST">{{ 'DIALOGS.FEEDBACK_FEATURE' | translate }}</option>
+              <option value="GENERAL">{{ 'DIALOGS.FEEDBACK_GENERAL' | translate }}</option>
             </select>
           </div>
 
           <div class="feedback-field">
-            <label class="field-label">SUBJECT</label>
+            <label class="field-label">{{ 'DIALOGS.FEEDBACK_SUBJECT' | translate }}</label>
             <input type="text" [(ngModel)]="subject" name="subject"
-                   placeholder="Brief summary..." maxlength="255" class="field-input" />
+                   [placeholder]="'DIALOGS.FEEDBACK_SUBJECT_PLACEHOLDER' | translate" maxlength="255" class="field-input" />
           </div>
 
           <div class="feedback-field">
-            <label class="field-label">MESSAGE</label>
+            <label class="field-label">{{ 'DIALOGS.FEEDBACK_MESSAGE' | translate }}</label>
             <textarea [(ngModel)]="message" name="message"
-                      placeholder="Describe your feedback in detail..."
+                      [placeholder]="'DIALOGS.FEEDBACK_MESSAGE_PLACEHOLDER' | translate"
                       rows="5" class="field-textarea"></textarea>
           </div>
 
@@ -47,9 +47,9 @@
           }
 
           <div class="feedback-actions">
-            <button type="button" class="btn-cancel" (click)="close()">Cancel</button>
+            <button type="button" class="btn-cancel" (click)="close()">{{ 'COMMON.CANCEL' | translate }}</button>
             <button type="submit" class="btn-submit" [disabled]="isSubmitting()">
-              @if (isSubmitting()) { Sending... } @else { Send Feedback }
+              @if (isSubmitting()) { {{ 'DIALOGS.FEEDBACK_SENDING' | translate }} } @else { {{ 'DIALOGS.FEEDBACK_SEND' | translate }} }
             </button>
           </div>
 

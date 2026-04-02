@@ -1,5 +1,6 @@
 import { CommonModule, DecimalPipe } from '@angular/common';
 import { Component, OnInit, signal, computed, inject, ViewChild } from '@angular/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { StatisticsService, TrainingStatsDto, StatsBucket, Vo2MaxPoint } from '../../services/statistics.service';
 import { PersonalRecordService, PersonalRecord } from '../../services/personal-record.service';
 import { PersonalRecordDetailDialogComponent } from '../personal-record-detail-dialog/personal-record-detail-dialog.component';
@@ -18,33 +19,45 @@ type IntensityZone = {
   colorClass: string;
 };
 
-const PERIOD_MAP: Record<string, string> = {
-  'Diese Woche':     'currentWeek',
-  'Letzte Woche':    'lastWeek',
-  'Dieser Monat':    'currentMonth',
-  'Letzte 30 Tage':  'day',
-  'Letzte 12 Wochen':'week',
-  'Dieses Jahr':     'currentYear',
-  'Letzte 12 Monate':'month',
-  'Alle Zeit':       'all',
+const PERIOD_KEYS = [
+  'STATISTICS.PERIOD_THIS_WEEK',
+  'STATISTICS.PERIOD_LAST_WEEK',
+  'STATISTICS.PERIOD_THIS_MONTH',
+  'STATISTICS.PERIOD_LAST_30',
+  'STATISTICS.PERIOD_LAST_12_WEEKS',
+  'STATISTICS.PERIOD_THIS_YEAR',
+  'STATISTICS.PERIOD_LAST_12_MONTHS',
+  'STATISTICS.PERIOD_ALL_TIME',
+];
+
+const PERIOD_API_MAP: Record<string, string> = {
+  'STATISTICS.PERIOD_THIS_WEEK':     'currentWeek',
+  'STATISTICS.PERIOD_LAST_WEEK':     'lastWeek',
+  'STATISTICS.PERIOD_THIS_MONTH':    'currentMonth',
+  'STATISTICS.PERIOD_LAST_30':       'day',
+  'STATISTICS.PERIOD_LAST_12_WEEKS': 'week',
+  'STATISTICS.PERIOD_THIS_YEAR':     'currentYear',
+  'STATISTICS.PERIOD_LAST_12_MONTHS':'month',
+  'STATISTICS.PERIOD_ALL_TIME':      'all',
 };
 
 @Component({
   selector: 'app-statistics',
   standalone: true,
-  imports: [CommonModule, DecimalPipe, PersonalRecordDetailDialogComponent, AddPersonalRecordDialogComponent, ProOverlay],
+  imports: [CommonModule, DecimalPipe, TranslateModule, PersonalRecordDetailDialogComponent, AddPersonalRecordDialogComponent, ProOverlay],
   templateUrl: './statistics.html',
   styleUrl: './statistics.scss'
 })
 export class Statistics implements OnInit {
   private readonly statisticsService = inject(StatisticsService);
   private readonly personalRecordService = inject(PersonalRecordService);
+  private readonly translate = inject(TranslateService);
 
   @ViewChild('detailDialog') private detailDialog!: PersonalRecordDetailDialogComponent;
   @ViewChild('addDialog') private addDialog!: AddPersonalRecordDialogComponent;
 
-  protected readonly periods = Object.keys(PERIOD_MAP);
-  protected readonly selectedPeriodLabel = signal('Letzte Woche');
+  protected readonly periodKeys = PERIOD_KEYS;
+  protected readonly selectedPeriodKey = signal('STATISTICS.PERIOD_LAST_WEEK');
 
   protected stats: TrainingStatsDto | null = null;
   protected loading = false;
@@ -113,8 +126,8 @@ export class Statistics implements OnInit {
     return h > 0 ? `${h}:${mm}:${ss}` : `${mm}:${ss}`;
   }
 
-  protected setPeriod(label: string): void {
-    this.selectedPeriodLabel.set(label);
+  protected setPeriod(key: string): void {
+    this.selectedPeriodKey.set(key);
     this.loadStats();
   }
 
@@ -137,7 +150,7 @@ export class Statistics implements OnInit {
   }
 
   private loadStats(): void {
-    const period = PERIOD_MAP[this.selectedPeriodLabel()];
+    const period = PERIOD_API_MAP[this.selectedPeriodKey()];
     this.loading = true;
     this.statisticsService.getStats(period).subscribe({
       next: (data) => {
@@ -277,12 +290,16 @@ export class Statistics implements OnInit {
     }));
 
     // Labels: max 6, gleichmäßig verteilt
-    const MONTH_NAMES = ['Jan', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dez'];
+    const MONTH_KEYS = [
+      'COMMON.MONTH_JAN', 'COMMON.MONTH_FEB', 'COMMON.MONTH_MAR', 'COMMON.MONTH_APR',
+      'COMMON.MONTH_MAY', 'COMMON.MONTH_JUN', 'COMMON.MONTH_JUL', 'COMMON.MONTH_AUG',
+      'COMMON.MONTH_SEP', 'COMMON.MONTH_OCT', 'COMMON.MONTH_NOV', 'COMMON.MONTH_DEC',
+    ];
     const labelCount = Math.min(6, points.length);
     this.fitnessTrendLabels = Array.from({ length: labelCount }, (_, i) => {
       const idx = Math.round(i * (points.length - 1) / (labelCount - 1));
       const d = new Date(points[idx].date);
-      return `${MONTH_NAMES[d.getMonth()]} ${d.getFullYear()}`;
+      return `${this.translate.instant(MONTH_KEYS[d.getMonth()])} ${d.getFullYear()}`;
     });
   }
 
@@ -296,20 +313,20 @@ export class Statistics implements OnInit {
 
     if (total === 0) {
       return [
-        { label: 'Easy (Zone 1-2)', value: 0, colorClass: 'zone--easy' },
-        { label: 'Tempo (Zone 3)', value: 0, colorClass: 'zone--tempo' },
-        { label: 'Threshold (Zone 4)', value: 0, colorClass: 'zone--threshold' },
-        { label: 'Anaerobic (Zone 5)', value: 0, colorClass: 'zone--anaerobic' },
+        { label: this.translate.instant('STATISTICS.ZONE_EASY'), value: 0, colorClass: 'zone--easy' },
+        { label: this.translate.instant('STATISTICS.ZONE_TEMPO'), value: 0, colorClass: 'zone--tempo' },
+        { label: this.translate.instant('STATISTICS.ZONE_THRESHOLD'), value: 0, colorClass: 'zone--threshold' },
+        { label: this.translate.instant('STATISTICS.ZONE_ANAEROBIC'), value: 0, colorClass: 'zone--anaerobic' },
       ];
     }
 
     const pct = (seconds: number) => Math.round((seconds / total) * 100);
 
     return [
-      { label: 'Easy (Zone 1-2)', value: pct(z1 + z2), colorClass: 'zone--easy' },
-      { label: 'Tempo (Zone 3)', value: pct(z3), colorClass: 'zone--tempo' },
-      { label: 'Threshold (Zone 4)', value: pct(z4), colorClass: 'zone--threshold' },
-      { label: 'Anaerobic (Zone 5)', value: pct(z5), colorClass: 'zone--anaerobic' },
+      { label: this.translate.instant('STATISTICS.ZONE_EASY'), value: pct(z1 + z2), colorClass: 'zone--easy' },
+      { label: this.translate.instant('STATISTICS.ZONE_TEMPO'), value: pct(z3), colorClass: 'zone--tempo' },
+      { label: this.translate.instant('STATISTICS.ZONE_THRESHOLD'), value: pct(z4), colorClass: 'zone--threshold' },
+      { label: this.translate.instant('STATISTICS.ZONE_ANAEROBIC'), value: pct(z5), colorClass: 'zone--anaerobic' },
     ];
   }
 }

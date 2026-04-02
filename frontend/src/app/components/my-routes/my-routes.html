@@ -4,10 +4,10 @@
     <div class="header-left">
       <a routerLink="/community-routes" class="back-link">
         <span class="material-symbols-outlined">arrow_back</span>
-        <span>ROUTES</span>
+        <span>{{ 'COMMUNITY.ROUTES' | translate }}</span>
       </a>
-      <h1>MY<br/><span class="accent">ROUTES</span></h1>
-      <p class="subtitle">Your shared routes &amp; performance</p>
+      <h1>{{ 'COMMUNITY.MY_ROUTES_TITLE' | translate }}<br/><span class="accent">{{ 'COMMUNITY.ROUTES' | translate }}</span></h1>
+      <p class="subtitle">{{ 'COMMUNITY.MY_ROUTES_SUBTITLE' | translate }}</p>
     </div>
   </div>
 
@@ -15,14 +15,14 @@
   @if (loading()) {
     <div class="loading-state">
       <span class="material-symbols-outlined spinning">progress_activity</span>
-      <h3>Loading Routes</h3>
-      <p>Fetching your shared routes...</p>
+      <h3>{{ 'COMMUNITY.LOADING_ROUTES' | translate }}</h3>
+      <p>{{ 'COMMUNITY.FETCHING' | translate }}</p>
     </div>
   } @else if (routes().length === 0) {
     <div class="empty-state">
       <span class="material-symbols-outlined">share_off</span>
-      <h3>No Shared Routes</h3>
-      <p>Share a route from any activity with GPS data to see it here.</p>
+      <h3>{{ 'COMMUNITY.NO_SHARED' | translate }}</h3>
+      <p>{{ 'COMMUNITY.NO_SHARED_HINT' | translate }}</p>
     </div>
   } @else {
     <!-- Route Cards Grid -->
@@ -38,7 +38,7 @@
             </div>
             <div class="visibility-badge">
               <span class="material-symbols-outlined">{{ route.visibility === 'PUBLIC' ? 'public' : 'group' }}</span>
-              <span>{{ route.visibility }}</span>
+              <span>{{ route.visibility === 'PUBLIC' ? ('COMMUNITY.PUBLIC' | translate) : ('COMMUNITY.FOLLOWERS_ONLY' | translate) }}</span>
             </div>
           </div>
 
@@ -47,17 +47,17 @@
             <div class="card-stats">
               <div class="stats-left">
                 <div class="stat-block">
-                  <div class="stat-label">Distance</div>
+                  <div class="stat-label">{{ 'COMMON.DISTANCE' | translate }}</div>
                   <div class="stat-value accent">{{ formatDistance(route.distanceKm) }}</div>
                 </div>
                 @if (route.elevationGainM) {
                   <div class="stat-block">
-                    <div class="stat-label">Elevation</div>
+                    <div class="stat-label">{{ 'COMMON.ELEVATION' | translate }}</div>
                     <div class="stat-value">{{ route.elevationGainM }}M</div>
                   </div>
                 }
                 <div class="stat-block">
-                  <div class="stat-label">Athletes</div>
+                  <div class="stat-label">{{ 'COMMUNITY.ATHLETES' | translate }}</div>
                   <div class="stat-value">{{ route.athleteCount }}</div>
                 </div>
               </div>
@@ -66,13 +66,13 @@
             @if (route.recordTimeSeconds) {
               <div class="record-badge">
                 <span class="material-symbols-outlined">emoji_events</span>
-                <span>RECORD {{ formatTime(route.recordTimeSeconds) }}</span>
+                <span>{{ 'COMMUNITY.RECORD' | translate }} {{ formatTime(route.recordTimeSeconds) }}</span>
               </div>
             }
 
             <div class="card-actions">
-              <a [routerLink]="['/community-routes', route.id]" class="btn-view">VIEW DETAIL</a>
-              <button class="btn-unshare" (click)="unshare(route)" title="Unshare route">
+              <a [routerLink]="['/community-routes', route.id]" class="btn-view">{{ 'COMMUNITY.VIEW_DETAIL' | translate }}</a>
+              <button class="btn-unshare" (click)="unshare(route)" [title]="'COMMUNITY.NO_SHARED' | translate">
                 <span class="material-symbols-outlined">delete</span>
               </button>
             </div>

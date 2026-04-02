@@ -4,7 +4,7 @@
     <header class="readiness-header">
       <div class="readiness-header-title">
         <span class="material-symbols-outlined readiness-header-icon">info</span>
-        <span>Was bedeutet der Readiness Score?</span>
+        <span>{{ 'DIALOGS.READINESS_TITLE' | translate }}</span>
       </div>
       <button class="readiness-close" (click)="close()">
         <span class="material-symbols-outlined">close</span>
@@ -12,66 +12,49 @@
     </header>
 
     <div class="readiness-body">
-      <p class="readiness-intro">
-        Der <strong>Readiness Score</strong> zeigt auf einer Skala von 0 bis 100,
-        wie bereit dein Körper für die nächste Trainingseinheit ist. Er berücksichtigt
-        deine aktuelle Trainingsbelastung, Erholungszeit und Belastungstrends der
-        letzten Tage.
-      </p>
+      <p class="readiness-intro">{{ 'DIALOGS.READINESS_DESCRIPTION' | translate }}</p>
 
       <div class="readiness-zones">
         <div class="readiness-zone readiness-zone--excellent">
           <div class="readiness-zone-header">
             <span class="readiness-zone-dot"></span>
-            <span class="readiness-zone-range">90 – 100</span>
-            <span class="readiness-zone-label">Exzellent</span>
+            <span class="readiness-zone-range">{{ 'DIALOGS.READINESS_EXCELLENT_RANGE' | translate }}</span>
+            <span class="readiness-zone-label">{{ 'DIALOGS.READINESS_EXCELLENT' | translate }}</span>
           </div>
-          <p class="readiness-zone-desc">
-            Dein Körper ist voll erholt und leistungsbereit — idealer Zeitpunkt
-            für intensive Einheiten, Intervalle oder Wettkämpfe.
-          </p>
+          <p class="readiness-zone-desc">{{ 'DIALOGS.READINESS_EXCELLENT_DESC' | translate }}</p>
         </div>
 
         <div class="readiness-zone readiness-zone--good">
           <div class="readiness-zone-header">
             <span class="readiness-zone-dot"></span>
-            <span class="readiness-zone-range">70 – 89</span>
-            <span class="readiness-zone-label">Gut</span>
+            <span class="readiness-zone-range">{{ 'DIALOGS.READINESS_GOOD_RANGE' | translate }}</span>
+            <span class="readiness-zone-label">{{ 'DIALOGS.READINESS_GOOD' | translate }}</span>
           </div>
-          <p class="readiness-zone-desc">
-            Gute Trainingsbereitschaft — du kannst normal trainieren und
-            moderate bis hohe Belastungen gut verkraften.
-          </p>
+          <p class="readiness-zone-desc">{{ 'DIALOGS.READINESS_GOOD_DESC' | translate }}</p>
         </div>
 
         <div class="readiness-zone readiness-zone--moderate">
           <div class="readiness-zone-header">
             <span class="readiness-zone-dot"></span>
-            <span class="readiness-zone-range">50 – 69</span>
-            <span class="readiness-zone-label">Moderat</span>
+            <span class="readiness-zone-range">{{ 'DIALOGS.READINESS_MODERATE_RANGE' | translate }}</span>
+            <span class="readiness-zone-label">{{ 'DIALOGS.READINESS_MODERATE' | translate }}</span>
           </div>
-          <p class="readiness-zone-desc">
-            Leichte Ermüdung erkennbar — passe die Intensität an und setze
-            auf lockere Läufe oder aktive Erholung.
-          </p>
+          <p class="readiness-zone-desc">{{ 'DIALOGS.READINESS_MODERATE_DESC' | translate }}</p>
         </div>
 
         <div class="readiness-zone readiness-zone--low">
           <div class="readiness-zone-header">
             <span class="readiness-zone-dot"></span>
-            <span class="readiness-zone-range">&lt; 50</span>
-            <span class="readiness-zone-label">Niedrig</span>
+            <span class="readiness-zone-range">{{ 'DIALOGS.READINESS_LOW_RANGE' | translate }}</span>
+            <span class="readiness-zone-label">{{ 'DIALOGS.READINESS_LOW' | translate }}</span>
           </div>
-          <p class="readiness-zone-desc">
-            Deutliche Ermüdung — dein Körper braucht Erholung. Priorisiere
-            Ruhetage, Schlaf und Regeneration, um Übertraining zu vermeiden.
-          </p>
+          <p class="readiness-zone-desc">{{ 'DIALOGS.READINESS_LOW_DESC' | translate }}</p>
         </div>
       </div>
 
       <div class="readiness-tip">
         <span class="material-symbols-outlined readiness-tip-icon">lightbulb</span>
-        <p>Der Readiness Score ist ein Richtwert — höre immer auch auf dein eigenes Körpergefühl und passe dein Training entsprechend an.</p>
+        <p>{{ 'DIALOGS.READINESS_TIP' | translate }}</p>
       </div>
     </div>
   </div>

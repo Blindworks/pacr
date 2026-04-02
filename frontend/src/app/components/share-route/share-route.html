@@ -3,21 +3,21 @@
     <button class="back-btn" (click)="goBack()">
       <span class="material-symbols-outlined">arrow_back</span>
     </button>
-    <h1>Share as Community Route</h1>
+    <h1>{{ 'COMMUNITY.SHARE_TITLE' | translate }}</h1>
   </div>
 
   @if (loading()) {
     <div class="loading-state">
       <span class="material-symbols-outlined spinning">progress_activity</span>
-      <p>Loading activity...</p>
+      <p>{{ 'COMMUNITY.LOADING_ACTIVITY' | translate }}</p>
     </div>
   } @else if (activity(); as act) {
     <div class="activity-summary">
-      <h3>{{ act.activityName || 'Activity' }}</h3>
+      <h3>{{ act.activityName }}</h3>
       <div class="summary-stats">
         <span>{{ formatDistance(act.distanceKm) }}</span>
         @if (act.elevationGainM) {
-          <span>{{ act.elevationGainM }}m elev</span>
+          <span>{{ act.elevationGainM }}m</span>
         }
         <span>{{ act.trainingDate }}</span>
       </div>
@@ -25,22 +25,22 @@
 
     <div class="form">
       <div class="form-group">
-        <label for="routeName">Route Name</label>
+        <label for="routeName">{{ 'COMMUNITY.ROUTE_NAME' | translate }}</label>
         <input id="routeName" type="text" [value]="routeName()"
                (input)="routeName.set($any($event.target).value)"
-               placeholder="Give your route a name" />
+               [placeholder]="'COMMUNITY.ROUTE_NAME_PLACEHOLDER' | translate" />
       </div>
 
       <div class="form-group">
-        <label>Visibility</label>
+        <label>{{ 'COMMUNITY.VISIBILITY' | translate }}</label>
         <div class="visibility-options">
           <button [class.active]="visibility() === 'PUBLIC'" (click)="visibility.set('PUBLIC')">
             <span class="material-symbols-outlined">public</span>
-            Public
+            {{ 'COMMUNITY.PUBLIC' | translate }}
           </button>
           <button [class.active]="visibility() === 'FOLLOWERS_ONLY'" (click)="visibility.set('FOLLOWERS_ONLY')">
             <span class="material-symbols-outlined">group</span>
-            Followers Only
+            {{ 'COMMUNITY.FOLLOWERS_ONLY' | translate }}
           </button>
         </div>
       </div>
@@ -52,7 +52,7 @@
       <button class="btn btn-primary btn-lg" (click)="share()"
               [disabled]="saving() || !routeName()">
         <span class="material-symbols-outlined">share</span>
-        {{ saving() ? 'Sharing...' : 'Share Route' }}
+        {{ saving() ? ('COMMUNITY.SHARING' | translate) : ('COMMUNITY.SHARE_ROUTE' | translate) }}
       </button>
     </div>
   }

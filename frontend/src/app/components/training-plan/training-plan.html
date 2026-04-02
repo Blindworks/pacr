@@ -1,20 +1,20 @@
 <div class="tp-page" *ngIf="!isLoading && !hasError && hasPlan">
   <header class="tp-header">
     <div class="tp-header__left">
-      <span class="tp-eyebrow">Active Program</span>
+      <span class="tp-eyebrow">{{ 'TRAINING_PLAN.ACTIVE_PROGRAM' | translate }}</span>
       <h2 class="tp-title">{{ planName }}</h2>
       <p class="tp-subtitle">{{ weekLabel }}</p>
     </div>
     <div class="tp-header__right">
       <div class="tp-progress">
         <div class="tp-progress__labels">
-          <span>Plan Progress</span>
+          <span>{{ 'TRAINING_PLAN.PLAN_PROGRESS' | translate }}</span>
           <span class="tp-progress__pct">{{ progressPercent }}%</span>
         </div>
         <div class="tp-progress__bar">
           <div class="tp-progress__fill" [style.width.%]="progressPercent"></div>
         </div>
-        <p class="tp-progress__sub">{{ completedSessions }} of {{ totalSessions }} sessions completed</p>
+        <p class="tp-progress__sub">{{ completedSessions }} {{ 'TRAINING_PLAN.OF' | translate }} {{ totalSessions }} {{ 'TRAINING_PLAN.SESSIONS_COMPLETED' | translate }}</p>
       </div>
     </div>
   </header>
@@ -23,7 +23,7 @@
     <section class="tp-adjustments">
       <div class="tp-adjustments__header">
         <span class="material-symbols-outlined">auto_fix_high</span>
-        <h3>Planänderungen vorgeschlagen</h3>
+        <h3>{{ 'TRAINING_PLAN.ADJUSTMENTS_SUGGESTED' | translate }}</h3>
         <span class="tp-adjustments__count">{{ pendingAdjustments.length }}</span>
       </div>
       <div class="tp-adjustments__list">
@@ -81,9 +81,9 @@
               @if (day.status === 'rest') {
                 <div class="tp-day__empty">
                   <div class="tp-day__title-row">
-                    <h4>Rest Day</h4>
+                    <h4>{{ 'TRAINING_PLAN.REST_DAY' | translate }}</h4>
                   </div>
-                  <p class="tp-day__sub">Erholung &amp; Mobilität</p>
+                  <p class="tp-day__sub">{{ 'TRAINING_PLAN.REST_SUBTITLE' | translate }}</p>
                 </div>
                 <span class="material-symbols-outlined tp-icon--muted">hotel</span>
               } @else {
@@ -114,18 +114,18 @@
                             <h4>{{ session.title }}</h4>
                             <span class="tp-plan-chip">{{ session.competitionName || 'Wettkampf' }}</span>
                             @if (session.status === 'today') {
-                              <span class="tp-today-badge">Today</span>
+                              <span class="tp-today-badge">{{ 'COMMON.TODAY' | translate }}</span>
                             } @else if (session.status === 'skipped') {
-                              <span class="tp-state-badge tp-state-badge--skipped">Skipped</span>
+                              <span class="tp-state-badge tp-state-badge--skipped">{{ 'TRAINING_PLAN.SKIPPED' | translate }}</span>
                             } @else if (session.status === 'completed') {
-                              <span class="tp-state-badge">Completed</span>
+                              <span class="tp-state-badge">{{ 'TRAINING_PLAN.COMPLETED' | translate }}</span>
                             }
                           </div>
                           <p class="tp-day__sub">{{ session.subtitle }}</p>
                           @if (session.isAiMoved) {
                             <span class="ai-badge">
                               <span class="material-symbols-outlined">smart_toy</span>
-                              KI Coach: von {{ formatShortDate(session.originalDate!) }}
+                              {{ 'TRAINING_PLAN.AI_COACH_FROM' | translate }} {{ formatShortDate(session.originalDate!) }}
                             </span>
                           }
                         </div>
@@ -137,19 +137,19 @@
                           [class.is-active]="session.status === 'completed'"
                           (click)="markSession(session, 'completed')">
                           <span class="material-symbols-outlined">check</span>
-                          Erledigt
+                          {{ 'TRAINING_PLAN.MARK_DONE' | translate }}
                         </button>
                         <button
                           class="tp-action-btn tp-action-btn--skip"
                           [class.is-active]="session.status === 'skipped'"
                           (click)="markSession(session, 'skipped')">
                           <span class="material-symbols-outlined">close</span>
-                          Skip
+                          {{ 'TRAINING_PLAN.SKIP' | translate }}
                         </button>
                         @if (session.status === 'today') {
                           <button class="tp-start-btn" (click)="showWorkout(session)">
                             <span class="material-symbols-outlined">play_arrow</span>
-                            Show workout
+                            {{ 'TRAINING_PLAN.SHOW_WORKOUT' | translate }}
                           </button>
                         }
                       </div>
@@ -168,7 +168,7 @@
       <section class="tp-insights">
         <div class="tp-insights__head">
           <span class="material-symbols-outlined">psychology</span>
-          <h3>Smart Insights</h3>
+          <h3>{{ 'TRAINING_PLAN.SMART_INSIGHTS' | translate }}</h3>
         </div>
         <div class="tp-insights__cards">
           @for (insight of insights; track insight.title) {

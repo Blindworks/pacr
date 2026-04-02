@@ -1,9 +1,11 @@
 import { Component, ElementRef, ViewChild, effect, inject, OnDestroy } from '@angular/core';
 import { StrainInfoDialogService } from '../../services/strain-info-dialog.service';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-strain-info-dialog',
   standalone: true,
+  imports: [TranslateModule],
   templateUrl: './strain-info-dialog.html',
   styleUrl: './strain-info-dialog.scss'
 })

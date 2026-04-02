@@ -8,27 +8,27 @@
 
     <div class="glass-panel">
       <div class="panel-header">
-        <h2>Welcome Back</h2>
-        <p>Push your limits. Track your progress.</p>
+        <h2>{{ 'LOGIN.WELCOME' | translate }}</h2>
+        <p>{{ 'LOGIN.SUBTITLE' | translate }}</p>
       </div>
 
       @if (verifiedSuccess()) {
         <div class="verified-banner">
           <span class="material-symbols-outlined">check_circle</span>
-          E-Mail erfolgreich bestätigt. Bitte einloggen.
+          {{ 'LOGIN.EMAIL_VERIFIED' | translate }}
         </div>
       }
 
       <form (ngSubmit)="onSubmit()" class="login-form">
         <div class="field-group">
-          <label>Email Address</label>
+          <label>{{ 'LOGIN.EMAIL_LABEL' | translate }}</label>
           <div class="input-wrapper">
             <span class="material-symbols-outlined input-icon">mail</span>
             <input
               type="email"
               [(ngModel)]="email"
               name="email"
-              placeholder="runner@example.com"
+              [placeholder]="'LOGIN.EMAIL_PLACEHOLDER' | translate"
               autocomplete="email"
             />
           </div>
@@ -36,8 +36,8 @@
 
         <div class="field-group">
           <div class="label-row">
-            <label>Password</label>
-            <a routerLink="/forgot-password" class="forgot-link">Forgot?</a>
+            <label>{{ 'LOGIN.PASSWORD_LABEL' | translate }}</label>
+            <a routerLink="/forgot-password" class="forgot-link">{{ 'LOGIN.FORGOT' | translate }}</a>
           </div>
           <div class="input-wrapper">
             <span class="material-symbols-outlined input-icon">lock</span>
@@ -55,12 +55,12 @@
           <p class="login-error">{{ error() }}</p>
         }
         <button type="submit" class="btn-login" [disabled]="loading()">
-          {{ loading() ? 'LOGGING IN...' : 'LOG IN' }}
+          {{ loading() ? ('LOGIN.LOGGING_IN' | translate) : ('LOGIN.LOG_IN' | translate) }}
         </button>
       </form>
 
       <div class="divider">
-        <span>Connect With</span>
+        <span>{{ 'LOGIN.CONNECT_WITH' | translate }}</span>
       </div>
 
       <div class="social-grid">
@@ -81,14 +81,14 @@
       </div>
 
       <p class="signup-text">
-        Don't have an account? <a routerLink="/signup" class="signup-link">Sign Up</a>
+        {{ 'LOGIN.NO_ACCOUNT' | translate }} <a routerLink="/signup" class="signup-link">{{ 'LOGIN.SIGN_UP' | translate }}</a>
       </p>
     </div>
 
     <footer class="login-footer">
-      <a href="#">Terms</a>
-      <a href="#">Privacy</a>
-      <a href="#">Support</a>
+      <a href="#">{{ 'LOGIN.TERMS' | translate }}</a>
+      <a href="#">{{ 'LOGIN.PRIVACY' | translate }}</a>
+      <a href="#">{{ 'LOGIN.SUPPORT' | translate }}</a>
     </footer>
   </div>
 </div>

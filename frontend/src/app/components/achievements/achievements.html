@@ -1,14 +1,14 @@
 <app-pro-overlay featureKey="achievements">
 <div class="achievements-page">
   <div class="page-header">
-    <h1>Achievements</h1>
-    <p class="page-subtitle">Track your milestones and unlock badges</p>
+    <h1>{{ 'ACHIEVEMENTS.TITLE' | translate }}</h1>
+    <p class="page-subtitle">{{ 'ACHIEVEMENTS.SUBTITLE' | translate }}</p>
   </div>
 
   @if (loading()) {
     <div class="loading">
       <span class="material-symbols-outlined spin">progress_activity</span>
-      <span>Loading achievements...</span>
+      <span>{{ 'ACHIEVEMENTS.LOADING' | translate }}</span>
     </div>
   } @else {
     <!-- Time-bound achievements (active challenges) -->
@@ -16,7 +16,7 @@
       <section class="category-section">
         <div class="category-header">
           <span class="material-symbols-outlined category-icon">timer</span>
-          <h2>Active Challenges</h2>
+          <h2>{{ 'ACHIEVEMENTS.ACTIVE_CHALLENGES' | translate }}</h2>
         </div>
         <div class="badge-grid">
           @for (a of getTimeBoundActive(); track a.id) {
@@ -49,7 +49,7 @@
       <section class="category-section">
         <div class="category-header">
           <span class="material-symbols-outlined category-icon">history</span>
-          <h2>Past Challenges</h2>
+          <h2>{{ 'ACHIEVEMENTS.PAST_CHALLENGES' | translate }}</h2>
         </div>
         <div class="badge-grid">
           @for (a of getTimeBoundExpired(); track a.id) {
@@ -63,7 +63,7 @@
                 @if (a.unlocked) {
                   <span class="badge-date">{{ formatDate(a.unlockedAt) }}</span>
                 } @else {
-                  <span class="badge-expired-label">Expired</span>
+                  <span class="badge-expired-label">{{ 'ACHIEVEMENTS.EXPIRED' | translate }}</span>
                 }
               </div>
             </div>
@@ -78,7 +78,7 @@
         <section class="category-section">
           <div class="category-header">
             <span class="material-symbols-outlined category-icon">{{ cat.icon }}</span>
-            <h2>{{ cat.label }}</h2>
+            <h2>{{ cat.labelKey | translate }}</h2>
           </div>
           <div class="badge-grid">
             @for (a of getPermanentByCategory(cat.key); track a.id) {
@@ -129,12 +129,12 @@
       @if (a.unlocked) {
         <div class="dialog-status unlocked">
           <span class="material-symbols-outlined">check_circle</span>
-          <span>Unlocked on {{ formatDate(a.unlockedAt) }}</span>
+          <span>{{ 'ACHIEVEMENTS.UNLOCKED_ON' | translate }} {{ formatDate(a.unlockedAt) }}</span>
         </div>
       } @else if (a.expired) {
         <div class="dialog-status expired">
           <span class="material-symbols-outlined">timer_off</span>
-          <span>Challenge expired</span>
+          <span>{{ 'ACHIEVEMENTS.CHALLENGE_EXPIRED' | translate }}</span>
         </div>
         <div class="dialog-progress">
           <div class="progress-bar large">
@@ -151,7 +151,7 @@
         </div>
       }
 
-      <button class="dialog-close-btn" (click)="closeDetail()">Close</button>
+      <button class="dialog-close-btn" (click)="closeDetail()">{{ 'COMMON.CLOSE' | translate }}</button>
     </div>
   }
 </dialog>

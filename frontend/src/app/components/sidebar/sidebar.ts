@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy, inject, signal, computed, output, HostListener } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive, NavigationEnd } from '@angular/router';
 import { NgClass } from '@angular/common';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { PaceCalculatorService } from '../../services/pace-calculator.service';
 import { AboutDialogService } from '../../services/about-dialog.service';
 import { UserService } from '../../services/user.service';
@@ -12,7 +13,7 @@ import { filter } from 'rxjs/operators';
 @Component({
   selector: 'app-sidebar',
   standalone: true,
-  imports: [RouterLink, RouterLinkActive, NgClass],
+  imports: [RouterLink, RouterLinkActive, NgClass, TranslateModule],
   templateUrl: './sidebar.html',
   styleUrl: './sidebar.scss'
 })
@@ -36,6 +37,7 @@ export class Sidebar implements OnInit, OnDestroy {
   private readonly aboutDialog = inject(AboutDialogService);
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
+  private readonly translate = inject(TranslateService);
   protected readonly userService = inject(UserService);
   protected readonly themeService = inject(ThemeService);
   protected readonly subscriptionService = inject(SubscriptionService);
@@ -54,9 +56,9 @@ export class Sidebar implements OnInit, OnDestroy {
 
   readonly membershipLabel = computed(() => {
     const role = this.userService.currentUser()?.role;
-    if (role === 'ADMIN') return 'Admin';
-    if (this.subscriptionService.isPro()) return 'Pro Member';
-    return 'Member';
+    if (role === 'ADMIN') return this.translate.instant('SIDEBAR.ADMIN');
+    if (this.subscriptionService.isPro()) return this.translate.instant('SIDEBAR.PRO_MEMBER');
+    return this.translate.instant('SIDEBAR.MEMBER');
   });
 
   ngOnInit(): void {

@@ -2,11 +2,12 @@ import { Component, ElementRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { GpsStreamDto } from '../../services/activity.service';
 import { ActivityMapComponent } from '../activity-map/activity-map';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-map-dialog',
   standalone: true,
-  imports: [CommonModule, ActivityMapComponent],
+  imports: [CommonModule, ActivityMapComponent, TranslateModule],
   templateUrl: './map-dialog.html',
   styleUrl: './map-dialog.scss'
 })

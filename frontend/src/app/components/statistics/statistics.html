@@ -2,17 +2,17 @@
 <section class="analytics-view">
   <header class="analytics-header">
     <div>
-      <h1>Analytics &amp; Performance</h1>
-      <p>Deep dive into your physiological data and training progression.</p>
+      <h1>{{ 'STATISTICS.TITLE' | translate }}</h1>
+      <p>{{ 'STATISTICS.SUBTITLE' | translate }}</p>
     </div>
     <div class="header-actions">
       <button class="btn-outline" type="button">
         <span class="material-symbols-outlined">file_download</span>
-        Export PDF
+        {{ 'STATISTICS.EXPORT_PDF' | translate }}
       </button>
       <select class="period-select" (change)="setPeriod($any($event.target).value)">
-        @for (period of periods; track period) {
-          <option [value]="period" [selected]="period === selectedPeriodLabel()">{{ period }}</option>
+        @for (key of periodKeys; track key) {
+          <option [value]="key" [selected]="key === selectedPeriodKey()">{{ key | translate }}</option>
         }
       </select>
     </div>
@@ -21,33 +21,33 @@
   <div class="top-metrics">
     <article class="metric-card">
       <div class="metric-row">
-        <span class="metric-label">Total Volume</span>
+        <span class="metric-label">{{ 'STATISTICS.TOTAL_VOLUME' | translate }}</span>
       </div>
       <div class="metric-value-row">
         <strong>{{ stats?.totalDistanceKm | number:'1.0-1' }}</strong>
-        <span>KM</span>
+        <span>{{ 'COMMON.KM' | translate }}</span>
       </div>
       <div class="progress-track"><div class="progress-fill" style="width: 78%"></div></div>
     </article>
 
     <article class="metric-card">
       <div class="metric-row">
-        <span class="metric-label">Activities</span>
+        <span class="metric-label">{{ 'STATISTICS.ACTIVITIES' | translate }}</span>
       </div>
       <div class="metric-value-row">
         <strong>{{ stats?.totalActivityCount ?? '--' }}</strong>
-        <span>Total</span>
+        <span>{{ 'STATISTICS.TOTAL' | translate }}</span>
       </div>
-      <p class="metric-subline"><span class="material-symbols-outlined">trending_up</span>{{ selectedPeriodLabel() }}</p>
+      <p class="metric-subline"><span class="material-symbols-outlined">trending_up</span>{{ selectedPeriodKey() | translate }}</p>
     </article>
 
     <article class="metric-card">
       <div class="metric-row">
-        <span class="metric-label">Avg. Pace</span>
+        <span class="metric-label">{{ 'STATISTICS.AVG_PACE' | translate }}</span>
       </div>
       <div class="metric-value-row">
         <strong>{{ formatPace(stats?.avgPaceSecondsPerKm ?? 0) }}</strong>
-        <span>MIN/KM</span>
+        <span>{{ 'STATISTICS.MIN_KM' | translate }}</span>
       </div>
       <p class="metric-subline"><span class="material-symbols-outlined">speed</span>Distance-weighted average</p>
     </article>

@@ -14,7 +14,7 @@
 
   <!-- Collapse toggle button (not on mobile) -->
   @if (!isMobile()) {
-    <button class="collapse-toggle" (click)="toggleCollapse()" [attr.title]="collapsed() ? 'Sidebar erweitern' : 'Sidebar minimieren'">
+    <button class="collapse-toggle" (click)="toggleCollapse()" [attr.title]="collapsed() ? ('SIDEBAR.EXPAND' | translate) : ('SIDEBAR.COLLAPSE' | translate)">
       <span class="material-symbols-outlined">{{ collapsed() ? 'chevron_right' : 'chevron_left' }}</span>
     </button>
   }
@@ -28,42 +28,42 @@
 
   <!-- Scrollable Navigation -->
   <nav class="nav">
-    <a routerLink="/dashboard" routerLinkActive="active" class="nav-item" [attr.title]="collapsed() && !isMobile() ? 'Dashboard' : null">
+    <a routerLink="/dashboard" routerLinkActive="active" class="nav-item" [attr.title]="collapsed() && !isMobile() ? ('NAV.DASHBOARD' | translate) : null">
       <span class="material-symbols-outlined">dashboard</span>
-      @if (!collapsed() || isMobile()) { <span>Dashboard</span> }
+      @if (!collapsed() || isMobile()) { <span>{{ 'NAV.DASHBOARD' | translate }}</span> }
     </a>
-    <a routerLink="/activities" routerLinkActive="active" class="nav-item" [attr.title]="collapsed() && !isMobile() ? 'Activities' : null">
+    <a routerLink="/activities" routerLinkActive="active" class="nav-item" [attr.title]="collapsed() && !isMobile() ? ('NAV.ACTIVITIES' | translate) : null">
       <span class="material-symbols-outlined">directions_run</span>
-      @if (!collapsed() || isMobile()) { <span>Activities</span> }
+      @if (!collapsed() || isMobile()) { <span>{{ 'NAV.ACTIVITIES' | translate }}</span> }
     </a>
-    <a routerLink="/training-plans" routerLinkActive="active" class="nav-item" [attr.title]="collapsed() && !isMobile() ? 'Training Plans' : null">
+    <a routerLink="/training-plans" routerLinkActive="active" class="nav-item" [attr.title]="collapsed() && !isMobile() ? ('NAV.TRAINING_PLANS' | translate) : null">
       <span class="material-symbols-outlined">calendar_today</span>
-      @if (!collapsed() || isMobile()) { <span>Training Plans</span> }
+      @if (!collapsed() || isMobile()) { <span>{{ 'NAV.TRAINING_PLANS' | translate }}</span> }
     </a>
-    <a routerLink="/competitions" routerLinkActive="active" class="nav-item" [attr.title]="collapsed() && !isMobile() ? 'Competitions' : null">
+    <a routerLink="/competitions" routerLinkActive="active" class="nav-item" [attr.title]="collapsed() && !isMobile() ? ('NAV.COMPETITIONS' | translate) : null">
       <span class="material-symbols-outlined">emoji_events</span>
-      @if (!collapsed() || isMobile()) { <span>Competitions</span> }
+      @if (!collapsed() || isMobile()) { <span>{{ 'NAV.COMPETITIONS' | translate }}</span> }
     </a>
-    <a routerLink="/statistics" routerLinkActive="active" class="nav-item" [attr.title]="collapsed() && !isMobile() ? 'Analytics' : null">
+    <a routerLink="/statistics" routerLinkActive="active" class="nav-item" [attr.title]="collapsed() && !isMobile() ? ('NAV.ANALYTICS' | translate) : null">
       <span class="material-symbols-outlined">analytics</span>
       @if (!collapsed() || isMobile()) {
-        <span>Analytics</span>
-        @if (!isPro()) { <span class="pro-nav-badge">PRO</span> }
+        <span>{{ 'NAV.ANALYTICS' | translate }}</span>
+        @if (!isPro()) { <span class="pro-nav-badge">{{ 'NAV.PRO' | translate }}</span> }
       }
     </a>
-    <a routerLink="/achievements" routerLinkActive="active" class="nav-item" [attr.title]="collapsed() && !isMobile() ? 'Achievements' : null">
+    <a routerLink="/achievements" routerLinkActive="active" class="nav-item" [attr.title]="collapsed() && !isMobile() ? ('NAV.ACHIEVEMENTS' | translate) : null">
       <span class="material-symbols-outlined">military_tech</span>
       @if (!collapsed() || isMobile()) {
-        <span>Achievements</span>
-        @if (!isPro()) { <span class="pro-nav-badge">PRO</span> }
+        <span>{{ 'NAV.ACHIEVEMENTS' | translate }}</span>
+        @if (!isPro()) { <span class="pro-nav-badge">{{ 'NAV.PRO' | translate }}</span> }
       }
     </a>
     @if (userService.currentUser()?.communityRoutesEnabled) {
-      <a routerLink="/community-routes" routerLinkActive="active" class="nav-item" [attr.title]="collapsed() && !isMobile() ? 'Community' : null">
+      <a routerLink="/community-routes" routerLinkActive="active" class="nav-item" [attr.title]="collapsed() && !isMobile() ? ('NAV.COMMUNITY' | translate) : null">
         <span class="material-symbols-outlined">explore</span>
         @if (!collapsed() || isMobile()) {
-          <span>Community</span>
-          @if (!isPro()) { <span class="pro-nav-badge">PRO</span> }
+          <span>{{ 'NAV.COMMUNITY' | translate }}</span>
+          @if (!isPro()) { <span class="pro-nav-badge">{{ 'NAV.PRO' | translate }}</span> }
         }
       </a>
     }
@@ -71,52 +71,52 @@
       <div class="nav-group">
         <button class="nav-item nav-item--group" (click)="toggleBodyData()" [ngClass]="{'open': bodyDataOpen}">
           <span class="material-symbols-outlined">monitoring</span>
-          <span>Body Data</span>
-          @if (!isPro()) { <span class="pro-nav-badge">PRO</span> }
+          <span>{{ 'NAV.BODY_DATA' | translate }}</span>
+          @if (!isPro()) { <span class="pro-nav-badge">{{ 'NAV.PRO' | translate }}</span> }
           <span class="material-symbols-outlined nav-group-arrow">expand_more</span>
         </button>
         <div class="nav-submenu" [ngClass]="{'open': bodyDataOpen}">
           <a routerLink="/body-data/body-metrics" routerLinkActive="active" class="nav-item nav-item--sub">
             <span class="material-symbols-outlined">monitor_weight</span>
-            <span>Body Metrics</span>
+            <span>{{ 'NAV.BODY_METRICS' | translate }}</span>
           </a>
           @if (userService.currentUser()?.cycleTrackingEnabled) {
             <a routerLink="/body-data/cycle-tracking" routerLinkActive="active" class="nav-item nav-item--sub">
               <span class="material-symbols-outlined">favorite</span>
-              <span>Cycle Tracking</span>
+              <span>{{ 'NAV.CYCLE_TRACKING' | translate }}</span>
             </a>
           }
           @if (userService.currentUser()?.asthmaTrackingEnabled) {
             <a routerLink="/body-data/asthma-tracking" routerLinkActive="active" class="nav-item nav-item--sub">
               <span class="material-symbols-outlined">pulmonology</span>
-              <span>Asthma Tracking</span>
+              <span>{{ 'NAV.ASTHMA_TRACKING' | translate }}</span>
             </a>
           }
         </div>
       </div>
     } @else {
-      <a routerLink="/body-data/body-metrics" routerLinkActive="active" class="nav-item" [attr.title]="'Body Data'">
+      <a routerLink="/body-data/body-metrics" routerLinkActive="active" class="nav-item" [attr.title]="'NAV.BODY_DATA' | translate">
         <span class="material-symbols-outlined">monitoring</span>
       </a>
     }
-    <a routerLink="/ai-trainer" routerLinkActive="active" class="nav-item" [attr.title]="collapsed() && !isMobile() ? 'AI Trainer' : null">
+    <a routerLink="/ai-trainer" routerLinkActive="active" class="nav-item" [attr.title]="collapsed() && !isMobile() ? ('NAV.AI_TRAINER' | translate) : null">
       <span class="material-symbols-outlined">psychology</span>
       @if (!collapsed() || isMobile()) {
-        <span>AI Trainer</span>
-        @if (!isPro()) { <span class="pro-nav-badge">PRO</span> }
+        <span>{{ 'NAV.AI_TRAINER' | translate }}</span>
+        @if (!isPro()) { <span class="pro-nav-badge">{{ 'NAV.PRO' | translate }}</span> }
       }
     </a>
-    <a routerLink="/insights" routerLinkActive="active" class="nav-item" [attr.title]="collapsed() && !isMobile() ? 'Insights' : null">
+    <a routerLink="/insights" routerLinkActive="active" class="nav-item" [attr.title]="collapsed() && !isMobile() ? ('NAV.INSIGHTS' | translate) : null">
       <span class="material-symbols-outlined">lightbulb</span>
       @if (!collapsed() || isMobile()) {
-        <span>Insights</span>
-        @if (!isPro()) { <span class="pro-nav-badge">PRO</span> }
+        <span>{{ 'NAV.INSIGHTS' | translate }}</span>
+        @if (!isPro()) { <span class="pro-nav-badge">{{ 'NAV.PRO' | translate }}</span> }
       }
     </a>
     @if (isAdmin()) {
-      <a routerLink="/admin" routerLinkActive="active" class="nav-item" [attr.title]="collapsed() && !isMobile() ? 'Admin' : null">
+      <a routerLink="/admin" routerLinkActive="active" class="nav-item" [attr.title]="collapsed() && !isMobile() ? ('NAV.ADMIN' | translate) : null">
         <span class="material-symbols-outlined">admin_panel_settings</span>
-        @if (!collapsed() || isMobile()) { <span>Admin</span> }
+        @if (!collapsed() || isMobile()) { <span>{{ 'NAV.ADMIN' | translate }}</span> }
       </a>
     }
   </nav>
@@ -126,9 +126,9 @@
     <!-- Upgrade Card (hidden when collapsed) -->
     @if (!isPro() && (!collapsed() || isMobile())) {
       <div class="upgrade-card">
-        <h3>Upgrade to Pro</h3>
-        <p>Unlock advanced analytics and personal coaching.</p>
-        <button class="upgrade-btn" routerLink="/elite-upgrade">Get Started</button>
+        <h3>{{ 'SIDEBAR.UPGRADE_TITLE' | translate }}</h3>
+        <p>{{ 'SIDEBAR.UPGRADE_TEXT' | translate }}</p>
+        <button class="upgrade-btn" routerLink="/elite-upgrade">{{ 'SIDEBAR.UPGRADE_BTN' | translate }}</button>
       </div>
     }
 
@@ -138,24 +138,24 @@
       <div class="user-menu">
         <button class="user-menu-item user-menu-item--btn" (click)="openPaceCalculator()">
           <span class="material-symbols-outlined">speed</span>
-          <span>Pace Calculator</span>
+          <span>{{ 'NAV.PACE_CALCULATOR' | translate }}</span>
         </button>
         <a routerLink="/upload" routerLinkActive="active" class="user-menu-item">
           <span class="material-symbols-outlined">upload_file</span>
-          <span>Upload Activity</span>
+          <span>{{ 'NAV.UPLOAD_ACTIVITY' | translate }}</span>
         </a>
         <a routerLink="/settings" routerLinkActive="active" class="user-menu-item">
           <span class="material-symbols-outlined">settings</span>
-          <span>Settings</span>
+          <span>{{ 'NAV.SETTINGS' | translate }}</span>
         </a>
         <button class="user-menu-item user-menu-item--btn" (click)="openAbout()">
           <span class="material-symbols-outlined">info</span>
-          <span>About</span>
+          <span>{{ 'NAV.ABOUT' | translate }}</span>
         </button>
         <div class="user-menu-divider"></div>
         <a (click)="logout()" class="user-menu-item user-menu-item--danger" style="cursor: pointer;">
           <span class="material-symbols-outlined">logout</span>
-          <span>Log out</span>
+          <span>{{ 'NAV.LOG_OUT' | translate }}</span>
         </a>
       </div>
 

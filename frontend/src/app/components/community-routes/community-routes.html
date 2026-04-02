@@ -3,16 +3,16 @@
   <!-- Header -->
   <div class="page-header">
     <div class="header-left">
-      <h1>COMMUNITY<br/><span class="accent">ROUTES</span></h1>
-      <p class="subtitle">High performance curated paths</p>
+      <h1>{{ 'COMMUNITY.TITLE' | translate }}<br/><span class="accent">{{ 'COMMUNITY.ROUTES' | translate }}</span></h1>
+      <p class="subtitle">{{ 'COMMUNITY.SUBTITLE' | translate }}</p>
     </div>
     <div class="header-actions">
       <a routerLink="/community-routes/mine" class="btn-secondary">
         <span class="material-symbols-outlined">folder</span>
-        MY ROUTES
+        {{ 'COMMUNITY.MY_ROUTES' | translate }}
       </a>
       <div class="near-you-toggle">
-        <span class="toggle-label">Near You</span>
+        <span class="toggle-label">{{ 'COMMUNITY.NEAR_YOU' | translate }}</span>
         <button class="toggle-track active" type="button">
           <span class="toggle-thumb"></span>
         </button>
@@ -24,21 +24,21 @@
   <div class="filter-bar">
     <div class="search-field">
       <span class="material-symbols-outlined search-icon">location_on</span>
-      <input type="text" placeholder="SEARCH BY LOCATION OR NAME" />
+      <input type="text" [placeholder]="'COMMUNITY.SEARCH_PLACEHOLDER' | translate" />
     </div>
     <div class="select-wrapper">
       <select (change)="onRadiusChange(+$any($event.target).value)">
-        <option value="5" [selected]="radiusKm() === 5">RADIUS: 5 KM</option>
-        <option value="10" [selected]="radiusKm() === 10">RADIUS: 10 KM</option>
-        <option value="25" [selected]="radiusKm() === 25">RADIUS: 25 KM</option>
-        <option value="50" [selected]="radiusKm() === 50">RADIUS: 50 KM</option>
+        <option value="5" [selected]="radiusKm() === 5">{{ 'COMMUNITY.RADIUS_5' | translate }}</option>
+        <option value="10" [selected]="radiusKm() === 10">{{ 'COMMUNITY.RADIUS_10' | translate }}</option>
+        <option value="25" [selected]="radiusKm() === 25">{{ 'COMMUNITY.RADIUS_25' | translate }}</option>
+        <option value="50" [selected]="radiusKm() === 50">{{ 'COMMUNITY.RADIUS_50' | translate }}</option>
       </select>
       <span class="material-symbols-outlined select-arrow">expand_more</span>
     </div>
     <div class="select-wrapper">
       <select (change)="onSortChange($any($event.target).value)">
-        <option value="distance" [selected]="sortBy() === 'distance'">SORT: DISTANCE</option>
-        <option value="popularity" [selected]="sortBy() === 'popularity'">SORT: POPULARITY</option>
+        <option value="distance" [selected]="sortBy() === 'distance'">{{ 'COMMUNITY.SORT_DISTANCE' | translate }}</option>
+        <option value="popularity" [selected]="sortBy() === 'popularity'">{{ 'COMMUNITY.SORT_POPULARITY' | translate }}</option>
       </select>
       <span class="material-symbols-outlined select-arrow">expand_more</span>
     </div>
@@ -48,21 +48,21 @@
   @if (loading()) {
     <div class="loading-state">
       <span class="material-symbols-outlined spinning">progress_activity</span>
-      <h3>Scanning Area</h3>
-      <p>Finding routes near you...</p>
+      <h3>{{ 'COMMUNITY.SCANNING' | translate }}</h3>
+      <p>{{ 'COMMUNITY.FINDING' | translate }}</p>
     </div>
   } @else if (error()) {
     <div class="error-state">
       <span class="material-symbols-outlined">error</span>
-      <h3>Connection Lost</h3>
+      <h3>{{ 'COMMUNITY.CONNECTION_LOST' | translate }}</h3>
       <p>{{ error() }}</p>
-      <button class="btn-retry" (click)="loadRoutes()">TRY AGAIN</button>
+      <button class="btn-retry" (click)="loadRoutes()">{{ 'COMMUNITY.TRY_AGAIN' | translate }}</button>
     </div>
   } @else if (routes().length === 0) {
     <div class="empty-state">
       <span class="material-symbols-outlined">explore_off</span>
-      <h3>No Routes Found</h3>
-      <p>Try increasing the search radius or share your own route from any activity.</p>
+      <h3>{{ 'COMMUNITY.NO_ROUTES' | translate }}</h3>
+      <p>{{ 'COMMUNITY.NO_ROUTES_HINT' | translate }}</p>
     </div>
   } @else {
     <!-- Route Cards Grid -->
@@ -75,7 +75,7 @@
             <div class="image-overlay"></div>
             <div class="card-title">
               <h3>{{ route.name }}</h3>
-              <div class="creator">by {{ route.creatorUsername }}</div>
+              <div class="creator">{{ route.creatorUsername }}</div>
             </div>
           </div>
 
@@ -84,12 +84,12 @@
             <div class="card-stats">
               <div class="stats-left">
                 <div class="stat-block">
-                  <div class="stat-label">Distance</div>
+                  <div class="stat-label">{{ 'COMMON.DISTANCE' | translate }}</div>
                   <div class="stat-value accent">{{ formatDistance(route.distanceKm) }}</div>
                 </div>
                 @if (route.elevationGainM) {
                   <div class="stat-block">
-                    <div class="stat-label">Elevation</div>
+                    <div class="stat-label">{{ 'COMMON.ELEVATION' | translate }}</div>
                     <div class="stat-value">{{ route.elevationGainM }}M</div>
                   </div>
                 }
@@ -104,17 +104,17 @@
             @if (route.recordTimeSeconds) {
               <div class="record-badge">
                 <span class="material-symbols-outlined">emoji_events</span>
-                <span>RECORD {{ formatTime(route.recordTimeSeconds) }}</span>
+                <span>{{ 'COMMUNITY.RECORD' | translate }} {{ formatTime(route.recordTimeSeconds) }}</span>
               </div>
             }
 
             <div class="card-runners">
               <span class="material-symbols-outlined">group</span>
-              <span>{{ route.athleteCount }} athletes on this route</span>
+              <span>{{ route.athleteCount }} {{ 'COMMUNITY.ATHLETES_ON_ROUTE' | translate }}</span>
             </div>
 
             <div class="card-actions">
-              <a [routerLink]="['/community-routes', route.id]" class="btn-view">VIEW DETAIL</a>
+              <a [routerLink]="['/community-routes', route.id]" class="btn-view">{{ 'COMMUNITY.VIEW_DETAIL' | translate }}</a>
               <a [routerLink]="['/community-routes', route.id]" class="btn-icon">
                 <span class="material-symbols-outlined">watch</span>
               </a>

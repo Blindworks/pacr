@@ -2,6 +2,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ProOverlay } from '../shared/pro-overlay/pro-overlay';
 import {
   DailyCoachService,
@@ -13,12 +14,13 @@ import {
 @Component({
   selector: 'app-ai-trainer',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, ProOverlay],
+  imports: [CommonModule, FormsModule, RouterModule, ProOverlay, TranslateModule],
   templateUrl: './ai-trainer.component.html',
   styleUrls: ['./ai-trainer.component.scss']
 })
 export class AiTrainerComponent implements OnInit {
   private coachService = inject(DailyCoachService);
+  private readonly translate = inject(TranslateService);
 
   phase: 'context' | 'recommendation' | 'confirmed' = 'context';
   selectedDate: Date = new Date();
@@ -33,7 +35,16 @@ export class AiTrainerComponent implements OnInit {
   aiDisabled: boolean = false;
 
   readonly feelingEmojis = ['sentiment_very_dissatisfied', 'sentiment_dissatisfied', 'sentiment_neutral', 'sentiment_satisfied', 'sentiment_very_satisfied'];
-  readonly feelingLabels = ['Sehr schlecht', 'Schlecht', 'Okay', 'Gut', 'Sehr gut'];
+
+  get feelingLabels(): string[] {
+    return [
+      this.translate.instant('AI_TRAINER.FEELING_VERY_BAD'),
+      this.translate.instant('AI_TRAINER.FEELING_BAD'),
+      this.translate.instant('AI_TRAINER.FEELING_OK'),
+      this.translate.instant('AI_TRAINER.FEELING_GOOD'),
+      this.translate.instant('AI_TRAINER.FEELING_VERY_GOOD'),
+    ];
+  }
 
   ngOnInit(): void {
     this.loadContext();
@@ -49,14 +60,20 @@ export class AiTrainerComponent implements OnInit {
   }
 
   get formattedDateDisplay(): string {
-    const days = ['Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag'];
-    const months = [
-      'Januar', 'Februar', 'März', 'April', 'Mai', 'Juni',
-      'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'
+    const dayKeys = [
+      'DAYS_LONG.SUNDAY', 'DAYS_LONG.MONDAY', 'DAYS_LONG.TUESDAY',
+      'DAYS_LONG.WEDNESDAY', 'DAYS_LONG.THURSDAY', 'DAYS_LONG.FRIDAY', 'DAYS_LONG.SATURDAY'
+    ];
+    const monthKeys = [
+      'MONTHS_LONG.JANUARY', 'MONTHS_LONG.FEBRUARY', 'MONTHS_LONG.MARCH',
+      'MONTHS_LONG.APRIL', 'MONTHS_LONG.MAY', 'MONTHS_LONG.JUNE',
+      'MONTHS_LONG.JULY', 'MONTHS_LONG.AUGUST', 'MONTHS_LONG.SEPTEMBER',
+      'MONTHS_LONG.OCTOBER', 'MONTHS_LONG.NOVEMBER', 'MONTHS_LONG.DECEMBER'
     ];
     const d = this.selectedDate;
-    const dayName = days[d.getDay()].slice(0, 2);
-    return `${dayName}, ${d.getDate()}. ${months[d.getMonth()]} ${d.getFullYear()}`;
+    const dayName = this.translate.instant(dayKeys[d.getDay()]).slice(0, 2);
+    const monthName = this.translate.instant(monthKeys[d.getMonth()]);
+    return `${dayName}, ${d.getDate()}. ${monthName} ${d.getFullYear()}`;
   }
 
   changeDay(delta: number): void {
@@ -86,7 +103,7 @@ export class AiTrainerComponent implements OnInit {
         if (err.status === 503) {
           this.aiDisabled = true;
         } else {
-          this.error = 'Fehler beim Laden des Kontexts.';
+          this.error = this.translate.instant('AI_TRAINER.ERROR_CONTEXT');
         }
         this.loading = false;
       }
@@ -112,7 +129,7 @@ export class AiTrainerComponent implements OnInit {
         this.loading = false;
       },
       error: () => {
-        this.error = 'Fehler beim Abrufen der KI-Empfehlung.';
+        this.error = this.translate.instant('AI_TRAINER.ERROR_RECOMMENDATION');
         this.loading = false;
       }
     });
@@ -132,7 +149,7 @@ export class AiTrainerComponent implements OnInit {
         this.executing = false;
       },
       error: () => {
-        this.error = 'Fehler bei der Ausführung.';
+        this.error = this.translate.instant('AI_TRAINER.ERROR_EXECUTION');
         this.executing = false;
       }
     });
@@ -147,9 +164,9 @@ export class AiTrainerComponent implements OnInit {
 
   getAsthmaLevelText(): string {
     const risk = this.context?.asthmaRisk?.riskIndex ?? 0;
-    if (risk < 30) return 'Niedrig';
-    if (risk < 60) return 'Mittel';
-    return 'Hoch';
+    if (risk < 30) return this.translate.instant('AI_TRAINER.RISK_LOW');
+    if (risk < 60) return this.translate.instant('AI_TRAINER.RISK_MEDIUM');
+    return this.translate.instant('AI_TRAINER.RISK_HIGH');
   }
 
   getActionIcon(action: string): string {
@@ -166,9 +183,9 @@ export class AiTrainerComponent implements OnInit {
 
   getActionLabel(action: string): string {
     const map: Record<string, string> = {
-      MOVED: 'Verschoben',
-      SKIPPED: 'Ausgelassen',
-      UNCHANGED: 'Unverandert'
+      MOVED: this.translate.instant('AI_TRAINER.ACTION_MOVED'),
+      SKIPPED: this.translate.instant('AI_TRAINER.ACTION_SKIPPED'),
+      UNCHANGED: this.translate.instant('AI_TRAINER.ACTION_UNCHANGED')
     };
     return map[action] ?? action;
   }

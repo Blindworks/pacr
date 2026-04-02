@@ -1,9 +1,11 @@
 import { Component, ElementRef, ViewChild, effect, inject, OnDestroy } from '@angular/core';
 import { AcwrInfoDialogService } from '../../services/acwr-info-dialog.service';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-acwr-info-dialog',
   standalone: true,
+  imports: [TranslateModule],
   templateUrl: './acwr-info-dialog.html',
   styleUrl: './acwr-info-dialog.scss'
 })

@@ -12,21 +12,21 @@
         <span class="brand-name">PACR</span>
       </div>
       <div class="header-actions">
-        <span class="already-text">Already have an account?</span>
-        <a routerLink="/login" class="btn-login-link">Log In</a>
+        <span class="already-text">{{ 'SIGNUP.ALREADY_ACCOUNT' | translate }}</span>
+        <a routerLink="/login" class="btn-login-link">{{ 'SIGNUP.LOG_IN' | translate }}</a>
       </div>
     </header>
 
     <main class="signup-main">
       <div class="signup-container">
         <div class="signup-heading">
-          <h1>Level Up Your Run</h1>
-          <p>Join the community and start tracking with PACR.</p>
+          <h1>{{ 'SIGNUP.TITLE' | translate }}</h1>
+          <p>{{ 'SIGNUP.SUBTITLE' | translate }}</p>
         </div>
 
         <form (ngSubmit)="onSubmit()" class="signup-form">
           <div class="field-group">
-            <label>Full Name</label>
+            <label>{{ 'SIGNUP.FULL_NAME' | translate }}</label>
             <input
               type="text"
               [(ngModel)]="fullName"
@@ -36,7 +36,7 @@
           </div>
 
           <div class="field-group">
-            <label>Username</label>
+            <label>{{ 'SIGNUP.USERNAME' | translate }}</label>
             <input
               type="text"
               [(ngModel)]="username"
@@ -46,7 +46,7 @@
           </div>
 
           <div class="field-group">
-            <label>Email Address</label>
+            <label>{{ 'SIGNUP.EMAIL_LABEL' | translate }}</label>
             <input
               type="email"
               [(ngModel)]="email"
@@ -57,13 +57,13 @@
           </div>
 
           <div class="field-group">
-            <label>Password</label>
+            <label>{{ 'SIGNUP.PASSWORD_LABEL' | translate }}</label>
             <div class="password-wrapper">
               <input
                 [type]="showPassword ? 'text' : 'password'"
                 [(ngModel)]="password"
                 name="password"
-                placeholder="At least 8 characters"
+                [placeholder]="'SIGNUP.PASSWORD_PLACEHOLDER' | translate"
                 autocomplete="new-password"
               />
               <button type="button" class="toggle-password" (click)="showPassword = !showPassword">
@@ -76,12 +76,12 @@
             <p class="signup-error">{{ error() }}</p>
           }
           <button type="submit" class="btn-join" [disabled]="loading()">
-            {{ loading() ? 'LOADING...' : 'JOIN PACR' }}
+            {{ loading() ? ('SIGNUP.LOADING' | translate) : ('SIGNUP.JOIN' | translate) }}
           </button>
         </form>
 
         <div class="divider">
-          <span>Or sync with</span>
+          <span>{{ 'SIGNUP.OR_SYNC' | translate }}</span>
         </div>
 
         <div class="social-grid">
@@ -100,9 +100,9 @@
         </div>
 
         <p class="terms-text">
-          By signing up, you agree to our
-          <a href="#">Terms of Service</a> and
-          <a href="#">Privacy Policy</a>.
+          {{ 'SIGNUP.AGREE_TEXT' | translate }}
+          <a href="#">{{ 'SIGNUP.TERMS' | translate }}</a> and
+          <a href="#">{{ 'SIGNUP.PRIVACY' | translate }}</a>.
         </p>
       </div>
     </main>

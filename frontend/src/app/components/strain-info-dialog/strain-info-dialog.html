@@ -4,7 +4,7 @@
     <header class="strain-header">
       <div class="strain-header-title">
         <span class="material-symbols-outlined strain-header-icon">info</span>
-        <span>Was bedeutet die Trainingsbelastung?</span>
+        <span>{{ 'DIALOGS.STRAIN_TITLE' | translate }}</span>
       </div>
       <button class="strain-close" (click)="close()">
         <span class="material-symbols-outlined">close</span>
@@ -12,66 +12,49 @@
     </header>
 
     <div class="strain-body">
-      <p class="strain-intro">
-        Die <strong>21-Tage Trainingsbelastung</strong> (Strain) misst die kumulative
-        Belastung deiner letzten 21 Trainingstage. Sie berücksichtigt Dauer, Distanz
-        und Herzfrequenz deiner Einheiten und gibt dir einen Überblick, wie stark
-        dein Körper aktuell beansprucht wird.
-      </p>
+      <p class="strain-intro">{{ 'DIALOGS.STRAIN_DESCRIPTION' | translate }}</p>
 
       <div class="strain-zones">
         <div class="strain-zone strain-zone--info">
           <div class="strain-zone-header">
             <span class="strain-zone-dot"></span>
-            <span class="strain-zone-range">&lt; 20</span>
-            <span class="strain-zone-label">Niedrig</span>
+            <span class="strain-zone-range">{{ 'DIALOGS.STRAIN_LOW_RANGE' | translate }}</span>
+            <span class="strain-zone-label">{{ 'DIALOGS.STRAIN_LOW' | translate }}</span>
           </div>
-          <p class="strain-zone-desc">
-            Wenig Trainingsreiz — ideal für Erholungsphasen oder den Einstieg
-            nach einer Pause. Langfristig reicht das nicht für Leistungssteigerung.
-          </p>
+          <p class="strain-zone-desc">{{ 'DIALOGS.STRAIN_LOW_DESC' | translate }}</p>
         </div>
 
         <div class="strain-zone strain-zone--good">
           <div class="strain-zone-header">
             <span class="strain-zone-dot"></span>
-            <span class="strain-zone-range">20 – 40</span>
-            <span class="strain-zone-label">Moderat</span>
+            <span class="strain-zone-range">{{ 'DIALOGS.STRAIN_MODERATE_RANGE' | translate }}</span>
+            <span class="strain-zone-label">{{ 'DIALOGS.STRAIN_MODERATE' | translate }}</span>
           </div>
-          <p class="strain-zone-desc">
-            Solide Trainingsgrundlage — du baust konstant Fitness auf, ohne dich
-            zu überlasten. Gute Balance zwischen Belastung und Erholung.
-          </p>
+          <p class="strain-zone-desc">{{ 'DIALOGS.STRAIN_MODERATE_DESC' | translate }}</p>
         </div>
 
         <div class="strain-zone strain-zone--warn">
           <div class="strain-zone-header">
             <span class="strain-zone-dot"></span>
-            <span class="strain-zone-range">40 – 60</span>
-            <span class="strain-zone-label">Hoch</span>
+            <span class="strain-zone-range">{{ 'DIALOGS.STRAIN_HIGH_RANGE' | translate }}</span>
+            <span class="strain-zone-label">{{ 'DIALOGS.STRAIN_HIGH' | translate }}</span>
           </div>
-          <p class="strain-zone-desc">
-            Intensive Trainingsphase — dein Körper wird stark gefordert.
-            Achte besonders auf ausreichend Schlaf und Erholung.
-          </p>
+          <p class="strain-zone-desc">{{ 'DIALOGS.STRAIN_HIGH_DESC' | translate }}</p>
         </div>
 
         <div class="strain-zone strain-zone--bad">
           <div class="strain-zone-header">
             <span class="strain-zone-dot"></span>
-            <span class="strain-zone-range">&gt; 60</span>
-            <span class="strain-zone-label">Sehr hoch</span>
+            <span class="strain-zone-range">{{ 'DIALOGS.STRAIN_VERY_HIGH_RANGE' | translate }}</span>
+            <span class="strain-zone-label">{{ 'DIALOGS.STRAIN_VERY_HIGH' | translate }}</span>
           </div>
-          <p class="strain-zone-desc">
-            Hohes Belastungsniveau — Risiko für Übertraining und Verletzungen steigt.
-            Plane bewusst Ruhetage ein und reduziere die Intensität.
-          </p>
+          <p class="strain-zone-desc">{{ 'DIALOGS.STRAIN_VERY_HIGH_DESC' | translate }}</p>
         </div>
       </div>
 
       <div class="strain-tip">
         <span class="material-symbols-outlined strain-tip-icon">lightbulb</span>
-        <p>Die Trainingsbelastung ist individuell — vergleiche vor allem mit deinen eigenen Werten über die Zeit, nicht mit anderen.</p>
+        <p>{{ 'DIALOGS.STRAIN_TIP' | translate }}</p>
       </div>
     </div>
   </div>

@@ -3,10 +3,12 @@ import { HttpClient } from '@angular/common/http';
 import { AboutDialogService } from '../../services/about-dialog.service';
 import { VersionService } from '../../services/version.service';
 import { apiUrl } from '../../core/api-base';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-about-dialog',
   standalone: true,
+  imports: [TranslateModule],
   templateUrl: './about-dialog.html',
   styleUrl: './about-dialog.scss'
 })

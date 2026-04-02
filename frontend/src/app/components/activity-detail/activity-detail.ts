@@ -1,6 +1,7 @@
 import { Component, OnInit, inject, ChangeDetectorRef, signal, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ActivityService, ActivityStreamDto, CompletedTraining, ActivityMetrics, ActivityVo2Max, GpsStreamDto } from '../../services/activity.service';
 import { ActivityMapComponent } from '../activity-map/activity-map';
 import { MapDialogComponent } from '../map-dialog/map-dialog';
@@ -10,7 +11,7 @@ import { ProOverlay } from '../shared/pro-overlay/pro-overlay';
 @Component({
   selector: 'app-activity-detail',
   standalone: true,
-  imports: [CommonModule, ActivityMapComponent, MapDialogComponent, RouterModule, ProOverlay],
+  imports: [CommonModule, ActivityMapComponent, MapDialogComponent, RouterModule, ProOverlay, TranslateModule],
   templateUrl: './activity-detail.html',
   styleUrl: './activity-detail.scss'
 })
@@ -20,6 +21,7 @@ export class ActivityDetail implements OnInit {
   private readonly router = inject(Router);
   private readonly activityService = inject(ActivityService);
   protected readonly userService = inject(UserService);
+  private readonly translate = inject(TranslateService);
 
   @ViewChild('mapDialog') private mapDialog!: MapDialogComponent;
 
@@ -297,11 +299,11 @@ export class ActivityDetail implements OnInit {
 
   decouplingReasonLabel(reason: string | null): string {
     const map: Record<string, string> = {
-      OK: 'Berechnet',
-      TOO_SHORT: 'Zu kurz',
-      NO_HR: 'Kein HF',
-      NO_PACE: 'Kein Pace',
-      NO_STREAMS: 'Keine Streams',
+      OK: this.translate.instant('ACTIVITY_DETAIL.CALCULATED'),
+      TOO_SHORT: this.translate.instant('ACTIVITY_DETAIL.TOO_SHORT'),
+      NO_HR: this.translate.instant('ACTIVITY_DETAIL.NO_HR'),
+      NO_PACE: this.translate.instant('ACTIVITY_DETAIL.NO_PACE'),
+      NO_STREAMS: this.translate.instant('ACTIVITY_DETAIL.NO_STREAMS'),
     };
     return reason ? (map[reason] ?? reason) : '—';
   }
