@@ -144,7 +144,7 @@
             [class.flow-btn--active]="flowIntensity === f.id"
             (click)="selectFlow(f.id)">
             <span class="flow-dot" [class.flow-dot--active]="flowIntensity === f.id"></span>
-            {{ f.label }}
+            {{ f.label | translate }}
           </button>
         </div>
       </section>
@@ -153,12 +153,12 @@
       <section class="section">
         <div class="section-title">
           <span class="material-symbols-outlined section-icon">edit_note</span>
-          <h3>Additional Notes</h3>
+          <h3>{{ 'BODY_DATA.ADDITIONAL_NOTES' | translate }}</h3>
         </div>
         <textarea
           class="notes-textarea"
           [(ngModel)]="notes"
-          placeholder="How are you feeling overall? Any specific pains or breakthroughs?">
+          [placeholder]="'BODY_DATA.NOTES_FEELING' | translate">
         </textarea>
       </section>
 
