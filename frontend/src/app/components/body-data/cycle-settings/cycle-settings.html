@@ -7,8 +7,8 @@
       <span class="material-symbols-outlined">arrow_back</span>
     </button>
     <div>
-      <h2>Zykluseinstellungen</h2>
-      <p class="subtitle">Konfiguriere deine Zyklus-Parameter</p>
+      <h2>{{ 'BODY_DATA.CYCLE_TITLE' | translate }}</h2>
+      <p class="subtitle">{{ 'BODY_DATA.CYCLE_SUBTITLE' | translate }}</p>
     </div>
   </header>
 
@@ -18,11 +18,11 @@
     <section class="card form-card">
       <h4 class="card-title">
         <span class="material-symbols-outlined card-title-icon">settings</span>
-        Zyklus konfigurieren
+        {{ 'BODY_DATA.CYCLE_LOG' | translate }}
       </h4>
 
       <div class="form-group">
-        <label class="form-label">Erster Tag der letzten Periode</label>
+        <label class="form-label">{{ 'BODY_DATA.MEASUREMENT_DATE' | translate }}</label>
         <input
           class="form-input"
           type="date"
@@ -33,8 +33,8 @@
 
       <div class="form-group">
         <label class="form-label">
-          Durchschnittliche Zykluslänge
-          <span class="form-value">{{ averageCycleLength }} Tage</span>
+          {{ 'BODY_DATA.CYCLE_TITLE' | translate }}
+          <span class="form-value">{{ averageCycleLength }} {{ 'COMMON.DAYS' | translate }}</span>
         </label>
         <input
           class="form-range"
@@ -50,7 +50,7 @@
       </div>
 
       <div class="form-group">
-        <label class="form-label">Durchschnittliche Periodendauer</label>
+        <label class="form-label">{{ 'BODY_DATA.SLEEP_DURATION' | translate }}</label>
         <select class="form-select" [(ngModel)]="averagePeriodDuration">
           <option *ngFor="let opt of periodDurationOptions" [value]="opt.value">{{ opt.label }}</option>
         </select>
@@ -59,15 +59,15 @@
       <div class="form-actions">
         <div class="feedback-msg feedback-msg--success" *ngIf="saveSuccess">
           <span class="material-symbols-outlined">check_circle</span>
-          Gespeichert! Weiterleitung...
+          {{ 'COMMON.SUCCESS' | translate }}
         </div>
         <div class="feedback-msg feedback-msg--error" *ngIf="saveError">
           <span class="material-symbols-outlined">error</span>
-          Fehler beim Speichern.
+          {{ 'BODY_DATA.SAVE_ERROR' | translate }}
         </div>
         <button class="save-btn" (click)="save()" [disabled]="!firstDayOfLastPeriod">
           <span class="material-symbols-outlined">save</span>
-          Einstellungen speichern
+          {{ 'COMMON.SAVE' | translate }}
         </button>
       </div>
     </section>
@@ -76,7 +76,7 @@
     <section class="card projection-card">
       <h4 class="card-title">
         <span class="material-symbols-outlined card-title-icon">timeline</span>
-        Zyklusvorschau ({{ averageCycleLength }} Tage)
+        {{ 'BODY_DATA.CYCLE_TITLE' | translate }} ({{ averageCycleLength }} {{ 'COMMON.DAYS' | translate }})
       </h4>
 
       <div class="phase-projection-bar">
@@ -85,26 +85,26 @@
           class="phase-seg"
           [ngClass]="'phase-bg-' + seg.phase"
           [style.width.%]="seg.width"
-          [title]="phaseLabels[seg.phase]"
+          [title]="phaseLabels[seg.phase] | translate"
         ></div>
       </div>
 
       <div class="projection-legend">
         <div class="legend-item">
           <span class="legend-dot phase-menstrual"></span>
-          Menstrual (1–{{ averagePeriodDuration }})
+          {{ 'BODY_DATA.PHASE_MENSTRUAL' | translate }} (1–{{ averagePeriodDuration }})
         </div>
         <div class="legend-item">
           <span class="legend-dot phase-follicular"></span>
-          Follikulär
+          {{ 'BODY_DATA.PHASE_FOLLICULAR' | translate }}
         </div>
         <div class="legend-item">
           <span class="legend-dot phase-ovulation"></span>
-          Ovulation
+          {{ 'BODY_DATA.PHASE_OVULATION' | translate }}
         </div>
         <div class="legend-item">
           <span class="legend-dot phase-luteal"></span>
-          Luteal
+          {{ 'BODY_DATA.PHASE_LUTEAL' | translate }}
         </div>
       </div>
     </section>
@@ -113,28 +113,28 @@
     <section class="card status-card" *ngIf="status">
       <h4 class="card-title">
         <span class="material-symbols-outlined card-title-icon">calendar_today</span>
-        Aktueller Status
+        {{ 'BODY_DATA.CURRENT_PHASE' | translate }}
       </h4>
 
       <div class="status-grid">
         <div class="status-item">
-          <p class="status-label">Aktuelle Phase</p>
+          <p class="status-label">{{ 'BODY_DATA.CURRENT_PHASE' | translate }}</p>
           <p class="status-value" [ngClass]="'phase-' + status.currentPhase">
-            {{ phaseLabels[status.currentPhase] }}
+            {{ phaseLabels[status.currentPhase] | translate }}
           </p>
         </div>
         <div class="status-item">
-          <p class="status-label">Zyklustag</p>
+          <p class="status-label">{{ 'COMMON.DATE' | translate }}</p>
           <p class="status-value">{{ status.currentDay }} / {{ status.cycleLength }}</p>
         </div>
         <div class="status-item">
-          <p class="status-label">Verbleibende Tage</p>
+          <p class="status-label">{{ 'BODY_DATA.DAYS_REMAINING' | translate }}</p>
           <p class="status-value">{{ status.daysRemainingInPhase }}</p>
         </div>
         <div class="status-item">
-          <p class="status-label">Nächste Phase</p>
+          <p class="status-label">{{ 'BODY_DATA.NEXT_PHASE' | translate }}</p>
           <p class="status-value" [ngClass]="'phase-' + status.nextPhase">
-            {{ phaseLabels[status.nextPhase] }}
+            {{ phaseLabels[status.nextPhase] | translate }}
           </p>
         </div>
       </div>

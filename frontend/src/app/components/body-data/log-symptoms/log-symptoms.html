@@ -5,7 +5,7 @@
     <!-- Header -->
     <header class="log-header">
       <div>
-        <h2>Log Symptoms</h2>
+        <h2>{{ 'BODY_DATA.LOG_SYMPTOMS_PAGE' | translate }}</h2>
         <p class="log-date">{{ today | date:'EEEE, MMMM d, y' }}</p>
       </div>
     </header>
@@ -77,7 +77,7 @@
         <section class="section">
           <div class="section-title">
             <span class="material-symbols-outlined section-icon">bedtime</span>
-            <h3>Sleep Quality</h3>
+            <h3>{{ 'BODY_DATA.SLEEP_QUALITY' | translate }}</h3>
           </div>
           <div class="sleep-row">
             <div class="sleep-display">
@@ -168,10 +168,10 @@
       <!-- Actions -->
       <div class="actions">
         <button class="btn-save" (click)="save()" [disabled]="saving">
-          <span *ngIf="!saving">Save Daily Log</span>
-          <span *ngIf="saving">Saving...</span>
+          <span *ngIf="!saving">{{ 'BODY_DATA.SAVE_LOG' | translate }}</span>
+          <span *ngIf="saving">{{ 'COMMON.SAVING' | translate }}</span>
         </button>
-        <button class="btn-discard" (click)="discard()" [disabled]="saving">Discard</button>
+        <button class="btn-discard" (click)="discard()" [disabled]="saving">{{ 'BODY_DATA.DISCARD' | translate }}</button>
       </div>
 
     </div>
@@ -183,7 +183,7 @@
 
       <header class="dialog-header">
         <div>
-          <h2 class="dialog-title">Log Symptoms</h2>
+          <h2 class="dialog-title">{{ 'BODY_DATA.LOG_SYMPTOMS_PAGE' | translate }}</h2>
           <p class="dialog-date">{{ today | date:'EEEE, MMMM d, y' }}</p>
         </div>
         <button class="dialog-close" (click)="closeDialog()">
@@ -244,7 +244,7 @@
               <div class="sleep-divider"></div>
               <div class="sleep-block">
                 <span class="sleep-block-label">{{ 'BODY_DATA.QUALITY' | translate }}</span>
-                <span class="sleep-block-value dialog-sleep-quality">{{ savedEntry?.sleepQuality | titlecase }}</span>
+                <span class="sleep-block-value dialog-sleep-quality">{{ ('BODY_DATA.' + savedEntry?.sleepQuality) | translate }}</span>
               </div>
             </div>
           </section>
@@ -266,13 +266,13 @@
         <section class="dialog-section" *ngIf="savedEntry?.notes">
           <div class="dialog-section-title">
             <span class="material-symbols-outlined section-icon">edit_note</span>
-            <h3>Notes</h3>
+            <h3>{{ 'BODY_DATA.ADDITIONAL_NOTES' | translate }}</h3>
           </div>
           <p class="dialog-notes">{{ savedEntry?.notes }}</p>
         </section>
 
         <div class="dialog-actions">
-          <button class="btn-save" (click)="closeDialog()">Done</button>
+          <button class="btn-save" (click)="closeDialog()">{{ 'BODY_DATA.DONE' | translate }}</button>
         </div>
 
       </div>
@@ -282,9 +282,9 @@
   <!-- Right Panel -->
   <aside class="right-panel">
     <div class="weekly-card">
-      <h4 class="weekly-title">Weekly Outlook</h4>
+      <h4 class="weekly-title">{{ 'BODY_DATA.WEEKLY_OUTLOOK' | translate }}</h4>
       <div class="weekly-row">
-        <span class="weekly-label">Recovery Score</span>
+        <span class="weekly-label">{{ 'BODY_DATA.RECOVERY_SCORE' | translate }}</span>
         <span class="weekly-score">92%</span>
       </div>
       <div class="weekly-bar">
@@ -301,8 +301,8 @@
     <div class="inspiration-card">
       <div class="inspiration-overlay"></div>
       <div class="inspiration-text">
-        <span class="inspiration-eyebrow">Daily Inspiration</span>
-        <p class="inspiration-quote">"Strength is built in the moments you want to stop."</p>
+        <span class="inspiration-eyebrow">{{ 'BODY_DATA.DAILY_INSPIRATION' | translate }}</span>
+        <p class="inspiration-quote">"{{ 'BODY_DATA.INSPIRATION_QUOTE' | translate }}"</p>
       </div>
     </div>
   </aside>

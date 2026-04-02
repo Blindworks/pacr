@@ -120,7 +120,7 @@
 
           <div class="latest-entry-list">
             <div class="latest-entry-item" *ngFor="let metric of latestEntryMetrics">
-              <span>{{ metric.label }}</span>
+              <span>{{ metric.label | translate }}</span>
               <div>
                 <strong>{{ metric.value }}</strong>
                 <span class="material-symbols-outlined" [class.trend-up]="metric.trend === 'up'" [class.trend-down]="metric.trend === 'down'">
@@ -147,8 +147,8 @@
           <div class="weekly-insight-card__image"></div>
           <div class="weekly-insight-card__overlay"></div>
           <div class="weekly-insight-card__content">
-            <p>Weekly Insight</p>
-            <h4>Consistency is the bridge between goals and accomplishment.</h4>
+            <p>{{ 'BODY_DATA.WEEKLY_OUTLOOK' | translate }}</p>
+            <h4>{{ 'BODY_DATA.INSPIRATION_QUOTE' | translate }}</h4>
           </div>
         </section>
       </aside>

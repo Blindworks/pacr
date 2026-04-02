@@ -51,10 +51,10 @@ export class LogBodyMetrics {
   error: string | null = null;
 
   readonly latestEntryMetrics: LatestEntryMetric[] = [
-    { label: 'Weight', value: '75.8 kg', trend: 'up' },
-    { label: 'Body Fat', value: '14.5%', trend: 'down' },
-    { label: 'Muscle Mass', value: '61.9 kg', trend: 'down' },
-    { label: 'Resting HR', value: '61 BPM', trend: 'down' },
+    { label: 'BODY_DATA.WEIGHT', value: '75.8 kg', trend: 'up' },
+    { label: 'BODY_DATA.BODY_FAT', value: '14.5%', trend: 'down' },
+    { label: 'BODY_DATA.MUSCLE_MASS', value: '61.9 kg', trend: 'down' },
+    { label: 'BODY_DATA.RESTING_HR', value: '61 BPM', trend: 'down' },
   ];
 
   openDatePicker(): void {
