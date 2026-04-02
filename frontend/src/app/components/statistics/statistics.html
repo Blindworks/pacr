@@ -6,10 +6,6 @@
       <p>{{ 'STATISTICS.SUBTITLE' | translate }}</p>
     </div>
     <div class="header-actions">
-      <button class="btn-outline" type="button">
-        <span class="material-symbols-outlined">file_download</span>
-        {{ 'STATISTICS.EXPORT_PDF' | translate }}
-      </button>
       <select class="period-select" (change)="setPeriod($any($event.target).value)">
         @for (key of periodKeys; track key) {
           <option [value]="key" [selected]="key === selectedPeriodKey()">{{ key | translate }}</option>

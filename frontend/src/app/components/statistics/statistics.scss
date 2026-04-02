@@ -9,6 +9,7 @@
   font-family: var(--font-family);
   display: grid;
   gap: 1.5rem;
+  overflow-x: hidden;
 }
 
 .analytics-header {
@@ -95,6 +96,7 @@
 
 .metric-card {
   @include m.card(1rem, 1.25rem);
+  min-width: 0;
 }
 
 .metric-row {
@@ -181,6 +183,7 @@
 
 .panel {
   @include m.card(1rem, 1.25rem);
+  min-width: 0;
 
   h2 {
     margin: 0;
@@ -492,13 +495,15 @@
 }
 
 @media (max-width: 1080px) {
-  .top-metrics {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
   .chart-grid,
   .bottom-grid {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .top-metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
@@ -519,10 +524,8 @@
   .header-actions {
     width: 100%;
 
-    .btn-outline,
-    .btn-ghost {
-      flex: 1;
-      justify-content: center;
+    .period-select {
+      width: 100%;
     }
   }
 }
