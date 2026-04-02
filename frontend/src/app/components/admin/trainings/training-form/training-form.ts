@@ -3,6 +3,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormArray, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { debounceTime } from 'rxjs';
+import { TranslateModule } from '@ngx-translate/core';
 
 import { TrainingService } from '../../../../services/training.service';
 import { TrainingPlanService, TrainingPlan } from '../../../../services/training-plan.service';
@@ -10,7 +11,7 @@ import { TrainingPlanService, TrainingPlan } from '../../../../services/training
 @Component({
   selector: 'app-training-form',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, TranslateModule],
   templateUrl: './training-form.html',
   styleUrl: './training-form.scss'
 })
