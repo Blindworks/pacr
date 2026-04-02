@@ -2,18 +2,20 @@ import { Component, signal, ViewChild, ElementRef, inject, OnInit } from '@angul
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ActivityService, CompletedTraining } from '../../services/activity.service';
 
 @Component({
   selector: 'app-upload',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, TranslateModule],
   templateUrl: './upload.html',
   styleUrl: './upload.scss'
 })
 export class Upload implements OnInit {
   readonly router = inject(Router);
   private readonly activityService = inject(ActivityService);
+  private readonly translate = inject(TranslateService);
 
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
 
@@ -59,7 +61,7 @@ export class Upload implements OnInit {
   private validateAndSetFile(file: File) {
     const name = file.name.toLowerCase();
     if (!name.endsWith('.fit') && !name.endsWith('.gpx') && !name.endsWith('.tcx')) {
-      this.uploadError.set('Ungültiges Format. Nur .fit, .gpx und .tcx sind erlaubt.');
+      this.uploadError.set(this.translate.instant('UPLOAD.INVALID_FORMAT'));
       return;
     }
     this.uploadError.set(null);
@@ -83,7 +85,7 @@ export class Upload implements OnInit {
       },
       error: (err) => {
         this.isUploading.set(false);
-        this.uploadError.set(err?.error?.message || err?.error || 'Upload fehlgeschlagen. Bitte erneut versuchen.');
+        this.uploadError.set(err?.error?.message || err?.error || this.translate.instant('UPLOAD.UPLOAD_ERROR'));
       }
     });
   }

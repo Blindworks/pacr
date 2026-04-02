@@ -1,6 +1,7 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { DashboardService, DashboardData } from '../../services/dashboard.service';
 import { AchievementService, StreakInfo } from '../../services/achievement.service';
 import { AcwrInfoDialogService } from '../../services/acwr-info-dialog.service';
@@ -10,18 +11,17 @@ import { StrainInfoDialog } from '../strain-info-dialog/strain-info-dialog';
 import { ReadinessInfoDialogService } from '../../services/readiness-info-dialog.service';
 import { ReadinessInfoDialog } from '../readiness-info-dialog/readiness-info-dialog';
 
-const DAYS_DE = ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'];
-
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterLink, AcwrInfoDialog, StrainInfoDialog, ReadinessInfoDialog],
+  imports: [CommonModule, RouterLink, TranslateModule, AcwrInfoDialog, StrainInfoDialog, ReadinessInfoDialog],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss'
 })
 export class Dashboard implements OnInit {
   private readonly dashboardService = inject(DashboardService);
   private readonly achievementService = inject(AchievementService);
+  private readonly translate = inject(TranslateService);
   protected readonly acwrInfoService = inject(AcwrInfoDialogService);
   protected readonly strainInfoService = inject(StrainInfoDialogService);
   protected readonly readinessInfoService = inject(ReadinessInfoDialogService);
@@ -32,14 +32,14 @@ export class Dashboard implements OnInit {
   streak = signal<StreakInfo | null>(null);
 
   private readonly FIELD_LABELS: Record<string, string> = {
-    firstName: 'Vorname',
-    lastName: 'Nachname',
-    dateOfBirth: 'Geburtsdatum',
-    heightCm: 'Körpergröße',
-    weightKg: 'Gewicht',
-    maxHeartRate: 'Maximale Herzfrequenz',
-    hrRest: 'Ruhepuls',
-    gender: 'Geschlecht'
+    firstName: 'DASHBOARD.FIELD_FIRST_NAME',
+    lastName: 'DASHBOARD.FIELD_LAST_NAME',
+    dateOfBirth: 'DASHBOARD.FIELD_DOB',
+    heightCm: 'DASHBOARD.FIELD_HEIGHT',
+    weightKg: 'DASHBOARD.FIELD_WEIGHT',
+    maxHeartRate: 'DASHBOARD.FIELD_MAX_HR',
+    hrRest: 'DASHBOARD.FIELD_REST_HR',
+    gender: 'DASHBOARD.FIELD_GENDER'
   };
 
   ngOnInit(): void {
@@ -48,9 +48,9 @@ export class Dashboard implements OnInit {
       error: err => {
         if (err.status === 400 && err.error?.missingFields) {
           this.missingFields.set(
-            (err.error.missingFields as string[]).map(f => this.FIELD_LABELS[f] ?? f)
+            (err.error.missingFields as string[]).map(f => this.translate.instant(this.FIELD_LABELS[f] ?? f))
           );
-          this.profileError.set('Profil unvollständig');
+          this.profileError.set(this.translate.instant('DASHBOARD.PROFILE_INCOMPLETE'));
         } else {
           console.error('Dashboard load failed', err);
         }
@@ -97,7 +97,15 @@ export class Dashboard implements OnInit {
     });
 
     const max = Math.max(...weekPoints.map(p => p.distanceKm), 50);
-    const WEEK_LABELS = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'];
+    const WEEK_LABELS = [
+      this.translate.instant('DAYS_SHORT.MON'),
+      this.translate.instant('DAYS_SHORT.TUE'),
+      this.translate.instant('DAYS_SHORT.WED'),
+      this.translate.instant('DAYS_SHORT.THU'),
+      this.translate.instant('DAYS_SHORT.FRI'),
+      this.translate.instant('DAYS_SHORT.SAT'),
+      this.translate.instant('DAYS_SHORT.SUN')
+    ];
 
     return weekPoints.map((p, i) => ({
       height: p.date > today ? 0 : Math.max(4, Math.round(p.distanceKm / max * 100)),
@@ -125,12 +133,12 @@ export class Dashboard implements OnInit {
 
   gaugeSublabel(): string {
     const vo2 = this.data?.vo2max ?? 0;
-    if (vo2 >= 60) return 'Exzellent';
-    if (vo2 >= 55) return 'Sehr gut';
-    if (vo2 >= 50) return 'Gut';
-    if (vo2 >= 45) return 'Durchschnitt';
-    if (vo2 >= 40) return 'Unterdurchschnitt';
-    return 'Niedrig';
+    if (vo2 >= 60) return this.translate.instant('DASHBOARD.VO2_EXCELLENT');
+    if (vo2 >= 55) return this.translate.instant('DASHBOARD.VO2_VERY_GOOD');
+    if (vo2 >= 50) return this.translate.instant('DASHBOARD.VO2_GOOD');
+    if (vo2 >= 45) return this.translate.instant('DASHBOARD.VO2_AVERAGE');
+    if (vo2 >= 40) return this.translate.instant('DASHBOARD.VO2_BELOW_AVG');
+    return this.translate.instant('DASHBOARD.VO2_LOW');
   }
 
   // ── Load Status ──────────────────────────────────────────────────
@@ -143,12 +151,12 @@ export class Dashboard implements OnInit {
   loadFlagLabel(): string {
     const flag = this.data?.loadStatus?.flag ?? 'BLUE';
     const map: Record<string, string> = {
-      GREEN: 'Optimal',
-      ORANGE: 'Vorsicht',
-      RED: 'Überlastung',
-      BLUE: 'Aufbau'
+      GREEN: 'DASHBOARD.LOAD_OPTIMAL',
+      ORANGE: 'DASHBOARD.LOAD_CAUTION',
+      RED: 'DASHBOARD.LOAD_OVERLOAD',
+      BLUE: 'DASHBOARD.LOAD_BUILDING'
     };
-    return map[flag] ?? flag;
+    return this.translate.instant(map[flag] ?? flag);
   }
 
   // ── Training Progress ────────────────────────────────────────────

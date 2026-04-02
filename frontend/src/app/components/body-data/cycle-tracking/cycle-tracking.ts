@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { CycleSettingsService } from '../../../services/cycle-settings.service';
 import { CycleEntryService } from '../../../services/cycle-entry.service';
 import { ProOverlay } from '../../shared/pro-overlay/pro-overlay';
@@ -16,7 +17,7 @@ export interface CycleDay {
 @Component({
   selector: 'app-cycle-tracking',
   standalone: true,
-  imports: [CommonModule, ProOverlay],
+  imports: [CommonModule, ProOverlay, TranslateModule],
   templateUrl: './cycle-tracking.html',
   styleUrl: './cycle-tracking.scss'
 })
@@ -26,7 +27,8 @@ export class CycleTracking implements OnInit {
   constructor(
     private router: Router,
     private cycleSettingsService: CycleSettingsService,
-    private cycleEntryService: CycleEntryService
+    private cycleEntryService: CycleEntryService,
+    private translate: TranslateService
   ) {}
 
   goToLogSymptoms(): void {
@@ -49,10 +51,10 @@ export class CycleTracking implements OnInit {
   calendarDays: CycleDay[] = [];
 
   readonly phaseLabels: Record<CyclePhase, string> = {
-    menstrual: 'Menstrual',
-    follicular: 'Follicular',
-    ovulation: 'Ovulation',
-    luteal: 'Luteal',
+    menstrual: 'BODY_DATA.PHASE_MENSTRUAL',
+    follicular: 'BODY_DATA.PHASE_FOLLICULAR',
+    ovulation: 'BODY_DATA.PHASE_OVULATION',
+    luteal: 'BODY_DATA.PHASE_LUTEAL',
   };
 
   readonly phaseInsights: Record<CyclePhase, { performance: string; fueling: string; intensity: number; label: string }> = {
@@ -60,25 +62,25 @@ export class CycleTracking implements OnInit {
       performance: 'High energy levels. Estrogen is rising, improving muscle strength and recovery speed. Great window for PR attempts or speedwork.',
       fueling: 'Higher carbohydrate tolerance. Focus on complex carbs for sustained intensity.',
       intensity: 90,
-      label: 'Peak Phase',
+      label: 'BODY_DATA.PHASE_FOLLICULAR',
     },
     ovulation: {
       performance: 'Peak strength and coordination. Testosterone peaks alongside estrogen — ideal for power training and race efforts.',
       fueling: 'Moderate carbs and protein. Hydration is key as body temperature rises slightly.',
       intensity: 95,
-      label: 'Ovulation Peak',
+      label: 'BODY_DATA.PHASE_OVULATION',
     },
     luteal: {
       performance: 'Energy may dip in late luteal phase. Progesterone rises, increasing perceived effort. Favour steady-state and tempo runs.',
       fueling: 'Increased caloric needs. Focus on iron-rich foods and complex carbs to support elevated metabolism.',
       intensity: 70,
-      label: 'Moderate Phase',
+      label: 'BODY_DATA.PHASE_LUTEAL',
     },
     menstrual: {
       performance: 'Rest and recovery priority. Low hormone levels — listen to your body. Light movement supports wellbeing.',
       fueling: 'Iron and magnesium intake is important. Anti-inflammatory foods help manage discomfort.',
       intensity: 40,
-      label: 'Recovery Phase',
+      label: 'BODY_DATA.PHASE_MENSTRUAL',
     },
   };
 

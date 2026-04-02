@@ -2,6 +2,7 @@ import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { forkJoin } from 'rxjs';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { UserTrainingEntry, UserTrainingEntryService } from '../../services/user-training-entry.service';
 import { StatisticsService, TrainingStatsDto } from '../../services/statistics.service';
 import { PlanAdjustment, PlanAdjustmentService } from '../../services/plan-adjustment.service';
@@ -40,12 +41,15 @@ interface Insight {
   text: string;
 }
 
-const DAY_SHORTS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+const DAY_SHORT_KEYS = [
+  'COMMON.DAY_SUN', 'COMMON.DAY_MON', 'COMMON.DAY_TUE',
+  'COMMON.DAY_WED', 'COMMON.DAY_THU', 'COMMON.DAY_FRI', 'COMMON.DAY_SAT'
+];
 
 @Component({
   selector: 'app-training-plan',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, TranslateModule],
   templateUrl: './training-plan.html',
   styleUrl: './training-plan.scss'
 })
@@ -55,6 +59,7 @@ export class TrainingPlan implements OnInit {
   private statsService = inject(StatisticsService);
   private adjustmentService = inject(PlanAdjustmentService);
   private cdr = inject(ChangeDetectorRef);
+  private translate = inject(TranslateService);
 
   planName = '—';
   weekLabel = '—';
@@ -65,34 +70,31 @@ export class TrainingPlan implements OnInit {
   hasError = false;
   hasPlan = false;
 
-  currentWeekLabel = 'Diese Woche';
+  currentWeekLabel = '';
   weekOffset = 0;
 
   days: TrainingDay[] = [];
 
-  insights: Insight[] = [
-    {
-      title: 'Training Load: Optimal',
-      text: 'Your recovery scores have been consistent. You\'re ready for today\'s high-intensity session.'
-    },
-    {
-      title: 'Pace Trend',
-      text: 'Threshold pace has improved by 4s/km over the last 14 days. Keep it up!'
-    }
-  ];
+  insights: Insight[] = [];
 
-  stats: Stat[] = [
-    { label: 'Weekly Distance', value: '—', unit: 'km' },
-    { label: 'Time on Feet', value: '—', unit: 'h' },
-    { label: 'Avg. HR', value: '—', unit: 'bpm' },
-    { label: 'Elevation', value: '—', unit: 'm' }
-  ];
+  stats: Stat[] = [];
 
   recoveryScore = 0;
 
   pendingAdjustments: PlanAdjustment[] = [];
 
   ngOnInit(): void {
+    this.currentWeekLabel = this.translate.instant('TRAINING_PLAN.THIS_WEEK');
+    this.insights = [
+      {
+        title: this.translate.instant('TRAINING_PLAN.INSIGHT_LOAD_TITLE'),
+        text: this.translate.instant('TRAINING_PLAN.INSIGHT_LOAD_TEXT')
+      },
+      {
+        title: this.translate.instant('TRAINING_PLAN.INSIGHT_PACE_TITLE'),
+        text: this.translate.instant('TRAINING_PLAN.INSIGHT_PACE_TEXT')
+      }
+    ];
     this.loadWeek();
     this.loadPendingAdjustments();
   }
@@ -141,9 +143,9 @@ export class TrainingPlan implements OnInit {
 
   adjustmentLabel(type: string): string {
     switch (type) {
-      case 'RESCHEDULE': return 'Verschieben';
-      case 'DROP': return 'Entfernen';
-      case 'INTENSITY_REDUCE': return 'Intensität senken';
+      case 'RESCHEDULE': return this.translate.instant('TRAINING_PLAN.ADJ_RESCHEDULE');
+      case 'DROP': return this.translate.instant('TRAINING_PLAN.ADJ_DROP');
+      case 'INTENSITY_REDUCE': return this.translate.instant('TRAINING_PLAN.ADJ_INTENSITY_REDUCE');
       default: return type;
     }
   }
@@ -209,7 +211,7 @@ export class TrainingPlan implements OnInit {
         this.resetSummary();
       },
       error: (err) => {
-        console.error('Fehler beim Laden der Trainingsplan-Einträge:', err);
+        console.error('Error loading training plan entries:', err);
         this.hasError = true;
         this.isLoading = false;
         this.cdr.detectChanges();
@@ -240,13 +242,13 @@ export class TrainingPlan implements OnInit {
       ? Math.round(dto.totalElevationGainM).toString() : '—';
 
     this.stats = [
-      { label: 'Weekly Distance', value: distance,                    unit: 'km'  },
-      { label: 'Time on Feet',    value: hours,                       unit: 'h'   },
-      { label: 'Avg. HR',         value: hr,                          unit: 'bpm' },
-      { label: 'Elevation',       value: elevation,                   unit: 'm'   },
-      { label: 'Geplant',         value: total > 0 ? String(total) : '—',     unit: 'Einheiten' },
-      { label: 'Erledigt',        value: total > 0 ? String(completed) : '—', unit: 'Einheiten' },
-      { label: 'Skipped',         value: total > 0 ? String(skipped) : '—',   unit: 'Einheiten' }
+      { label: this.translate.instant('TRAINING_PLAN.WEEKLY_DISTANCE'), value: distance,                    unit: this.translate.instant('COMMON.KM')    },
+      { label: this.translate.instant('TRAINING_PLAN.TIME_ON_FEET'),    value: hours,                       unit: this.translate.instant('COMMON.HOURS') },
+      { label: this.translate.instant('TRAINING_PLAN.AVG_HR'),          value: hr,                          unit: this.translate.instant('COMMON.BPM')   },
+      { label: this.translate.instant('COMMON.ELEVATION'),              value: elevation,                   unit: this.translate.instant('COMMON.M')     },
+      { label: this.translate.instant('TRAINING_PLAN.PLANNED'),         value: total > 0 ? String(total) : '—',     unit: this.translate.instant('COMMON.SESSIONS') },
+      { label: this.translate.instant('TRAINING_PLAN.DONE'),            value: total > 0 ? String(completed) : '—', unit: this.translate.instant('COMMON.SESSIONS') },
+      { label: this.translate.instant('TRAINING_PLAN.SKIPPED'),         value: total > 0 ? String(skipped) : '—',   unit: this.translate.instant('COMMON.SESSIONS') }
     ];
   }
 
@@ -280,7 +282,7 @@ export class TrainingPlan implements OnInit {
 
       if (dayEntries.length === 0) {
         this.days.push({
-          dayShort: DAY_SHORTS[jsDay],
+          dayShort: this.translate.instant(DAY_SHORT_KEYS[jsDay]),
           dayNum: day.getDate(),
           isoDate,
           isToday,
@@ -291,7 +293,7 @@ export class TrainingPlan implements OnInit {
       }
 
       this.days.push({
-        dayShort: DAY_SHORTS[jsDay],
+        dayShort: this.translate.instant(DAY_SHORT_KEYS[jsDay]),
         dayNum: day.getDate(),
         isoDate,
         isToday,
@@ -419,7 +421,7 @@ export class TrainingPlan implements OnInit {
       completionStatus: nextStatus === 'upcoming' ? 'pending' : nextStatus
     }).subscribe({
       next: () => this.loadWeek(),
-      error: (err) => console.error('Fehler beim Aktualisieren des Trainingsstatus:', err)
+      error: (err) => console.error('Error updating training status:', err)
     });
   }
 

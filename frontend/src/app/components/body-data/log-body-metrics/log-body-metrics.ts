@@ -3,6 +3,7 @@ import { Component, ElementRef, ViewChild, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { forkJoin, of } from 'rxjs';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { BloodPressureEntry, BloodPressureService } from '../../../services/blood-pressure.service';
 import { ProOverlay } from '../../shared/pro-overlay/pro-overlay';
 import { BodyMeasurementEntry, BodyMeasurementService } from '../../../services/body-measurement.service';
@@ -17,7 +18,7 @@ interface LatestEntryMetric {
 @Component({
   selector: 'app-log-body-metrics',
   standalone: true,
-  imports: [CommonModule, FormsModule, ProOverlay],
+  imports: [CommonModule, FormsModule, ProOverlay, TranslateModule],
   templateUrl: './log-body-metrics.html',
   styleUrl: './log-body-metrics.scss'
 })
@@ -27,6 +28,7 @@ export class LogBodyMetrics {
   @ViewChild('entryTimeInput') entryTimeInput?: ElementRef<HTMLInputElement>;
 
   private readonly router = inject(Router);
+  private readonly translate = inject(TranslateService);
   private readonly bodyMeasurementService = inject(BodyMeasurementService);
   private readonly bloodPressureService = inject(BloodPressureService);
   private readonly sleepDataService = inject(SleepDataService);
@@ -49,10 +51,10 @@ export class LogBodyMetrics {
   error: string | null = null;
 
   readonly latestEntryMetrics: LatestEntryMetric[] = [
-    { label: 'Weight', value: '75.8 kg', trend: 'up' },
-    { label: 'Body Fat', value: '14.5%', trend: 'down' },
-    { label: 'Muscle Mass', value: '61.9 kg', trend: 'down' },
-    { label: 'Resting HR', value: '61 BPM', trend: 'down' },
+    { label: 'BODY_DATA.WEIGHT', value: '75.8 kg', trend: 'up' },
+    { label: 'BODY_DATA.BODY_FAT', value: '14.5%', trend: 'down' },
+    { label: 'BODY_DATA.MUSCLE_MASS', value: '61.9 kg', trend: 'down' },
+    { label: 'BODY_DATA.RESTING_HR', value: '61 BPM', trend: 'down' },
   ];
 
   openDatePicker(): void {
@@ -104,7 +106,7 @@ export class LogBodyMetrics {
       },
       error: () => {
         this.saving = false;
-        this.error = 'Failed to save. Please try again.';
+        this.error = this.translate.instant('BODY_DATA.SAVE_ERROR');
       }
     });
   }
@@ -151,7 +153,7 @@ export class LogBodyMetrics {
   private buildPayload(): { bodyMeasurement?: BodyMeasurementEntry; bloodPressure?: BloodPressureEntry; sleepData?: SleepDataEntry } | null {
     const bloodPressure = this.parseBloodPressure(this.bloodPressure);
     if (this.bloodPressure.trim() && !bloodPressure) {
-      this.error = 'Blood pressure must use the format systolic/diastolic, e.g. 120/80.';
+      this.error = this.translate.instant('BODY_DATA.BP_FORMAT_ERROR');
       return null;
     }
 
@@ -185,7 +187,7 @@ export class LogBodyMetrics {
     } : undefined;
 
     if (!hasBodyMeasurementValue && !bloodPressureEntry && !sleepData) {
-      this.error = 'Enter at least one metric before saving.';
+      this.error = this.translate.instant('BODY_DATA.MIN_ONE_METRIC');
       return null;
     }
 

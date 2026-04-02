@@ -6,19 +6,19 @@
     <div class="page-header__left">
       <span class="page-eyebrow">
         <span class="material-symbols-outlined">psychology</span>
-        AI Trainer
+        {{ 'AI_TRAINER.EYEBROW' | translate }}
       </span>
-      <h2 class="page-title">Dein täglicher Coach</h2>
+      <h2 class="page-title">{{ 'AI_TRAINER.TITLE' | translate }}</h2>
     </div>
     <div class="date-nav">
-      <button class="date-btn" (click)="changeDay(-1)" aria-label="Vorheriger Tag">
+      <button class="date-btn" (click)="changeDay(-1)" [attr.aria-label]="'AI_TRAINER.PREV_DAY' | translate">
         <span class="material-symbols-outlined">chevron_left</span>
       </button>
       <div class="date-display">
         <span class="date-display__text">{{ formattedDateDisplay }}</span>
-        <span class="date-display__today-badge" *ngIf="isToday">Heute</span>
+        <span class="date-display__today-badge" *ngIf="isToday">{{ 'COMMON.TODAY' | translate }}</span>
       </div>
-      <button class="date-btn" (click)="changeDay(1)" aria-label="Nächster Tag">
+      <button class="date-btn" (click)="changeDay(1)" [attr.aria-label]="'AI_TRAINER.NEXT_DAY' | translate">
         <span class="material-symbols-outlined">chevron_right</span>
       </button>
     </div>
@@ -28,8 +28,8 @@
   <div class="info-box info-box--warn" *ngIf="aiDisabled">
     <span class="material-symbols-outlined">warning</span>
     <div>
-      <strong>AI Trainer nicht verfügbar.</strong>
-      <p>Bitte AI-Modul im Backend aktivieren.</p>
+      <strong>{{ 'AI_TRAINER.NOT_AVAILABLE' | translate }}</strong>
+      <p>{{ 'AI_TRAINER.ACTIVATE_HINT' | translate }}</p>
     </div>
   </div>
 
@@ -42,7 +42,7 @@
   <!-- Loading Spinner -->
   <div class="spinner-wrap" *ngIf="loading">
     <span class="material-symbols-outlined spin">progress_activity</span>
-    <span class="spinner-label">Wird geladen…</span>
+    <span class="spinner-label">{{ 'COMMON.LOADING' | translate }}</span>
   </div>
 
   <!-- ═══════════════════════════════════════════════════════════════ -->
@@ -53,15 +53,15 @@
     <!-- No trainings planned -->
     <div class="section-card section-card--empty" *ngIf="context && context.plannedEntries.length === 0">
       <span class="material-symbols-outlined empty-icon">event_available</span>
-      <p class="empty-title">Kein Training geplant</p>
-      <p class="empty-sub">Für diesen Tag ist kein Training in deinem Plan vorgesehen.</p>
+      <p class="empty-title">{{ 'AI_TRAINER.NO_TRAINING' | translate }}</p>
+      <p class="empty-sub">{{ 'AI_TRAINER.NO_TRAINING_SUB' | translate }}</p>
     </div>
 
     <!-- Planned Trainings -->
     <section class="section-card" *ngIf="context && context.plannedEntries.length > 0">
       <div class="section-card__head">
         <span class="material-symbols-outlined section-icon">calendar_today</span>
-        <h3 class="section-card__title">Geplante Einheiten</h3>
+        <h3 class="section-card__title">{{ 'AI_TRAINER.PLANNED_SESSIONS' | translate }}</h3>
         <span class="session-count-badge">{{ context.plannedEntries.length }}</span>
       </div>
       <div class="training-list">
@@ -85,7 +85,7 @@
             <div class="training-item__meta">
               <span *ngIf="entry.training.duration">
                 <span class="material-symbols-outlined meta-icon">schedule</span>
-                {{ entry.training.duration }} min
+                {{ entry.training.duration }} {{ 'COMMON.MIN' | translate }}
               </span>
               <span class="training-item__competition">{{ entry.competitionName }}</span>
             </div>
@@ -104,7 +104,7 @@
       <section class="section-card wellbeing-card" *ngIf="context.asthmaRisk">
         <div class="section-card__head">
           <span class="material-symbols-outlined section-icon">pulmonology</span>
-          <h3 class="section-card__title">Asthma-Risiko</h3>
+          <h3 class="section-card__title">{{ 'AI_TRAINER.ASTHMA_RISK' | translate }}</h3>
           <span class="risk-badge" [class]="getAsthmaLevelClass()">{{ getAsthmaLevelText() }}</span>
         </div>
         <div class="risk-bar-wrap">
@@ -121,11 +121,11 @@
       <section class="section-card wellbeing-card" *ngIf="context.cyclePhase">
         <div class="section-card__head">
           <span class="material-symbols-outlined section-icon">favorite</span>
-          <h3 class="section-card__title">Zyklusphase</h3>
+          <h3 class="section-card__title">{{ 'AI_TRAINER.CYCLE_PHASE' | translate }}</h3>
           <span class="phase-badge">{{ context.cyclePhase.phase }}</span>
         </div>
         <div class="energy-bar-wrap">
-          <span class="energy-label">Energie</span>
+          <span class="energy-label">{{ 'AI_TRAINER.ENERGY' | translate }}</span>
           <div class="energy-bar">
             <div class="energy-bar__fill"
               [style.width.%]="(context.cyclePhase.energyLevel / 10) * 100"></div>
@@ -141,7 +141,7 @@
     <div class="info-box info-box--info" *ngIf="context?.existingSession && !context?.existingSession?.userDecision">
       <span class="material-symbols-outlined">info</span>
       <div>
-        <strong>Frühere KI-Empfehlung vorhanden</strong>
+        <strong>{{ 'AI_TRAINER.PREVIOUS_SESSION' | translate }}</strong>
         <p>{{ context!.existingSession!.aiRecommendation }}</p>
       </div>
     </div>
@@ -150,7 +150,7 @@
     <section class="section-card feeling-card" *ngIf="context">
       <div class="section-card__head">
         <span class="material-symbols-outlined section-icon">sentiment_satisfied</span>
-        <h3 class="section-card__title">Dein Wohlbefinden</h3>
+        <h3 class="section-card__title">{{ 'AI_TRAINER.WELLBEING_TITLE' | translate }}</h3>
       </div>
 
       <div class="feeling-selector">
@@ -167,19 +167,19 @@
       </div>
 
       <div class="feeling-notes">
-        <label class="notes-label" for="feelingText">Anmerkungen (optional)</label>
+        <label class="notes-label" for="feelingText">{{ 'AI_TRAINER.NOTES_LABEL' | translate }}</label>
         <textarea
           id="feelingText"
           class="notes-textarea"
           [(ngModel)]="feelingText"
-          placeholder="Wie fühlst du dich heute? Schlafqualität, Muskelkater, besondere Umstände…"
+          [placeholder]="'AI_TRAINER.NOTES_PLACEHOLDER' | translate"
           rows="3">
         </textarea>
       </div>
 
       <button class="ask-btn" (click)="askAI()" [disabled]="loading">
         <span class="material-symbols-outlined">psychology</span>
-        KI fragen
+        {{ 'AI_TRAINER.ASK_AI' | translate }}
       </button>
     </section>
 
@@ -193,7 +193,7 @@
     <section class="section-card">
       <div class="section-card__head">
         <span class="material-symbols-outlined section-icon">psychology</span>
-        <h3 class="section-card__title">KI-Empfehlung</h3>
+        <h3 class="section-card__title">{{ 'AI_TRAINER.RECOMMENDATION' | translate }}</h3>
       </div>
 
       <!-- Recommendation Text -->
@@ -208,7 +208,7 @@
       <div class="restructuring-preview" *ngIf="recommendation!.restructuringPreview">
         <div class="restructuring-preview__head">
           <span class="material-symbols-outlined">preview</span>
-          <span>Vorschau: Planänderungen</span>
+          <span>{{ 'AI_TRAINER.PREVIEW_CHANGES' | translate }}</span>
         </div>
         <p class="restructuring-preview__text">{{ recommendation!.restructuringPreview }}</p>
       </div>
@@ -216,32 +216,32 @@
 
     <!-- Decision Buttons -->
     <section class="section-card decision-card">
-      <h3 class="decision-title">Was möchtest du tun?</h3>
-      <p class="decision-sub">Empfehlung: <strong>{{ recommendation!.suggestedAction }}</strong></p>
+      <h3 class="decision-title">{{ 'AI_TRAINER.WHAT_TO_DO' | translate }}</h3>
+      <p class="decision-sub">{{ 'AI_TRAINER.RECOMMENDATION_PREFIX' | translate }} <strong>{{ recommendation!.suggestedAction }}</strong></p>
 
       <div class="decision-buttons">
         <button class="decision-btn btn-proceed" (click)="decide('PROCEED')" [disabled]="executing">
           <span class="material-symbols-outlined">check_circle</span>
-          <span class="decision-btn__label">Training durchführen</span>
-          <span class="decision-btn__sub">Plan wie geplant</span>
+          <span class="decision-btn__label">{{ 'AI_TRAINER.OPTION_DO_TRAINING' | translate }}</span>
+          <span class="decision-btn__sub">{{ 'AI_TRAINER.OPTION_DO_TRAINING_SUB' | translate }}</span>
         </button>
 
         <button class="decision-btn btn-modify" (click)="decide('MODIFY')" [disabled]="executing">
           <span class="material-symbols-outlined">tune</span>
-          <span class="decision-btn__label">Angepasst durchführen</span>
-          <span class="decision-btn__sub">KI-Anpassung anwenden</span>
+          <span class="decision-btn__label">{{ 'AI_TRAINER.OPTION_ADJUSTED' | translate }}</span>
+          <span class="decision-btn__sub">{{ 'AI_TRAINER.OPTION_ADJUSTED_SUB' | translate }}</span>
         </button>
 
         <button class="decision-btn btn-skip" (click)="decide('SKIP')" [disabled]="executing">
           <span class="material-symbols-outlined">cancel</span>
-          <span class="decision-btn__label">Ausfallen lassen</span>
-          <span class="decision-btn__sub">Einheit überspringen</span>
+          <span class="decision-btn__label">{{ 'AI_TRAINER.OPTION_SKIP' | translate }}</span>
+          <span class="decision-btn__sub">{{ 'AI_TRAINER.OPTION_SKIP_SUB' | translate }}</span>
         </button>
       </div>
 
       <div class="executing-hint" *ngIf="executing">
         <span class="material-symbols-outlined spin">progress_activity</span>
-        Wird ausgeführt…
+        {{ 'AI_TRAINER.EXECUTING' | translate }}
       </div>
     </section>
 
@@ -258,9 +258,9 @@
         <span class="material-symbols-outlined">check_circle</span>
       </div>
       <div class="success-box__body">
-        <h3 class="success-box__title">Entscheidung bereits getroffen</h3>
+        <h3 class="success-box__title">{{ 'AI_TRAINER.DECISION_MADE' | translate }}</h3>
         <p class="success-box__sub">
-          Deine Entscheidung für diesen Tag: <strong>{{ context!.existingSession!.userDecision }}</strong>
+          {{ 'AI_TRAINER.YOUR_DECISION' | translate }} <strong>{{ context!.existingSession!.userDecision }}</strong>
         </p>
         <p class="success-box__rec" *ngIf="context?.existingSession?.aiRecommendation">
           {{ context!.existingSession!.aiRecommendation }}
@@ -274,7 +274,7 @@
         <span class="material-symbols-outlined">check_circle</span>
       </div>
       <div class="success-box__body">
-        <h3 class="success-box__title">Plan wurde angepasst</h3>
+        <h3 class="success-box__title">{{ 'AI_TRAINER.PLAN_ADJUSTED' | translate }}</h3>
         <p class="success-box__sub">{{ result!.message }}</p>
       </div>
     </div>
@@ -283,7 +283,7 @@
     <section class="section-card changes-card" *ngIf="result && result!.changes && result!.changes.length > 0">
       <div class="section-card__head">
         <span class="material-symbols-outlined section-icon">list_alt</span>
-        <h3 class="section-card__title">Vorgenommene Änderungen</h3>
+        <h3 class="section-card__title">{{ 'AI_TRAINER.CHANGES_MADE' | translate }}</h3>
       </div>
 
       <div class="changes-list">
@@ -305,11 +305,11 @@
     <div class="confirmed-actions">
       <a routerLink="/training-plans" class="nav-btn">
         <span class="material-symbols-outlined">calendar_today</span>
-        Zum Trainingsplan
+        {{ 'AI_TRAINER.TO_TRAINING_PLAN' | translate }}
       </a>
       <button class="secondary-btn" (click)="changeDay(0)">
         <span class="material-symbols-outlined">refresh</span>
-        Neu laden
+        {{ 'AI_TRAINER.RELOAD' | translate }}
       </button>
     </div>
 

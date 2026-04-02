@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.8.0] - 2026-04-02
+
+### Added
+- Full internationalization (i18n) support using @ngx-translate/core with runtime language switching
+- German (de) and English (en) translation files with ~600 keys covering all 42+ components
+- Language switcher in Settings under "App Preferences" — default language is German
+- Language preference persisted in localStorage under `pacr-language`
+
+### Changed
+- All hardcoded UI strings in templates and TypeScript files replaced with translation keys
+- Every standalone component updated to import TranslateModule
+
 ## [0.7.0] - 2026-04-01
 
 ### Added

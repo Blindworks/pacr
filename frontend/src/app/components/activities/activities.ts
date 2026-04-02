@@ -1,6 +1,7 @@
 import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ActivityService, CompletedTraining, GpsStreamDto } from '../../services/activity.service';
 import { StravaService } from '../../services/strava.service';
 import { ActivityMapComponent } from '../activity-map/activity-map';
@@ -21,7 +22,7 @@ interface Activity {
 @Component({
   selector: 'app-activities',
   standalone: true,
-  imports: [RouterModule, CommonModule, ActivityMapComponent],
+  imports: [RouterModule, CommonModule, ActivityMapComponent, TranslateModule],
   templateUrl: './activities.html',
   styleUrl: './activities.scss'
 })
@@ -29,6 +30,7 @@ export class Activities implements OnInit {
   private readonly activityService = inject(ActivityService);
   private readonly stravaService = inject(StravaService);
   private readonly cdr = inject(ChangeDetectorRef);
+  private readonly translate = inject(TranslateService);
 
   selectedFilter: string = 'all';
   isLoading = true;
@@ -36,12 +38,14 @@ export class Activities implements OnInit {
   hasError = false;
   stravaConnected = false;
 
-  filters = [
-    { id: 'all', label: 'All' },
-    { id: 'run', label: 'Running' },
-    { id: 'cycl', label: 'Cycling' },
-    { id: 'swim', label: 'Swimming' },
-  ];
+  get filters() {
+    return [
+      { id: 'all', label: this.translate.instant('ACTIVITIES.FILTER_ALL') },
+      { id: 'run', label: this.translate.instant('ACTIVITIES.FILTER_RUNNING') },
+      { id: 'cycl', label: this.translate.instant('ACTIVITIES.FILTER_CYCLING') },
+      { id: 'swim', label: this.translate.instant('ACTIVITIES.FILTER_SWIMMING') },
+    ];
+  }
 
   activities: Activity[] = [];
   featuredGpsData: GpsStreamDto | null = null;

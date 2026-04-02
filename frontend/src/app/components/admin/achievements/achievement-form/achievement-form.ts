@@ -1,12 +1,13 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { AdminAchievementService } from '../../../../services/admin-achievement.service';
 
 @Component({
   selector: 'app-achievement-form',
   standalone: true,
-  imports: [FormsModule],
+  imports: [FormsModule, TranslateModule],
   templateUrl: './achievement-form.html',
   styleUrl: './achievement-form.scss'
 })
@@ -14,6 +15,7 @@ export class AchievementForm implements OnInit {
   private achievementService = inject(AdminAchievementService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
+  private translate = inject(TranslateService);
 
   editId = signal<number | null>(null);
   saving = signal(false);
@@ -29,12 +31,14 @@ export class AchievementForm implements OnInit {
   validFrom = signal('');
   validUntil = signal('');
 
-  readonly categories = [
-    { value: 'DISTANCE', label: 'Distanz' },
-    { value: 'STREAK', label: 'Streak' },
-    { value: 'PR', label: 'Persönlicher Rekord' },
-    { value: 'PLAN_COMPLETION', label: 'Plan-Abschluss' }
-  ];
+  get categories() {
+    return [
+      { value: 'DISTANCE', label: this.translate.instant('ADMIN.CAT_DISTANCE_FULL') },
+      { value: 'STREAK', label: this.translate.instant('ADMIN.CAT_STREAK_FULL') },
+      { value: 'PR', label: this.translate.instant('ADMIN.CAT_PR_FULL') },
+      { value: 'PLAN_COMPLETION', label: this.translate.instant('ADMIN.CAT_PLAN_FULL') }
+    ];
+  }
 
   readonly icons = [
     'emoji_events', 'directions_run', 'local_fire_department', 'task_alt',
@@ -64,7 +68,7 @@ export class AchievementForm implements OnInit {
 
   save(): void {
     if (!this.key() || !this.name()) {
-      this.error.set('Key und Name sind erforderlich.');
+      this.error.set(this.translate.instant('ADMIN.KEY_NAME_REQUIRED'));
       return;
     }
 
@@ -91,7 +95,7 @@ export class AchievementForm implements OnInit {
     call.subscribe({
       next: () => this.router.navigate(['/admin/achievements']),
       error: () => {
-        this.error.set('Fehler beim Speichern.');
+        this.error.set(this.translate.instant('ADMIN.ACHIEVEMENT_SAVE_ERROR'));
         this.saving.set(false);
       }
     });

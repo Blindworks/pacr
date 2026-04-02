@@ -2,11 +2,12 @@ import { Component, ElementRef, ViewChild, effect, inject, signal, OnDestroy } f
 import { FormsModule } from '@angular/forms';
 import { FeedbackDialogService } from '../../services/feedback-dialog.service';
 import { FeedbackService, FeedbackCategory } from '../../services/feedback.service';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-feedback-dialog',
   standalone: true,
-  imports: [FormsModule],
+  imports: [FormsModule, TranslateModule],
   templateUrl: './feedback-dialog.html',
   styleUrl: './feedback-dialog.scss'
 })
@@ -15,6 +16,7 @@ export class FeedbackDialog implements OnDestroy {
 
   private readonly dialogService = inject(FeedbackDialogService);
   private readonly feedbackService = inject(FeedbackService);
+  private readonly translate = inject(TranslateService);
 
   isSubmitting = signal(false);
   submitError = signal<string | null>(null);
@@ -50,7 +52,7 @@ export class FeedbackDialog implements OnDestroy {
 
   submit(): void {
     if (!this.subject.trim() || !this.message.trim()) {
-      this.submitError.set('Please fill in both subject and message.');
+      this.submitError.set(this.translate.instant('DIALOGS.FEEDBACK_FILL_FIELDS'));
       return;
     }
 
@@ -69,7 +71,7 @@ export class FeedbackDialog implements OnDestroy {
       },
       error: () => {
         this.isSubmitting.set(false);
-        this.submitError.set('Failed to send feedback. Please try again.');
+        this.submitError.set(this.translate.instant('DIALOGS.FEEDBACK_ERROR'));
       }
     });
   }

@@ -6,32 +6,32 @@
       {{ plan()?.name ?? 'Plan' }}
     </button>
     <span class="material-symbols-outlined breadcrumb-sep">chevron_right</span>
-    <span class="breadcrumb-current">{{ isEdit ? 'Edit Training' : 'New Training' }}</span>
+    <span class="breadcrumb-current">{{ isEdit ? ('ADMIN.EDIT_TRAINING_TITLE' | translate) : ('ADMIN.NEW_TRAINING_TITLE' | translate) }}</span>
   </div>
 
   <!-- Sticky header -->
   <header class="form-header">
     <div class="form-header-left">
-      <button class="btn-ghost icon-only" (click)="cancel()" title="Back">
+      <button class="btn-ghost icon-only" (click)="cancel()" [title]="'COMMON.BACK' | translate">
         <span class="material-symbols-outlined">arrow_back</span>
       </button>
-      <h2>{{ isEdit ? 'Edit Training' : 'New Training' }}</h2>
+      <h2>{{ isEdit ? ('ADMIN.EDIT_TRAINING_TITLE' | translate) : ('ADMIN.NEW_TRAINING_TITLE' | translate) }}</h2>
     </div>
     <div class="form-header-actions">
       @if (hasError()) {
         <span class="error-hint">
           <span class="material-symbols-outlined">error</span>
-          Save failed
+          {{ 'ADMIN.SAVE_FAILED' | translate }}
         </span>
       }
-      <button class="btn-ghost" (click)="cancel()" [disabled]="isSaving()">Cancel</button>
+      <button class="btn-ghost" (click)="cancel()" [disabled]="isSaving()">{{ 'COMMON.CANCEL' | translate }}</button>
       <button class="btn-primary" (click)="save()" [disabled]="isSaving()">
         @if (isSaving()) {
           <span class="material-symbols-outlined spin">progress_activity</span>
         } @else {
           <span class="material-symbols-outlined">save</span>
         }
-        {{ isSaving() ? 'Saving…' : 'Save' }}
+        {{ isSaving() ? ('COMMON.SAVING' | translate) : ('COMMON.SAVE' | translate) }}
       </button>
     </div>
   </header>
@@ -40,7 +40,7 @@
   @if (isLoading()) {
     <div class="loading-state">
       <span class="material-symbols-outlined spin">progress_activity</span>
-      <span>Loading training…</span>
+      <span>{{ 'COMMON.LOADING' | translate }}</span>
     </div>
   }
 
@@ -51,20 +51,20 @@
       <section class="form-card">
         <h3 class="section-title">
           <span class="material-symbols-outlined">info</span>
-          Basic Info
+          {{ 'ADMIN.BASIC_INFO' | translate }}
         </h3>
         <div class="field-grid">
           <div class="field field--full">
-            <label>Name <span class="required">*</span></label>
-            <input formControlName="name" type="text" placeholder="e.g. Tempo Intervals" class="input" [class.invalid]="form.get('name')?.invalid && form.get('name')?.touched" />
+            <label>{{ 'COMMON.NAME' | translate }} <span class="required">*</span></label>
+            <input formControlName="name" type="text" [placeholder]="'ADMIN.TRAINING_PLACEHOLDER' | translate" class="input" [class.invalid]="form.get('name')?.invalid && form.get('name')?.touched" />
             @if (form.get('name')?.invalid && form.get('name')?.touched) {
-              <span class="field-error">Name is required</span>
+              <span class="field-error">{{ 'ADMIN.NAME_REQUIRED' | translate }}</span>
             }
           </div>
           <div class="field">
-            <label>Training Type</label>
+            <label>{{ 'ADMIN.TRAINING_TYPE' | translate }}</label>
             <select formControlName="trainingType" class="input">
-              <option value="">— Select —</option>
+              <option value="">{{ 'ADMIN.SELECT' | translate }}</option>
               <option value="speed">Speed</option>
               <option value="endurance">Endurance</option>
               <option value="strength">Strength</option>
@@ -77,9 +77,9 @@
             </select>
           </div>
           <div class="field">
-            <label>Intensity Level</label>
+            <label>{{ 'ADMIN.INTENSITY_LEVEL' | translate }}</label>
             <select formControlName="intensityLevel" class="input">
-              <option value="">— Select —</option>
+              <option value="">{{ 'ADMIN.SELECT' | translate }}</option>
               <option value="high">High</option>
               <option value="medium">Medium</option>
               <option value="low">Low</option>
@@ -88,24 +88,24 @@
             </select>
           </div>
           <div class="field">
-            <label>Difficulty</label>
+            <label>{{ 'ADMIN.DIFFICULTY_LEVEL' | translate }}</label>
             <select formControlName="difficulty" class="input">
-              <option value="">— Select —</option>
-              <option value="beginner">Beginner</option>
-              <option value="intermediate">Intermediate</option>
-              <option value="advanced">Advanced</option>
-              <option value="elite">Elite</option>
+              <option value="">{{ 'ADMIN.SELECT' | translate }}</option>
+              <option value="beginner">{{ 'ADMIN.BEGINNER' | translate }}</option>
+              <option value="intermediate">{{ 'ADMIN.INTERMEDIATE' | translate }}</option>
+              <option value="advanced">{{ 'ADMIN.ADVANCED' | translate }}</option>
+              <option value="elite">{{ 'ADMIN.ELITE_LEVEL' | translate }}</option>
             </select>
           </div>
           <div class="field">
-            <label>Week</label>
+            <label>{{ 'ADMIN.WEEK_LABEL' | translate }}</label>
             <input formControlName="weekNumber" type="number" min="1" placeholder="e.g. 1" class="input" />
-            <span class="field-hint">Training week within the plan</span>
+            <span class="field-hint">{{ 'ADMIN.WEEK_HINT' | translate }}</span>
           </div>
           <div class="field">
-            <label>Day of Week</label>
+            <label>{{ 'ADMIN.DAY_OF_WEEK' | translate }}</label>
             <select formControlName="dayOfWeek" class="input">
-              <option [ngValue]="null">— Select —</option>
+              <option [ngValue]="null">{{ 'ADMIN.SELECT' | translate }}</option>
               <option [ngValue]="1">Monday</option>
               <option [ngValue]="2">Tuesday</option>
               <option [ngValue]="3">Wednesday</option>
@@ -114,15 +114,15 @@
               <option [ngValue]="6">Saturday</option>
               <option [ngValue]="7">Sunday</option>
             </select>
-            <span class="field-hint">Relative day (1 = Mon, 7 = Sun)</span>
+            <span class="field-hint">{{ 'ADMIN.DAY_HINT' | translate }}</span>
           </div>
           <div class="field field--full">
-            <label>Description</label>
+            <label>{{ 'COMMON.DESCRIPTION' | translate }}</label>
             <textarea formControlName="description" rows="3" placeholder="Describe this training…" class="input textarea"></textarea>
           </div>
           <div class="field field--full">
-            <label>Benefit</label>
-            <input formControlName="benefit" type="text" placeholder="e.g. Improves lactate threshold" class="input" />
+            <label>{{ 'ADMIN.BENEFIT' | translate }}</label>
+            <input formControlName="benefit" type="text" [placeholder]="'ADMIN.BENEFIT_PLACEHOLDER' | translate" class="input" />
           </div>
         </div>
       </section>
@@ -131,35 +131,35 @@
       <section class="form-card">
         <h3 class="section-title">
           <span class="material-symbols-outlined">speed</span>
-          Metrics &amp; Pace
+          {{ 'ADMIN.METRICS_PACE' | translate }}
         </h3>
         <div class="field-grid">
           <div class="field">
-            <label>Duration (min)</label>
+            <label>{{ 'ADMIN.DURATION_MIN' | translate }}</label>
             <input formControlName="durationMinutes" type="number" min="0" placeholder="60" class="input" />
           </div>
           <div class="field">
-            <label>Work Pace</label>
-            <input formControlName="workPace" type="text" placeholder="e.g. 4:30/km" class="input" />
+            <label>{{ 'ADMIN.WORK_PACE' | translate }}</label>
+            <input formControlName="workPace" type="text" [placeholder]="'ADMIN.WORK_PACE_PLACEHOLDER' | translate" class="input" />
           </div>
           <div class="field">
-            <label>Recovery Pace</label>
-            <input formControlName="recoveryPace" type="text" placeholder="e.g. 6:00/km" class="input" />
+            <label>{{ 'ADMIN.RECOVERY_PACE' | translate }}</label>
+            <input formControlName="recoveryPace" type="text" [placeholder]="'ADMIN.RECOVERY_PACE_PLACEHOLDER' | translate" class="input" />
           </div>
           <div class="field">
-            <label>Intensity Score</label>
+            <label>{{ 'ADMIN.INTENSITY_SCORE' | translate }}</label>
             <input formControlName="intensityScore" type="number" min="0" max="100" placeholder="0–100" class="input" />
           </div>
           <div class="field">
-            <label>Est. Calories</label>
+            <label>{{ 'ADMIN.EST_CALORIES' | translate }}</label>
             <input formControlName="estimatedCalories" type="number" min="0" placeholder="500" class="input" />
           </div>
           <div class="field">
-            <label>Est. Distance (m)</label>
+            <label>{{ 'ADMIN.EST_DISTANCE' | translate }}</label>
             <input formControlName="estimatedDistanceMeters" type="number" min="0" placeholder="10000" class="input" />
           </div>
           <div class="field field--full">
-            <label>Hero Image URL</label>
+            <label>{{ 'ADMIN.HERO_IMAGE' | translate }}</label>
             <input formControlName="heroImageUrl" type="url" placeholder="https://…" class="input" />
           </div>
         </div>
@@ -170,17 +170,17 @@
         <div class="section-header">
           <h3 class="section-title">
             <span class="material-symbols-outlined">format_list_numbered</span>
-            Workout Steps
+            {{ 'ADMIN.WORKOUT_STEPS' | translate }}
             <span class="badge">{{ steps.length }}</span>
           </h3>
           <button type="button" class="btn-ghost small" (click)="addStep()">
             <span class="material-symbols-outlined">add</span>
-            Add Step
+            {{ 'ADMIN.ADD_STEP' | translate }}
           </button>
         </div>
 
         @if (steps.length === 0) {
-          <p class="empty-hint">No steps yet. Click "Add Step" to define the workout structure.</p>
+          <p class="empty-hint">{{ 'ADMIN.NO_STEPS' | translate }}</p>
         }
 
         @for (step of steps.controls; track $index) {
@@ -188,77 +188,77 @@
             <div class="array-item-header">
               <span class="array-item-index">{{ $index + 1 }}</span>
               <div class="array-item-actions">
-                <button type="button" class="icon-btn" title="Move up" (click)="moveStepUp($index)" [disabled]="$index === 0">
+                <button type="button" class="icon-btn" [title]="'ADMIN.MOVE_UP' | translate" (click)="moveStepUp($index)" [disabled]="$index === 0">
                   <span class="material-symbols-outlined">arrow_upward</span>
                 </button>
-                <button type="button" class="icon-btn" title="Move down" (click)="moveStepDown($index)" [disabled]="$index === steps.length - 1">
+                <button type="button" class="icon-btn" [title]="'ADMIN.MOVE_DOWN' | translate" (click)="moveStepDown($index)" [disabled]="$index === steps.length - 1">
                   <span class="material-symbols-outlined">arrow_downward</span>
                 </button>
-                <button type="button" class="icon-btn icon-btn--danger" title="Remove" (click)="removeStep($index)">
+                <button type="button" class="icon-btn icon-btn--danger" [title]="'ADMIN.REMOVE' | translate" (click)="removeStep($index)">
                   <span class="material-symbols-outlined">delete</span>
                 </button>
               </div>
             </div>
             <div class="field-grid field-grid--compact">
               <div class="field">
-                <label>Type</label>
+                <label>{{ 'COMMON.TYPE' | translate }}</label>
                 <select formControlName="stepType" class="input">
-                  <option value="">— Select —</option>
-                  <option value="warmup">Warm-up</option>
-                  <option value="work">Work</option>
-                  <option value="recovery">Recovery</option>
-                  <option value="cooldown">Cool-down</option>
-                  <option value="rest">Rest</option>
+                  <option value="">{{ 'ADMIN.SELECT' | translate }}</option>
+                  <option value="warmup">{{ 'ADMIN.STEP_WARMUP' | translate }}</option>
+                  <option value="work">{{ 'ADMIN.STEP_WORK' | translate }}</option>
+                  <option value="recovery">{{ 'ADMIN.STEP_RECOVERY' | translate }}</option>
+                  <option value="cooldown">{{ 'ADMIN.STEP_COOLDOWN' | translate }}</option>
+                  <option value="rest">{{ 'ADMIN.STEP_REST' | translate }}</option>
                 </select>
               </div>
               <div class="field">
-                <label>Subtitle</label>
-                <input formControlName="subtitle" type="text" placeholder="Optional detail" class="input" />
+                <label>{{ 'ADMIN.SUBTITLE' | translate }}</label>
+                <input formControlName="subtitle" type="text" [placeholder]="'ADMIN.SUBTITLE_PLACEHOLDER' | translate" class="input" />
               </div>
               <div class="field">
-                <label>Measurement</label>
+                <label>{{ 'ADMIN.MEASUREMENT' | translate }}</label>
                 <select formControlName="measurementType" class="input" (change)="onMeasurementTypeChange($index)">
-                  <option value="duration">Duration</option>
-                  <option value="distance">Distance</option>
+                  <option value="duration">{{ 'COMMON.DURATION' | translate }}</option>
+                  <option value="distance">{{ 'COMMON.DISTANCE' | translate }}</option>
                 </select>
               </div>
               <div class="field">
-                <label>{{ stepGroup($index).get('measurementType')?.value === 'distance' ? 'Distance (m)' : 'Duration (mm:ss)' }}</label>
+                <label>{{ stepGroup($index).get('measurementType')?.value === 'distance' ? ('ADMIN.DISTANCE_M' | translate) : ('ADMIN.DURATION_MMSS' | translate) }}</label>
                 @if (stepGroup($index).get('measurementType')?.value === 'distance') {
-                  <input formControlName="distanceMeters" type="number" min="1" placeholder="e.g. 1000" class="input" [class.invalid]="stepGroup($index).get('distanceMeters')?.invalid && stepGroup($index).get('distanceMeters')?.touched" />
+                  <input formControlName="distanceMeters" type="number" min="1" [placeholder]="'ADMIN.DISTANCE_PLACEHOLDER' | translate" class="input" [class.invalid]="stepGroup($index).get('distanceMeters')?.invalid && stepGroup($index).get('distanceMeters')?.touched" />
                   @if (stepGroup($index).get('distanceMeters')?.hasError('invalidDistance') && stepGroup($index).get('distanceMeters')?.touched) {
-                    <span class="field-error">Enter a distance in meters</span>
+                    <span class="field-error">{{ 'ADMIN.DISTANCE_HINT' | translate }}</span>
                   }
                 } @else {
-                  <input formControlName="durationText" type="text" inputmode="numeric" maxlength="5" placeholder="e.g. 05:30" class="input" [class.invalid]="stepGroup($index).get('durationText')?.invalid && stepGroup($index).get('durationText')?.touched" (input)="onMaskedTimeInput($index, 'durationText')" (blur)="onMaskedTimeBlur($index, 'durationText')" />
+                  <input formControlName="durationText" type="text" inputmode="numeric" maxlength="5" [placeholder]="'ADMIN.DURATION_PLACEHOLDER' | translate" class="input" [class.invalid]="stepGroup($index).get('durationText')?.invalid && stepGroup($index).get('durationText')?.touched" (input)="onMaskedTimeInput($index, 'durationText')" (blur)="onMaskedTimeBlur($index, 'durationText')" />
                   @if (stepGroup($index).get('durationText')?.hasError('invalidDuration') && stepGroup($index).get('durationText')?.touched) {
-                    <span class="field-error">Use the format mm:ss</span>
+                    <span class="field-error">{{ 'ADMIN.DURATION_HINT' | translate }}</span>
                   }
                 }
               </div>
               <div class="field">
-                <label>Pace Display</label>
+                <label>{{ 'ADMIN.PACE_DISPLAY' | translate }}</label>
                 <input formControlName="paceDisplay" type="text" inputmode="numeric" maxlength="5" placeholder="e.g. 04:15" class="input" [class.invalid]="stepGroup($index).get('paceDisplay')?.invalid && stepGroup($index).get('paceDisplay')?.touched" (input)="onMaskedTimeInput($index, 'paceDisplay')" (blur)="onMaskedTimeBlur($index, 'paceDisplay')" />
                 @if (stepGroup($index).get('paceDisplay')?.hasError('invalidPaceDisplay') && stepGroup($index).get('paceDisplay')?.touched) {
-                  <span class="field-error">Use the format mm:ss</span>
+                  <span class="field-error">{{ 'ADMIN.DURATION_HINT' | translate }}</span>
                 }
               </div>
               <div class="field">
-                <label>Icon</label>
-                <input formControlName="icon" type="text" placeholder="e.g. sprint" class="input" />
+                <label>{{ 'ADMIN.ICON' | translate }}</label>
+                <input formControlName="icon" type="text" [placeholder]="'ADMIN.ICON_PLACEHOLDER' | translate" class="input" />
               </div>
               <div class="field">
-                <label>Repetitions</label>
+                <label>{{ 'ADMIN.REPETITIONS' | translate }}</label>
                 <input formControlName="repetitions" type="number" min="1" class="input" />
               </div>
               <div class="field checkboxes">
                 <label class="checkbox-label">
                   <input formControlName="highlight" type="checkbox" />
-                  Highlight
+                  {{ 'ADMIN.HIGHLIGHT' | translate }}
                 </label>
                 <label class="checkbox-label">
                   <input formControlName="muted" type="checkbox" />
-                  Muted
+                  {{ 'ADMIN.MUTED' | translate }}
                 </label>
               </div>
             </div>
@@ -271,39 +271,39 @@
         <div class="section-header">
           <h3 class="section-title">
             <span class="material-symbols-outlined">lightbulb</span>
-            Prep Tips
+            {{ 'ADMIN.PREP_TIPS' | translate }}
             <span class="badge">{{ prepTips.length }}</span>
           </h3>
           <button type="button" class="btn-ghost small" (click)="addTip()">
             <span class="material-symbols-outlined">add</span>
-            Add Tip
+            {{ 'ADMIN.ADD_TIP' | translate }}
           </button>
         </div>
 
         @if (prepTips.length === 0) {
-          <p class="empty-hint">No prep tips yet.</p>
+          <p class="empty-hint">{{ 'ADMIN.NO_TIPS' | translate }}</p>
         }
 
         @for (tip of prepTips.controls; track $index) {
           <div class="array-item" [formGroup]="tipGroup($index)">
             <div class="array-item-header">
               <span class="array-item-index">{{ $index + 1 }}</span>
-              <button type="button" class="icon-btn icon-btn--danger" title="Remove" (click)="removeTip($index)">
+              <button type="button" class="icon-btn icon-btn--danger" [title]="'ADMIN.REMOVE' | translate" (click)="removeTip($index)">
                 <span class="material-symbols-outlined">delete</span>
               </button>
             </div>
             <div class="field-grid field-grid--compact">
               <div class="field">
-                <label>Title <span class="required">*</span></label>
-                <input formControlName="title" type="text" placeholder="e.g. Hydrate well" class="input" />
+                <label>{{ 'ADMIN.TIP_TITLE' | translate }} <span class="required">*</span></label>
+                <input formControlName="title" type="text" [placeholder]="'ADMIN.TIP_TITLE_PLACEHOLDER' | translate" class="input" />
               </div>
               <div class="field">
-                <label>Icon</label>
+                <label>{{ 'ADMIN.ICON' | translate }}</label>
                 <input formControlName="icon" type="text" placeholder="e.g. water_drop" class="input" />
               </div>
               <div class="field field--full">
-                <label>Text</label>
-                <textarea formControlName="text" rows="2" placeholder="Tip details…" class="input textarea"></textarea>
+                <label>{{ 'ADMIN.TIP_TEXT' | translate }}</label>
+                <textarea formControlName="text" rows="2" [placeholder]="'ADMIN.TIP_TEXT_PLACEHOLDER' | translate" class="input textarea"></textarea>
               </div>
             </div>
           </div>

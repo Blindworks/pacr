@@ -2,13 +2,14 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { CommunityRouteService } from '../../services/community-route.service';
 import { ActivityService, CompletedTraining } from '../../services/activity.service';
 
 @Component({
   selector: 'app-share-route',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, TranslateModule],
   templateUrl: './share-route.html',
   styleUrl: './share-route.scss'
 })
@@ -17,6 +18,7 @@ export class ShareRoute implements OnInit {
   private readonly router = inject(Router);
   private readonly routeService = inject(CommunityRouteService);
   private readonly activityService = inject(ActivityService);
+  private readonly translate = inject(TranslateService);
 
   activity = signal<CompletedTraining | null>(null);
   loading = signal(true);
@@ -37,7 +39,7 @@ export class ShareRoute implements OnInit {
         this.loading.set(false);
       },
       error: () => {
-        this.error.set('Activity not found');
+        this.error.set(this.translate.instant('COMMUNITY.ACTIVITY_NOT_FOUND'));
         this.loading.set(false);
       }
     });
@@ -61,7 +63,7 @@ export class ShareRoute implements OnInit {
       },
       error: err => {
         this.saving.set(false);
-        this.error.set(typeof err.error === 'string' ? err.error : 'Failed to share route');
+        this.error.set(typeof err.error === 'string' ? err.error : this.translate.instant('COMMUNITY.SHARE_ERROR'));
       }
     });
   }

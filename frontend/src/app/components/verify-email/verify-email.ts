@@ -1,12 +1,13 @@
 import { Component, OnInit, signal, OnDestroy } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-verify-email',
   standalone: true,
-  imports: [FormsModule, RouterLink],
+  imports: [FormsModule, RouterLink, TranslateModule],
   templateUrl: './verify-email.html',
   styleUrl: './verify-email.scss'
 })
@@ -20,7 +21,7 @@ export class VerifyEmail implements OnInit, OnDestroy {
 
   private cooldownInterval: ReturnType<typeof setInterval> | null = null;
 
-  constructor(private router: Router, private auth: AuthService) {}
+  constructor(private router: Router, private auth: AuthService, private translate: TranslateService) {}
 
   ngOnInit() {
     const state = window.history.state;
@@ -94,8 +95,8 @@ export class VerifyEmail implements OnInit, OnDestroy {
       },
       error: (err) => {
         this.loading.set(false);
-        const msg = err?.error?.message ?? 'Ungültiger oder abgelaufener Code';
-        this.error.set(typeof msg === 'string' ? msg : 'Ungültiger oder abgelaufener Code');
+        const msg = err?.error?.message ?? this.translate.instant('VERIFY_EMAIL.INVALID_CODE');
+        this.error.set(typeof msg === 'string' ? msg : this.translate.instant('VERIFY_EMAIL.INVALID_CODE'));
       }
     });
   }
@@ -110,8 +111,8 @@ export class VerifyEmail implements OnInit, OnDestroy {
       },
       error: (err) => {
         this.resendLoading.set(false);
-        const msg = err?.error?.message ?? 'Fehler beim Senden';
-        this.error.set(typeof msg === 'string' ? msg : 'Fehler beim Senden');
+        const msg = err?.error?.message ?? this.translate.instant('VERIFY_EMAIL.SEND_ERROR');
+        this.error.set(typeof msg === 'string' ? msg : this.translate.instant('VERIFY_EMAIL.SEND_ERROR'));
       }
     });
   }

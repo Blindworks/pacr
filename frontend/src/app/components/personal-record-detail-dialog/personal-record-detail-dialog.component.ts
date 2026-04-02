@@ -16,13 +16,14 @@ import {
   PersonalRecordEntry,
   PersonalRecordService,
 } from '../../services/personal-record.service';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 type TabId = 'history' | 'edit';
 
 @Component({
   selector: 'app-personal-record-detail-dialog',
   standalone: true,
-  imports: [NgIf, NgFor, FormsModule, DatePipe],
+  imports: [NgIf, NgFor, FormsModule, DatePipe, TranslateModule],
   templateUrl: './personal-record-detail-dialog.component.html',
   styleUrl: './personal-record-detail-dialog.component.scss',
 })
@@ -35,6 +36,7 @@ export class PersonalRecordDetailDialogComponent implements OnInit {
   @Output() closed = new EventEmitter<boolean>();
 
   private readonly service = inject(PersonalRecordService);
+  private readonly translate = inject(TranslateService);
 
   // ── State ─────────────────────────────────────────────────────────────
   activeTab: TabId = 'history';
@@ -105,7 +107,7 @@ export class PersonalRecordDetailDialogComponent implements OnInit {
         this.loadingEntries = false;
       },
       error: () => {
-        this.entriesError = 'Einträge konnten nicht geladen werden.';
+        this.entriesError = this.translate.instant('DIALOGS.PR_DETAIL_LOAD_ERROR');
         this.loadingEntries = false;
       },
     });
@@ -132,7 +134,7 @@ export class PersonalRecordDetailDialogComponent implements OnInit {
   saveGoal(): void {
     const seconds = this.parseTime(this.goalTimeInput);
     if (seconds === null) {
-      this.goalError = 'Ungültiges Format. Bitte MM:SS oder H:MM:SS eingeben.';
+      this.goalError = this.translate.instant('DIALOGS.PR_DETAIL_FORMAT_ERROR');
       return;
     }
 
@@ -150,7 +152,7 @@ export class PersonalRecordDetailDialogComponent implements OnInit {
       },
       error: () => {
         this.savingGoal = false;
-        this.goalError = 'Speichern fehlgeschlagen. Bitte erneut versuchen.';
+        this.goalError = this.translate.instant('DIALOGS.PR_DETAIL_SAVE_ERROR');
       },
     });
   }
@@ -186,7 +188,7 @@ export class PersonalRecordDetailDialogComponent implements OnInit {
       },
       error: () => {
         this.addingEntry = false;
-        this.addEntryError = 'Eintrag konnte nicht gespeichert werden.';
+        this.addEntryError = this.translate.instant('DIALOGS.PR_DETAIL_ENTRY_ERROR');
       },
     });
   }
@@ -215,7 +217,9 @@ export class PersonalRecordDetailDialogComponent implements OnInit {
   }
 
   entryType(entry: PersonalRecordEntry): string {
-    return entry.isManual ? 'Manuell' : 'Automatisch';
+    return entry.isManual
+      ? this.translate.instant('DIALOGS.PR_DETAIL_MANUAL')
+      : this.translate.instant('DIALOGS.PR_DETAIL_AUTO');
   }
 
   trackEntry(_index: number, entry: PersonalRecordEntry): number {

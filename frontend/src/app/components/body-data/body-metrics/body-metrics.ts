@@ -3,6 +3,7 @@ import { ChangeDetectorRef, Component, OnInit, inject, signal } from '@angular/c
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { catchError, forkJoin, of } from 'rxjs';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { BloodPressureEntry, BloodPressureService } from '../../../services/blood-pressure.service';
 import { ProOverlay } from '../../shared/pro-overlay/pro-overlay';
 import { BodyMeasurementEntry, BodyMeasurementService } from '../../../services/body-measurement.service';
@@ -59,15 +60,16 @@ interface ChartContext {
 @Component({
   selector: 'app-body-metrics',
   standalone: true,
-  imports: [CommonModule, FormsModule, ProOverlay],
+  imports: [CommonModule, FormsModule, ProOverlay, TranslateModule],
   templateUrl: './body-metrics.html',
   styleUrl: './body-metrics.scss'
 })
 export class BodyMetrics implements OnInit {
   search = '';
-  lastUpdatedText = 'No data available';
+  lastUpdatedText = '';
   private readonly router = inject(Router);
   private readonly cdr = inject(ChangeDetectorRef);
+  private readonly translate = inject(TranslateService);
   private readonly bodyMeasurementService = inject(BodyMeasurementService);
   private readonly bloodPressureService = inject(BloodPressureService);
   private readonly sleepDataService = inject(SleepDataService);
@@ -75,19 +77,19 @@ export class BodyMetrics implements OnInit {
   private sleepDataEntries: SleepDataEntry[] = [];
 
   summaryCards: SummaryCard[] = [
-    { label: 'Weight', value: '-', unit: 'kg', change: 'Stable', trend: 'flat' },
-    { label: 'Body Fat', value: '-', unit: '%', change: 'Stable', trend: 'flat' },
-    { label: 'Muscle Mass', value: '-', unit: 'kg', change: 'Stable', trend: 'flat' },
-    { label: 'BMI', value: '-', unit: '', change: 'Stable', trend: 'flat' },
+    { label: 'BODY_DATA.WEIGHT', value: '-', unit: 'kg', change: 'BODY_DATA.STABLE', trend: 'flat' },
+    { label: 'BODY_DATA.BODY_FAT', value: '-', unit: '%', change: 'BODY_DATA.STABLE', trend: 'flat' },
+    { label: 'BODY_DATA.MUSCLE_MASS', value: '-', unit: 'kg', change: 'BODY_DATA.STABLE', trend: 'flat' },
+    { label: 'BODY_DATA.BMI', value: '-', unit: '', change: 'BODY_DATA.STABLE', trend: 'flat' },
   ];
 
   detailMetrics: DetailMetric[] = [
-    { icon: 'straighten', label: 'Waist Circ.', value: 'No data', change: 'Stable', trend: 'flat' },
-    { icon: 'favorite', label: 'Resting HR', value: 'No data', change: 'Stable', trend: 'flat' },
-    { icon: 'blood_pressure', label: 'Blood Pressure', value: 'No data', change: 'Stable', trend: 'flat' },
-    { icon: 'water_drop', label: 'Water %', value: 'No data', change: 'Stable', trend: 'flat' },
-    { icon: 'skeleton', label: 'Bone Mass', value: 'No data', change: 'Stable', trend: 'flat' },
-    { icon: 'monitor_weight', label: 'Visceral Fat', value: 'No data', change: 'Stable', trend: 'flat' },
+    { icon: 'straighten', label: 'BODY_DATA.WAIST', value: 'BODY_DATA.NO_DATA', change: 'BODY_DATA.STABLE', trend: 'flat' },
+    { icon: 'favorite', label: 'BODY_DATA.RESTING_HR', value: 'BODY_DATA.NO_DATA', change: 'BODY_DATA.STABLE', trend: 'flat' },
+    { icon: 'blood_pressure', label: 'BODY_DATA.BLOOD_PRESSURE', value: 'BODY_DATA.NO_DATA', change: 'BODY_DATA.STABLE', trend: 'flat' },
+    { icon: 'water_drop', label: 'BODY_DATA.WATER', value: 'BODY_DATA.NO_DATA', change: 'BODY_DATA.STABLE', trend: 'flat' },
+    { icon: 'skeleton', label: 'BODY_DATA.BONE_MASS', value: 'BODY_DATA.NO_DATA', change: 'BODY_DATA.STABLE', trend: 'flat' },
+    { icon: 'monitor_weight', label: 'BODY_DATA.VISCERAL_FAT', value: 'BODY_DATA.NO_DATA', change: 'BODY_DATA.STABLE', trend: 'flat' },
   ];
 
   historyItems: HistoryItem[] = [];
@@ -100,9 +102,9 @@ export class BodyMetrics implements OnInit {
     timestamps: [],
     streamData: {},
     descriptors: [
-      { key: 'weight', label: 'Weight', color: 'var(--pp)', unit: 'kg' },
-      { key: 'fat', label: 'Body Fat', color: 'rgba(255,255,255,0.5)', unit: '%' },
-      { key: 'muscle', label: 'Muscle', color: '#60a5fa', unit: 'kg' },
+      { key: 'weight', label: this.translate.instant('BODY_DATA.WEIGHT'), color: 'var(--pp)', unit: 'kg' },
+      { key: 'fat', label: this.translate.instant('BODY_DATA.BODY_FAT'), color: 'rgba(255,255,255,0.5)', unit: '%' },
+      { key: 'muscle', label: this.translate.instant('BODY_DATA.MUSCLE_MASS'), color: '#60a5fa', unit: 'kg' },
     ],
     activeStreams: signal<Set<string>>(new Set(['weight', 'fat', 'muscle'])),
     tooltipIndex: null,
@@ -114,8 +116,8 @@ export class BodyMetrics implements OnInit {
     timestamps: [],
     streamData: {},
     descriptors: [
-      { key: 'systolic', label: 'Systolic', color: '#f87171', unit: 'mmHg' },
-      { key: 'diastolic', label: 'Diastolic', color: '#60a5fa', unit: 'mmHg' },
+      { key: 'systolic', label: this.translate.instant('BODY_DATA.SYSTOLIC'), color: '#f87171', unit: 'mmHg' },
+      { key: 'diastolic', label: this.translate.instant('BODY_DATA.DIASTOLIC'), color: '#60a5fa', unit: 'mmHg' },
     ],
     activeStreams: signal<Set<string>>(new Set(['systolic', 'diastolic'])),
     tooltipIndex: null,
@@ -127,7 +129,7 @@ export class BodyMetrics implements OnInit {
     timestamps: [],
     streamData: {},
     descriptors: [
-      { key: 'restingHr', label: 'Resting HR', color: '#f472b6', unit: 'bpm' },
+      { key: 'restingHr', label: this.translate.instant('BODY_DATA.RESTING_HR'), color: '#f472b6', unit: 'bpm' },
     ],
     activeStreams: signal<Set<string>>(new Set(['restingHr'])),
     tooltipIndex: null,
@@ -380,8 +382,8 @@ export class BodyMetrics implements OnInit {
 
   deleteItem(item: HistoryItem, event: Event): void {
     event.stopPropagation();
-    const typeLabel = item.type === 'body' ? 'Body Measurement' : item.type === 'bloodPressure' ? 'Blood Pressure' : 'Resting HR';
-    if (!confirm(`Delete ${typeLabel} entry from ${item.date}?`)) return;
+    const typeLabel = item.type === 'body' ? this.translate.instant('BODY_DATA.WEIGHT') : item.type === 'bloodPressure' ? this.translate.instant('BODY_DATA.BLOOD_PRESSURE') : this.translate.instant('BODY_DATA.RESTING_HR');
+    if (!confirm(`${this.translate.instant('COMMON.DELETE')} ${typeLabel} ${item.date}?`)) return;
 
     if (item.type === 'body') {
       this.bodyMeasurementService.delete(item.id).subscribe(() => this.loadData());
@@ -455,10 +457,10 @@ export class BodyMetrics implements OnInit {
 
   private buildSummaryCards(latest: BodyMeasurementEntry | null, previous: BodyMeasurementEntry | null): SummaryCard[] {
     return [
-      this.createSummaryCard('Weight', latest?.weightKg, 'kg', previous?.weightKg),
-      this.createSummaryCard('Body Fat', latest?.fatPercentage, '%', previous?.fatPercentage),
-      this.createSummaryCard('Muscle Mass', latest?.muscleMassKg, 'kg', previous?.muscleMassKg),
-      this.createSummaryCard('BMI', latest?.bmi, '', previous?.bmi),
+      this.createSummaryCard('BODY_DATA.WEIGHT', latest?.weightKg, 'kg', previous?.weightKg),
+      this.createSummaryCard('BODY_DATA.BODY_FAT', latest?.fatPercentage, '%', previous?.fatPercentage),
+      this.createSummaryCard('BODY_DATA.MUSCLE_MASS', latest?.muscleMassKg, 'kg', previous?.muscleMassKg),
+      this.createSummaryCard('BODY_DATA.BMI', latest?.bmi, '', previous?.bmi),
     ];
   }
 
@@ -466,41 +468,43 @@ export class BodyMetrics implements OnInit {
     latestMeasurement: BodyMeasurementEntry | null,
     latestBloodPressure: BloodPressureEntry | null
   ): DetailMetric[] {
+    const noData = this.translate.instant('BODY_DATA.NO_DATA');
+    const stable = this.translate.instant('BODY_DATA.STABLE');
     return [
-      { icon: 'straighten', label: 'Waist Circ.', value: 'No data', change: 'Stable', trend: 'flat' },
+      { icon: 'straighten', label: 'BODY_DATA.WAIST', value: noData, change: stable, trend: 'flat' },
       {
         icon: 'favorite',
-        label: 'Resting HR',
-        value: latestBloodPressure?.pulseAtMeasurement != null ? `${latestBloodPressure.pulseAtMeasurement} bpm` : 'No data',
-        change: 'Stable',
+        label: 'BODY_DATA.RESTING_HR',
+        value: latestBloodPressure?.pulseAtMeasurement != null ? `${latestBloodPressure.pulseAtMeasurement} bpm` : noData,
+        change: stable,
         trend: 'flat'
       },
       {
         icon: 'blood_pressure',
-        label: 'Blood Pressure',
-        value: latestBloodPressure ? `${latestBloodPressure.systolicPressure}/${latestBloodPressure.diastolicPressure}` : 'No data',
-        change: 'Stable',
+        label: 'BODY_DATA.BLOOD_PRESSURE',
+        value: latestBloodPressure ? `${latestBloodPressure.systolicPressure}/${latestBloodPressure.diastolicPressure}` : noData,
+        change: stable,
         trend: 'flat'
       },
       {
         icon: 'water_drop',
-        label: 'Water %',
-        value: latestMeasurement?.waterPercentage != null ? `${this.formatNumber(latestMeasurement.waterPercentage)}%` : 'No data',
-        change: 'Stable',
+        label: 'BODY_DATA.WATER',
+        value: latestMeasurement?.waterPercentage != null ? `${this.formatNumber(latestMeasurement.waterPercentage)}%` : noData,
+        change: stable,
         trend: 'flat'
       },
       {
         icon: 'skeleton',
-        label: 'Bone Mass',
-        value: latestMeasurement?.boneMassKg != null ? `${this.formatNumber(latestMeasurement.boneMassKg)} kg` : 'No data',
-        change: 'Stable',
+        label: 'BODY_DATA.BONE_MASS',
+        value: latestMeasurement?.boneMassKg != null ? `${this.formatNumber(latestMeasurement.boneMassKg)} kg` : noData,
+        change: stable,
         trend: 'flat'
       },
       {
         icon: 'monitor_weight',
-        label: 'Visceral Fat',
-        value: latestMeasurement?.visceralFatLevel != null ? `Level ${latestMeasurement.visceralFatLevel}` : 'No data',
-        change: 'Stable',
+        label: 'BODY_DATA.VISCERAL_FAT',
+        value: latestMeasurement?.visceralFatLevel != null ? `Level ${latestMeasurement.visceralFatLevel}` : noData,
+        change: stable,
         trend: 'flat'
       },
     ];
@@ -522,10 +526,10 @@ export class BodyMetrics implements OnInit {
         date: this.formatLongDate(m.measuredAt),
         rawDate: m.measuredAt,
         icon: 'monitor_weight',
-        label: 'Body',
+        label: this.translate.instant('BODY_DATA.WEIGHT'),
         values: [
-          { label: 'Weight', value: m.weightKg != null ? `${this.formatNumber(m.weightKg)} kg` : '-' },
-          { label: 'Body Fat', value: m.fatPercentage != null ? `${this.formatNumber(m.fatPercentage)}%` : '-' },
+          { label: this.translate.instant('BODY_DATA.WEIGHT'), value: m.weightKg != null ? `${this.formatNumber(m.weightKg)} kg` : '-' },
+          { label: this.translate.instant('BODY_DATA.BODY_FAT'), value: m.fatPercentage != null ? `${this.formatNumber(m.fatPercentage)}%` : '-' },
         ],
         originalEntry: m,
         editing: false,
@@ -541,10 +545,10 @@ export class BodyMetrics implements OnInit {
         date: this.formatLongDate(bp.measuredAt),
         rawDate: bp.measuredAt,
         icon: 'blood_pressure',
-        label: 'BP',
+        label: this.translate.instant('BODY_DATA.BLOOD_PRESSURE'),
         values: [
-          { label: 'BP', value: `${bp.systolicPressure}/${bp.diastolicPressure}` },
-          { label: 'Pulse', value: bp.pulseAtMeasurement != null ? `${bp.pulseAtMeasurement} bpm` : '-' },
+          { label: this.translate.instant('BODY_DATA.BLOOD_PRESSURE'), value: `${bp.systolicPressure}/${bp.diastolicPressure}` },
+          { label: this.translate.instant('BODY_DATA.PULSE'), value: bp.pulseAtMeasurement != null ? `${bp.pulseAtMeasurement} bpm` : '-' },
         ],
         originalEntry: bp,
         editing: false,
@@ -560,9 +564,9 @@ export class BodyMetrics implements OnInit {
         date: this.formatLongDate(sd.recordedAt),
         rawDate: sd.recordedAt,
         icon: 'favorite',
-        label: 'HR',
+        label: this.translate.instant('BODY_DATA.RESTING_HR'),
         values: [
-          { label: 'Resting HR', value: `${sd.restingHeartRate} bpm` },
+          { label: this.translate.instant('BODY_DATA.RESTING_HR'), value: `${sd.restingHeartRate} bpm` },
         ],
         originalEntry: sd,
         editing: false,
@@ -601,7 +605,7 @@ export class BodyMetrics implements OnInit {
     ].filter((value): value is string => !!value);
 
     if (dates.length === 0) {
-      return 'No data available';
+      return this.translate.instant('BODY_DATA.NO_DATA_AVAILABLE');
     }
 
     const latest = dates.sort((a, b) => new Date(b).getTime() - new Date(a).getTime())[0];
@@ -609,7 +613,7 @@ export class BodyMetrics implements OnInit {
   }
 
   private createSummaryCard(label: string, value: number | undefined, unit = '', previous?: number): SummaryCard {
-    let change = 'No prev.';
+    let change = this.translate.instant('BODY_DATA.NO_DATA');
     let trend: 'up' | 'down' | 'flat' = 'flat';
 
     if (value != null && previous != null) {
@@ -617,7 +621,7 @@ export class BodyMetrics implements OnInit {
       const sign = delta > 0 ? '+' : '';
       change = `${sign}${this.formatNumber(delta)}${unit ? ' ' + unit : ''}`;
       if (Math.abs(delta) < 0.05) {
-        change = 'Stable';
+        change = 'BODY_DATA.STABLE';
         trend = 'flat';
       } else {
         trend = delta > 0 ? 'up' : 'down';

@@ -2,6 +2,7 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { CommunityRouteService, CommunityRouteDto } from '../../services/community-route.service';
 import { UserService } from '../../services/user.service';
 import { ProOverlay } from '../shared/pro-overlay/pro-overlay';
@@ -9,7 +10,7 @@ import { ProOverlay } from '../shared/pro-overlay/pro-overlay';
 @Component({
   selector: 'app-community-routes',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule, ProOverlay],
+  imports: [CommonModule, RouterModule, FormsModule, TranslateModule, ProOverlay],
   templateUrl: './community-routes.html',
   styleUrl: './community-routes.scss'
 })
@@ -17,6 +18,7 @@ export class CommunityRoutes implements OnInit {
   private readonly routeService = inject(CommunityRouteService);
   private readonly userService = inject(UserService);
   private readonly router = inject(Router);
+  readonly translate = inject(TranslateService);
 
   routes = signal<CommunityRouteDto[]>([]);
   loading = signal(true);
@@ -69,7 +71,7 @@ export class CommunityRoutes implements OnInit {
         this.loading.set(false);
       },
       error: () => {
-        this.error.set('Failed to load routes');
+        this.error.set(this.translate.instant('COMMUNITY.LOAD_ERROR'));
         this.loading.set(false);
       }
     });
@@ -104,20 +106,20 @@ export class CommunityRoutes implements OnInit {
     const elev = route.elevationGainM ?? 0;
 
     if (elev > 300) {
-      tags.push({ label: 'TECHNICAL', primary: true });
-      tags.push({ label: 'TRAIL', primary: false });
+      tags.push({ label: this.translate.instant('COMMUNITY.TAG_TECHNICAL'), primary: true });
+      tags.push({ label: this.translate.instant('COMMUNITY.TAG_TRAIL'), primary: false });
     } else if (elev > 100) {
-      tags.push({ label: 'HILLY', primary: true });
+      tags.push({ label: this.translate.instant('COMMUNITY.TAG_HILLY'), primary: true });
     } else {
-      tags.push({ label: 'FLAT', primary: false });
+      tags.push({ label: this.translate.instant('COMMUNITY.TAG_FLAT'), primary: false });
     }
 
     if (km >= 21) {
-      tags.push({ label: 'MARATHON+', primary: false });
+      tags.push({ label: this.translate.instant('COMMUNITY.TAG_MARATHON_PLUS'), primary: false });
     } else if (km >= 10) {
-      tags.push({ label: 'LONG', primary: false });
+      tags.push({ label: this.translate.instant('COMMUNITY.TAG_LONG'), primary: false });
     } else if (km < 5) {
-      tags.push({ label: 'FAST', primary: false });
+      tags.push({ label: this.translate.instant('COMMUNITY.TAG_FAST'), primary: false });
     }
 
     return tags;

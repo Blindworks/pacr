@@ -1,6 +1,7 @@
 import { Component, OnInit, inject, signal, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
+import { TranslateModule } from '@ngx-translate/core';
 import {
   CommunityRouteService,
   CommunityRouteDetailDto,
@@ -12,7 +13,7 @@ import * as L from 'leaflet';
 @Component({
   selector: 'app-community-route-detail',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, TranslateModule],
   templateUrl: './community-route-detail.html',
   styleUrl: './community-route-detail.scss'
 })

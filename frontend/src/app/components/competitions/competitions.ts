@@ -1,6 +1,7 @@
 import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 import { DomSanitizer, SafeStyle } from '@angular/platform-browser';
 import { CompetitionService, Competition } from '../../services/competition.service';
@@ -41,7 +42,7 @@ interface PlanCard {
 @Component({
   selector: 'app-competitions',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, TranslateModule],
   templateUrl: './competitions.html',
   styleUrl: './competitions.scss'
 })
@@ -51,6 +52,7 @@ export class Competitions implements OnInit {
   private router = inject(Router);
   private sanitizer = inject(DomSanitizer);
   private cdr = inject(ChangeDetectorRef);
+  private readonly translate = inject(TranslateService);
 
   activeFilter = 'All Races';
   showPastRaces = false;

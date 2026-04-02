@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit, OnDestroy, signal, inject, ViewChild, ElementRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
 import { debounceTime, takeUntil } from 'rxjs/operators';
 import { StravaService } from '../../services/strava.service';
@@ -21,7 +22,7 @@ type Integration = {
 @Component({
   selector: 'app-settings',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, TranslateModule],
   templateUrl: './settings.html',
   styleUrl: './settings.scss'
 })
@@ -34,6 +35,7 @@ export class Settings implements OnInit, OnDestroy {
   private readonly userService = inject(UserService);
   private readonly notifPrefsService = inject(NotificationPreferencesService);
   private readonly themeService = inject(ThemeService);
+  private readonly translate = inject(TranslateService);
 
   private readonly autoSave$ = new Subject<void>();
   private readonly destroy$ = new Subject<void>();
@@ -62,6 +64,7 @@ export class Settings implements OnInit, OnDestroy {
 
   protected unit = signal<'metric' | 'imperial'>('metric');
   protected theme = signal<'light' | 'dark' | 'auto'>('dark');
+  protected currentLang = signal<string>(localStorage.getItem('pacr-language') || 'de');
 
   protected emailReminderEnabled = signal(false);
   protected emailReminderTime = signal('18:00');
@@ -108,28 +111,28 @@ export class Settings implements OnInit, OnDestroy {
     {
       id: 'strava',
       name: 'Strava',
-      description: 'Sync activities and segments automatically',
+      description: this.translate.instant('SETTINGS.STRAVA_DESC'),
       iconBg: '#FC6100',
       connected: false
     },
     {
       id: 'coros',
       name: 'COROS',
-      description: 'Sync workouts from your COROS watch',
+      description: this.translate.instant('SETTINGS.COROS_DESC'),
       iconBg: '#e7262a',
       connected: false
     },
     {
       id: 'garmin',
       name: 'Garmin Connect',
-      description: 'Import health metrics and training data',
+      description: this.translate.instant('SETTINGS.GARMIN_DESC'),
       iconBg: '#0076C0',
       connected: false
     },
     {
       id: 'apple',
       name: 'Apple Health',
-      description: 'Sync steps, sleep, and heart rate',
+      description: this.translate.instant('SETTINGS.APPLE_DESC'),
       iconBg: '#1c1c1e',
       connected: false
     }
@@ -223,7 +226,7 @@ export class Settings implements OnInit, OnDestroy {
       },
       error: () => {
         this.imageUploading.set(false);
-        this.imageError.set('Upload failed. Please try again.');
+        this.imageError.set(this.translate.instant('SETTINGS.UPLOAD_FAILED'));
       }
     });
 
@@ -275,6 +278,12 @@ export class Settings implements OnInit, OnDestroy {
     this.theme.set(value);
     this.themeService.setTheme(value);
     this.triggerAutoSave();
+  }
+
+  protected setLanguage(lang: string): void {
+    this.translate.use(lang);
+    localStorage.setItem('pacr-language', lang);
+    this.currentLang.set(lang);
   }
 
   protected onFieldChange(): void {
@@ -359,7 +368,7 @@ export class Settings implements OnInit, OnDestroy {
         this.saveNotificationPreferences();
       },
       error: () => {
-        this.saveError.set('Failed to save. Please try again.');
+        this.saveError.set(this.translate.instant('SETTINGS.SAVE_FAILED'));
         this.saving.set(false);
       }
     });
@@ -370,15 +379,15 @@ export class Settings implements OnInit, OnDestroy {
     this.passwordSuccess.set('');
 
     if (!this.currentPassword() || !this.newPassword() || !this.confirmPassword()) {
-      this.passwordError.set('Bitte alle Felder ausfüllen.');
+      this.passwordError.set(this.translate.instant('SETTINGS.PASSWORD_FILL_ALL'));
       return;
     }
     if (this.newPassword().length < 8) {
-      this.passwordError.set('Das neue Passwort muss mindestens 8 Zeichen lang sein.');
+      this.passwordError.set(this.translate.instant('SETTINGS.PASSWORD_MIN_LENGTH'));
       return;
     }
     if (this.newPassword() !== this.confirmPassword()) {
-      this.passwordError.set('Die Passwörter stimmen nicht überein.');
+      this.passwordError.set(this.translate.instant('SETTINGS.PASSWORD_NO_MATCH'));
       return;
     }
 
@@ -386,14 +395,14 @@ export class Settings implements OnInit, OnDestroy {
     this.userService.changePassword(this.currentPassword(), this.newPassword()).subscribe({
       next: () => {
         this.passwordSaving.set(false);
-        this.passwordSuccess.set('Passwort erfolgreich geändert.');
+        this.passwordSuccess.set(this.translate.instant('SETTINGS.PASSWORD_SUCCESS'));
         this.currentPassword.set('');
         this.newPassword.set('');
         this.confirmPassword.set('');
       },
       error: (err) => {
         this.passwordSaving.set(false);
-        const msg = err.error?.message ?? 'Passwort konnte nicht geändert werden.';
+        const msg = err.error?.message ?? this.translate.instant('SETTINGS.PASSWORD_ERROR');
         this.passwordError.set(msg);
       }
     });

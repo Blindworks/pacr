@@ -5,25 +5,26 @@ import {
   CreatePersonalRecordRequest,
   PersonalRecordService,
 } from '../../services/personal-record.service';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 interface DistanceOption {
-  label: string;
+  labelKey: string;
   distanceKm: number | null;
   distanceLabel: string;
 }
 
 const PRESET_OPTIONS: DistanceOption[] = [
-  { label: '5K', distanceKm: 5.0, distanceLabel: '5K' },
-  { label: '10K', distanceKm: 10.0, distanceLabel: '10K' },
-  { label: 'Halbmarathon', distanceKm: 21.0975, distanceLabel: 'Halbmarathon' },
-  { label: 'Marathon', distanceKm: 42.195, distanceLabel: 'Marathon' },
-  { label: 'Eigene Distanz', distanceKm: null, distanceLabel: '' },
+  { labelKey: 'DIALOGS.PR_5K', distanceKm: 5.0, distanceLabel: '5K' },
+  { labelKey: 'DIALOGS.PR_10K', distanceKm: 10.0, distanceLabel: '10K' },
+  { labelKey: 'DIALOGS.PR_HALF', distanceKm: 21.0975, distanceLabel: 'Halbmarathon' },
+  { labelKey: 'DIALOGS.PR_MARATHON', distanceKm: 42.195, distanceLabel: 'Marathon' },
+  { labelKey: 'DIALOGS.PR_CUSTOM', distanceKm: null, distanceLabel: '' },
 ];
 
 @Component({
   selector: 'app-add-personal-record-dialog',
   standalone: true,
-  imports: [NgIf, NgFor, FormsModule],
+  imports: [NgIf, NgFor, FormsModule, TranslateModule],
   templateUrl: './add-personal-record-dialog.component.html',
   styleUrl: './add-personal-record-dialog.component.scss',
 })
@@ -33,6 +34,7 @@ export class AddPersonalRecordDialogComponent {
   @Output() cancelled = new EventEmitter<void>();
 
   private readonly service = inject(PersonalRecordService);
+  private readonly translate = inject(TranslateService);
 
   readonly distanceOptions = PRESET_OPTIONS;
 
@@ -112,15 +114,15 @@ export class AddPersonalRecordDialogComponent {
       error: (err: { status?: number }) => {
         this.saving = false;
         this.error = err.status === 409
-          ? 'Diese Distanz existiert bereits.'
-          : 'Speichern fehlgeschlagen. Bitte versuche es erneut.';
+          ? this.translate.instant('DIALOGS.PR_EXISTS')
+          : this.translate.instant('DIALOGS.PR_SAVE_ERROR');
       },
     });
   }
 
   compareOptions(a: DistanceOption | null, b: DistanceOption | null): boolean {
     if (a === null || b === null) return a === b;
-    return a.label === b.label;
+    return a.labelKey === b.labelKey;
   }
 
   parseTime(input: string): number | null {

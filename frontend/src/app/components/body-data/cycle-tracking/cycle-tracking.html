@@ -4,17 +4,17 @@
   <!-- Header -->
   <header class="page-header">
     <div>
-      <h2>Cycle Tracking</h2>
-      <p class="subtitle">Syncing your biology with your training.</p>
+      <h2>{{ 'BODY_DATA.CYCLE_TITLE' | translate }}</h2>
+      <p class="subtitle">{{ 'BODY_DATA.CYCLE_SUBTITLE' | translate }}</p>
     </div>
     <div class="header-actions">
       <button class="settings-btn" (click)="goToCycleSettings()">
         <span class="material-symbols-outlined">settings</span>
-        Zyklus erfassen
+        {{ 'BODY_DATA.CYCLE_LOG' | translate }}
       </button>
       <button class="log-btn" (click)="goToLogSymptoms()">
         <span class="material-symbols-outlined">add</span>
-        Log Today's Symptoms
+        {{ 'BODY_DATA.LOG_SYMPTOMS' | translate }}
       </button>
     </div>
   </header>
@@ -22,10 +22,10 @@
   <!-- New Cycle Prompt Banner -->
   <div class="new-cycle-banner" *ngIf="showNewCyclePrompt">
     <span class="material-symbols-outlined banner-icon">calendar_today</span>
-    <p class="banner-text">Hat heute dein neuer Zyklus begonnen?</p>
+    <p class="banner-text">{{ 'BODY_DATA.CYCLE_START_Q' | translate }}</p>
     <div class="banner-actions">
-      <button class="banner-btn banner-btn--confirm" (click)="confirmNewCycle()">Ja, bestätigen</button>
-      <button class="banner-btn banner-btn--dismiss" (click)="dismissNewCyclePrompt()">Überspringen</button>
+      <button class="banner-btn banner-btn--confirm" (click)="confirmNewCycle()">{{ 'BODY_DATA.CYCLE_CONFIRM' | translate }}</button>
+      <button class="banner-btn banner-btn--dismiss" (click)="dismissNewCyclePrompt()">{{ 'BODY_DATA.CYCLE_SKIP' | translate }}</button>
     </div>
   </div>
 
@@ -34,24 +34,24 @@
 
     <!-- Current Phase Card -->
     <section class="card phase-card">
-      <span class="section-label">Current Phase</span>
-      <h3 class="phase-name" [ngClass]="phaseClass(currentPhase)">{{ phaseLabels[currentPhase] }}</h3>
+      <span class="section-label">{{ 'BODY_DATA.CURRENT_PHASE' | translate }}</span>
+      <h3 class="phase-name" [ngClass]="phaseClass(currentPhase)">{{ phaseLabels[currentPhase] | translate }}</h3>
       <p class="phase-day">Day {{ currentDay }} of {{ cycleLength }}</p>
 
       <div class="phase-divider">
         <p class="next-phase-label">
-          Next Phase:
-          <span class="next-phase-value" [ngClass]="phaseClass(nextPhase)">{{ phaseLabels[nextPhase] }}</span>
+          {{ 'BODY_DATA.NEXT_PHASE' | translate }}
+          <span class="next-phase-value" [ngClass]="phaseClass(nextPhase)">{{ phaseLabels[nextPhase] | translate }}</span>
         </p>
         <div class="phase-bar">
           <div class="phase-bar-fill" [ngClass]="phaseClass(currentPhase)" [style.width.%]="phaseProgressPercent"></div>
         </div>
-        <p class="days-remaining">{{ daysRemaining }} Days Remaining</p>
+        <p class="days-remaining">{{ daysRemaining }} {{ 'BODY_DATA.DAYS_REMAINING' | translate }}</p>
       </div>
 
       <div class="phase-tip">
         <span class="tip-dot" [ngClass]="phaseClass(currentPhase)"></span>
-        <span class="tip-text">{{ insight.label }}</span>
+        <span class="tip-text">{{ insight.label | translate }}</span>
       </div>
     </section>
 
@@ -59,22 +59,22 @@
     <section class="card training-impact">
       <h4 class="card-title">
         <span class="material-symbols-outlined card-title-icon">trending_up</span>
-        Training Impact
+        {{ 'BODY_DATA.TRAINING_IMPACT' | translate }}
       </h4>
       <div class="impact-grid">
         <div class="impact-details">
           <div class="impact-item impact-item--highlighted" [ngClass]="'border-' + currentPhase">
-            <p class="impact-label">Performance Outlook</p>
+            <p class="impact-label">{{ 'BODY_DATA.PERFORMANCE_OUTLOOK' | translate }}</p>
             <p class="impact-text">{{ insight.performance }}</p>
           </div>
           <div class="impact-item">
-            <p class="impact-label">Fueling Focus</p>
+            <p class="impact-label">{{ 'BODY_DATA.FUELING_FOCUS' | translate }}</p>
             <p class="impact-text">{{ insight.fueling }}</p>
           </div>
         </div>
 
         <div class="intensity-ring-wrap">
-          <p class="ring-label">Recommended Intensity</p>
+          <p class="ring-label">{{ 'BODY_DATA.RECOMMENDED_INTENSITY' | translate }}</p>
           <div class="ring-container">
             <svg viewBox="0 0 128 128" class="ring-svg">
               <circle class="ring-track" cx="64" cy="64" r="58" stroke-width="8" fill="transparent"/>
@@ -86,7 +86,7 @@
             </svg>
             <span class="ring-value">{{ insight.intensity }}%</span>
           </div>
-          <p class="ring-phase-label">{{ insight.label }}</p>
+          <p class="ring-phase-label">{{ insight.label | translate }}</p>
         </div>
       </div>
     </section>
@@ -96,10 +96,10 @@
       <div class="calendar-header">
         <h4 class="card-title">{{ currentMonth }}</h4>
         <div class="legend">
-          <div class="legend-item"><span class="legend-dot phase-menstrual"></span> Menstrual</div>
-          <div class="legend-item"><span class="legend-dot phase-follicular"></span> Follicular</div>
-          <div class="legend-item"><span class="legend-dot phase-ovulation"></span> Ovulation</div>
-          <div class="legend-item"><span class="legend-dot phase-luteal"></span> Luteal</div>
+          <div class="legend-item"><span class="legend-dot phase-menstrual"></span> {{ 'BODY_DATA.PHASE_MENSTRUAL' | translate }}</div>
+          <div class="legend-item"><span class="legend-dot phase-follicular"></span> {{ 'BODY_DATA.PHASE_FOLLICULAR' | translate }}</div>
+          <div class="legend-item"><span class="legend-dot phase-ovulation"></span> {{ 'BODY_DATA.PHASE_OVULATION' | translate }}</div>
+          <div class="legend-item"><span class="legend-dot phase-luteal"></span> {{ 'BODY_DATA.PHASE_LUTEAL' | translate }}</div>
         </div>
       </div>
 
@@ -121,7 +121,7 @@
           <span *ngIf="d.day !== null" class="cal-day-num" [class.cal-day-num--today]="d.isToday">{{ d.day }}</span>
           <div *ngIf="d.day !== null && d.phase" class="cal-phase-bar" [ngClass]="phaseClass(d.phase)"></div>
           <div *ngIf="d.day !== null && d.phase" class="cal-tooltip" [ngClass]="phaseClass(d.phase)">
-            {{ phaseLabels[d.phase] }}
+            {{ phaseLabels[d.phase] | translate }}
           </div>
         </div>
       </div>
@@ -131,7 +131,7 @@
     <section class="card adaptive-card">
       <h4 class="card-title">
         <span class="pulse-dot"></span>
-        PACR Adaptive Adjustment
+        {{ 'BODY_DATA.ADAPTIVE_ADJUSTMENT' | translate }}
       </h4>
       <div class="adaptive-items">
         <div class="adaptive-item adaptive-item--prev">
@@ -139,7 +139,7 @@
             <span class="material-symbols-outlined">arrow_downward</span>
           </div>
           <div>
-            <p class="adaptive-item-label">Previous Plan</p>
+            <p class="adaptive-item-label">{{ 'BODY_DATA.PREVIOUS_PLAN' | translate }}</p>
             <p class="adaptive-item-value">Active Recovery Walk (45 min)</p>
           </div>
         </div>
@@ -148,7 +148,7 @@
             <span class="material-symbols-outlined">arrow_upward</span>
           </div>
           <div>
-            <p class="adaptive-item-label adaptive-item-label--primary">AI Adjusted ({{ phaseLabels[currentPhase] }} Optimization)</p>
+            <p class="adaptive-item-label adaptive-item-label--primary">{{ 'BODY_DATA.AI_ADJUSTED' | translate }} ({{ phaseLabels[currentPhase] | translate }})</p>
             <p class="adaptive-item-value adaptive-item-value--large">Tempo Run: 8km @ 4:45 min/km</p>
           </div>
         </div>
@@ -159,15 +159,15 @@
 
     <!-- Physiological Insights -->
     <section class="card physio-card">
-      <h4 class="card-title">Physiological Insights</h4>
+      <h4 class="card-title">{{ 'BODY_DATA.PHYSIOLOGICAL_INSIGHTS' | translate }}</h4>
 
       <div class="physio-metric">
         <div class="physio-metric-header">
           <div>
-            <p class="physio-metric-label">Resting Heart Rate</p>
+            <p class="physio-metric-label">{{ 'BODY_DATA.RESTING_HR' | translate }}</p>
             <p class="physio-metric-value">48 <span class="physio-metric-unit">BPM</span></p>
           </div>
-          <p class="physio-metric-delta phase-follicular">-3% vs Average</p>
+          <p class="physio-metric-delta phase-follicular">-3% {{ 'BODY_DATA.VS_AVERAGE' | translate }}</p>
         </div>
         <div class="mini-bar-chart">
           <div class="mini-bar" style="height: 60%"></div>
@@ -183,10 +183,10 @@
       <div class="physio-metric physio-metric--bordered">
         <div class="physio-metric-header">
           <div>
-            <p class="physio-metric-label">Basal Body Temp</p>
+            <p class="physio-metric-label">{{ 'BODY_DATA.BASAL_TEMP' | translate }}</p>
             <p class="physio-metric-value">36.2 <span class="physio-metric-unit">°C</span></p>
           </div>
-          <p class="physio-metric-delta physio-metric-delta--neutral">Baseline Stable</p>
+          <p class="physio-metric-delta physio-metric-delta--neutral">{{ 'BODY_DATA.BASELINE_STABLE' | translate }}</p>
         </div>
         <div class="temp-bar">
           <div class="temp-bar-fill"></div>

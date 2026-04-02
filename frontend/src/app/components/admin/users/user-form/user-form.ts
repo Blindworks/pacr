@@ -1,13 +1,14 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 import { UserService } from '../../../../services/user.service';
 
 @Component({
   selector: 'app-user-form',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, TranslateModule],
   templateUrl: './user-form.html',
   styleUrl: './user-form.scss'
 })
@@ -16,30 +17,37 @@ export class UserForm implements OnInit {
   private userService = inject(UserService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
+  private translate = inject(TranslateService);
 
   userId = signal<number | null>(null);
   isLoading = signal(false);
   isSaving = signal(false);
   hasError = signal(false);
 
-  readonly userStatuses = [
-    { value: 'ACTIVE', label: 'Active' },
-    { value: 'INACTIVE', label: 'Inactive' },
-    { value: 'PENDING', label: 'Pending' },
-    { value: 'BLOCKED', label: 'Blocked' },
-    { value: 'DELETED', label: 'Deleted' }
-  ];
+  get userStatuses() {
+    return [
+      { value: 'ACTIVE', label: this.translate.instant('ADMIN.STATUS_ACTIVE') },
+      { value: 'INACTIVE', label: this.translate.instant('ADMIN.STATUS_INACTIVE') },
+      { value: 'PENDING', label: this.translate.instant('ADMIN.STATUS_PENDING') },
+      { value: 'BLOCKED', label: this.translate.instant('ADMIN.STATUS_BLOCKED') },
+      { value: 'DELETED', label: this.translate.instant('ADMIN.STATUS_DELETED') }
+    ];
+  }
 
-  readonly userRoles = [
-    { value: 'USER', label: 'User' },
-    { value: 'TRAINER', label: 'Trainer' },
-    { value: 'ADMIN', label: 'Admin' }
-  ];
+  get userRoles() {
+    return [
+      { value: 'USER', label: this.translate.instant('ADMIN.ROLE_USER') },
+      { value: 'TRAINER', label: this.translate.instant('ADMIN.ROLE_TRAINER') },
+      { value: 'ADMIN', label: this.translate.instant('ADMIN.ROLE_ADMIN') }
+    ];
+  }
 
-  readonly subscriptionPlans = [
-    { value: 'FREE', label: 'Free' },
-    { value: 'PRO', label: 'Pro' }
-  ];
+  get subscriptionPlans() {
+    return [
+      { value: 'FREE', label: this.translate.instant('ADMIN.SUB_FREE') },
+      { value: 'PRO', label: this.translate.instant('ADMIN.SUB_PRO') }
+    ];
+  }
 
   form = this.fb.group({
     username: ['', Validators.required],

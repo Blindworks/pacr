@@ -1,5 +1,6 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
+import { TranslateModule } from '@ngx-translate/core';
 
 import { TrainingService, Training } from '../../../../services/training.service';
 import { TrainingPlanService, TrainingPlan } from '../../../../services/training-plan.service';
@@ -7,7 +8,7 @@ import { TrainingPlanService, TrainingPlan } from '../../../../services/training
 @Component({
   selector: 'app-training-list',
   standalone: true,
-  imports: [],
+  imports: [TranslateModule],
   templateUrl: './training-list.html',
   styleUrl: './training-list.scss'
 })

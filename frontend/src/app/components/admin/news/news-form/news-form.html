@@ -1,19 +1,19 @@
 <div class="form-page">
   <div class="form-header">
-    <h2>{{ newsId() ? 'News bearbeiten' : 'Neue News' }}</h2>
+    <h2>{{ newsId() ? ('ADMIN.EDIT_NEWS_TITLE' | translate) : ('ADMIN.NEW_NEWS_TITLE' | translate) }}</h2>
   </div>
 
   <form class="form-body" (ngSubmit)="save()">
     <div class="field">
-      <label for="title">Titel</label>
+      <label for="title">{{ 'ADMIN.NEWS_TITLE_LABEL' | translate }}</label>
       <input id="title" type="text" [ngModel]="title()" (ngModelChange)="title.set($event)"
-             name="title" placeholder="News-Titel" />
+             name="title" [placeholder]="'ADMIN.NEWS_TITLE_PLACEHOLDER' | translate" />
     </div>
 
     <div class="field">
-      <label for="content">Inhalt</label>
+      <label for="content">{{ 'ADMIN.NEWS_CONTENT' | translate }}</label>
       <textarea id="content" [ngModel]="content()" (ngModelChange)="content.set($event)"
-                name="content" rows="8" placeholder="Beschreibe die Neuigkeit…"></textarea>
+                name="content" rows="8" [placeholder]="'ADMIN.NEWS_CONTENT_PLACEHOLDER' | translate"></textarea>
     </div>
 
     @if (error()) {
@@ -22,9 +22,9 @@
 
     <div class="form-actions">
       <button type="submit" class="btn-primary" [disabled]="saving()">
-        {{ saving() ? 'Wird gespeichert…' : 'Speichern' }}
+        {{ saving() ? ('COMMON.SAVING' | translate) : ('COMMON.SAVE' | translate) }}
       </button>
-      <button type="button" class="btn-secondary" (click)="cancel()">Abbrechen</button>
+      <button type="button" class="btn-secondary" (click)="cancel()">{{ 'COMMON.CANCEL' | translate }}</button>
     </div>
   </form>
 </div>

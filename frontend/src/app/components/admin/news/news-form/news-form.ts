@@ -1,12 +1,13 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { AdminNewsService, CreateNewsRequest } from '../../../../services/admin-news.service';
 
 @Component({
   selector: 'app-news-form',
   standalone: true,
-  imports: [FormsModule],
+  imports: [FormsModule, TranslateModule],
   templateUrl: './news-form.html',
   styleUrl: './news-form.scss'
 })
@@ -14,6 +15,7 @@ export class NewsForm implements OnInit {
   private newsService = inject(AdminNewsService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
+  private translate = inject(TranslateService);
 
   newsId = signal<number | null>(null);
   title = signal('');
@@ -39,7 +41,7 @@ export class NewsForm implements OnInit {
 
   save(): void {
     if (!this.title() || !this.content()) {
-      this.error.set('Titel und Inhalt sind erforderlich.');
+      this.error.set(this.translate.instant('ADMIN.NEWS_REQUIRED'));
       return;
     }
 
@@ -53,7 +55,7 @@ export class NewsForm implements OnInit {
     call.subscribe({
       next: () => this.router.navigate(['/admin/news']),
       error: () => {
-        this.error.set('Fehler beim Speichern. Bitte erneut versuchen.');
+        this.error.set(this.translate.instant('ADMIN.NEWS_SAVE_ERROR'));
         this.saving.set(false);
       }
     });

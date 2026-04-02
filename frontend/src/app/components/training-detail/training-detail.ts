@@ -1,6 +1,7 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TrainingService, Training } from '../../services/training.service';
 
 interface WorkoutStep {
@@ -38,11 +39,12 @@ export interface TrainingDetailData {
 @Component({
   selector: 'app-training-detail',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, TranslateModule],
   templateUrl: './training-detail.html',
   styleUrl: './training-detail.scss'
 })
 export class TrainingDetail implements OnInit {
+  private readonly translate = inject(TranslateService);
   training: TrainingDetailData | null = null;
 
   constructor(
@@ -106,7 +108,7 @@ export class TrainingDetail implements OnInit {
 
   private formatStepTitle(stepType?: string): string {
     if (!stepType) {
-      return 'Step';
+      return this.translate.instant('TRAINING_DETAIL.WORKOUT');
     }
 
     return stepType

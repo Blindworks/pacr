@@ -1,19 +1,21 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { SlicePipe } from '@angular/common';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 import { UserService, UserProfile } from '../../../../services/user.service';
 
 @Component({
   selector: 'app-user-list',
   standalone: true,
-  imports: [SlicePipe],
+  imports: [SlicePipe, TranslateModule],
   templateUrl: './user-list.html',
   styleUrl: './user-list.scss'
 })
 export class UserList implements OnInit {
   private userService = inject(UserService);
   private router = inject(Router);
+  private translate = inject(TranslateService);
 
   users = signal<UserProfile[]>([]);
   isLoading = signal(false);
@@ -39,10 +41,10 @@ export class UserList implements OnInit {
 
   statusLabel(status: string | null): string {
     switch (status) {
-      case 'ACTIVE': return 'Active';
-      case 'BLOCKED': return 'Blocked';
-      case 'PENDING': return 'Pending';
-      case 'INACTIVE': return 'Inactive';
+      case 'ACTIVE': return this.translate.instant('ADMIN.STATUS_ACTIVE');
+      case 'BLOCKED': return this.translate.instant('ADMIN.STATUS_BLOCKED');
+      case 'PENDING': return this.translate.instant('ADMIN.STATUS_PENDING');
+      case 'INACTIVE': return this.translate.instant('ADMIN.STATUS_INACTIVE');
       default: return status ?? '—';
     }
   }
@@ -59,9 +61,9 @@ export class UserList implements OnInit {
 
   roleLabel(role: string | null): string {
     switch (role) {
-      case 'USER': return 'User';
-      case 'TRAINER': return 'Trainer';
-      case 'ADMIN': return 'Admin';
+      case 'USER': return this.translate.instant('ADMIN.ROLE_USER');
+      case 'TRAINER': return this.translate.instant('ADMIN.ROLE_TRAINER');
+      case 'ADMIN': return this.translate.instant('ADMIN.ROLE_ADMIN');
       default: return role ?? '—';
     }
   }
@@ -73,9 +75,9 @@ export class UserList implements OnInit {
 
   subscriptionLabel(plan: string | null): string {
     switch (plan) {
-      case 'PRO': return 'Pro';
-      case 'FREE': return 'Free';
-      default: return plan ?? 'Free';
+      case 'PRO': return this.translate.instant('ADMIN.SUB_PRO');
+      case 'FREE': return this.translate.instant('ADMIN.SUB_FREE');
+      default: return plan ?? this.translate.instant('ADMIN.SUB_FREE');
     }
   }
 

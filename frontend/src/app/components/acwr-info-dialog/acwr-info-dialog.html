@@ -4,7 +4,7 @@
     <header class="acwr-header">
       <div class="acwr-header-title">
         <span class="material-symbols-outlined acwr-header-icon">info</span>
-        <span>Was bedeutet der ACWR?</span>
+        <span>{{ 'DIALOGS.ACWR_TITLE' | translate }}</span>
       </div>
       <button class="acwr-close" (click)="close()">
         <span class="material-symbols-outlined">close</span>
@@ -12,66 +12,49 @@
     </header>
 
     <div class="acwr-body">
-      <p class="acwr-intro">
-        Der <strong>ACWR</strong> (Acute:Chronic Workload Ratio) vergleicht deine
-        kurzfristige Trainingsbelastung (letzte 7 Tage) mit der langfristigen
-        (letzte 28 Tage). Er zeigt, ob du dein Training sicher steigerst oder
-        dich überbelastest.
-      </p>
+      <p class="acwr-intro">{{ 'DIALOGS.ACWR_DESCRIPTION' | translate }}</p>
 
       <div class="acwr-zones">
         <div class="acwr-zone acwr-zone--info">
           <div class="acwr-zone-header">
             <span class="acwr-zone-dot"></span>
-            <span class="acwr-zone-range">&lt; 0.8</span>
-            <span class="acwr-zone-label">Aufbau</span>
+            <span class="acwr-zone-range">{{ 'DIALOGS.ACWR_BUILDING_RANGE' | translate }}</span>
+            <span class="acwr-zone-label">{{ 'DIALOGS.ACWR_BUILDING' | translate }}</span>
           </div>
-          <p class="acwr-zone-desc">
-            Unterbelastung — du trainierst deutlich weniger als gewohnt.
-            Dein Trainingsumfang kann gesteigert werden.
-          </p>
+          <p class="acwr-zone-desc">{{ 'DIALOGS.ACWR_BUILDING_DESC' | translate }}</p>
         </div>
 
         <div class="acwr-zone acwr-zone--good">
           <div class="acwr-zone-header">
             <span class="acwr-zone-dot"></span>
-            <span class="acwr-zone-range">0.8 – 1.3</span>
-            <span class="acwr-zone-label">Optimal</span>
+            <span class="acwr-zone-range">{{ 'DIALOGS.ACWR_OPTIMAL_RANGE' | translate }}</span>
+            <span class="acwr-zone-label">{{ 'DIALOGS.ACWR_OPTIMAL' | translate }}</span>
           </div>
-          <p class="acwr-zone-desc">
-            Sweet Spot — gute Balance zwischen Belastung und Erholung.
-            Dein Verletzungsrisiko ist gering.
-          </p>
+          <p class="acwr-zone-desc">{{ 'DIALOGS.ACWR_OPTIMAL_DESC' | translate }}</p>
         </div>
 
         <div class="acwr-zone acwr-zone--warn">
           <div class="acwr-zone-header">
             <span class="acwr-zone-dot"></span>
-            <span class="acwr-zone-range">1.3 – 1.5</span>
-            <span class="acwr-zone-label">Vorsicht</span>
+            <span class="acwr-zone-range">{{ 'DIALOGS.ACWR_CAUTION_RANGE' | translate }}</span>
+            <span class="acwr-zone-label">{{ 'DIALOGS.ACWR_CAUTION' | translate }}</span>
           </div>
-          <p class="acwr-zone-desc">
-            Erhöhtes Verletzungsrisiko — du steigerst dein Training schneller als empfohlen.
-            Stabilisiere deinen Umfang.
-          </p>
+          <p class="acwr-zone-desc">{{ 'DIALOGS.ACWR_CAUTION_DESC' | translate }}</p>
         </div>
 
         <div class="acwr-zone acwr-zone--bad">
           <div class="acwr-zone-header">
             <span class="acwr-zone-dot"></span>
-            <span class="acwr-zone-range">&gt; 1.5</span>
-            <span class="acwr-zone-label">Überlastung</span>
+            <span class="acwr-zone-range">{{ 'DIALOGS.ACWR_OVERLOAD_RANGE' | translate }}</span>
+            <span class="acwr-zone-label">{{ 'DIALOGS.ACWR_OVERLOAD' | translate }}</span>
           </div>
-          <p class="acwr-zone-desc">
-            Hohes Verletzungsrisiko — dein Körper ist stark überbelastet.
-            Reduziere den Trainingsumfang.
-          </p>
+          <p class="acwr-zone-desc">{{ 'DIALOGS.ACWR_OVERLOAD_DESC' | translate }}</p>
         </div>
       </div>
 
       <div class="acwr-tip">
         <span class="material-symbols-outlined acwr-tip-icon">lightbulb</span>
-        <p>Steigere dein Trainingsvolumen idealerweise um maximal 10 % pro Woche, um im optimalen Bereich zu bleiben.</p>
+        <p>{{ 'DIALOGS.ACWR_TIP' | translate }}</p>
       </div>
     </div>
   </div>

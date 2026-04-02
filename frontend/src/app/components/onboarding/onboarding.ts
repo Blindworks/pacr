@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit, signal, inject, computed } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { UserService, UserProfile } from '../../services/user.service';
 import { TrainingPlanService, TrainingPlan } from '../../services/training-plan.service';
 import { CompetitionService, Competition } from '../../services/competition.service';
@@ -9,7 +10,7 @@ import { CompetitionService, Competition } from '../../services/competition.serv
 @Component({
   selector: 'app-onboarding',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, TranslateModule],
   templateUrl: './onboarding.html',
   styleUrl: './onboarding.scss'
 })
@@ -18,6 +19,7 @@ export class Onboarding implements OnInit {
   private readonly userService = inject(UserService);
   private readonly planService = inject(TrainingPlanService);
   private readonly competitionService = inject(CompetitionService);
+  private readonly translate = inject(TranslateService);
 
   protected readonly currentStep = signal(1);
   protected readonly totalSteps = 5;
@@ -55,13 +57,15 @@ export class Onboarding implements OnInit {
     return ((this.currentStep() - 1) / (this.totalSteps - 1)) * 100;
   });
 
-  protected readonly phaseLabels: Record<number, string> = {
-    1: 'PHASE 01 // INITIALIZATION',
-    2: 'PHASE 01.5 // INTELLIGENCE OPT-IN',
-    3: 'PHASE 02 // GOAL DEFINITION',
-    4: 'PHASE 03 // PLAN CALIBRATION',
-    5: 'PHASE 04 // FINALIZATION'
-  };
+  protected get phaseLabels(): Record<number, string> {
+    return {
+      1: this.translate.instant('ONBOARDING.PHASE_1'),
+      2: this.translate.instant('ONBOARDING.PHASE_1_5'),
+      3: this.translate.instant('ONBOARDING.PHASE_2'),
+      4: this.translate.instant('ONBOARDING.PHASE_3'),
+      5: this.translate.instant('ONBOARDING.PHASE_4'),
+    };
+  }
 
   private userId = 0;
   private userSnapshot: UserProfile | null = null;
@@ -320,36 +324,36 @@ export class Onboarding implements OnInit {
   }
 
   protected getDistanceLabel(d: string): string {
-    const labels: Record<string, string> = {
-      '5K': '5K',
-      '10K': '10K',
-      'HALF_MARATHON': 'Half Marathon',
-      'MARATHON': 'Marathon',
-      'FUN': 'Just for Fun/Health'
+    const keys: Record<string, string> = {
+      '5K': 'ONBOARDING.DIST_5K',
+      '10K': 'ONBOARDING.DIST_10K',
+      'HALF_MARATHON': 'ONBOARDING.DIST_HALF',
+      'MARATHON': 'ONBOARDING.DIST_MARATHON',
+      'FUN': 'ONBOARDING.DIST_FUN'
     };
-    return labels[d] ?? d;
+    return this.translate.instant(keys[d] ?? d);
   }
 
   protected getDistanceSub(d: string): string {
-    const subs: Record<string, string> = {
-      '5K': 'Foundation Run',
-      '10K': 'Endurance Build',
-      'HALF_MARATHON': '21.1 KM Precision',
-      'MARATHON': '42.2 KM Mastery',
-      'FUN': 'Consistent Movement'
+    const keys: Record<string, string> = {
+      '5K': 'ONBOARDING.DIST_5K_SUB',
+      '10K': 'ONBOARDING.DIST_10K_SUB',
+      'HALF_MARATHON': 'ONBOARDING.DIST_HALF_SUB',
+      'MARATHON': 'ONBOARDING.DIST_MARATHON_SUB',
+      'FUN': 'ONBOARDING.DIST_FUN_SUB'
     };
-    return subs[d] ?? '';
+    return this.translate.instant(keys[d] ?? d);
   }
 
   protected getVolumeLabel(v: string): string {
-    const labels: Record<string, string> = {
-      '0_10': '0-10km',
-      '10_30': '10-30km',
-      '20_40': '20-40km',
-      '40_60': '40-60km',
-      '60_PLUS': '60km+'
+    const keys: Record<string, string> = {
+      '0_10': 'ONBOARDING.VOL_0_10',
+      '10_30': 'ONBOARDING.VOL_10_30',
+      '20_40': 'ONBOARDING.VOL_20_40',
+      '40_60': 'ONBOARDING.VOL_40_60',
+      '60_PLUS': 'ONBOARDING.VOL_60_PLUS'
     };
-    return labels[v] ?? v;
+    return this.translate.instant(keys[v] ?? v);
   }
 
   protected setScheduleMode(mode: 'startdate' | 'competition'): void {

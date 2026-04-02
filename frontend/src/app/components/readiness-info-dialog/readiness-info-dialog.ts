@@ -1,9 +1,11 @@
 import { Component, ElementRef, ViewChild, effect, inject, OnDestroy } from '@angular/core';
 import { ReadinessInfoDialogService } from '../../services/readiness-info-dialog.service';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-readiness-info-dialog',
   standalone: true,
+  imports: [TranslateModule],
   templateUrl: './readiness-info-dialog.html',
   styleUrl: './readiness-info-dialog.scss'
 })

@@ -19,58 +19,56 @@
         <span class="phase-label">{{ phaseLabels[1] }}</span>
 
         <h1 class="mega-title">
-          WELCOME TO PACR,<br>
-          <span class="accent">RUNNER!</span>
+          {{ 'ONBOARDING.WELCOME' | translate }}
         </h1>
 
         <p class="step-desc">
-          Let's calibrate your performance engine. Provide your basic metrics
-          to generate your initial kinetic profile.
+          {{ 'ONBOARDING.WELCOME_TEXT' | translate }}
         </p>
 
         <div class="form-section">
-          <span class="field-label">IDENTITY SELECTION</span>
+          <span class="field-label">{{ 'ONBOARDING.IDENTITY' | translate }}</span>
           <div class="gender-cards">
             <button class="gender-card" [class.selected]="gender() === 'Male'" (click)="selectGender('Male')">
               <span class="material-symbols-outlined">male</span>
-              <span>MALE</span>
+              <span>{{ 'ONBOARDING.MALE' | translate }}</span>
             </button>
             <button class="gender-card" [class.selected]="gender() === 'Female'" (click)="selectGender('Female')">
               <span class="material-symbols-outlined">female</span>
-              <span>FEMALE</span>
+              <span>{{ 'ONBOARDING.FEMALE' | translate }}</span>
             </button>
             <button class="gender-card" [class.selected]="gender() === 'Non-binary'" (click)="selectGender('Non-binary')">
               <span class="material-symbols-outlined">transgender</span>
-              <span>NON-BINARY</span>
+              <span>{{ 'ONBOARDING.NON_BINARY' | translate }}</span>
             </button>
           </div>
         </div>
 
         <div class="metrics-row">
           <div class="metric-field">
-            <span class="field-label">CHRONOLOGICAL AGE</span>
+            <span class="field-label">{{ 'ONBOARDING.AGE' | translate }}</span>
             <div class="input-wrap">
               <input type="number" [ngModel]="age()" (ngModelChange)="age.set($event)" placeholder="28" />
-              <span class="input-unit">YEARS</span>
+              <span class="input-unit">{{ 'ONBOARDING.YEARS' | translate }}</span>
             </div>
           </div>
           <div class="metric-field">
-            <span class="field-label">VERTICAL REACH</span>
+            <span class="field-label">{{ 'ONBOARDING.HEIGHT' | translate }}</span>
             <div class="input-wrap">
               <input type="number" [ngModel]="height()" (ngModelChange)="height.set($event)" placeholder="178" />
-              <span class="input-unit">CM</span>
+              <span class="input-unit">{{ 'ONBOARDING.CM' | translate }}</span>
             </div>
           </div>
           <div class="metric-field">
-            <span class="field-label">MASS INDEX</span>
+            <span class="field-label">{{ 'ONBOARDING.MASS' | translate }}</span>
             <div class="input-wrap">
               <input type="number" [ngModel]="weight()" (ngModelChange)="weight.set($event)" placeholder="72" />
-              <span class="input-unit">KG</span>
+              <span class="input-unit">{{ 'ONBOARDING.KG' | translate }}</span>
             </div>
           </div>
         </div>
 
-        <p class="quote">"PRECISION IS THE ULTIMATE SPEED."</p>
+        <p class="quote">"{{ 'ONBOARDING.QUOTE' | translate }}"</p>
       </section>
     }
 
@@ -79,16 +77,15 @@
       <section class="step step-intel">
         <div class="phase-row">
           <span class="phase-label">{{ phaseLabels[2] }}</span>
-          <span class="progress-pct">{{ progress() | number:'1.0-0' }}% COMPLETE</span>
+          <span class="progress-pct">{{ progress() | number:'1.0-0' }}{{ 'ONBOARDING.COMPLETE' | translate }}</span>
         </div>
 
         <h1 class="mega-title">
-          CHOOSE YOUR<br><span class="accent">INTEL</span>
+          {{ 'ONBOARDING.CHOOSE_INTEL' | translate }}
         </h1>
 
         <p class="step-desc">
-          Supercharge your performance with specialized environmental and
-          physiological tracking modules.
+          {{ 'ONBOARDING.INTEL_SUBTITLE' | translate }}
         </p>
 
         <div class="intel-cards">
@@ -101,8 +98,8 @@
                 }
               </div>
             </div>
-            <h3>CYCLE INTELLIGENCE</h3>
-            <p>Pro-active training adjustments based on your natural physiological rhythms and recovery windows.</p>
+            <h3>{{ 'ONBOARDING.CYCLE_INTEL' | translate }}</h3>
+            <p>{{ 'ONBOARDING.CYCLE_INTEL_DESC' | translate }}</p>
           </button>
 
           <button class="intel-card" [class.selected]="bioWeatherEnabled()" (click)="toggleIntel('bioWeather')">
@@ -114,8 +111,8 @@
                 }
               </div>
             </div>
-            <h3>BIO-WEATHER</h3>
-            <p>Real-time environmental alerts for air quality, humidity, and pressure shifts that affect your output.</p>
+            <h3>{{ 'ONBOARDING.BIO_WEATHER' | translate }}</h3>
+            <p>{{ 'ONBOARDING.BIO_WEATHER_DESC' | translate }}</p>
           </button>
 
           <button class="intel-card" [class.selected]="asthmaEnabled()" (click)="toggleIntel('asthma')">
@@ -127,14 +124,14 @@
                 }
               </div>
             </div>
-            <h3>ASTHMA TRACKING</h3>
-            <p>Continuous respiratory monitoring and event logging for performance safety in varying altitudes.</p>
+            <h3>{{ 'ONBOARDING.ASTHMA' | translate }}</h3>
+            <p>{{ 'ONBOARDING.ASTHMA_DESC' | translate }}</p>
           </button>
         </div>
 
         <p class="info-note">
           <span class="material-symbols-outlined">info</span>
-          THESE FEATURES ARE OPTIONAL AND CAN BE MANAGED LATER IN SETTINGS.
+          {{ 'ONBOARDING.OPTIONAL_NOTE' | translate }}
         </p>
       </section>
     }
@@ -144,16 +141,16 @@
       <section class="step step-goals">
         <div class="phase-row">
           <span class="phase-label">{{ phaseLabels[3] }}</span>
-          <span class="progress-pct">{{ progress() | number:'1.0-0' }}% COMPLETE</span>
+          <span class="progress-pct">{{ progress() | number:'1.0-0' }}{{ 'ONBOARDING.COMPLETE' | translate }}</span>
         </div>
 
         <h1 class="mega-title">
-          WHAT'S YOUR NEXT<br><span class="accent">FINISH LINE?</span>
+          {{ 'ONBOARDING.GOAL_TITLE' | translate }}
         </h1>
 
         <div class="goals-layout">
           <div class="distance-section">
-            <span class="field-label">TARGET DISTANCE</span>
+            <span class="field-label">{{ 'ONBOARDING.TARGET_DISTANCE' | translate }}</span>
             <div class="distance-cards">
               @for (d of ['5K', '10K', 'HALF_MARATHON', 'MARATHON', 'FUN']; track d) {
                 <button class="distance-card" [class.selected]="targetDistance() === d" (click)="selectDistance(d)">
@@ -170,7 +167,7 @@
           </div>
 
           <div class="volume-section">
-            <span class="field-label">CURRENT WEEKLY VOLUME</span>
+            <span class="field-label">{{ 'ONBOARDING.CURRENT_VOLUME' | translate }}</span>
             <div class="volume-chips">
               @for (v of ['0_10', '10_30', '20_40', '40_60', '60_PLUS']; track v) {
                 <button class="volume-chip" [class.selected]="weeklyVolume() === v" (click)="selectVolume(v)">
@@ -180,8 +177,7 @@
             </div>
 
             <div class="volume-hint">
-              <p>Your current volume will define the <span class="accent-text">acceleration phase</span> of your
-                customized training engine. We adjust the load to prevent injury while maximizing adaptation.</p>
+              <p>{{ 'ONBOARDING.VOLUME_HINT' | translate }}</p>
             </div>
           </div>
         </div>
@@ -194,12 +190,11 @@
         <span class="phase-label">{{ phaseLabels[4] }}</span>
 
         <h1 class="mega-title">
-          YOUR KINETIC<br><span class="accent">ENGINE IS READY</span>
+          {{ 'ONBOARDING.ENGINE_READY' | translate }}
         </h1>
 
         <p class="step-desc">
-          Based on your profile, we've engineered a high-performance training
-          protocol optimized for endurance gains and injury prevention.
+          {{ 'ONBOARDING.ENGINE_READY_TEXT' | translate }}
         </p>
 
         @if (availablePlans().length > 0) {
@@ -208,7 +203,7 @@
               @for (plan of availablePlans(); track plan.id) {
                 <button class="plan-card" [class.selected]="selectedPlan()?.id === plan.id" (click)="selectPlan(plan)">
                   @if (selectedPlan()?.id === plan.id) {
-                    <span class="recommended-badge">RECOMMENDED</span>
+                    <span class="recommended-badge">{{ 'ONBOARDING.RECOMMENDED' | translate }}</span>
                   }
                   <span class="material-symbols-outlined plan-check">check_circle</span>
                   <h3>{{ plan.name }}</h3>
@@ -216,13 +211,13 @@
                     @if (plan.competitionType) {
                       <div class="stat">
                         <span class="stat-val">{{ plan.competitionType }}</span>
-                        <span class="stat-label">DISTANCE</span>
+                        <span class="stat-label">{{ 'COMMON.DISTANCE' | translate }}</span>
                       </div>
                     }
                     @if (plan.trainingCount) {
                       <div class="stat">
                         <span class="stat-val">{{ plan.trainingCount }}</span>
-                        <span class="stat-label">SESSIONS</span>
+                        <span class="stat-label">{{ 'COMMON.SESSIONS' | translate }}</span>
                       </div>
                     }
                   </div>
@@ -235,11 +230,11 @@
               <div class="schedule-mode-toggle">
                 <button class="mode-btn" [class.selected]="scheduleMode() === 'startdate'" (click)="setScheduleMode('startdate')">
                   <span class="material-symbols-outlined">calendar_today</span>
-                  START DATE
+                  {{ 'ONBOARDING.START_DATE' | translate }}
                 </button>
                 <button class="mode-btn" [class.selected]="scheduleMode() === 'competition'" (click)="setScheduleMode('competition')">
                   <span class="material-symbols-outlined">emoji_events</span>
-                  COMPETITION
+                  {{ 'ONBOARDING.COMPETITION' | translate }}
                 </button>
               </div>
 
@@ -247,12 +242,12 @@
                 <div class="start-card">
                   <div class="start-options">
                     <button class="start-opt" [class.selected]="startDateMode() === 'immediate'" (click)="setStartMode('immediate')">
-                      <strong>IMMEDIATE</strong>
-                      <span>Next Monday</span>
+                      <strong>{{ 'ONBOARDING.IMMEDIATE' | translate }}</strong>
+                      <span>{{ 'ONBOARDING.NEXT_MONDAY' | translate }}</span>
                     </button>
                     <button class="start-opt" [class.selected]="startDateMode() === 'custom'" (click)="setStartMode('custom')">
-                      <strong>CUSTOM START</strong>
-                      <span>Select from calendar</span>
+                      <strong>{{ 'ONBOARDING.CUSTOM_START' | translate }}</strong>
+                      <span>{{ 'ONBOARDING.SELECT_CALENDAR' | translate }}</span>
                     </button>
                   </div>
                   @if (startDateMode() === 'custom') {
@@ -282,7 +277,7 @@
                 } @else {
                   <div class="no-competitions">
                     <span class="material-symbols-outlined">info</span>
-                    <p>Noch keine Wettkämpfe angelegt. Wähle ein Startdatum.</p>
+                    <p>{{ 'ONBOARDING.NO_COMPETITIONS' | translate }}</p>
                   </div>
                 }
               }
@@ -291,7 +286,7 @@
         } @else {
           <div class="no-plans">
             <span class="material-symbols-outlined">info</span>
-            <p>No training plans available yet. You can skip this step and add a plan later from the Training Plans section.</p>
+            <p>{{ 'ONBOARDING.NO_PLANS' | translate }}</p>
           </div>
         }
       </section>
@@ -303,28 +298,28 @@
         <span class="phase-label">{{ phaseLabels[5] }}</span>
 
         <h1 class="mega-title">
-          YOU'RE READY<br>TO <span class="accent">RUN.</span>
+          {{ 'ONBOARDING.READY_TO_RUN' | translate }}
         </h1>
 
         <div class="final-layout">
           <div class="profile-status">
             <span class="material-symbols-outlined status-icon">check_circle</span>
             <div>
-              <span class="status-label">PROFILE STATUS</span>
-              <strong class="status-value">ENGINE PRIMED</strong>
+              <span class="status-label">{{ 'ONBOARDING.PROFILE_STATUS' | translate }}</span>
+              <strong class="status-value">{{ 'ONBOARDING.ENGINE_PRIMED' | translate }}</strong>
             </div>
           </div>
 
           @if (selectedPlan()) {
             <div class="final-card blueprint-card">
-              <span class="card-badge">SELECTED BLUEPRINT</span>
+              <span class="card-badge">{{ 'ONBOARDING.SELECTED_BLUEPRINT' | translate }}</span>
               <h3>{{ selectedPlan()!.name }}</h3>
               <div class="plan-meta">
                 @if (selectedPlan()!.competitionType) {
                   <span>{{ selectedPlan()!.competitionType }}</span>
                 }
                 @if (selectedPlan()!.trainingCount) {
-                  <span>{{ selectedPlan()!.trainingCount }} Sessions</span>
+                  <span>{{ selectedPlan()!.trainingCount }} {{ 'COMMON.SESSIONS' | translate }}</span>
                 }
               </div>
             </div>
@@ -332,9 +327,9 @@
         </div>
 
         <button class="cta-button" (click)="goToDashboard()" [disabled]="saving()">
-          {{ saving() ? 'INITIALIZING...' : 'GO TO DASHBOARD' }}
+          {{ saving() ? ('ONBOARDING.INITIALIZING' | translate) : ('ONBOARDING.GO_TO_DASHBOARD' | translate) }}
         </button>
-        <p class="cta-sub">SYNCING BIOMETRICS // INITIALIZING ENGINE</p>
+        <p class="cta-sub">{{ 'ONBOARDING.SYNCING' | translate }}</p>
       </section>
     }
 
@@ -345,10 +340,10 @@
     <nav class="ob-nav">
       <button class="nav-btn nav-prev" [disabled]="currentStep() === 1" (click)="prevStep()">
         <span class="material-symbols-outlined">arrow_back</span>
-        PREVIOUS
+        {{ 'COMMON.PREVIOUS' | translate }}
       </button>
       <button class="nav-btn nav-next" (click)="nextStep()" [disabled]="saving()">
-        {{ saving() ? 'SAVING...' : 'NEXT' }}
+        {{ saving() ? ('COMMON.SAVING' | translate) : ('COMMON.NEXT' | translate) }}
         <span class="material-symbols-outlined">arrow_forward</span>
       </button>
     </nav>

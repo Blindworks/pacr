@@ -1,17 +1,19 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { DatePipe, LowerCasePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { FeedbackService, Feedback, FeedbackStatus } from '../../../../services/feedback.service';
 
 @Component({
   selector: 'app-feedback-list',
   standalone: true,
-  imports: [DatePipe, LowerCasePipe, FormsModule],
+  imports: [DatePipe, LowerCasePipe, FormsModule, TranslateModule],
   templateUrl: './feedback-list.html',
   styleUrl: './feedback-list.scss'
 })
 export class FeedbackList implements OnInit {
   private readonly feedbackService = inject(FeedbackService);
+  private readonly translate = inject(TranslateService);
 
   items = signal<Feedback[]>([]);
   isLoading = signal(false);
@@ -62,19 +64,19 @@ export class FeedbackList implements OnInit {
 
   categoryLabel(cat: string): string {
     switch (cat) {
-      case 'BUG': return 'Bug';
-      case 'FEATURE_REQUEST': return 'Feature';
-      case 'GENERAL': return 'General';
+      case 'BUG': return this.translate.instant('ADMIN.CAT_BUG');
+      case 'FEATURE_REQUEST': return this.translate.instant('ADMIN.CAT_FEATURE');
+      case 'GENERAL': return this.translate.instant('ADMIN.CAT_GENERAL');
       default: return cat;
     }
   }
 
   statusLabel(s: string): string {
     switch (s) {
-      case 'NEW': return 'New';
-      case 'IN_PROGRESS': return 'In Progress';
-      case 'RESOLVED': return 'Resolved';
-      case 'CLOSED': return 'Closed';
+      case 'NEW': return this.translate.instant('ADMIN.FEEDBACK_NEW');
+      case 'IN_PROGRESS': return this.translate.instant('ADMIN.FEEDBACK_IN_PROGRESS');
+      case 'RESOLVED': return this.translate.instant('ADMIN.FEEDBACK_RESOLVED');
+      case 'CLOSED': return this.translate.instant('ADMIN.FEEDBACK_CLOSED');
       default: return s;
     }
   }

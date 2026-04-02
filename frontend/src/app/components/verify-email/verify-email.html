@@ -20,8 +20,8 @@
         </div>
 
         <div class="verify-heading">
-          <h1>E-Mail bestätigen</h1>
-          <p>Wir haben einen 6-stelligen Code an <strong>{{ email() }}</strong> gesendet.</p>
+          <h1>{{ 'VERIFY_EMAIL.TITLE' | translate }}</h1>
+          <p>{{ 'VERIFY_EMAIL.SUBTITLE' | translate:{ email: email() } }}</p>
         </div>
 
         <div class="digits-row">
@@ -46,23 +46,23 @@
         }
 
         <button class="btn-verify" [disabled]="loading() || code.length < 6" (click)="onVerify()">
-          {{ loading() ? 'WIRD GEPRÜFT...' : 'BESTÄTIGEN' }}
+          {{ loading() ? ('VERIFY_EMAIL.VERIFYING' | translate) : ('VERIFY_EMAIL.CONFIRM' | translate) }}
         </button>
 
         <div class="resend-section">
-          <span class="resend-hint">Code nicht erhalten?</span>
+          <span class="resend-hint">{{ 'VERIFY_EMAIL.NOT_RECEIVED' | translate }}</span>
           @if (resendCooldown() > 0) {
-            <span class="resend-cooldown">Erneut senden in {{ resendCooldown() }}s</span>
+            <span class="resend-cooldown">{{ 'VERIFY_EMAIL.RESEND_IN' | translate:{ count: resendCooldown() } }}</span>
           } @else {
             <button class="btn-resend" [disabled]="resendLoading()" (click)="onResend()">
-              {{ resendLoading() ? 'Wird gesendet...' : 'Erneut senden' }}
+              {{ resendLoading() ? ('VERIFY_EMAIL.SENDING' | translate) : ('VERIFY_EMAIL.RESEND' | translate) }}
             </button>
           }
         </div>
 
         <a routerLink="/signup" class="back-link">
           <span class="material-symbols-outlined">arrow_back</span>
-          Zurück zur Registrierung
+          {{ 'VERIFY_EMAIL.BACK_TO_SIGNUP' | translate }}
         </a>
       </div>
     </main>

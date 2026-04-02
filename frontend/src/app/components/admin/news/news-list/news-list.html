@@ -1,22 +1,22 @@
 <div class="list-page">
   <div class="list-header">
-    <h2>App-News</h2>
-    <button class="btn-primary" (click)="goNew()">+ Neue News</button>
+    <h2>{{ 'ADMIN.NEWS_TITLE' | translate }}</h2>
+    <button class="btn-primary" (click)="goNew()">{{ 'ADMIN.NEW_NEWS' | translate }}</button>
   </div>
 
   @if (isLoading()) {
-    <p class="loading">Wird geladen…</p>
+    <p class="loading">{{ 'ADMIN.LOADING_NEWS' | translate }}</p>
   } @else if (news().length === 0) {
-    <p class="empty">Noch keine News vorhanden.</p>
+    <p class="empty">{{ 'ADMIN.NO_NEWS' | translate }}</p>
   } @else {
     <table class="data-table">
       <thead>
         <tr>
-          <th>Titel</th>
-          <th>Status</th>
-          <th>Erstellt</th>
-          <th>Veröffentlicht</th>
-          <th>Aktionen</th>
+          <th>{{ 'ADMIN.NEWS_COL_TITLE' | translate }}</th>
+          <th>{{ 'ADMIN.NEWS_COL_STATUS' | translate }}</th>
+          <th>{{ 'ADMIN.NEWS_COL_CREATED' | translate }}</th>
+          <th>{{ 'ADMIN.NEWS_PUBLISHED' | translate }}</th>
+          <th>{{ 'COMMON.ACTIONS' | translate }}</th>
         </tr>
       </thead>
       <tbody>
@@ -25,21 +25,21 @@
             <td>{{ item.title }}</td>
             <td>
               <span class="badge" [class.badge--published]="item.isPublished">
-                {{ item.isPublished ? 'Veröffentlicht' : 'Entwurf' }}
+                {{ item.isPublished ? ('ADMIN.NEWS_PUBLISHED' | translate) : ('ADMIN.NEWS_DRAFT' | translate) }}
               </span>
             </td>
             <td>{{ item.createdAt | date:'dd.MM.yyyy HH:mm' }}</td>
             <td>{{ item.publishedAt ? (item.publishedAt | date:'dd.MM.yyyy HH:mm') : '—' }}</td>
             <td class="actions">
-              <button class="btn-icon" (click)="edit(item)" title="Bearbeiten">
+              <button class="btn-icon" (click)="edit(item)" [title]="'COMMON.EDIT' | translate">
                 <span class="material-symbols-outlined">edit</span>
               </button>
               @if (!item.isPublished) {
-                <button class="btn-icon btn-icon--publish" (click)="publish(item)" title="Veröffentlichen">
+                <button class="btn-icon btn-icon--publish" (click)="publish(item)" [title]="'ADMIN.PUBLISH' | translate">
                   <span class="material-symbols-outlined">publish</span>
                 </button>
               }
-              <button class="btn-icon btn-icon--danger" (click)="delete(item)" title="Löschen">
+              <button class="btn-icon btn-icon--danger" (click)="delete(item)" [title]="'COMMON.DELETE' | translate">
                 <span class="material-symbols-outlined">delete</span>
               </button>
             </td>

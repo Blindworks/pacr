@@ -1,17 +1,19 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { AdminService, AdminStats, AuditLogEntry } from '../../../services/admin.service';
 
 @Component({
   selector: 'app-admin-overview',
   standalone: true,
-  imports: [CommonModule, FormsModule, DatePipe],
+  imports: [CommonModule, FormsModule, DatePipe, TranslateModule],
   templateUrl: './admin-overview.html',
   styleUrl: './admin-overview.scss'
 })
 export class AdminOverview implements OnInit {
   private adminService = inject(AdminService);
+  private translate = inject(TranslateService);
 
   stats = signal<AdminStats | null>(null);
   auditLog = signal<AuditLogEntry[]>([]);
@@ -29,21 +31,23 @@ export class AdminOverview implements OnInit {
   currentPage = 0;
   pageSize = 50;
 
-  readonly actionCategories = [
-    { label: 'Alle', value: '' },
-    { label: 'Login', value: 'LOGIN' },
-    { label: 'User erstellt', value: 'USER_CREATED' },
-    { label: 'User bearbeitet', value: 'USER_UPDATED' },
-    { label: 'Status geändert', value: 'USER_STATUS_CHANGED' },
-    { label: 'Subscription geändert', value: 'SUBSCRIPTION_CHANGED' },
-    { label: 'FIT Upload', value: 'FIT_UPLOADED' },
-    { label: 'Strava verbunden', value: 'STRAVA_CONNECTED' },
-    { label: 'Strava getrennt', value: 'STRAVA_DISCONNECTED' },
-    { label: 'Plan erstellt', value: 'PLAN_CREATED' },
-    { label: 'Plan gelöscht', value: 'PLAN_DELETED' },
-    { label: 'Competition erstellt', value: 'COMPETITION_CREATED' },
-    { label: 'Competition gelöscht', value: 'COMPETITION_DELETED' },
-  ];
+  get actionCategories(): { label: string; value: string }[] {
+    return [
+      { label: this.translate.instant('ADMIN.AUDIT_ALL'), value: '' },
+      { label: this.translate.instant('ADMIN.AUDIT_LOGIN'), value: 'LOGIN' },
+      { label: this.translate.instant('ADMIN.AUDIT_USER_CREATED'), value: 'USER_CREATED' },
+      { label: this.translate.instant('ADMIN.AUDIT_USER_EDITED'), value: 'USER_UPDATED' },
+      { label: this.translate.instant('ADMIN.AUDIT_STATUS_CHANGED'), value: 'USER_STATUS_CHANGED' },
+      { label: this.translate.instant('ADMIN.AUDIT_SUB_CHANGED'), value: 'SUBSCRIPTION_CHANGED' },
+      { label: this.translate.instant('ADMIN.AUDIT_FIT_UPLOAD'), value: 'FIT_UPLOADED' },
+      { label: this.translate.instant('ADMIN.AUDIT_STRAVA_CONNECTED'), value: 'STRAVA_CONNECTED' },
+      { label: this.translate.instant('ADMIN.AUDIT_STRAVA_DISCONNECTED'), value: 'STRAVA_DISCONNECTED' },
+      { label: this.translate.instant('ADMIN.AUDIT_PLAN_CREATED'), value: 'PLAN_CREATED' },
+      { label: this.translate.instant('ADMIN.AUDIT_PLAN_DELETED'), value: 'PLAN_DELETED' },
+      { label: this.translate.instant('ADMIN.AUDIT_COMP_CREATED'), value: 'COMPETITION_CREATED' },
+      { label: this.translate.instant('ADMIN.AUDIT_COMP_DELETED'), value: 'COMPETITION_DELETED' },
+    ];
+  }
 
   ngOnInit(): void {
     this.loadStats();

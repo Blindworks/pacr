@@ -4,7 +4,7 @@
     <header class="pace-header">
       <div class="pace-header-title">
         <span class="material-symbols-outlined pace-icon">speed</span>
-        <span>Pace Calculator</span>
+        <span>{{ 'DIALOGS.PACE_TITLE' | translate }}</span>
       </div>
       <button class="pace-close" (click)="close()">
         <span class="material-symbols-outlined">close</span>
@@ -14,25 +14,25 @@
     <div class="pace-body">
 
       <div class="pace-intro">
-        <h2>Run Smarter.</h2>
-        <p>Enter any two values to calculate your performance metrics. <span class="pace-highlight">Values update live as you type.</span></p>
+        <h2>{{ 'DIALOGS.PACE_SUBTITLE' | translate }}</h2>
+        <p>{{ 'DIALOGS.PACE_DESCRIPTION' | translate }}</p>
       </div>
 
       <!-- Race presets -->
       <div class="presets-section">
-        <span class="presets-label">RACE PRESETS</span>
+        <span class="presets-label">{{ 'DIALOGS.PACE_PRESETS' | translate }}</span>
         <div class="presets">
           <button class="preset-btn" (click)="setPreset(5)">5K</button>
           <button class="preset-btn" (click)="setPreset(10)">10K</button>
-          <button class="preset-btn" (click)="setPreset(21.0975)">Half Marathon</button>
-          <button class="preset-btn" (click)="setPreset(42.195)">Full Marathon</button>
+          <button class="preset-btn" (click)="setPreset(21.0975)">{{ 'DIALOGS.PACE_HALF' | translate }}</button>
+          <button class="preset-btn" (click)="setPreset(42.195)">{{ 'DIALOGS.PACE_FULL' | translate }}</button>
         </div>
       </div>
 
       <!-- Input fields -->
       <div class="fields-grid">
         <div class="field-card">
-          <label class="field-label">DISTANCE (KM)</label>
+          <label class="field-label">{{ 'DIALOGS.PACE_DISTANCE' | translate }}</label>
           <input
             class="field-input"
             type="text"
@@ -46,7 +46,7 @@
         </div>
 
         <div class="field-card">
-          <label class="field-label">TIME (HH:MM:SS)</label>
+          <label class="field-label">{{ 'DIALOGS.PACE_TIME' | translate }}</label>
           <input
             class="field-input"
             type="text"
@@ -60,7 +60,7 @@
         </div>
 
         <div class="field-card">
-          <label class="field-label">PACE (MIN/KM)</label>
+          <label class="field-label">{{ 'DIALOGS.PACE_PACE' | translate }}</label>
           <input
             class="field-input"
             type="text"
@@ -74,7 +74,7 @@
         </div>
 
         <div class="field-card">
-          <label class="field-label">SPEED (KM/H)</label>
+          <label class="field-label">{{ 'DIALOGS.PACE_SPEED' | translate }}</label>
           <input
             class="field-input"
             type="text"
@@ -88,12 +88,12 @@
         </div>
       </div>
 
-      <button class="reset-btn" (click)="reset()">Reset All Fields</button>
+      <button class="reset-btn" (click)="reset()">{{ 'DIALOGS.PACE_RESET' | translate }}</button>
 
       <!-- Projected splits -->
       <div class="splits-section" *ngIf="splits.length > 0">
         <div class="splits-header">
-          <h3>Projected Split Times</h3>
+          <h3>{{ 'DIALOGS.PACE_SPLITS' | translate }}</h3>
         </div>
         <div class="splits-grid">
           <div class="split-card" *ngFor="let split of splits">

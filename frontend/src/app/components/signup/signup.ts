@@ -1,12 +1,13 @@
 import { Component, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-signup',
   standalone: true,
-  imports: [FormsModule, RouterLink],
+  imports: [FormsModule, RouterLink, TranslateModule],
   templateUrl: './signup.html',
   styleUrl: './signup.scss'
 })
@@ -19,7 +20,7 @@ export class Signup {
   loading = signal(false);
   error = signal('');
 
-  constructor(private router: Router, private auth: AuthService) {}
+  constructor(private router: Router, private auth: AuthService, private translate: TranslateService) {}
 
   onSubmit() {
     this.error.set('');
@@ -31,8 +32,8 @@ export class Signup {
       },
       error: (err) => {
         this.loading.set(false);
-        const msg = err?.error?.message ?? err?.error ?? 'Registrierung fehlgeschlagen';
-        this.error.set(typeof msg === 'string' ? msg : 'Registrierung fehlgeschlagen');
+        const msg = err?.error?.message ?? err?.error ?? this.translate.instant('SIGNUP.FAILED');
+        this.error.set(typeof msg === 'string' ? msg : this.translate.instant('SIGNUP.FAILED'));
       }
     });
   }

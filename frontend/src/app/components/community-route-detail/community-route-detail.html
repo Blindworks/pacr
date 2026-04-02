@@ -1,7 +1,7 @@
 @if (loading()) {
   <div class="loading-state">
     <span class="material-symbols-outlined spinning">progress_activity</span>
-    <p>Loading route...</p>
+    <p>{{ 'COMMUNITY.LOADING_ROUTE' | translate }}</p>
   </div>
 } @else if (route(); as r) {
   <div class="route-detail">
@@ -11,7 +11,7 @@
       </button>
       <div>
         <h1>{{ r.name }}</h1>
-        <span class="creator">by {{ r.creatorUsername }}</span>
+        <span class="creator">{{ r.creatorUsername }}</span>
       </div>
     </div>
 
@@ -21,25 +21,25 @@
       <div class="stat-card">
         <span class="material-symbols-outlined">straighten</span>
         <div class="stat-value">{{ formatDistance(r.distanceKm) }}</div>
-        <div class="stat-label">Distance</div>
+        <div class="stat-label">{{ 'COMMON.DISTANCE' | translate }}</div>
       </div>
       @if (r.elevationGainM) {
         <div class="stat-card">
           <span class="material-symbols-outlined">terrain</span>
           <div class="stat-value">{{ r.elevationGainM }}m</div>
-          <div class="stat-label">Elevation</div>
+          <div class="stat-label">{{ 'COMMON.ELEVATION' | translate }}</div>
         </div>
       }
       <div class="stat-card">
         <span class="material-symbols-outlined">group</span>
         <div class="stat-value">{{ r.athleteCount }}</div>
-        <div class="stat-label">Athletes</div>
+        <div class="stat-label">{{ 'COMMUNITY.ATHLETES' | translate }}</div>
       </div>
       @if (r.recordTimeSeconds) {
         <div class="stat-card highlight">
           <span class="material-symbols-outlined">emoji_events</span>
           <div class="stat-value">{{ formatTime(r.recordTimeSeconds) }}</div>
-          <div class="stat-label">Record by {{ r.recordHolder }}</div>
+          <div class="stat-label">{{ 'COMMUNITY.RECORD_BY' | translate }} {{ r.recordHolder }}</div>
         </div>
       }
     </div>
@@ -49,43 +49,43 @@
         @if (attempt.routeId === r.id) {
           <div class="attempt-active">
             <span class="material-symbols-outlined">directions_run</span>
-            <span>Attempt active — go run this route!</span>
-            <button class="btn btn-secondary" (click)="cancelAttempt()">Cancel</button>
+            <span>{{ 'COMMUNITY.ATTEMPT_ACTIVE' | translate }}</span>
+            <button class="btn btn-secondary" (click)="cancelAttempt()">{{ 'COMMON.CANCEL' | translate }}</button>
           </div>
         } @else {
-          <p class="attempt-note">You have a pending attempt on another route.</p>
+          <p class="attempt-note">{{ 'COMMUNITY.PENDING_ATTEMPT' | translate }}</p>
         }
       } @else {
         <button class="btn btn-primary btn-lg" (click)="selectRoute()" [disabled]="selectingRoute()">
           <span class="material-symbols-outlined">flag</span>
-          {{ selectingRoute() ? 'Selecting...' : 'Run This Route' }}
+          {{ selectingRoute() ? ('COMMUNITY.SELECTING' | translate) : ('COMMUNITY.RUN_ROUTE' | translate) }}
         </button>
       }
     </div>
 
     <div class="leaderboard-section">
       <div class="leaderboard-header">
-        <h2>Leaderboard</h2>
+        <h2>{{ 'COMMUNITY.LEADERBOARD' | translate }}</h2>
         <div class="period-tabs">
-          <button [class.active]="period() === 'ALL_TIME'" (click)="onPeriodChange('ALL_TIME')">All Time</button>
-          <button [class.active]="period() === 'THIS_MONTH'" (click)="onPeriodChange('THIS_MONTH')">This Month</button>
-          <button [class.active]="period() === 'THIS_WEEK'" (click)="onPeriodChange('THIS_WEEK')">This Week</button>
+          <button [class.active]="period() === 'ALL_TIME'" (click)="onPeriodChange('ALL_TIME')">{{ 'COMMUNITY.ALL_TIME' | translate }}</button>
+          <button [class.active]="period() === 'THIS_MONTH'" (click)="onPeriodChange('THIS_MONTH')">{{ 'COMMUNITY.THIS_MONTH' | translate }}</button>
+          <button [class.active]="period() === 'THIS_WEEK'" (click)="onPeriodChange('THIS_WEEK')">{{ 'COMMUNITY.THIS_WEEK' | translate }}</button>
         </div>
       </div>
 
       @if (leaderboard().length === 0) {
         <div class="empty-leaderboard">
-          <p>No entries yet. Be the first to run this route!</p>
+          <p>{{ 'COMMUNITY.NO_ENTRIES' | translate }}</p>
         </div>
       } @else {
         <table class="leaderboard-table">
           <thead>
             <tr>
-              <th class="rank-col">#</th>
-              <th>Athlete</th>
-              <th>Time</th>
-              <th>Pace</th>
-              <th>Date</th>
+              <th class="rank-col">{{ 'COMMUNITY.COL_RANK' | translate }}</th>
+              <th>{{ 'COMMUNITY.COL_ATHLETE' | translate }}</th>
+              <th>{{ 'COMMUNITY.COL_TIME' | translate }}</th>
+              <th>{{ 'COMMUNITY.COL_PACE' | translate }}</th>
+              <th>{{ 'COMMUNITY.COL_DATE' | translate }}</th>
             </tr>
           </thead>
           <tbody>

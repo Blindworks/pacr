@@ -1,30 +1,30 @@
 <div class="list-page">
   <div class="list-header">
-    <h2>User Feedback</h2>
+    <h2>{{ 'ADMIN.FEEDBACK_TITLE' | translate }}</h2>
     <div class="filter-bar">
       <select class="filter-select" [ngModel]="selectedStatus()" (ngModelChange)="onStatusFilter($event)">
-        <option value="">All</option>
-        <option value="NEW">New</option>
-        <option value="IN_PROGRESS">In Progress</option>
-        <option value="RESOLVED">Resolved</option>
-        <option value="CLOSED">Closed</option>
+        <option value="">{{ 'ADMIN.FEEDBACK_ALL' | translate }}</option>
+        <option value="NEW">{{ 'ADMIN.FEEDBACK_NEW' | translate }}</option>
+        <option value="IN_PROGRESS">{{ 'ADMIN.FEEDBACK_IN_PROGRESS' | translate }}</option>
+        <option value="RESOLVED">{{ 'ADMIN.FEEDBACK_RESOLVED' | translate }}</option>
+        <option value="CLOSED">{{ 'ADMIN.FEEDBACK_CLOSED' | translate }}</option>
       </select>
     </div>
   </div>
 
   @if (isLoading()) {
-    <p class="loading">Loading...</p>
+    <p class="loading">{{ 'ADMIN.LOADING_FEEDBACK' | translate }}</p>
   } @else if (items().length === 0) {
-    <p class="empty">No feedback submitted yet.</p>
+    <p class="empty">{{ 'ADMIN.NO_FEEDBACK' | translate }}</p>
   } @else {
     <table class="data-table">
       <thead>
         <tr>
-          <th>User</th>
-          <th>Category</th>
-          <th>Subject</th>
-          <th>Status</th>
-          <th>Date</th>
+          <th>{{ 'ADMIN.FEEDBACK_USER' | translate }}</th>
+          <th>{{ 'ADMIN.FEEDBACK_CATEGORY' | translate }}</th>
+          <th>{{ 'ADMIN.FEEDBACK_SUBJECT' | translate }}</th>
+          <th>{{ 'COMMON.STATUS' | translate }}</th>
+          <th>{{ 'ADMIN.FEEDBACK_DATE' | translate }}</th>
           <th></th>
         </tr>
       </thead>
@@ -48,28 +48,28 @@
               <td colspan="6">
                 <div class="detail-content">
                   <div class="detail-message">
-                    <label class="field-label">MESSAGE</label>
+                    <label class="field-label">{{ 'ADMIN.FEEDBACK_MESSAGE' | translate }}</label>
                     <p class="message-text">{{ item.message }}</p>
                   </div>
                   <div class="detail-admin">
                     <div class="admin-field">
-                      <label class="field-label">STATUS</label>
+                      <label class="field-label">{{ 'ADMIN.FEEDBACK_STATUS' | translate }}</label>
                       <select [(ngModel)]="editingStatus" class="admin-select" (click)="$event.stopPropagation()">
-                        <option value="NEW">New</option>
-                        <option value="IN_PROGRESS">In Progress</option>
-                        <option value="RESOLVED">Resolved</option>
-                        <option value="CLOSED">Closed</option>
+                        <option value="NEW">{{ 'ADMIN.FEEDBACK_NEW' | translate }}</option>
+                        <option value="IN_PROGRESS">{{ 'ADMIN.FEEDBACK_IN_PROGRESS' | translate }}</option>
+                        <option value="RESOLVED">{{ 'ADMIN.FEEDBACK_RESOLVED' | translate }}</option>
+                        <option value="CLOSED">{{ 'ADMIN.FEEDBACK_CLOSED' | translate }}</option>
                       </select>
                     </div>
                     <div class="admin-field">
-                      <label class="field-label">ADMIN NOTES</label>
+                      <label class="field-label">{{ 'ADMIN.ADMIN_NOTES' | translate }}</label>
                       <textarea [(ngModel)]="editingNotes" class="admin-textarea"
-                                placeholder="Add notes..." rows="3"
+                                [placeholder]="'ADMIN.NOTES_PLACEHOLDER' | translate" rows="3"
                                 (click)="$event.stopPropagation()"></textarea>
                     </div>
                     <button class="btn-save" (click)="save(item.id); $event.stopPropagation()"
                             [disabled]="isSaving()">
-                      @if (isSaving()) { Saving... } @else { Save Changes }
+                      @if (isSaving()) { {{ 'COMMON.SAVING' | translate }} } @else { {{ 'ADMIN.SAVE_CHANGES' | translate }} }
                     </button>
                   </div>
                 </div>

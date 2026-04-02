@@ -2,19 +2,19 @@
 <div class="body-measures-screen">
   <header class="page-header">
     <div class="page-header__titles">
-      <h2>Body Measures</h2>
-      <p>Last updated: {{ lastUpdatedText }}</p>
+      <h2>{{ 'BODY_DATA.METRICS_TITLE' | translate }}</h2>
+      <p>{{ 'BODY_DATA.LAST_UPDATED' | translate }} {{ lastUpdatedText }}</p>
     </div>
 
     <div class="page-header__actions">
       <label class="search-box">
         <span class="material-symbols-outlined">search</span>
-        <input [(ngModel)]="search" name="search" type="text" placeholder="Search logs...">
+        <input [(ngModel)]="search" name="search" type="text" [placeholder]="'BODY_DATA.SEARCH_LOGS' | translate">
       </label>
 
       <button type="button" class="primary-action" (click)="goToLogNewData()">
         <span class="material-symbols-outlined">add_circle</span>
-        Log New Data
+        {{ 'BODY_DATA.LOG_NEW' | translate }}
       </button>
     </div>
   </header>
@@ -22,7 +22,7 @@
   <div class="page-content">
     <section class="summary-grid">
       <article class="summary-card" *ngFor="let card of summaryCards">
-        <span class="summary-card__label">{{ card.label }}</span>
+        <span class="summary-card__label">{{ card.label | translate }}</span>
         <div class="summary-card__row">
           <h3>{{ card.value }} <span>{{ card.unit }}</span></h3>
           <div class="summary-card__change"
@@ -32,7 +32,7 @@
             <span class="material-symbols-outlined">
               {{ card.trend === 'up' ? 'arrow_upward' : card.trend === 'down' ? 'arrow_downward' : 'remove' }}
             </span>
-            {{ card.change }}
+            {{ card.change | translate }}
           </div>
         </div>
       </article>
@@ -45,15 +45,15 @@
           <article class="detail-card" *ngFor="let metric of detailMetrics">
             <div class="detail-card__top">
               <span class="material-symbols-outlined">{{ metric.icon }}</span>
-              <p>{{ metric.label }}</p>
+              <p>{{ metric.label | translate }}</p>
             </div>
             <div class="detail-card__row">
-              <strong>{{ metric.value }}</strong>
+              <strong>{{ metric.value | translate }}</strong>
               <span
                 [class.detail-card__change--up]="metric.trend === 'up'"
                 [class.detail-card__change--down]="metric.trend === 'down'"
                 [class.detail-card__change--flat]="metric.trend === 'flat'">
-                {{ metric.change }}
+                {{ metric.change | translate }}
               </span>
             </div>
           </article>
@@ -62,21 +62,21 @@
         <!-- ═══ Body Composition Trends ═══ -->
         <ng-container *ngTemplateOutlet="chartTpl; context: {
           ctx: bodyChart,
-          title: 'Body Composition Trends',
+          title: ('BODY_DATA.COMPOSITION_TRENDS' | translate),
           icon: 'bar_chart'
         }"></ng-container>
 
         <!-- ═══ Blood Pressure Trends ═══ -->
         <ng-container *ngTemplateOutlet="chartTpl; context: {
           ctx: bpChart,
-          title: 'Blood Pressure Trends',
+          title: ('BODY_DATA.BP_TRENDS' | translate),
           icon: 'blood_pressure'
         }"></ng-container>
 
         <!-- ═══ Resting Heart Rate ═══ -->
         <ng-container *ngTemplateOutlet="chartTpl; context: {
           ctx: hrChart,
-          title: 'Resting Heart Rate',
+          title: ('BODY_DATA.RESTING_HR' | translate),
           icon: 'favorite'
         }"></ng-container>
 
@@ -87,21 +87,21 @@
           <span class="material-symbols-outlined insight-card__bg">lightbulb</span>
           <div class="insight-card__header">
             <span class="material-symbols-outlined">psychology</span>
-            <h4>Smart Insight</h4>
+            <h4>{{ 'BODY_DATA.SMART_INSIGHT' | translate }}</h4>
           </div>
           <p>
             Your muscle mass has increased by 0.5kg this month, indicating effective strength
             training. Maintain your protein intake to support this growth.
           </p>
           <div class="insight-card__footer">
-            <span>AI ENGINE V2.4</span>
-            <button type="button">See plan</button>
+            <span>{{ 'BODY_DATA.AI_ENGINE' | translate }}</span>
+            <button type="button">{{ 'BODY_DATA.SEE_PLAN' | translate }}</button>
           </div>
         </section>
 
         <section class="history-panel">
           <div class="history-panel__header">
-            <h4>Recent History</h4>
+            <h4>{{ 'BODY_DATA.RECENT_HISTORY' | translate }}</h4>
           </div>
 
           <div class="history-list">
@@ -122,10 +122,10 @@
                   </div>
                 </div>
                 <div class="history-item__actions">
-                  <button type="button" class="icon-btn" title="Edit" (click)="startEdit(item, $event)">
+                  <button type="button" class="icon-btn" [title]="'COMMON.EDIT' | translate" (click)="startEdit(item, $event)">
                     <span class="material-symbols-outlined">edit</span>
                   </button>
-                  <button type="button" class="icon-btn icon-btn--danger" title="Delete" (click)="deleteItem(item, $event)">
+                  <button type="button" class="icon-btn icon-btn--danger" [title]="'COMMON.DELETE' | translate" (click)="deleteItem(item, $event)">
                     <span class="material-symbols-outlined">delete</span>
                   </button>
                 </div>
@@ -140,24 +140,24 @@
                   </div>
                   <div class="edit-fields">
                     <ng-container *ngIf="item.type === 'body'">
-                      <label>Weight (kg) <input type="number" step="0.1" [(ngModel)]="item.editFields['weightKg']"></label>
-                      <label>Body Fat (%) <input type="number" step="0.1" [(ngModel)]="item.editFields['fatPercentage']"></label>
+                      <label>{{ 'BODY_DATA.WEIGHT' | translate }} (kg) <input type="number" step="0.1" [(ngModel)]="item.editFields['weightKg']"></label>
+                      <label>{{ 'BODY_DATA.BODY_FAT' | translate }} (%) <input type="number" step="0.1" [(ngModel)]="item.editFields['fatPercentage']"></label>
                     </ng-container>
                     <ng-container *ngIf="item.type === 'bloodPressure'">
-                      <label>Systolic <input type="number" [(ngModel)]="item.editFields['systolicPressure']"></label>
-                      <label>Diastolic <input type="number" [(ngModel)]="item.editFields['diastolicPressure']"></label>
-                      <label>Pulse <input type="number" [(ngModel)]="item.editFields['pulseAtMeasurement']"></label>
+                      <label>{{ 'BODY_DATA.SYSTOLIC' | translate }} <input type="number" [(ngModel)]="item.editFields['systolicPressure']"></label>
+                      <label>{{ 'BODY_DATA.DIASTOLIC' | translate }} <input type="number" [(ngModel)]="item.editFields['diastolicPressure']"></label>
+                      <label>{{ 'BODY_DATA.PULSE' | translate }} <input type="number" [(ngModel)]="item.editFields['pulseAtMeasurement']"></label>
                     </ng-container>
                     <ng-container *ngIf="item.type === 'restingHr'">
-                      <label>Resting HR (bpm) <input type="number" [(ngModel)]="item.editFields['restingHeartRate']"></label>
+                      <label>{{ 'BODY_DATA.RESTING_HR' | translate }} (bpm) <input type="number" [(ngModel)]="item.editFields['restingHeartRate']"></label>
                     </ng-container>
                   </div>
                   <div class="edit-actions">
                     <button type="button" class="edit-btn edit-btn--save" (click)="saveEdit(item, $event)">
-                      <span class="material-symbols-outlined">check</span> Save
+                      <span class="material-symbols-outlined">check</span> {{ 'COMMON.SAVE' | translate }}
                     </button>
                     <button type="button" class="edit-btn edit-btn--cancel" (click)="cancelEdit(item, $event)">
-                      <span class="material-symbols-outlined">close</span> Cancel
+                      <span class="material-symbols-outlined">close</span> {{ 'COMMON.CANCEL' | translate }}
                     </button>
                   </div>
                 </div>
@@ -165,7 +165,7 @@
             </article>
           </div>
 
-          <button type="button" class="history-panel__footer">View Full History</button>
+          <button type="button" class="history-panel__footer">{{ 'BODY_DATA.VIEW_FULL_HISTORY' | translate }}</button>
         </section>
       </aside>
     </div>
@@ -306,7 +306,7 @@
     </div>
     <div class="chart-empty">
       <span class="material-symbols-outlined">show_chart</span>
-      <p>No data yet</p>
+      <p>{{ 'BODY_DATA.NO_DATA_YET' | translate }}</p>
     </div>
   </section>
 </ng-template>

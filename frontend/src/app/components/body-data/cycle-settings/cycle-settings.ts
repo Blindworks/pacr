@@ -2,13 +2,14 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { TranslateModule } from '@ngx-translate/core';
 import { CycleSettingsService, CycleSettings, CycleStatusDto } from '../../../services/cycle-settings.service';
 import { ProOverlay } from '../../shared/pro-overlay/pro-overlay';
 
 @Component({
   selector: 'app-cycle-settings',
   standalone: true,
-  imports: [CommonModule, FormsModule, ProOverlay],
+  imports: [CommonModule, FormsModule, ProOverlay, TranslateModule],
   templateUrl: './cycle-settings.html',
   styleUrl: './cycle-settings.scss'
 })
@@ -28,10 +29,10 @@ export class CycleSettingsComponent implements OnInit {
   ];
 
   readonly phaseLabels: Record<string, string> = {
-    menstrual: 'Menstrual',
-    follicular: 'Follikulär',
-    ovulation: 'Ovulation',
-    luteal: 'Luteal',
+    menstrual: 'BODY_DATA.PHASE_MENSTRUAL',
+    follicular: 'BODY_DATA.PHASE_FOLLICULAR',
+    ovulation: 'BODY_DATA.PHASE_OVULATION',
+    luteal: 'BODY_DATA.PHASE_LUTEAL',
   };
 
   constructor(
