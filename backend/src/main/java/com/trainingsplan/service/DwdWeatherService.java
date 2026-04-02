@@ -38,12 +38,10 @@ public class DwdWeatherService {
         java.util.Map.entry(60,  new double[]{51.97, 11.58}),
         java.util.Map.entry(70,  new double[]{51.02, 11.00}),
         java.util.Map.entry(80,  new double[]{51.05, 13.74}),
-        java.util.Map.entry(90,  new double[]{47.56, 11.20}),
-        java.util.Map.entry(91,  new double[]{48.13, 11.57}),
-        java.util.Map.entry(92,  new double[]{49.45, 11.08}),
-        java.util.Map.entry(100, new double[]{48.78,  9.18}),
-        java.util.Map.entry(110, new double[]{49.99,  7.17}),
-        java.util.Map.entry(120, new double[]{50.65,  9.16})
+        java.util.Map.entry(90,  new double[]{50.11,  8.68}),  // Hessen
+        java.util.Map.entry(100, new double[]{49.99,  7.17}),  // Rheinland-Pfalz und Saarland
+        java.util.Map.entry(110, new double[]{48.78,  9.18}),  // Baden-Württemberg
+        java.util.Map.entry(120, new double[]{48.13, 11.57})   // Bayern
     );
 
     private final RestClient restClient;

@@ -99,12 +99,10 @@ export class Settings implements OnInit, OnDestroy {
     { id: 60,  name: 'Sachsen-Anhalt' },
     { id: 70,  name: 'Thüringen' },
     { id: 80,  name: 'Sachsen' },
-    { id: 90,  name: 'Bayern – Alpen' },
-    { id: 91,  name: 'Bayern – Süd (ohne Alpen)' },
-    { id: 92,  name: 'Bayern – Nord' },
-    { id: 100, name: 'Baden-Württemberg' },
-    { id: 110, name: 'Rheinland-Pfalz und Saarland' },
-    { id: 120, name: 'Hessen' },
+    { id: 90,  name: 'Hessen' },
+    { id: 100, name: 'Rheinland-Pfalz und Saarland' },
+    { id: 110, name: 'Baden-Württemberg' },
+    { id: 120, name: 'Bayern' },
   ] as const;
 
   protected readonly integrations: Integration[] = [
