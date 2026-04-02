@@ -40,18 +40,18 @@
 
       <div class="phase-divider">
         <p class="next-phase-label">
-          Next Phase:
-          <span class="next-phase-value" [ngClass]="phaseClass(nextPhase)">{{ phaseLabels[nextPhase] }}</span>
+          {{ 'BODY_DATA.NEXT_PHASE' | translate }}
+          <span class="next-phase-value" [ngClass]="phaseClass(nextPhase)">{{ phaseLabels[nextPhase] | translate }}</span>
         </p>
         <div class="phase-bar">
           <div class="phase-bar-fill" [ngClass]="phaseClass(currentPhase)" [style.width.%]="phaseProgressPercent"></div>
         </div>
-        <p class="days-remaining">{{ daysRemaining }} Days Remaining</p>
+        <p class="days-remaining">{{ daysRemaining }} {{ 'BODY_DATA.DAYS_REMAINING' | translate }}</p>
       </div>
 
       <div class="phase-tip">
         <span class="tip-dot" [ngClass]="phaseClass(currentPhase)"></span>
-        <span class="tip-text">{{ insight.label }}</span>
+        <span class="tip-text">{{ insight.label | translate }}</span>
       </div>
     </section>
 
