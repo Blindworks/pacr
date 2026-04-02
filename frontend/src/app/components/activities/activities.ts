@@ -11,6 +11,7 @@ interface Activity {
   id: number;
   name: string;
   date: string;
+  startTime: string | null;
   distance: string;
   time: string;
   pace: string;
@@ -216,6 +217,7 @@ export class Activities implements OnInit {
       id: ct.id,
       name: ct.activityName ?? ct.trainingType ?? this.formatSport(ct.sport) ?? 'Activity',
       date: this.formatDate(ct.trainingDate),
+      startTime: this.formatTime(ct.startTime),
       distance: ct.distanceKm != null ? `${ct.distanceKm.toFixed(1)} km` : '—',
       time: ct.durationSeconds != null ? this.formatDuration(ct.durationSeconds) : '—',
       pace: ct.averagePaceSecondsPerKm != null ? this.formatPace(ct.averagePaceSecondsPerKm) : '—',
@@ -229,6 +231,12 @@ export class Activities implements OnInit {
     if (!dateStr) return '';
     const d = new Date(dateStr);
     return d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+  }
+
+  private formatTime(timeStr: string | null | undefined): string | null {
+    if (!timeStr) return null;
+    // timeStr is "HH:mm:ss" — show only HH:mm
+    return timeStr.substring(0, 5);
   }
 
   private formatDuration(seconds: number): string {

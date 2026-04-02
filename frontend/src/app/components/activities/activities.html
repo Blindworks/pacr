@@ -98,7 +98,7 @@
             <div class="featured-top">
               <div>
                 <h3 class="featured-title">{{ filteredFeatured.name }}</h3>
-                <p class="featured-date">{{ filteredFeatured.date }}</p>
+                <p class="featured-date">{{ filteredFeatured.date }}@if (filteredFeatured.startTime) { · {{ filteredFeatured.startTime }}}</p>
               </div>
             </div>
             <div class="featured-stats">
@@ -139,7 +139,7 @@
             <div class="activity-info-top">
               <div>
                 <h4 class="activity-name">{{ activity.name }}</h4>
-                <p class="activity-date">{{ activity.date }}</p>
+                <p class="activity-date">{{ activity.date }}@if (activity.startTime) { · {{ activity.startTime }}}</p>
               </div>
               <span class="material-symbols-outlined chevron">chevron_right</span>
             </div>

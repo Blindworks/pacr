@@ -8,6 +8,7 @@ const BASE = apiUrl('/completed-trainings');
 export interface CompletedTraining {
   id: number;
   trainingDate: string;
+  startTime: string | null;
   uploadDate: string;
   activityName: string | null;
   trainingType: string | null;
