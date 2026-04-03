@@ -91,6 +91,7 @@ export class Sidebar implements OnInit, OnDestroy {
     ).subscribe(() => {
       if (this.isMobile()) {
         this.mobileOpen.set(false);
+        this.setScrollLock(false);
       }
     });
   }
@@ -101,6 +102,7 @@ export class Sidebar implements OnInit, OnDestroy {
 
     this.mobileQuery?.removeEventListener('change', this.mobileListener);
     this.tabletQuery?.removeEventListener('change', this.tabletListener);
+    this.setScrollLock(false);
   }
 
   private onMobileChange(matches: boolean): void {
@@ -109,6 +111,7 @@ export class Sidebar implements OnInit, OnDestroy {
       this.collapsed.set(false);
       this.mobileOpen.set(false);
     }
+    this.setScrollLock(false);
   }
 
   private onTabletChange(matches: boolean): void {
@@ -129,11 +132,22 @@ export class Sidebar implements OnInit, OnDestroy {
   }
 
   toggleMobile(): void {
-    this.mobileOpen.set(!this.mobileOpen());
+    const next = !this.mobileOpen();
+    this.mobileOpen.set(next);
+    this.setScrollLock(next);
   }
 
   closeMobile(): void {
     this.mobileOpen.set(false);
+    this.setScrollLock(false);
+  }
+
+  private setScrollLock(locked: boolean): void {
+    if (locked) {
+      document.body.classList.add('mobile-nav-open');
+    } else {
+      document.body.classList.remove('mobile-nav-open');
+    }
   }
 
   private loadProfileImage(userId: number): void {
