@@ -4,7 +4,7 @@
     "ACTIVITIES": "Aktivitäten",
     "TRAINING_PLANS": "Trainingspläne",
     "COMPETITIONS": "Wettkämpfe",
-    "ANALYTICS": "Analytik",
+    "ANALYTICS": "Statistik",
     "ACHIEVEMENTS": "Erfolge",
     "COMMUNITY": "Community",
     "BODY_DATA": "Körperdaten",
@@ -477,7 +477,7 @@
     "VIEW_DETAILS": "Details anzeigen"
   },
   "STATISTICS": {
-    "TITLE": "Analytik & Performance",
+    "TITLE": "Statistik & Performance",
     "SUBTITLE": "Tauche tief in deine physiologischen Daten und Trainingsfortschritte ein.",
     "EXPORT_PDF": "PDF exportieren",
     "PERIOD_THIS_WEEK": "Diese Woche",

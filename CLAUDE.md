@@ -62,6 +62,7 @@ CompletedTraining (from FIT file upload, linked to date — NOT a FK to Training
 - **API Service** (`services/api.service.ts`): Single injectable service wrapping all backend calls; base URL from `environments/environment.ts` (`http://localhost:8080/api`)
 - **Models** (`models/competition.model.ts`): All TypeScript interfaces in one file; `Training` has both new fields (`trainingDate`, `intensityLevel`, `trainingType`) and legacy fields (`date`, `intensity`, `type`) for compatibility
 - **Components** (all standalone): `TrainingPlanOverviewComponent` is the main calendar view with week navigation and multi-competition display; `TrainingDetailsDialogComponent` is a Material dialog for per-training details
+- **i18n support**: Every text hast to be setup in english in `en.json` (and mirrored in `de.json`), and used via Angular's i18n pipe (`{{ 'key' | translate }}`)
 
 ### Key API Endpoints
 - `POST /api/competitions/{id}/generate-weeks` — triggers automatic week generation after competition creation
