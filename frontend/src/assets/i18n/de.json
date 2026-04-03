@@ -89,7 +89,14 @@
     "PER_KM": "/km",
     "KM_H": "km/h",
     "SPM": "spm",
-    "ML_KG_MIN": "ml/kg/min"
+    "ML_KG_MIN": "ml/kg/min",
+    "DAY_MON": "Montag",
+    "DAY_TUE": "Dienstag",
+    "DAY_WED": "Mittwoch",
+    "DAY_THU": "Donnerstag",
+    "DAY_FRI": "Freitag",
+    "DAY_SAT": "Samstag",
+    "DAY_SUN": "Sonntag"
   },
   "DAYS_SHORT": {
     "MON": "Mo",
