@@ -79,13 +79,17 @@
   } @else {
     <!-- Event Cards Grid -->
     <div class="event-grid">
-      @for (event of filteredEvents(); track event.id) {
-        <a [routerLink]="['/community/groups', event.id]" class="event-card">
+      @for (event of filteredEvents(); track trackEvent($index, event)) {
+        <a [routerLink]="['/community/groups', event.id]" class="event-card" [class.today-event]="isToday(event)">
           <!-- Card Header -->
           <div class="card-header">
-            <div class="event-date-badge">
-              <span class="date-day">{{ event.eventDate | date:'dd' }}</span>
-              <span class="date-month">{{ event.eventDate | date:'MMM' }}</span>
+            <div class="event-date-badge" [class.today-badge]="isToday(event)">
+              @if (isToday(event)) {
+                <span class="today-label">{{ 'GROUP_EVENTS.TODAY' | translate }}</span>
+              } @else {
+                <span class="date-day">{{ event.eventDate | date:'dd' }}</span>
+                <span class="date-month">{{ event.eventDate | date:'MMM' }}</span>
+              }
             </div>
             <div class="card-title-section">
               <h3>{{ event.title }}</h3>

@@ -219,6 +219,11 @@
   &:hover {
     background: var(--panel-soft);
   }
+
+  &.today-event {
+    border-left: 3px solid var(--pp);
+    box-shadow: 0 0 12px rgba(var(--pp-rgb, 169, 224, 0), 0.15);
+  }
 }
 
 // === CARD HEADER ===
@@ -233,6 +238,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   background: var(--pp);
   color: var(--btn-active-text);
   border-radius: 0.25rem;
@@ -252,6 +258,24 @@
     text-transform: uppercase;
     letter-spacing: 0.1em;
   }
+
+  .today-label {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    line-height: 1;
+  }
+
+  &.today-badge {
+    animation: todayPulse 2s ease-in-out infinite;
+  }
+}
+
+@keyframes todayPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(var(--pp-rgb, 169, 224, 0), 0.4); }
+  50% { box-shadow: 0 0 8px 2px rgba(var(--pp-rgb, 169, 224, 0), 0.2); }
 }
 
 .card-title-section {

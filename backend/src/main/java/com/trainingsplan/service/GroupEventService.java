@@ -183,8 +183,7 @@ public class GroupEventService {
             }
         }
 
-        result.sort(Comparator.comparing(GroupEventDto::occurrenceDate,
-                Comparator.nullsLast(Comparator.naturalOrder())));
+        result.sort(Comparator.comparing(GroupEventDto::eventDate));
         return result;
     }
 
@@ -209,8 +208,7 @@ public class GroupEventService {
             result.addAll(expandRecurringEvent(event, today, rangeEnd, currentUser));
         }
 
-        result.sort(Comparator.comparing(GroupEventDto::occurrenceDate,
-                Comparator.nullsLast(Comparator.naturalOrder())));
+        result.sort(Comparator.comparing(GroupEventDto::eventDate));
         return result;
     }
 

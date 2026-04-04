@@ -147,4 +147,19 @@ export class GroupEvents implements OnInit {
   clearPaceFilter(): void {
     this.paceFilterSeconds.set(null);
   }
+
+  trackEvent(index: number, event: GroupEventDto): string {
+    return event.occurrenceDate ? `${event.id}-${event.occurrenceDate}` : `${event.id}`;
+  }
+
+  private todayStr = (() => {
+    const t = new Date();
+    return `${t.getFullYear()}-${String(t.getMonth() + 1).padStart(2, '0')}-${String(t.getDate()).padStart(2, '0')}`;
+  })();
+
+  isToday(event: GroupEventDto): boolean {
+    const raw = event.occurrenceDate || event.eventDate;
+    if (!raw) return false;
+    return raw.substring(0, 10) === this.todayStr;
+  }
 }

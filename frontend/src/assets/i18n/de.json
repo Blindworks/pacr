@@ -1474,7 +1474,8 @@
     "PACE": "Pace",
     "PACE_UNIT": "/km",
     "FILTER_PACE": "Mein Pace",
-    "FILTER_PACE_HINT": "mm:ss/km - passende Events anzeigen"
+    "FILTER_PACE_HINT": "mm:ss/km - passende Events anzeigen",
+    "TODAY": "Heute"
   },
   "TRAINER_EVENTS": {
     "TITLE": "Meine Events",
