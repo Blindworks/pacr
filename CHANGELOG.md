@@ -8,6 +8,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- Recurring group events with full RRULE support (RFC 5545): daily, weekly, bi-weekly, monthly (Nth weekday), yearly
+- Recurrence UI in trainer event form: frequency, interval, weekday chips, monthly position selector, series end date
+- Dynamic RRULE expansion: recurring events are expanded on-the-fly for API responses without pre-generating instances
+- Per-occurrence registration: users can register for specific dates of a recurring event independently
+- Occurrence exceptions: trainers can cancel individual dates of a recurring series
+- New `RecurrenceService` for RRULE parsing and date expansion using `java.time` APIs
+- New `group_event_exceptions` table for cancelled occurrences (Liquibase migration 087)
+- `occurrence_date` column on `group_event_registrations` for per-occurrence tracking
+- New trainer endpoints: `PUT /cancel-occurrence`, `GET /occurrences`
+- i18n support (en + de) for all recurrence-related labels
+
+### Changed
+- `GroupEventDto` extended with `rrule`, `recurrenceEndDate`, `occurrenceDate`, `isRecurring` fields
+- Registration and cancel-registration endpoints now accept optional `occurrenceDate` query parameter
+- Upcoming and nearby event queries now include expanded recurring event occurrences
+
+### Previous (unreleased)
 - Pace range (from/to) for group events: trainers can specify target pace in mm:ss/km format when creating events
 - Pace filter in group events overview: users can enter their pace to find matching events
 - Pace display on event cards and detail view

@@ -78,9 +78,19 @@ public class GroupEvent {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+    @Column(length = 500)
+    private String rrule;
+
+    @Column(name = "recurrence_end_date")
+    private LocalDate recurrenceEndDate;
+
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private List<GroupEventRegistration> registrations = new ArrayList<>();
+
+    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<GroupEventException> exceptions = new ArrayList<>();
 
     public GroupEvent() {}
 
@@ -148,4 +158,15 @@ public class GroupEvent {
 
     public List<GroupEventRegistration> getRegistrations() { return registrations; }
     public void setRegistrations(List<GroupEventRegistration> registrations) { this.registrations = registrations; }
+
+    public String getRrule() { return rrule; }
+    public void setRrule(String rrule) { this.rrule = rrule; }
+
+    public LocalDate getRecurrenceEndDate() { return recurrenceEndDate; }
+    public void setRecurrenceEndDate(LocalDate recurrenceEndDate) { this.recurrenceEndDate = recurrenceEndDate; }
+
+    public boolean isRecurring() { return rrule != null && !rrule.isBlank(); }
+
+    public List<GroupEventException> getExceptions() { return exceptions; }
+    public void setExceptions(List<GroupEventException> exceptions) { this.exceptions = exceptions; }
 }

@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -98,6 +99,41 @@ public class TrainerEventController {
 
         List<GroupEventDto> events = groupEventService.getTrainerEvents(trainer);
         return ResponseEntity.ok(events);
+    }
+
+    @PutMapping("/{id}/cancel-occurrence")
+    public ResponseEntity<?> cancelOccurrence(@PathVariable Long id,
+                                               @RequestParam String date,
+                                               @RequestParam(required = false) String reason) {
+        User trainer = securityUtils.getCurrentUser();
+        if (trainer == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+
+        try {
+            LocalDate occurrenceDate = LocalDate.parse(date);
+            groupEventService.cancelOccurrence(trainer, id, occurrenceDate, reason);
+            return ResponseEntity.ok().build();
+        } catch (IllegalStateException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @GetMapping("/{id}/occurrences")
+    public ResponseEntity<?> getOccurrences(@PathVariable Long id,
+                                             @RequestParam String from,
+                                             @RequestParam String to) {
+        User trainer = securityUtils.getCurrentUser();
+        if (trainer == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+
+        try {
+            LocalDate fromDate = LocalDate.parse(from);
+            LocalDate toDate = LocalDate.parse(to);
+            List<GroupEventDto> occurrences = groupEventService.getEventOccurrences(id, fromDate, toDate);
+            return ResponseEntity.ok(occurrences);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @GetMapping("/{id}/participants")

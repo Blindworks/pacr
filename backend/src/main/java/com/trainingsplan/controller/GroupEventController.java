@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -62,13 +63,15 @@ public class GroupEventController {
     }
 
     @PostMapping("/{id}/register")
-    public ResponseEntity<?> registerForEvent(@PathVariable Long id) {
+    public ResponseEntity<?> registerForEvent(@PathVariable Long id,
+                                               @RequestParam(required = false) String occurrenceDate) {
         User user = securityUtils.getCurrentUser();
         if (user == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         if (!user.isGroupEventsEnabled()) return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Group events not enabled");
 
         try {
-            groupEventService.registerForEvent(user, id);
+            LocalDate occDate = occurrenceDate != null ? LocalDate.parse(occurrenceDate) : null;
+            groupEventService.registerForEvent(user, id, occDate);
             return ResponseEntity.ok().build();
         } catch (IllegalStateException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
@@ -78,12 +81,14 @@ public class GroupEventController {
     }
 
     @DeleteMapping("/{id}/register")
-    public ResponseEntity<?> cancelRegistration(@PathVariable Long id) {
+    public ResponseEntity<?> cancelRegistration(@PathVariable Long id,
+                                                 @RequestParam(required = false) String occurrenceDate) {
         User user = securityUtils.getCurrentUser();
         if (user == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
         try {
-            groupEventService.cancelRegistration(user, id);
+            LocalDate occDate = occurrenceDate != null ? LocalDate.parse(occurrenceDate) : null;
+            groupEventService.cancelRegistration(user, id, occDate);
             return ResponseEntity.ok().build();
         } catch (IllegalArgumentException e) {
             return ResponseEntity.notFound().build();

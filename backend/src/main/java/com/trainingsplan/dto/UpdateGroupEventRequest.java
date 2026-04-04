@@ -18,5 +18,7 @@ public record UpdateGroupEventRequest(
         Integer maxParticipants,
         Integer costCents,
         String costCurrency,
-        String difficulty
+        String difficulty,
+        String rrule,
+        LocalDate recurrenceEndDate
 ) {}

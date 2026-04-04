@@ -28,6 +28,10 @@ export interface GroupEventDto {
   trainerId: number;
   createdAt: string;
   isRegistered: boolean;
+  rrule: string | null;
+  recurrenceEndDate: string | null;
+  occurrenceDate: string | null;
+  isRecurring: boolean;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -50,12 +54,20 @@ export class GroupEventService {
     return this.http.get<GroupEventDto>(`${BASE}/${id}`);
   }
 
-  registerForEvent(eventId: number): Observable<void> {
-    return this.http.post<void>(`${BASE}/${eventId}/register`, {});
+  registerForEvent(eventId: number, occurrenceDate?: string): Observable<void> {
+    let params = new HttpParams();
+    if (occurrenceDate) {
+      params = params.set('occurrenceDate', occurrenceDate);
+    }
+    return this.http.post<void>(`${BASE}/${eventId}/register`, {}, { params });
   }
 
-  cancelRegistration(eventId: number): Observable<void> {
-    return this.http.delete<void>(`${BASE}/${eventId}/register`);
+  cancelRegistration(eventId: number, occurrenceDate?: string): Observable<void> {
+    let params = new HttpParams();
+    if (occurrenceDate) {
+      params = params.set('occurrenceDate', occurrenceDate);
+    }
+    return this.http.delete<void>(`${BASE}/${eventId}/register`, { params });
   }
 
   getMyRegistrations(): Observable<GroupEventDto[]> {

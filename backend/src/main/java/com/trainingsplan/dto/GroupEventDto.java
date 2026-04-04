@@ -26,5 +26,9 @@ public record GroupEventDto(
         String trainerUsername,
         Long trainerId,
         LocalDateTime createdAt,
-        boolean isRegistered
+        boolean isRegistered,
+        String rrule,
+        LocalDate recurrenceEndDate,
+        LocalDate occurrenceDate,
+        boolean isRecurring
 ) {}

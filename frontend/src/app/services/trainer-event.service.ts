@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { apiUrl } from '../core/api-base';
 import { GroupEventDto } from './group-event.service';
@@ -22,6 +22,8 @@ export interface CreateGroupEventRequest {
   costCents?: number;
   costCurrency?: string;
   difficulty?: string;
+  rrule?: string;
+  recurrenceEndDate?: string;
 }
 
 export interface UpdateGroupEventRequest {
@@ -40,6 +42,8 @@ export interface UpdateGroupEventRequest {
   costCents?: number;
   costCurrency?: string;
   difficulty?: string;
+  rrule?: string;
+  recurrenceEndDate?: string;
 }
 
 export interface GroupEventRegistrationDto {
@@ -82,5 +86,18 @@ export class TrainerEventService {
 
   getParticipants(eventId: number): Observable<GroupEventRegistrationDto[]> {
     return this.http.get<GroupEventRegistrationDto[]>(`${BASE}/${eventId}/participants`);
+  }
+
+  cancelOccurrence(eventId: number, date: string, reason?: string): Observable<void> {
+    let params = new HttpParams().set('date', date);
+    if (reason) {
+      params = params.set('reason', reason);
+    }
+    return this.http.put<void>(`${BASE}/${eventId}/cancel-occurrence`, {}, { params });
+  }
+
+  getOccurrences(eventId: number, from: string, to: string): Observable<GroupEventDto[]> {
+    const params = new HttpParams().set('from', from).set('to', to);
+    return this.http.get<GroupEventDto[]>(`${BASE}/${eventId}/occurrences`, { params });
   }
 }

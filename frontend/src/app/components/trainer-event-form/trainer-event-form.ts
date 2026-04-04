@@ -29,6 +29,17 @@ export class TrainerEventForm implements OnInit {
 
   readonly difficulties = ['BEGINNER', 'INTERMEDIATE', 'ADVANCED'];
   readonly currencies = ['EUR', 'USD', 'GBP', 'CHF'];
+  readonly frequencies = ['WEEKLY', 'DAILY', 'MONTHLY', 'YEARLY'];
+  readonly weekdays = [
+    { value: 'MO', labelKey: 'TRAINER_EVENTS.DAY_MO' },
+    { value: 'TU', labelKey: 'TRAINER_EVENTS.DAY_TU' },
+    { value: 'WE', labelKey: 'TRAINER_EVENTS.DAY_WE' },
+    { value: 'TH', labelKey: 'TRAINER_EVENTS.DAY_TH' },
+    { value: 'FR', labelKey: 'TRAINER_EVENTS.DAY_FR' },
+    { value: 'SA', labelKey: 'TRAINER_EVENTS.DAY_SA' },
+    { value: 'SU', labelKey: 'TRAINER_EVENTS.DAY_SU' }
+  ];
+  readonly monthlyPositions = [1, 2, 3, 4, -1];
 
   ngOnInit(): void {
     this.initForm();
@@ -57,7 +68,15 @@ export class TrainerEventForm implements OnInit {
       maxParticipants: [null],
       costCents: [null],
       costCurrency: ['EUR'],
-      difficulty: [null]
+      difficulty: [null],
+      // Recurrence fields
+      recurrenceEnabled: [false],
+      recurrenceFrequency: ['WEEKLY'],
+      recurrenceInterval: [1],
+      recurrenceByDay: [[]],
+      recurrenceMonthlyPosition: [1],
+      recurrenceMonthlyDay: ['MO'],
+      recurrenceEndDate: [null]
     });
   }
 
@@ -96,6 +115,19 @@ export class TrainerEventForm implements OnInit {
       costCurrency: event.costCurrency || 'EUR',
       difficulty: event.difficulty
     });
+
+    if (event.rrule) {
+      const parsed = this.parseRrule(event.rrule);
+      this.form.patchValue({
+        recurrenceEnabled: true,
+        recurrenceFrequency: parsed.freq,
+        recurrenceInterval: parsed.interval,
+        recurrenceByDay: parsed.byDay,
+        recurrenceMonthlyPosition: parsed.monthlyPos,
+        recurrenceMonthlyDay: parsed.monthlyDay,
+        recurrenceEndDate: event.recurrenceEndDate
+      });
+    }
   }
 
   saveAsDraft(): void {
@@ -134,7 +166,9 @@ export class TrainerEventForm implements OnInit {
       maxParticipants: formValue.maxParticipants || undefined,
       costCents: formValue.costCents || undefined,
       costCurrency: formValue.costCurrency || undefined,
-      difficulty: formValue.difficulty || undefined
+      difficulty: formValue.difficulty || undefined,
+      rrule: formValue.recurrenceEnabled ? this.buildRrule() : undefined,
+      recurrenceEndDate: formValue.recurrenceEnabled && formValue.recurrenceEndDate ? formValue.recurrenceEndDate : undefined
     };
 
     if (this.isEditMode() && this.eventId()) {
@@ -202,5 +236,79 @@ export class TrainerEventForm implements OnInit {
     const input = event.target as HTMLInputElement;
     const seconds = this.parsePaceInput(input.value);
     this.form.get(field)?.setValue(seconds);
+  }
+
+  toggleWeekday(day: string): void {
+    const current: string[] = this.form.get('recurrenceByDay')?.value || [];
+    const idx = current.indexOf(day);
+    if (idx >= 0) {
+      current.splice(idx, 1);
+    } else {
+      current.push(day);
+    }
+    this.form.get('recurrenceByDay')?.setValue([...current]);
+  }
+
+  isDaySelected(day: string): boolean {
+    const current: string[] = this.form.get('recurrenceByDay')?.value || [];
+    return current.includes(day);
+  }
+
+  private buildRrule(): string {
+    const freq = this.form.get('recurrenceFrequency')?.value || 'WEEKLY';
+    const interval = this.form.get('recurrenceInterval')?.value || 1;
+    let rrule = `FREQ=${freq}`;
+
+    if (interval > 1) {
+      rrule += `;INTERVAL=${interval}`;
+    }
+
+    if (freq === 'WEEKLY') {
+      const days: string[] = this.form.get('recurrenceByDay')?.value || [];
+      if (days.length > 0) {
+        rrule += `;BYDAY=${days.join(',')}`;
+      }
+    } else if (freq === 'MONTHLY') {
+      const pos = this.form.get('recurrenceMonthlyPosition')?.value || 1;
+      const day = this.form.get('recurrenceMonthlyDay')?.value || 'MO';
+      rrule += `;BYDAY=${pos}${day}`;
+    }
+
+    return rrule;
+  }
+
+  private parseRrule(rrule: string): { freq: string; interval: number; byDay: string[]; monthlyPos: number; monthlyDay: string } {
+    const parts: Record<string, string> = {};
+    for (const part of rrule.split(';')) {
+      const [key, value] = part.split('=', 2);
+      if (key && value) parts[key] = value;
+    }
+
+    const freq = parts['FREQ'] || 'WEEKLY';
+    const interval = parts['INTERVAL'] ? parseInt(parts['INTERVAL'], 10) : 1;
+    let byDay: string[] = [];
+    let monthlyPos = 1;
+    let monthlyDay = 'MO';
+
+    if (parts['BYDAY']) {
+      if (freq === 'MONTHLY') {
+        // Parse positional like "2TU" or "-1FR"
+        const match = parts['BYDAY'].match(/^(-?\d+)([A-Z]{2})$/);
+        if (match) {
+          monthlyPos = parseInt(match[1], 10);
+          monthlyDay = match[2];
+        }
+      } else {
+        byDay = parts['BYDAY'].split(',');
+      }
+    }
+
+    return { freq, interval, byDay, monthlyPos, monthlyDay };
+  }
+
+  getPositionLabel(pos: number): string {
+    if (pos === -1) return this.translate.instant('TRAINER_EVENTS.POS_LAST');
+    const keys = ['', 'TRAINER_EVENTS.POS_FIRST', 'TRAINER_EVENTS.POS_SECOND', 'TRAINER_EVENTS.POS_THIRD', 'TRAINER_EVENTS.POS_FOURTH'];
+    return this.translate.instant(keys[pos] || '');
   }
 }

@@ -2,6 +2,7 @@ package com.trainingsplan.service;
 
 import com.trainingsplan.dto.*;
 import com.trainingsplan.entity.*;
+import com.trainingsplan.repository.GroupEventExceptionRepository;
 import com.trainingsplan.repository.GroupEventRegistrationRepository;
 import com.trainingsplan.repository.GroupEventRepository;
 import org.springframework.stereotype.Service;
@@ -9,21 +10,29 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
 public class GroupEventService {
 
     private static final double EARTH_RADIUS_KM = 6371.0;
+    private static final int RECURRENCE_LOOKAHEAD_MONTHS = 3;
 
     private final GroupEventRepository eventRepository;
     private final GroupEventRegistrationRepository registrationRepository;
+    private final GroupEventExceptionRepository exceptionRepository;
+    private final RecurrenceService recurrenceService;
 
     public GroupEventService(GroupEventRepository eventRepository,
-                             GroupEventRegistrationRepository registrationRepository) {
+                             GroupEventRegistrationRepository registrationRepository,
+                             GroupEventExceptionRepository exceptionRepository,
+                             RecurrenceService recurrenceService) {
         this.eventRepository = eventRepository;
         this.registrationRepository = registrationRepository;
+        this.exceptionRepository = exceptionRepository;
+        this.recurrenceService = recurrenceService;
     }
 
     public GroupEventDto createEvent(User trainer, CreateGroupEventRequest request) {
@@ -52,11 +61,13 @@ public class GroupEventService {
         if (request.difficulty() != null) {
             event.setDifficulty(GroupEventDifficulty.valueOf(request.difficulty()));
         }
+        event.setRrule(request.rrule());
+        event.setRecurrenceEndDate(request.recurrenceEndDate());
         event.setStatus(GroupEventStatus.DRAFT);
         event.setCreatedAt(LocalDateTime.now());
 
         event = eventRepository.save(event);
-        return toDto(event, null);
+        return toDto(event, null, null);
     }
 
     public GroupEventDto updateEvent(User trainer, Long eventId, UpdateGroupEventRequest request) {
@@ -80,10 +91,12 @@ public class GroupEventService {
         if (request.costCents() != null) event.setCostCents(request.costCents());
         if (request.costCurrency() != null) event.setCostCurrency(request.costCurrency());
         if (request.difficulty() != null) event.setDifficulty(GroupEventDifficulty.valueOf(request.difficulty()));
+        if (request.rrule() != null) event.setRrule(request.rrule().isBlank() ? null : request.rrule());
+        if (request.recurrenceEndDate() != null) event.setRecurrenceEndDate(request.recurrenceEndDate());
 
         event.setUpdatedAt(LocalDateTime.now());
         event = eventRepository.save(event);
-        return toDto(event, null);
+        return toDto(event, null, null);
     }
 
     public GroupEventDto publishEvent(User trainer, Long eventId) {
@@ -94,7 +107,7 @@ public class GroupEventService {
         event.setStatus(GroupEventStatus.PUBLISHED);
         event.setUpdatedAt(LocalDateTime.now());
         event = eventRepository.save(event);
-        return toDto(event, null);
+        return toDto(event, null, null);
     }
 
     public void cancelEvent(User trainer, Long eventId) {
@@ -115,10 +128,26 @@ public class GroupEventService {
         eventRepository.delete(event);
     }
 
+    public void cancelOccurrence(User trainer, Long eventId, LocalDate date, String reason) {
+        GroupEvent event = getOwnEvent(trainer, eventId);
+        if (!event.isRecurring()) {
+            throw new IllegalStateException("Event is not recurring");
+        }
+        if (exceptionRepository.existsByEventIdAndExceptionDate(eventId, date)) {
+            throw new IllegalStateException("This occurrence is already cancelled");
+        }
+        GroupEventException exception = new GroupEventException();
+        exception.setEvent(event);
+        exception.setExceptionDate(date);
+        exception.setReason(reason);
+        exception.setCreatedAt(LocalDateTime.now());
+        exceptionRepository.save(exception);
+    }
+
     @Transactional(readOnly = true)
     public List<GroupEventDto> getTrainerEvents(User trainer) {
         return eventRepository.findByTrainerIdOrderByEventDateDesc(trainer.getId()).stream()
-                .map(e -> toDto(e, null))
+                .map(e -> toDto(e, null, null))
                 .toList();
     }
 
@@ -127,33 +156,92 @@ public class GroupEventService {
         double latDelta = radiusKm / 111.0;
         double lonDelta = radiusKm / (111.0 * Math.cos(Math.toRadians(lat)));
 
-        List<GroupEvent> events = eventRepository.findNearbyPublished(
-                GroupEventStatus.PUBLISHED, LocalDate.now(),
+        LocalDate today = LocalDate.now();
+        LocalDate rangeEnd = today.plusMonths(RECURRENCE_LOOKAHEAD_MONTHS);
+
+        // One-off events
+        List<GroupEvent> oneOffEvents = eventRepository.findNearbyPublished(
+                GroupEventStatus.PUBLISHED, today,
                 lat - latDelta, lat + latDelta,
                 lon - lonDelta, lon + lonDelta);
 
-        return events.stream()
+        List<GroupEventDto> result = new ArrayList<>(oneOffEvents.stream()
+                .filter(e -> !e.isRecurring())
                 .filter(e -> haversineDistance(lat, lon, e.getLatitude(), e.getLongitude()) <= radiusKm)
-                .map(e -> toDto(e, currentUser))
-                .toList();
+                .map(e -> toDto(e, currentUser, null))
+                .toList());
+
+        // Recurring events
+        List<GroupEvent> recurringEvents = eventRepository.findNearbyPublishedRecurringInRange(
+                GroupEventStatus.PUBLISHED, today, rangeEnd,
+                lat - latDelta, lat + latDelta,
+                lon - lonDelta, lon + lonDelta);
+
+        for (GroupEvent event : recurringEvents) {
+            if (haversineDistance(lat, lon, event.getLatitude(), event.getLongitude()) <= radiusKm) {
+                result.addAll(expandRecurringEvent(event, today, rangeEnd, currentUser));
+            }
+        }
+
+        result.sort(Comparator.comparing(GroupEventDto::occurrenceDate,
+                Comparator.nullsLast(Comparator.naturalOrder())));
+        return result;
     }
 
     @Transactional(readOnly = true)
     public List<GroupEventDto> getUpcomingEvents(User currentUser) {
-        return eventRepository.findByStatusAndEventDateGreaterThanEqualOrderByEventDateAsc(
-                GroupEventStatus.PUBLISHED, LocalDate.now()).stream()
-                .map(e -> toDto(e, currentUser))
-                .toList();
+        LocalDate today = LocalDate.now();
+        LocalDate rangeEnd = today.plusMonths(RECURRENCE_LOOKAHEAD_MONTHS);
+
+        // One-off events
+        List<GroupEventDto> result = new ArrayList<>(
+                eventRepository.findByStatusAndEventDateGreaterThanEqualOrderByEventDateAsc(
+                        GroupEventStatus.PUBLISHED, today).stream()
+                        .filter(e -> !e.isRecurring())
+                        .map(e -> toDto(e, currentUser, null))
+                        .toList());
+
+        // Recurring events
+        List<GroupEvent> recurringEvents = eventRepository.findPublishedRecurringInRange(
+                GroupEventStatus.PUBLISHED, today, rangeEnd);
+
+        for (GroupEvent event : recurringEvents) {
+            result.addAll(expandRecurringEvent(event, today, rangeEnd, currentUser));
+        }
+
+        result.sort(Comparator.comparing(GroupEventDto::occurrenceDate,
+                Comparator.nullsLast(Comparator.naturalOrder())));
+        return result;
     }
 
     @Transactional(readOnly = true)
     public GroupEventDto getEventDetail(Long eventId, User currentUser) {
         GroupEvent event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new IllegalArgumentException("Event not found"));
-        return toDto(event, currentUser);
+        return toDto(event, currentUser, null);
     }
 
-    public void registerForEvent(User user, Long eventId) {
+    @Transactional(readOnly = true)
+    public GroupEventDto getEventOccurrenceDetail(Long eventId, LocalDate occurrenceDate, User currentUser) {
+        GroupEvent event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new IllegalArgumentException("Event not found"));
+        if (!event.isRecurring()) {
+            return toDto(event, currentUser, null);
+        }
+        return toDto(event, currentUser, occurrenceDate);
+    }
+
+    @Transactional(readOnly = true)
+    public List<GroupEventDto> getEventOccurrences(Long eventId, LocalDate from, LocalDate to) {
+        GroupEvent event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new IllegalArgumentException("Event not found"));
+        if (!event.isRecurring()) {
+            return List.of(toDto(event, null, null));
+        }
+        return expandRecurringEvent(event, from, to, null);
+    }
+
+    public void registerForEvent(User user, Long eventId, LocalDate occurrenceDate) {
         if (!user.isGroupEventsEnabled()) {
             throw new IllegalStateException("Group events feature is not enabled for this user");
         }
@@ -165,17 +253,39 @@ public class GroupEventService {
             throw new IllegalStateException("Can only register for published events");
         }
 
-        if (event.getEventDate().isBefore(LocalDate.now())) {
+        // Determine the effective date for this registration
+        LocalDate effectiveDate = event.isRecurring() ? occurrenceDate : event.getEventDate();
+        if (effectiveDate != null && effectiveDate.isBefore(LocalDate.now())) {
             throw new IllegalStateException("Cannot register for past events");
         }
 
-        var existing = registrationRepository.findByEventIdAndUserId(eventId, user.getId());
+        // For recurring events, check that the occurrence isn't cancelled
+        if (event.isRecurring() && occurrenceDate != null) {
+            if (exceptionRepository.existsByEventIdAndExceptionDate(eventId, occurrenceDate)) {
+                throw new IllegalStateException("This occurrence has been cancelled");
+            }
+        }
+
+        // Check existing registration
+        Optional<GroupEventRegistration> existing;
+        if (event.isRecurring() && occurrenceDate != null) {
+            existing = registrationRepository.findByEventIdAndUserIdAndOccurrenceDate(eventId, user.getId(), occurrenceDate);
+        } else {
+            existing = registrationRepository.findByEventIdAndUserIdAndOccurrenceDate(eventId, user.getId(), null);
+        }
+
         if (existing.isPresent() && existing.get().getStatus() == RegistrationStatus.REGISTERED) {
             throw new IllegalStateException("Already registered for this event");
         }
 
+        // Check capacity
         if (event.getMaxParticipants() != null) {
-            int count = registrationRepository.countByEventIdAndStatus(eventId, RegistrationStatus.REGISTERED);
+            int count;
+            if (event.isRecurring() && occurrenceDate != null) {
+                count = registrationRepository.countByEventIdAndOccurrenceDateAndStatus(eventId, occurrenceDate, RegistrationStatus.REGISTERED);
+            } else {
+                count = registrationRepository.countByEventIdAndStatus(eventId, RegistrationStatus.REGISTERED);
+            }
             if (count >= event.getMaxParticipants()) {
                 throw new IllegalStateException("Event is full");
             }
@@ -190,14 +300,21 @@ public class GroupEventService {
             GroupEventRegistration reg = new GroupEventRegistration();
             reg.setEvent(event);
             reg.setUser(user);
+            reg.setOccurrenceDate(event.isRecurring() ? occurrenceDate : null);
             reg.setRegisteredAt(LocalDateTime.now());
             reg.setStatus(RegistrationStatus.REGISTERED);
             registrationRepository.save(reg);
         }
     }
 
-    public void cancelRegistration(User user, Long eventId) {
-        GroupEventRegistration reg = registrationRepository.findByEventIdAndUserId(eventId, user.getId())
+    public void cancelRegistration(User user, Long eventId, LocalDate occurrenceDate) {
+        Optional<GroupEventRegistration> regOpt;
+        if (occurrenceDate != null) {
+            regOpt = registrationRepository.findByEventIdAndUserIdAndOccurrenceDate(eventId, user.getId(), occurrenceDate);
+        } else {
+            regOpt = registrationRepository.findByEventIdAndUserIdAndOccurrenceDate(eventId, user.getId(), null);
+        }
+        GroupEventRegistration reg = regOpt
                 .orElseThrow(() -> new IllegalArgumentException("Registration not found"));
         reg.setStatus(RegistrationStatus.CANCELLED);
         registrationRepository.save(reg);
@@ -207,7 +324,7 @@ public class GroupEventService {
     public List<GroupEventDto> getMyRegistrations(User user) {
         return registrationRepository.findByUserIdAndStatusOrderByRegisteredAtDesc(user.getId(), RegistrationStatus.REGISTERED)
                 .stream()
-                .map(reg -> toDto(reg.getEvent(), user))
+                .map(reg -> toDto(reg.getEvent(), user, reg.getOccurrenceDate()))
                 .toList();
     }
 
@@ -227,6 +344,42 @@ public class GroupEventService {
                 .toList();
     }
 
+    @Transactional(readOnly = true)
+    public List<GroupEventRegistrationDto> getOccurrenceParticipants(User trainer, Long eventId, LocalDate occurrenceDate) {
+        GroupEvent event = getOwnEvent(trainer, eventId);
+        return registrationRepository.findByEventIdAndOccurrenceDateAndStatus(event.getId(), occurrenceDate, RegistrationStatus.REGISTERED)
+                .stream()
+                .map(reg -> new GroupEventRegistrationDto(
+                        reg.getId(),
+                        reg.getEvent().getId(),
+                        reg.getEvent().getTitle(),
+                        reg.getUser().getId(),
+                        reg.getUser().getUsername(),
+                        reg.getStatus().name(),
+                        reg.getRegisteredAt()))
+                .toList();
+    }
+
+    // --- Private helpers ---
+
+    private List<GroupEventDto> expandRecurringEvent(GroupEvent event, LocalDate rangeStart, LocalDate rangeEnd, User currentUser) {
+        Set<LocalDate> exceptions = exceptionRepository.findByEventId(event.getId()).stream()
+                .map(GroupEventException::getExceptionDate)
+                .collect(Collectors.toSet());
+
+        LocalDate effectiveEnd = rangeEnd;
+        if (event.getRecurrenceEndDate() != null && event.getRecurrenceEndDate().isBefore(effectiveEnd)) {
+            effectiveEnd = event.getRecurrenceEndDate();
+        }
+
+        List<LocalDate> occurrences = recurrenceService.expandOccurrences(
+                event.getRrule(), event.getEventDate(), rangeStart, effectiveEnd, exceptions);
+
+        return occurrences.stream()
+                .map(date -> toDto(event, currentUser, date))
+                .toList();
+    }
+
     private GroupEvent getOwnEvent(User trainer, Long eventId) {
         GroupEvent event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new IllegalArgumentException("Event not found"));
@@ -236,18 +389,31 @@ public class GroupEventService {
         return event;
     }
 
-    private GroupEventDto toDto(GroupEvent event, User currentUser) {
-        int participants = registrationRepository.countByEventIdAndStatus(event.getId(), RegistrationStatus.REGISTERED);
+    private GroupEventDto toDto(GroupEvent event, User currentUser, LocalDate occurrenceDate) {
+        int participants;
         boolean registered = false;
-        if (currentUser != null) {
-            var reg = registrationRepository.findByEventIdAndUserId(event.getId(), currentUser.getId());
-            registered = reg.isPresent() && reg.get().getStatus() == RegistrationStatus.REGISTERED;
+
+        if (event.isRecurring() && occurrenceDate != null) {
+            participants = registrationRepository.countByEventIdAndOccurrenceDateAndStatus(
+                    event.getId(), occurrenceDate, RegistrationStatus.REGISTERED);
+            if (currentUser != null) {
+                var reg = registrationRepository.findByEventIdAndUserIdAndOccurrenceDate(
+                        event.getId(), currentUser.getId(), occurrenceDate);
+                registered = reg.isPresent() && reg.get().getStatus() == RegistrationStatus.REGISTERED;
+            }
+        } else {
+            participants = registrationRepository.countByEventIdAndStatus(event.getId(), RegistrationStatus.REGISTERED);
+            if (currentUser != null) {
+                var reg = registrationRepository.findByEventIdAndUserId(event.getId(), currentUser.getId());
+                registered = reg.isPresent() && reg.get().getStatus() == RegistrationStatus.REGISTERED;
+            }
         }
+
         return new GroupEventDto(
                 event.getId(),
                 event.getTitle(),
                 event.getDescription(),
-                event.getEventDate(),
+                event.isRecurring() && occurrenceDate != null ? occurrenceDate : event.getEventDate(),
                 event.getStartTime(),
                 event.getEndTime(),
                 event.getLocationName(),
@@ -265,7 +431,11 @@ public class GroupEventService {
                 event.getTrainer().getUsername(),
                 event.getTrainer().getId(),
                 event.getCreatedAt(),
-                registered
+                registered,
+                event.getRrule(),
+                event.getRecurrenceEndDate(),
+                occurrenceDate,
+                event.isRecurring()
         );
     }
 

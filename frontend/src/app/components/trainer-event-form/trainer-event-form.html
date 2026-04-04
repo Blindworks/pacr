@@ -100,6 +100,92 @@
         </div>
       </div>
 
+      <!-- Recurrence Section -->
+      <div class="form-section">
+        <h2 class="section-title">
+          <span class="material-symbols-outlined">repeat</span>
+          {{ 'TRAINER_EVENTS.SECTION_RECURRENCE' | translate }}
+        </h2>
+
+        <div class="form-field">
+          <label class="toggle-label">
+            <input type="checkbox" formControlName="recurrenceEnabled" />
+            <span>{{ 'TRAINER_EVENTS.RECURRENCE_ENABLE' | translate }}</span>
+          </label>
+        </div>
+
+        @if (form.get('recurrenceEnabled')?.value) {
+          <div class="form-row">
+            <div class="form-field">
+              <label for="recurrenceFrequency">{{ 'TRAINER_EVENTS.RECURRENCE_FREQUENCY' | translate }}</label>
+              <div class="select-wrapper">
+                <select id="recurrenceFrequency" formControlName="recurrenceFrequency">
+                  @for (f of frequencies; track f) {
+                    <option [value]="f">{{ 'TRAINER_EVENTS.FREQ_' + f | translate }}</option>
+                  }
+                </select>
+                <span class="material-symbols-outlined select-arrow">expand_more</span>
+              </div>
+            </div>
+
+            <div class="form-field">
+              <label for="recurrenceInterval">{{ 'TRAINER_EVENTS.RECURRENCE_INTERVAL' | translate }}</label>
+              <input id="recurrenceInterval" type="number" min="1" max="52" formControlName="recurrenceInterval" />
+            </div>
+          </div>
+
+          @if (form.get('recurrenceFrequency')?.value === 'WEEKLY') {
+            <div class="form-field">
+              <label>{{ 'TRAINER_EVENTS.RECURRENCE_WEEKDAYS' | translate }}</label>
+              <div class="weekday-chips">
+                @for (day of weekdays; track day.value) {
+                  <button type="button"
+                          class="weekday-chip"
+                          [class.selected]="isDaySelected(day.value)"
+                          (click)="toggleWeekday(day.value)">
+                    {{ day.labelKey | translate }}
+                  </button>
+                }
+              </div>
+            </div>
+          }
+
+          @if (form.get('recurrenceFrequency')?.value === 'MONTHLY') {
+            <div class="form-row">
+              <div class="form-field">
+                <label for="recurrenceMonthlyPosition">{{ 'TRAINER_EVENTS.RECURRENCE_MONTHLY_POS' | translate }}</label>
+                <div class="select-wrapper">
+                  <select id="recurrenceMonthlyPosition" formControlName="recurrenceMonthlyPosition">
+                    @for (pos of monthlyPositions; track pos) {
+                      <option [ngValue]="pos">{{ getPositionLabel(pos) }}</option>
+                    }
+                  </select>
+                  <span class="material-symbols-outlined select-arrow">expand_more</span>
+                </div>
+              </div>
+
+              <div class="form-field">
+                <label for="recurrenceMonthlyDay">{{ 'TRAINER_EVENTS.RECURRENCE_DAY' | translate }}</label>
+                <div class="select-wrapper">
+                  <select id="recurrenceMonthlyDay" formControlName="recurrenceMonthlyDay">
+                    @for (day of weekdays; track day.value) {
+                      <option [value]="day.value">{{ day.labelKey | translate }}</option>
+                    }
+                  </select>
+                  <span class="material-symbols-outlined select-arrow">expand_more</span>
+                </div>
+              </div>
+            </div>
+          }
+
+          <div class="form-field">
+            <label for="recurrenceEndDate">{{ 'TRAINER_EVENTS.RECURRENCE_END_DATE' | translate }}</label>
+            <input id="recurrenceEndDate" type="date" formControlName="recurrenceEndDate" />
+            <span class="field-hint">{{ 'TRAINER_EVENTS.RECURRENCE_NO_END' | translate }}</span>
+          </div>
+        }
+      </div>
+
       <!-- Location Section -->
       <div class="form-section">
         <h2 class="section-title">
