@@ -13,6 +13,8 @@ public record CreateGroupEventRequest(
         Double latitude,
         Double longitude,
         Double distanceKm,
+        Integer paceMinSecondsPerKm,
+        Integer paceMaxSecondsPerKm,
         Integer maxParticipants,
         Integer costCents,
         String costCurrency,

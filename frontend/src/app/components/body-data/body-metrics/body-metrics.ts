@@ -55,6 +55,12 @@ interface ChartContext {
   tooltipIndex: number | null;
   tooltipPixelX: number | null;
   hasData: boolean;
+  viewMode: 'chart' | 'table';
+}
+
+interface TableRow {
+  date: string;
+  values: Record<string, string>;
 }
 
 @Component({
@@ -110,6 +116,7 @@ export class BodyMetrics implements OnInit {
     tooltipIndex: null,
     tooltipPixelX: null,
     hasData: false,
+    viewMode: 'chart',
   };
 
   bpChart: ChartContext = {
@@ -123,6 +130,7 @@ export class BodyMetrics implements OnInit {
     tooltipIndex: null,
     tooltipPixelX: null,
     hasData: false,
+    viewMode: 'chart',
   };
 
   hrChart: ChartContext = {
@@ -135,6 +143,7 @@ export class BodyMetrics implements OnInit {
     tooltipIndex: null,
     tooltipPixelX: null,
     hasData: false,
+    viewMode: 'chart',
   };
 
   // Keep legacy getters for template backward-compat
@@ -149,6 +158,28 @@ export class BodyMetrics implements OnInit {
   }
 
   // ── Generic chart helpers ──────────────────────────────────────
+
+  toggleViewMode(ctx: ChartContext): void {
+    ctx.viewMode = ctx.viewMode === 'chart' ? 'table' : 'chart';
+  }
+
+  getTableRows(ctx: ChartContext): TableRow[] {
+    if (ctx.timestamps.length === 0) return [];
+    const rows: TableRow[] = [];
+    for (let i = ctx.timestamps.length - 1; i >= 0; i--) {
+      const date = new Date(ctx.timestamps[i]).toLocaleDateString('de-DE', {
+        day: '2-digit', month: 'short', year: 'numeric'
+      });
+      const values: Record<string, string> = {};
+      for (const d of ctx.descriptors) {
+        const data = ctx.streamData[d.key];
+        const v = data ? data[i] : null;
+        values[d.key] = v != null ? this.formatNumber(v) : '-';
+      }
+      rows.push({ date, values });
+    }
+    return rows;
+  }
 
   toggleStream(ctx: ChartContext, key: string): void {
     const next = new Set(ctx.activeStreams());

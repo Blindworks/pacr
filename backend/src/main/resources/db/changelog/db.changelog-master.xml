@@ -89,5 +89,6 @@
     <include file="db/changelog/changes/083-add-user-group-events-enabled.xml"/>
     <include file="db/changelog/changes/084-add-group-events.xml"/>
     <include file="db/changelog/changes/085-add-group-event-registrations.xml"/>
+    <include file="db/changelog/changes/086-add-group-event-pace.xml"/>
 
 </databaseChangeLog>
