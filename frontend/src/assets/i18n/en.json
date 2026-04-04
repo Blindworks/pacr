@@ -1571,6 +1571,18 @@
     "DAY_FR": "Fri",
     "DAY_SA": "Sat",
     "DAY_SU": "Sun",
+    "PACE": "Pace",
+    "PACE_DISPLAY": "min/km",
+    "UPCOMING_OCCURRENCES": "Upcoming Dates",
+    "SERIES_ENDS": "Series ends",
+    "SERIES_ENDED": "Series ended",
+    "NO_UPCOMING_OCCURRENCES": "No upcoming dates",
+    "EXTEND_RECURRENCE": "Extend Series",
+    "EXTEND_4_WEEKS": "+ 4 Weeks",
+    "EXTEND_8_WEEKS": "+ 8 Weeks",
+    "EXTEND_3_MONTHS": "+ 3 Months",
+    "EXTEND_CUSTOM": "Custom date",
+    "EXTENDED_SUCCESS": "Series extended",
     "LOAD_ERROR": "Failed to load event",
     "SAVE_ERROR": "Failed to save event"
   }

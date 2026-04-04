@@ -111,6 +111,16 @@
             </div>
           </div>
         }
+
+        @if (ev.paceMinSecondsPerKm || ev.paceMaxSecondsPerKm) {
+          <div class="info-card">
+            <span class="material-symbols-outlined">speed</span>
+            <div class="info-content">
+              <span class="info-label">{{ 'TRAINER_EVENTS.PACE' | translate }}</span>
+              <span class="info-value">{{ formatPaceRange(ev) }}</span>
+            </div>
+          </div>
+        }
       </div>
 
       @if (ev.description) {
@@ -123,6 +133,93 @@
         </div>
       }
     </div>
+
+    <!-- Occurrences Section (recurring events only) -->
+    @if (ev.isRecurring) {
+      <div class="occurrences-section">
+        <div class="section-title clickable" (click)="toggleOccurrences()">
+          <span class="material-symbols-outlined">event_repeat</span>
+          {{ 'TRAINER_EVENTS.UPCOMING_OCCURRENCES' | translate }}
+          <span class="count-badge">{{ occurrences().length }}</span>
+          <span class="material-symbols-outlined toggle-icon" [class.expanded]="occurrencesExpanded()">expand_more</span>
+        </div>
+
+        @if (ev.recurrenceEndDate) {
+          <div class="recurrence-end-info" [class.ended]="isSeriesEnded(ev)">
+            <span class="material-symbols-outlined">
+              @if (isSeriesEnded(ev)) { warning } @else { event_available }
+            </span>
+            @if (isSeriesEnded(ev)) {
+              {{ 'TRAINER_EVENTS.SERIES_ENDED' | translate }}: {{ formatDate(ev.recurrenceEndDate) }}
+            } @else {
+              {{ 'TRAINER_EVENTS.SERIES_ENDS' | translate }}: {{ formatDate(ev.recurrenceEndDate) }}
+            }
+          </div>
+        }
+
+        <!-- Extend Button -->
+        @if (shouldShowExtendButton(ev)) {
+          <div class="extend-recurrence">
+            <button class="btn-extend" (click)="toggleExtendMenu()" [disabled]="extendLoading()">
+              <span class="material-symbols-outlined">update</span>
+              {{ 'TRAINER_EVENTS.EXTEND_RECURRENCE' | translate }}
+              @if (extendLoading()) {
+                <span class="material-symbols-outlined spinning">progress_activity</span>
+              }
+            </button>
+
+            @if (showExtendMenu()) {
+              <div class="extend-options">
+                <button class="extend-option" (click)="extendRecurrence(4)" [disabled]="extendLoading()">
+                  {{ 'TRAINER_EVENTS.EXTEND_4_WEEKS' | translate }}
+                </button>
+                <button class="extend-option" (click)="extendRecurrence(8)" [disabled]="extendLoading()">
+                  {{ 'TRAINER_EVENTS.EXTEND_8_WEEKS' | translate }}
+                </button>
+                <button class="extend-option" (click)="extendRecurrence(13)" [disabled]="extendLoading()">
+                  {{ 'TRAINER_EVENTS.EXTEND_3_MONTHS' | translate }}
+                </button>
+                <div class="extend-custom">
+                  <label class="extend-custom-label">{{ 'TRAINER_EVENTS.EXTEND_CUSTOM' | translate }}</label>
+                  <input type="date" class="extend-date-input" [min]="ev.recurrenceEndDate" (change)="extendRecurrenceCustom($event)">
+                </div>
+              </div>
+            }
+          </div>
+        }
+
+        <!-- Occurrences List -->
+        @if (occurrencesExpanded()) {
+          @if (occurrencesLoading()) {
+            <div class="occurrences-loading">
+              <span class="material-symbols-outlined spinning">progress_activity</span>
+            </div>
+          } @else if (occurrences().length === 0) {
+            <div class="occurrences-empty">
+              <span class="material-symbols-outlined">event_busy</span>
+              <p>{{ 'TRAINER_EVENTS.NO_UPCOMING_OCCURRENCES' | translate }}</p>
+            </div>
+          } @else {
+            <div class="occurrences-list">
+              @for (occ of occurrences(); track occ.occurrenceDate) {
+                <div class="occurrence-row">
+                  <div class="occurrence-date">
+                    <span class="material-symbols-outlined">calendar_today</span>
+                    {{ formatOccurrenceDate(occ.occurrenceDate!) }}
+                  </div>
+                  <div class="occurrence-meta">
+                    <span class="occurrence-participants">
+                      <span class="material-symbols-outlined">group</span>
+                      {{ occ.currentParticipants }}@if (ev.maxParticipants) {/{{ ev.maxParticipants }}}
+                    </span>
+                  </div>
+                </div>
+              }
+            </div>
+          }
+        }
+      </div>
+    }
 
     <!-- Participants Table -->
     <div class="participants-section">

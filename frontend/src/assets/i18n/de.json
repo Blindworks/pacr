@@ -1571,6 +1571,18 @@
     "DAY_FR": "Fr",
     "DAY_SA": "Sa",
     "DAY_SU": "So",
+    "PACE": "Pace",
+    "PACE_DISPLAY": "min/km",
+    "UPCOMING_OCCURRENCES": "Kommende Termine",
+    "SERIES_ENDS": "Serie endet",
+    "SERIES_ENDED": "Serie beendet",
+    "NO_UPCOMING_OCCURRENCES": "Keine kommenden Termine",
+    "EXTEND_RECURRENCE": "Serie verlängern",
+    "EXTEND_4_WEEKS": "+ 4 Wochen",
+    "EXTEND_8_WEEKS": "+ 8 Wochen",
+    "EXTEND_3_MONTHS": "+ 3 Monate",
+    "EXTEND_CUSTOM": "Eigenes Datum",
+    "EXTENDED_SUCCESS": "Serie verlängert",
     "LOAD_ERROR": "Event konnte nicht geladen werden",
     "SAVE_ERROR": "Event konnte nicht gespeichert werden"
   }
