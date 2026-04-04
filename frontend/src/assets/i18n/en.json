@@ -369,6 +369,8 @@
     "SAVE_FAILED": "Failed to save. Please try again."
   },
   "TRAINING_PLAN": {
+    "TITLE": "Training",
+    "TITLE_ACCENT": "Plan",
     "ACTIVE_PROGRAM": "Active Program",
     "PLAN_PROGRESS": "Plan Progress",
     "OF": "of",
@@ -471,6 +473,9 @@
     "NOT_REGISTERED_INFO": "Not yet registered with organizer"
   },
   "ACTIVITIES": {
+    "TITLE": "Your",
+    "TITLE_ACCENT": "Activities",
+    "TITLE_SUBTITLE": "Track and manage your completed workouts.",
     "THIS_WEEK": "This Week",
     "PREVIOUS_WEEK": "Previous week",
     "NEXT_WEEK": "Next week",
@@ -922,6 +927,8 @@
     "NOT_FOUND": "Training not found."
   },
   "BODY_DATA": {
+    "TITLE": "Body",
+    "TITLE_ACCENT": "Measures",
     "METRICS_TITLE": "Body Measures",
     "LAST_UPDATED": "Last updated:",
     "SEARCH_LOGS": "Search logs...",
@@ -977,6 +984,8 @@
     "BP_FORMAT_ERROR": "Blood pressure must use the format systolic/diastolic, e.g. 120/80.",
     "MIN_ONE_METRIC": "Enter at least one metric before saving.",
     "SAVE_ERROR": "Failed to save. Please try again.",
+    "CYCLE_TITLE_LINE1": "Cycle",
+    "CYCLE_TITLE_ACCENT": "Tracking",
     "CYCLE_TITLE": "Cycle Tracking",
     "CYCLE_SUBTITLE": "Syncing your biology with your training.",
     "CYCLE_LOG": "Record cycle",

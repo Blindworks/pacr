@@ -1,9 +1,15 @@
 <app-pro-overlay featureKey="body-metrics">
 <div class="body-measures-screen">
+  <div class="page-title-block">
+    <div class="header-left">
+      <h1>{{ 'BODY_DATA.TITLE' | translate }}<br/><span class="accent">{{ 'BODY_DATA.TITLE_ACCENT' | translate }}</span></h1>
+      <p class="subtitle">{{ 'BODY_DATA.LAST_UPDATED' | translate }} {{ lastUpdatedText }}</p>
+    </div>
+  </div>
+
   <header class="page-header">
     <div class="page-header__titles">
       <h2>{{ 'BODY_DATA.METRICS_TITLE' | translate }}</h2>
-      <p>{{ 'BODY_DATA.LAST_UPDATED' | translate }} {{ lastUpdatedText }}</p>
     </div>
 
     <div class="page-header__actions">

@@ -13,6 +13,36 @@
   min-height: 100%;
 }
 
+.page-title-block {
+  padding: 2rem 2rem 1.5rem;
+}
+
+.header-left {
+  h1 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    font-weight: 900;
+    font-style: italic;
+    line-height: 0.95;
+    letter-spacing: -0.04em;
+    text-transform: uppercase;
+    margin: 0 0 0.75rem;
+
+    .accent {
+      color: var(--pp);
+    }
+  }
+
+  .subtitle {
+    font-family: 'Lexend', sans-serif;
+    font-size: 0.6875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.3em;
+    color: var(--text-muted);
+    margin: 0;
+  }
+}
+
 .page-header {
   position: sticky;
   top: 0;
@@ -29,15 +59,9 @@
 
 .page-header__titles h2 {
   margin: 0;
-  font-size: 2rem;
-  font-weight: 800;
-  letter-spacing: -0.02em;
-}
-
-.page-header__titles p {
-  margin: 0.25rem 0 0;
-  font-size: 0.875rem;
-  color: var(--text-muted);
+  font-size: 1.2rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
 }
 
 .page-header__actions,

@@ -369,6 +369,8 @@
     "SAVE_FAILED": "Speichern fehlgeschlagen. Bitte erneut versuchen."
   },
   "TRAINING_PLAN": {
+    "TITLE": "Trainings",
+    "TITLE_ACCENT": "Plan",
     "ACTIVE_PROGRAM": "Aktives Programm",
     "PLAN_PROGRESS": "Plan-Fortschritt",
     "OF": "von",
@@ -471,6 +473,9 @@
     "NOT_REGISTERED_INFO": "Noch nicht beim Veranstalter angemeldet"
   },
   "ACTIVITIES": {
+    "TITLE": "Deine",
+    "TITLE_ACCENT": "Aktivitäten",
+    "TITLE_SUBTITLE": "Verfolge und verwalte deine abgeschlossenen Workouts.",
     "THIS_WEEK": "Diese Woche",
     "PREVIOUS_WEEK": "Vorherige Woche",
     "NEXT_WEEK": "Nächste Woche",
@@ -922,6 +927,8 @@
     "NOT_FOUND": "Training nicht gefunden."
   },
   "BODY_DATA": {
+    "TITLE": "Körper",
+    "TITLE_ACCENT": "Messwerte",
     "METRICS_TITLE": "Körpermesswerte",
     "LAST_UPDATED": "Zuletzt aktualisiert:",
     "SEARCH_LOGS": "Einträge durchsuchen...",
@@ -977,6 +984,8 @@
     "BP_FORMAT_ERROR": "Blutdruck muss im Format systolisch/diastolisch sein, z.B. 120/80.",
     "MIN_ONE_METRIC": "Mindestens ein Messwert vor dem Speichern eingeben.",
     "SAVE_ERROR": "Speichern fehlgeschlagen. Bitte erneut versuchen.",
+    "CYCLE_TITLE_LINE1": "Zyklus",
+    "CYCLE_TITLE_ACCENT": "Tracking",
     "CYCLE_TITLE": "Zyklus-Tracking",
     "CYCLE_SUBTITLE": "Synchronisiere deine Biologie mit deinem Training.",
     "CYCLE_LOG": "Zyklus erfassen",

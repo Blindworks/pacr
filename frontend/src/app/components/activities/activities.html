@@ -1,12 +1,20 @@
 <div class="activities-page">
 
+  <!-- Page Title -->
+  <div class="page-title-block">
+    <div class="title-left">
+      <h1>{{ 'ACTIVITIES.TITLE' | translate }}<br/><span class="accent">{{ 'ACTIVITIES.TITLE_ACCENT' | translate }}</span></h1>
+      <p class="subtitle">{{ 'ACTIVITIES.TITLE_SUBTITLE' | translate }}</p>
+    </div>
+  </div>
+
   <!-- Header -->
   <header class="page-header">
     <div class="header-left">
       <span class="material-symbols-outlined header-icon">database</span>
       <div>
-        <h2 class="page-title">{{ isCurrentWeek ? ('ACTIVITIES.THIS_WEEK' | translate) : ('COMMON.WEEK' | translate) }}</h2>
-        <p class="page-subtitle">{{ weekLabel }}</p>
+        <h2 class="week-title">{{ isCurrentWeek ? ('ACTIVITIES.THIS_WEEK' | translate) : ('COMMON.WEEK' | translate) }}</h2>
+        <p class="week-subtitle">{{ weekLabel }}</p>
       </div>
       <div class="week-nav">
         <button class="week-nav-btn" (click)="prevWeek()" [title]="'ACTIVITIES.PREVIOUS_WEEK' | translate">
