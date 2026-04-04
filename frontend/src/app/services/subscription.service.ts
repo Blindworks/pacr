@@ -11,6 +11,7 @@ const PRO_FEATURES = new Set([
   'achievements',
   'insights',
   'activity-detail-advanced',
+  'group-events',
 ]);
 
 @Injectable({ providedIn: 'root' })

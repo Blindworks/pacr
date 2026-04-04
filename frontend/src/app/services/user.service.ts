@@ -23,6 +23,7 @@ export interface UserProfile {
   asthmaTrackingEnabled: boolean;
   cycleTrackingEnabled: boolean;
   communityRoutesEnabled: boolean;
+  groupEventsEnabled: boolean;
   theme: string;
   role: string | null;
   subscriptionPlan: string | null;
@@ -49,6 +50,7 @@ export interface UpdateUserRequest {
   asthmaTrackingEnabled?: boolean;
   cycleTrackingEnabled?: boolean;
   communityRoutesEnabled?: boolean;
+  groupEventsEnabled?: boolean;
   role?: string | null;
   subscriptionPlan?: string | null;
   subscriptionExpiresAt?: string | null;

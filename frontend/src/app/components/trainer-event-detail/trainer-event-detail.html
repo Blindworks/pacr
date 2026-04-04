@@ -1,0 +1,169 @@
+<div class="trainer-event-detail">
+  <!-- Back Button -->
+  <button class="btn-back" (click)="goBack()">
+    <span class="material-symbols-outlined">arrow_back</span>
+    {{ 'TRAINER_EVENTS.BACK_TO_EVENTS' | translate }}
+  </button>
+
+  @if (loading()) {
+    <div class="loading-state">
+      <span class="material-symbols-outlined spinning">progress_activity</span>
+      <h3>{{ 'TRAINER_EVENTS.LOADING' | translate }}</h3>
+    </div>
+  } @else if (error()) {
+    <div class="error-state">
+      <span class="material-symbols-outlined">error</span>
+      <h3>{{ 'TRAINER_EVENTS.ERROR_TITLE' | translate }}</h3>
+      <p>{{ error() }}</p>
+    </div>
+  } @else if (event(); as ev) {
+    <!-- Header with actions -->
+    <div class="detail-header">
+      <div class="header-title">
+        <h1>{{ ev.title }}</h1>
+        <span class="status-badge" [ngClass]="getStatusClass(ev.status)">{{ ev.status }}</span>
+      </div>
+
+      <div class="header-actions">
+        @if (ev.status === 'DRAFT') {
+          <button class="btn-action btn-publish" (click)="publishEvent()" [disabled]="actionLoading()">
+            <span class="material-symbols-outlined">publish</span>
+            {{ 'TRAINER_EVENTS.PUBLISH' | translate }}
+          </button>
+        }
+        @if (ev.status !== 'CANCELLED' && ev.status !== 'COMPLETED') {
+          <a [routerLink]="['/trainer/events', ev.id, 'edit']" class="btn-action btn-edit">
+            <span class="material-symbols-outlined">edit</span>
+            {{ 'TRAINER_EVENTS.EDIT' | translate }}
+          </a>
+          <button class="btn-action btn-cancel-event" (click)="cancelEvent()" [disabled]="actionLoading()">
+            <span class="material-symbols-outlined">block</span>
+            {{ 'TRAINER_EVENTS.CANCEL_EVENT' | translate }}
+          </button>
+        }
+        <button class="btn-action btn-delete" (click)="deleteEvent()" [disabled]="actionLoading()">
+          <span class="material-symbols-outlined">delete</span>
+          {{ 'TRAINER_EVENTS.DELETE' | translate }}
+        </button>
+      </div>
+    </div>
+
+    <!-- Event Details -->
+    <div class="detail-grid">
+      <!-- Info Cards -->
+      <div class="info-cards">
+        <div class="info-card">
+          <span class="material-symbols-outlined">calendar_today</span>
+          <div class="info-content">
+            <span class="info-label">{{ 'TRAINER_EVENTS.DATE' | translate }}</span>
+            <span class="info-value">{{ formatDate(ev.eventDate) }}</span>
+          </div>
+        </div>
+
+        <div class="info-card">
+          <span class="material-symbols-outlined">schedule</span>
+          <div class="info-content">
+            <span class="info-label">{{ 'TRAINER_EVENTS.TIME' | translate }}</span>
+            <span class="info-value">{{ ev.startTime }}@if (ev.endTime) { - {{ ev.endTime }}}</span>
+          </div>
+        </div>
+
+        <div class="info-card">
+          <span class="material-symbols-outlined">location_on</span>
+          <div class="info-content">
+            <span class="info-label">{{ 'TRAINER_EVENTS.LOCATION' | translate }}</span>
+            <span class="info-value">{{ ev.locationName }}</span>
+          </div>
+        </div>
+
+        <div class="info-card">
+          <span class="material-symbols-outlined">group</span>
+          <div class="info-content">
+            <span class="info-label">{{ 'TRAINER_EVENTS.PARTICIPANTS' | translate }}</span>
+            <span class="info-value">{{ ev.currentParticipants }}@if (ev.maxParticipants) { / {{ ev.maxParticipants }}}</span>
+          </div>
+        </div>
+
+        <div class="info-card">
+          <span class="material-symbols-outlined">payments</span>
+          <div class="info-content">
+            <span class="info-label">{{ 'TRAINER_EVENTS.COST' | translate }}</span>
+            <span class="info-value">{{ formatCost(ev.costCents, ev.costCurrency) }}</span>
+          </div>
+        </div>
+
+        @if (ev.difficulty) {
+          <div class="info-card">
+            <span class="material-symbols-outlined">fitness_center</span>
+            <div class="info-content">
+              <span class="info-label">{{ 'TRAINER_EVENTS.DIFFICULTY' | translate }}</span>
+              <span class="difficulty-badge" [ngClass]="getDifficultyClass(ev.difficulty)">{{ ev.difficulty }}</span>
+            </div>
+          </div>
+        }
+
+        @if (ev.distanceKm) {
+          <div class="info-card">
+            <span class="material-symbols-outlined">route</span>
+            <div class="info-content">
+              <span class="info-label">{{ 'TRAINER_EVENTS.DISTANCE' | translate }}</span>
+              <span class="info-value">{{ ev.distanceKm }} km</span>
+            </div>
+          </div>
+        }
+      </div>
+
+      @if (ev.description) {
+        <div class="description-section">
+          <h2 class="section-title">
+            <span class="material-symbols-outlined">description</span>
+            {{ 'TRAINER_EVENTS.DESCRIPTION' | translate }}
+          </h2>
+          <p>{{ ev.description }}</p>
+        </div>
+      }
+    </div>
+
+    <!-- Participants Table -->
+    <div class="participants-section">
+      <h2 class="section-title">
+        <span class="material-symbols-outlined">group</span>
+        {{ 'TRAINER_EVENTS.PARTICIPANT_LIST' | translate }}
+        <span class="count-badge">{{ participants().length }}</span>
+      </h2>
+
+      @if (participants().length === 0) {
+        <div class="empty-participants">
+          <span class="material-symbols-outlined">person_off</span>
+          <p>{{ 'TRAINER_EVENTS.NO_PARTICIPANTS' | translate }}</p>
+        </div>
+      } @else {
+        <div class="participants-table-wrapper">
+          <table class="participants-table">
+            <thead>
+              <tr>
+                <th>{{ 'TRAINER_EVENTS.COL_USERNAME' | translate }}</th>
+                <th>{{ 'TRAINER_EVENTS.COL_STATUS' | translate }}</th>
+                <th>{{ 'TRAINER_EVENTS.COL_REGISTERED_AT' | translate }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (p of participants(); track p.id) {
+                <tr>
+                  <td class="username-cell">
+                    <span class="material-symbols-outlined">person</span>
+                    {{ p.username }}
+                  </td>
+                  <td>
+                    <span class="participant-status" [ngClass]="'reg-' + p.status.toLowerCase()">{{ p.status }}</span>
+                  </td>
+                  <td class="date-cell">{{ formatRegisteredAt(p.registeredAt) }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </div>
+  }
+</div>

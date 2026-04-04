@@ -7,6 +7,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.0] - 2026-04-03
+
+### Added
+- Community Groups / Group Events feature: users can discover and register for group runs, training sessions, and events
+- New `group_events` and `group_event_registrations` database tables with Liquibase migrations (083-085)
+- GroupEvent entity with full lifecycle: DRAFT → PUBLISHED → CANCELLED / COMPLETED
+- User-facing endpoints: browse nearby/upcoming events, register/unregister, view registrations (`/api/group-events/*`)
+- Trainer-facing endpoints: create, edit, publish, cancel, delete events, view participants (`/api/trainer/events/*`)
+- `groupEventsEnabled` user setting toggle in Settings page
+- Community sidebar menu restructured as expandable submenu with "Routes" and "Groups" sub-items
+- New Trainer menu item (top-level) visible for TRAINER and ADMIN roles
+- Trainer guard for frontend route protection
+- Group Events browse screen with tabs (Near Me, All Upcoming, My Events), geolocation, and radius filter
+- Group Event detail screen with registration/unregistration functionality
+- Trainer Events dashboard for managing events with status badges and quick actions
+- Trainer Event form for creating and editing events with all fields (date, time, location, distance, capacity, cost, difficulty)
+- Trainer Event detail view with participant list
+- Full i18n support (en + de) for all new screens (~60 translation keys)
+- Group Events added to PRO feature set
+- TRAINER role activated (previously defined but unused)
+
 ## [0.8.0] - 2026-04-02
 
 ### Added

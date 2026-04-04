@@ -1,0 +1,126 @@
+<app-pro-overlay featureKey="group-events">
+<div class="group-events">
+  <!-- Header -->
+  <div class="page-header">
+    <div class="header-left">
+      <h1>{{ 'GROUP_EVENTS.TITLE' | translate }}<br/><span class="accent">{{ 'GROUP_EVENTS.EVENTS' | translate }}</span></h1>
+      <p class="subtitle">{{ 'GROUP_EVENTS.SUBTITLE' | translate }}</p>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tab-bar">
+    <button class="tab-btn" [class.active]="activeTab() === 'near'" (click)="onTabChange('near')">
+      <span class="material-symbols-outlined">near_me</span>
+      {{ 'GROUP_EVENTS.TAB_NEAR_ME' | translate }}
+    </button>
+    <button class="tab-btn" [class.active]="activeTab() === 'upcoming'" (click)="onTabChange('upcoming')">
+      <span class="material-symbols-outlined">calendar_month</span>
+      {{ 'GROUP_EVENTS.TAB_UPCOMING' | translate }}
+    </button>
+    <button class="tab-btn" [class.active]="activeTab() === 'mine'" (click)="onTabChange('mine')">
+      <span class="material-symbols-outlined">person</span>
+      {{ 'GROUP_EVENTS.TAB_MY_EVENTS' | translate }}
+    </button>
+  </div>
+
+  <!-- Radius selector (only for Near Me tab) -->
+  @if (activeTab() === 'near') {
+    <div class="filter-bar">
+      <div class="select-wrapper">
+        <select (change)="onRadiusChange(+$any($event.target).value)">
+          <option value="5" [selected]="radiusKm() === 5">{{ 'GROUP_EVENTS.RADIUS_5' | translate }}</option>
+          <option value="10" [selected]="radiusKm() === 10">{{ 'GROUP_EVENTS.RADIUS_10' | translate }}</option>
+          <option value="25" [selected]="radiusKm() === 25">{{ 'GROUP_EVENTS.RADIUS_25' | translate }}</option>
+          <option value="50" [selected]="radiusKm() === 50">{{ 'GROUP_EVENTS.RADIUS_50' | translate }}</option>
+        </select>
+        <span class="material-symbols-outlined select-arrow">expand_more</span>
+      </div>
+    </div>
+  }
+
+  <!-- States -->
+  @if (loading()) {
+    <div class="loading-state">
+      <span class="material-symbols-outlined spinning">progress_activity</span>
+      <h3>{{ 'GROUP_EVENTS.LOADING' | translate }}</h3>
+      <p>{{ 'GROUP_EVENTS.LOADING_HINT' | translate }}</p>
+    </div>
+  } @else if (error()) {
+    <div class="error-state">
+      <span class="material-symbols-outlined">error</span>
+      <h3>{{ 'GROUP_EVENTS.ERROR_TITLE' | translate }}</h3>
+      <p>{{ error() }}</p>
+      <button class="btn-retry" (click)="loadEvents()">{{ 'GROUP_EVENTS.TRY_AGAIN' | translate }}</button>
+    </div>
+  } @else if (events().length === 0) {
+    <div class="empty-state">
+      <span class="material-symbols-outlined">event_busy</span>
+      <h3>{{ 'GROUP_EVENTS.NO_EVENTS' | translate }}</h3>
+      <p>{{ 'GROUP_EVENTS.NO_EVENTS_HINT' | translate }}</p>
+    </div>
+  } @else {
+    <!-- Event Cards Grid -->
+    <div class="event-grid">
+      @for (event of events(); track event.id) {
+        <a [routerLink]="['/community/groups', event.id]" class="event-card">
+          <!-- Card Header -->
+          <div class="card-header">
+            <div class="event-date-badge">
+              <span class="date-day">{{ event.eventDate | date:'dd' }}</span>
+              <span class="date-month">{{ event.eventDate | date:'MMM' }}</span>
+            </div>
+            <div class="card-title-section">
+              <h3>{{ event.title }}</h3>
+              <div class="trainer-name">
+                <span class="material-symbols-outlined">person</span>
+                {{ event.trainerUsername }}
+              </div>
+            </div>
+            @if (event.difficulty) {
+              <span class="difficulty-badge" [ngClass]="getDifficultyClass(event.difficulty)">
+                {{ event.difficulty }}
+              </span>
+            }
+          </div>
+
+          <!-- Card Body -->
+          <div class="card-body">
+            <div class="event-info-row">
+              <span class="material-symbols-outlined">schedule</span>
+              <span>{{ event.startTime }}@if (event.endTime) { - {{ event.endTime }}}</span>
+            </div>
+            <div class="event-info-row">
+              <span class="material-symbols-outlined">location_on</span>
+              <span>{{ event.locationName }}</span>
+            </div>
+            @if (event.distanceKm) {
+              <div class="event-info-row">
+                <span class="material-symbols-outlined">route</span>
+                <span>{{ event.distanceKm }} km</span>
+              </div>
+            }
+          </div>
+
+          <!-- Card Footer -->
+          <div class="card-footer">
+            <div class="participants-info">
+              <span class="material-symbols-outlined">group</span>
+              <span>{{ event.currentParticipants }}@if (event.maxParticipants) { / {{ event.maxParticipants }}}</span>
+            </div>
+            <div class="cost-info">
+              {{ formatCost(event.costCents, event.costCurrency) }}
+            </div>
+            @if (event.isRegistered) {
+              <span class="registered-badge">
+                <span class="material-symbols-outlined">check_circle</span>
+                {{ 'GROUP_EVENTS.REGISTERED' | translate }}
+              </span>
+            }
+          </div>
+        </a>
+      }
+    </div>
+  }
+</div>
+</app-pro-overlay>

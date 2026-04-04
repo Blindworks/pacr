@@ -19,6 +19,7 @@ import { filter } from 'rxjs/operators';
 })
 export class Sidebar implements OnInit, OnDestroy {
   bodyDataOpen = false;
+  communityOpen = false;
   profileImageUrl = signal<string | null>(null);
 
   /** Sidebar collapsed (icon-only) — for tablet/desktop toggle */
@@ -53,6 +54,16 @@ export class Sidebar implements OnInit, OnDestroy {
   });
 
   readonly isPro = computed(() => this.subscriptionService.isPro() || this.subscriptionService.isAdmin());
+
+  readonly isTrainer = computed(() => {
+    const role = this.userService.currentUser()?.role ?? this.authService.getRole();
+    return role === 'TRAINER' || role === 'ADMIN';
+  });
+
+  readonly showCommunityMenu = computed(() => {
+    const user = this.userService.currentUser();
+    return !!(user?.communityRoutesEnabled || user?.groupEventsEnabled);
+  });
 
   readonly membershipLabel = computed(() => {
     const role = this.userService.currentUser()?.role;
@@ -164,6 +175,10 @@ export class Sidebar implements OnInit, OnDestroy {
 
   toggleBodyData(): void {
     this.bodyDataOpen = !this.bodyDataOpen;
+  }
+
+  toggleCommunity(): void {
+    this.communityOpen = !this.communityOpen;
   }
 
   openPaceCalculator(): void {

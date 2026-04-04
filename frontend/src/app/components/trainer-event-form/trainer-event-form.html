@@ -1,0 +1,195 @@
+<div class="trainer-event-form">
+  <!-- Back Button -->
+  <button class="btn-back" (click)="goBack()">
+    <span class="material-symbols-outlined">arrow_back</span>
+    {{ 'TRAINER_EVENTS.BACK_TO_EVENTS' | translate }}
+  </button>
+
+  <!-- Header -->
+  <div class="form-header">
+    <h1>
+      @if (isEditMode()) {
+        {{ 'TRAINER_EVENTS.EDIT_EVENT' | translate }}
+      } @else {
+        {{ 'TRAINER_EVENTS.CREATE_EVENT' | translate }}
+      }
+    </h1>
+  </div>
+
+  @if (loading()) {
+    <div class="loading-state">
+      <span class="material-symbols-outlined spinning">progress_activity</span>
+      <h3>{{ 'TRAINER_EVENTS.LOADING' | translate }}</h3>
+    </div>
+  } @else {
+    @if (error()) {
+      <div class="form-error">
+        <span class="material-symbols-outlined">error</span>
+        {{ error() }}
+      </div>
+    }
+
+    <form [formGroup]="form" class="event-form">
+      <!-- Basic Info Section -->
+      <div class="form-section">
+        <h2 class="section-title">
+          <span class="material-symbols-outlined">info</span>
+          {{ 'TRAINER_EVENTS.SECTION_BASIC' | translate }}
+        </h2>
+
+        <div class="form-field">
+          <label for="title">{{ 'TRAINER_EVENTS.FIELD_TITLE' | translate }} *</label>
+          <input id="title" type="text" formControlName="title"
+                 [placeholder]="'TRAINER_EVENTS.PLACEHOLDER_TITLE' | translate"
+                 [class.invalid]="isFieldInvalid('title')" />
+          @if (isFieldInvalid('title')) {
+            <span class="field-error">{{ 'TRAINER_EVENTS.REQUIRED_FIELD' | translate }}</span>
+          }
+        </div>
+
+        <div class="form-field">
+          <label for="description">{{ 'TRAINER_EVENTS.FIELD_DESCRIPTION' | translate }}</label>
+          <textarea id="description" formControlName="description" rows="4"
+                    [placeholder]="'TRAINER_EVENTS.PLACEHOLDER_DESCRIPTION' | translate"></textarea>
+        </div>
+
+        <div class="form-field">
+          <label for="difficulty">{{ 'TRAINER_EVENTS.FIELD_DIFFICULTY' | translate }}</label>
+          <div class="select-wrapper">
+            <select id="difficulty" formControlName="difficulty">
+              <option [ngValue]="null">{{ 'TRAINER_EVENTS.NO_DIFFICULTY' | translate }}</option>
+              @for (d of difficulties; track d) {
+                <option [value]="d">{{ d }}</option>
+              }
+            </select>
+            <span class="material-symbols-outlined select-arrow">expand_more</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Date & Time Section -->
+      <div class="form-section">
+        <h2 class="section-title">
+          <span class="material-symbols-outlined">schedule</span>
+          {{ 'TRAINER_EVENTS.SECTION_DATETIME' | translate }}
+        </h2>
+
+        <div class="form-row">
+          <div class="form-field">
+            <label for="eventDate">{{ 'TRAINER_EVENTS.FIELD_DATE' | translate }} *</label>
+            <input id="eventDate" type="date" formControlName="eventDate"
+                   [class.invalid]="isFieldInvalid('eventDate')" />
+            @if (isFieldInvalid('eventDate')) {
+              <span class="field-error">{{ 'TRAINER_EVENTS.REQUIRED_FIELD' | translate }}</span>
+            }
+          </div>
+
+          <div class="form-field">
+            <label for="startTime">{{ 'TRAINER_EVENTS.FIELD_START_TIME' | translate }} *</label>
+            <input id="startTime" type="time" formControlName="startTime"
+                   [class.invalid]="isFieldInvalid('startTime')" />
+            @if (isFieldInvalid('startTime')) {
+              <span class="field-error">{{ 'TRAINER_EVENTS.REQUIRED_FIELD' | translate }}</span>
+            }
+          </div>
+
+          <div class="form-field">
+            <label for="endTime">{{ 'TRAINER_EVENTS.FIELD_END_TIME' | translate }}</label>
+            <input id="endTime" type="time" formControlName="endTime" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Location Section -->
+      <div class="form-section">
+        <h2 class="section-title">
+          <span class="material-symbols-outlined">location_on</span>
+          {{ 'TRAINER_EVENTS.SECTION_LOCATION' | translate }}
+        </h2>
+
+        <div class="form-field">
+          <label for="locationName">{{ 'TRAINER_EVENTS.FIELD_LOCATION' | translate }} *</label>
+          <input id="locationName" type="text" formControlName="locationName"
+                 [placeholder]="'TRAINER_EVENTS.PLACEHOLDER_LOCATION' | translate"
+                 [class.invalid]="isFieldInvalid('locationName')" />
+          @if (isFieldInvalid('locationName')) {
+            <span class="field-error">{{ 'TRAINER_EVENTS.REQUIRED_FIELD' | translate }}</span>
+          }
+        </div>
+
+        <div class="form-row">
+          <div class="form-field">
+            <label for="latitude">{{ 'TRAINER_EVENTS.FIELD_LATITUDE' | translate }}</label>
+            <input id="latitude" type="number" step="0.000001" formControlName="latitude"
+                   placeholder="48.137154" />
+          </div>
+
+          <div class="form-field">
+            <label for="longitude">{{ 'TRAINER_EVENTS.FIELD_LONGITUDE' | translate }}</label>
+            <input id="longitude" type="number" step="0.000001" formControlName="longitude"
+                   placeholder="11.576124" />
+          </div>
+        </div>
+
+        <div class="form-field">
+          <label for="distanceKm">{{ 'TRAINER_EVENTS.FIELD_DISTANCE' | translate }}</label>
+          <input id="distanceKm" type="number" step="0.1" formControlName="distanceKm"
+                 [placeholder]="'TRAINER_EVENTS.PLACEHOLDER_DISTANCE' | translate" />
+        </div>
+      </div>
+
+      <!-- Capacity & Cost Section -->
+      <div class="form-section">
+        <h2 class="section-title">
+          <span class="material-symbols-outlined">payments</span>
+          {{ 'TRAINER_EVENTS.SECTION_CAPACITY' | translate }}
+        </h2>
+
+        <div class="form-row">
+          <div class="form-field">
+            <label for="maxParticipants">{{ 'TRAINER_EVENTS.FIELD_MAX_PARTICIPANTS' | translate }}</label>
+            <input id="maxParticipants" type="number" min="1" formControlName="maxParticipants"
+                   [placeholder]="'TRAINER_EVENTS.PLACEHOLDER_UNLIMITED' | translate" />
+          </div>
+
+          <div class="form-field">
+            <label for="costCents">{{ 'TRAINER_EVENTS.FIELD_COST_CENTS' | translate }}</label>
+            <input id="costCents" type="number" min="0" formControlName="costCents"
+                   [placeholder]="'TRAINER_EVENTS.PLACEHOLDER_FREE' | translate" />
+          </div>
+
+          <div class="form-field">
+            <label for="costCurrency">{{ 'TRAINER_EVENTS.FIELD_CURRENCY' | translate }}</label>
+            <div class="select-wrapper">
+              <select id="costCurrency" formControlName="costCurrency">
+                @for (c of currencies; track c) {
+                  <option [value]="c">{{ c }}</option>
+                }
+              </select>
+              <span class="material-symbols-outlined select-arrow">expand_more</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Form Actions -->
+      <div class="form-actions">
+        <button type="button" class="btn-ghost" (click)="goBack()">
+          {{ 'TRAINER_EVENTS.CANCEL' | translate }}
+        </button>
+        <button type="button" class="btn-secondary" (click)="saveAsDraft()" [disabled]="saving()">
+          @if (saving()) {
+            <span class="material-symbols-outlined spinning">progress_activity</span>
+          }
+          {{ 'TRAINER_EVENTS.SAVE_DRAFT' | translate }}
+        </button>
+        <button type="button" class="btn-primary" (click)="saveAndPublish()" [disabled]="saving()">
+          @if (saving()) {
+            <span class="material-symbols-outlined spinning">progress_activity</span>
+          }
+          {{ 'TRAINER_EVENTS.SAVE_PUBLISH' | translate }}
+        </button>
+      </div>
+    </form>
+  }
+</div>

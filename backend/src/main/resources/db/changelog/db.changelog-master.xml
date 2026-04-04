@@ -86,5 +86,8 @@
     <include file="db/changelog/changes/080-add-user-feedback.xml"/>
     <include file="db/changelog/changes/081-add-blacklisted-tokens.xml"/>
     <include file="db/changelog/changes/082-add-start-time-to-completed-trainings.xml"/>
+    <include file="db/changelog/changes/083-add-user-group-events-enabled.xml"/>
+    <include file="db/changelog/changes/084-add-group-events.xml"/>
+    <include file="db/changelog/changes/085-add-group-event-registrations.xml"/>
 
 </databaseChangeLog>

@@ -58,14 +58,35 @@
         @if (!isPro()) { <span class="pro-nav-badge">{{ 'NAV.PRO' | translate }}</span> }
       }
     </a>
-    @if (userService.currentUser()?.communityRoutesEnabled) {
-      <a routerLink="/community-routes" routerLinkActive="active" class="nav-item" [attr.title]="collapsed() && !isMobile() ? ('NAV.COMMUNITY' | translate) : null">
-        <span class="material-symbols-outlined">explore</span>
-        @if (!collapsed() || isMobile()) {
-          <span>{{ 'NAV.COMMUNITY' | translate }}</span>
-          @if (!isPro()) { <span class="pro-nav-badge">{{ 'NAV.PRO' | translate }}</span> }
-        }
-      </a>
+    @if (showCommunityMenu()) {
+      @if (!collapsed() || isMobile()) {
+        <div class="nav-group">
+          <button class="nav-item nav-item--group" (click)="toggleCommunity()" [ngClass]="{'open': communityOpen}">
+            <span class="material-symbols-outlined">explore</span>
+            <span>{{ 'NAV.COMMUNITY' | translate }}</span>
+            @if (!isPro()) { <span class="pro-nav-badge">{{ 'NAV.PRO' | translate }}</span> }
+            <span class="material-symbols-outlined nav-group-arrow">expand_more</span>
+          </button>
+          <div class="nav-submenu" [ngClass]="{'open': communityOpen}">
+            @if (userService.currentUser()?.communityRoutesEnabled) {
+              <a routerLink="/community-routes" routerLinkActive="active" class="nav-item nav-item--sub">
+                <span class="material-symbols-outlined">route</span>
+                <span>{{ 'NAV.COMMUNITY_ROUTES' | translate }}</span>
+              </a>
+            }
+            @if (userService.currentUser()?.groupEventsEnabled) {
+              <a routerLink="/community/groups" routerLinkActive="active" class="nav-item nav-item--sub">
+                <span class="material-symbols-outlined">groups</span>
+                <span>{{ 'NAV.GROUP_EVENTS' | translate }}</span>
+              </a>
+            }
+          </div>
+        </div>
+      } @else {
+        <a routerLink="/community-routes" routerLinkActive="active" class="nav-item" [attr.title]="'NAV.COMMUNITY' | translate">
+          <span class="material-symbols-outlined">explore</span>
+        </a>
+      }
     }
     @if (!collapsed() || isMobile()) {
       <div class="nav-group">
@@ -113,6 +134,12 @@
         @if (!isPro()) { <span class="pro-nav-badge">{{ 'NAV.PRO' | translate }}</span> }
       }
     </a>
+    @if (isTrainer()) {
+      <a routerLink="/trainer/events" routerLinkActive="active" class="nav-item" [attr.title]="collapsed() && !isMobile() ? ('NAV.TRAINER_EVENTS' | translate) : null">
+        <span class="material-symbols-outlined">school</span>
+        @if (!collapsed() || isMobile()) { <span>{{ 'NAV.TRAINER_EVENTS' | translate }}</span> }
+      </a>
+    }
     @if (isAdmin()) {
       <a routerLink="/admin" routerLinkActive="active" class="nav-item" [attr.title]="collapsed() && !isMobile() ? ('NAV.ADMIN' | translate) : null">
         <span class="material-symbols-outlined">admin_panel_settings</span>

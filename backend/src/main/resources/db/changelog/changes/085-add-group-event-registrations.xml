@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="085-1" author="claude">
+        <preConditions onFail="MARK_RAN">
+            <not><tableExists tableName="group_event_registrations"/></not>
+        </preConditions>
+        <comment>Create group_event_registrations table for event sign-ups</comment>
+        <createTable tableName="group_event_registrations">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="event_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="user_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="registered_at" type="DATETIME">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="VARCHAR(20)" defaultValue="REGISTERED">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addForeignKeyConstraint
+            baseTableName="group_event_registrations" baseColumnNames="event_id"
+            referencedTableName="group_events" referencedColumnNames="id"
+            constraintName="fk_group_event_reg_event"/>
+        <addForeignKeyConstraint
+            baseTableName="group_event_registrations" baseColumnNames="user_id"
+            referencedTableName="users" referencedColumnNames="id"
+            constraintName="fk_group_event_reg_user"/>
+        <addUniqueConstraint tableName="group_event_registrations"
+            columnNames="event_id, user_id"
+            constraintName="uk_group_event_reg_event_user"/>
+        <createIndex tableName="group_event_registrations" indexName="idx_group_event_reg_event">
+            <column name="event_id"/>
+        </createIndex>
+        <createIndex tableName="group_event_registrations" indexName="idx_group_event_reg_user">
+            <column name="user_id"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>

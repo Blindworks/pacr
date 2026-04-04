@@ -78,6 +78,7 @@ export class Settings implements OnInit, OnDestroy {
   protected asthmaTrackingEnabled = signal(false);
   protected cycleTrackingEnabled = signal(false);
   protected communityRoutesEnabled = signal(false);
+  protected groupEventsEnabled = signal(false);
 
   protected stravaLoading = signal(false);
   protected corosLoading = signal(false);
@@ -171,6 +172,7 @@ export class Settings implements OnInit, OnDestroy {
         this.asthmaTrackingEnabled.set(user.asthmaTrackingEnabled ?? false);
         this.cycleTrackingEnabled.set(user.cycleTrackingEnabled ?? false);
         this.communityRoutesEnabled.set(user.communityRoutesEnabled ?? false);
+        this.groupEventsEnabled.set(user.groupEventsEnabled ?? false);
         this.theme.set((user.theme as ThemeChoice) ?? 'dark');
         this.themeService.initFromProfile(user.theme);
         this.profileLoaded = true;
@@ -267,6 +269,12 @@ export class Settings implements OnInit, OnDestroy {
     this.triggerAutoSave();
   }
 
+  protected onGroupEventsChange(value: boolean): void {
+    this.groupEventsEnabled.set(value);
+    this.userService.currentUser.update(u => u ? { ...u, groupEventsEnabled: value } : null);
+    this.triggerAutoSave();
+  }
+
   protected setUnit(value: 'metric' | 'imperial'): void {
     this.unit.set(value);
     this.triggerAutoSave();
@@ -358,6 +366,7 @@ export class Settings implements OnInit, OnDestroy {
       asthmaTrackingEnabled: this.asthmaTrackingEnabled(),
       cycleTrackingEnabled: this.cycleTrackingEnabled(),
       communityRoutesEnabled: this.communityRoutesEnabled(),
+      groupEventsEnabled: this.groupEventsEnabled(),
       theme: this.theme()
     }).subscribe({
       next: updated => {

@@ -109,6 +109,10 @@ public class User implements UserDetails {
     @Column(name = "community_routes_enabled", nullable = false)
     private boolean communityRoutesEnabled = false;
 
+    /** Whether group events feature is enabled for this user. */
+    @Column(name = "group_events_enabled", nullable = false)
+    private boolean groupEventsEnabled = false;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "subscription_plan", nullable = false, length = 20)
     private SubscriptionPlan subscriptionPlan = SubscriptionPlan.FREE;
@@ -366,6 +370,9 @@ public class User implements UserDetails {
 
     public boolean isCommunityRoutesEnabled() { return communityRoutesEnabled; }
     public void setCommunityRoutesEnabled(boolean communityRoutesEnabled) { this.communityRoutesEnabled = communityRoutesEnabled; }
+
+    public boolean isGroupEventsEnabled() { return groupEventsEnabled; }
+    public void setGroupEventsEnabled(boolean groupEventsEnabled) { this.groupEventsEnabled = groupEventsEnabled; }
 
     public SubscriptionPlan getSubscriptionPlan() { return subscriptionPlan; }
     public void setSubscriptionPlan(SubscriptionPlan subscriptionPlan) {

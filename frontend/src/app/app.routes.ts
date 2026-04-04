@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './guards/auth.guard';
 import { adminGuard } from './guards/admin.guard';
+import { trainerGuard } from './guards/trainer.guard';
 
 export const routes: Routes = [
   {
@@ -109,6 +110,36 @@ export const routes: Routes = [
     path: 'community-routes/:id',
     canActivate: [authGuard],
     loadComponent: () => import('./components/community-route-detail/community-route-detail').then(m => m.CommunityRouteDetail)
+  },
+  {
+    path: 'community/groups',
+    canActivate: [authGuard],
+    loadComponent: () => import('./components/group-events/group-events').then(m => m.GroupEvents)
+  },
+  {
+    path: 'community/groups/:id',
+    canActivate: [authGuard],
+    loadComponent: () => import('./components/group-event-detail/group-event-detail').then(m => m.GroupEventDetail)
+  },
+  {
+    path: 'trainer/events',
+    canActivate: [authGuard, trainerGuard],
+    loadComponent: () => import('./components/trainer-events/trainer-events').then(m => m.TrainerEvents)
+  },
+  {
+    path: 'trainer/events/create',
+    canActivate: [authGuard, trainerGuard],
+    loadComponent: () => import('./components/trainer-event-form/trainer-event-form').then(m => m.TrainerEventForm)
+  },
+  {
+    path: 'trainer/events/:id',
+    canActivate: [authGuard, trainerGuard],
+    loadComponent: () => import('./components/trainer-event-detail/trainer-event-detail').then(m => m.TrainerEventDetail)
+  },
+  {
+    path: 'trainer/events/:id/edit',
+    canActivate: [authGuard, trainerGuard],
+    loadComponent: () => import('./components/trainer-event-form/trainer-event-form').then(m => m.TrainerEventForm)
   },
   {
     path: 'elite-upgrade',

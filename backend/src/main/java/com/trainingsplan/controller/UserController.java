@@ -76,6 +76,7 @@ public class UserController {
             Boolean asthmaTrackingEnabled,
             Boolean cycleTrackingEnabled,
             Boolean communityRoutesEnabled,
+            Boolean groupEventsEnabled,
             String role,
             String subscriptionPlan,
             LocalDateTime subscriptionExpiresAt,
@@ -152,6 +153,7 @@ public class UserController {
                     request.dwdRegionId(), Boolean.TRUE.equals(request.asthmaTrackingEnabled()),
                     Boolean.TRUE.equals(request.cycleTrackingEnabled()),
                     Boolean.TRUE.equals(request.communityRoutesEnabled()),
+                    Boolean.TRUE.equals(request.groupEventsEnabled()),
                     request.role(), request.subscriptionPlan(), request.subscriptionExpiresAt(),
                     request.targetDistance(), request.weeklyVolumeKm(), request.theme());
             return ResponseEntity.ok(updated);

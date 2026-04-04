@@ -1,0 +1,352 @@
+@use 'mixins' as m;
+@use 'variables' as v;
+
+:host {
+  display: block;
+  font-family: 'Manrope', sans-serif;
+  color: var(--text);
+}
+
+.group-event-detail {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+// === BACK BUTTON ===
+.btn-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-family: 'Lexend', sans-serif;
+  font-size: 0.625rem;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  cursor: pointer;
+  padding: 0.5rem 0;
+  margin-bottom: 2rem;
+  transition: color v.$transition-normal;
+
+  .material-symbols-outlined {
+    font-size: 1.125rem;
+  }
+
+  &:hover {
+    color: var(--pp);
+  }
+}
+
+// === LAYOUT ===
+.detail-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+
+  @media (min-width: v.$bp-md) {
+    grid-template-columns: 1fr 320px;
+  }
+}
+
+// === MAIN CONTENT ===
+.detail-main {
+  min-width: 0;
+}
+
+.detail-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 1rem;
+
+  h1 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 900;
+    font-style: italic;
+    text-transform: uppercase;
+    letter-spacing: -0.03em;
+    line-height: 1;
+    margin: 0;
+    flex: 1;
+  }
+}
+
+.difficulty-badge {
+  font-family: 'Lexend', sans-serif;
+  font-size: 0.5625rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 0.375rem 0.75rem;
+  border-radius: 1rem;
+  white-space: nowrap;
+  background: var(--surface-high);
+  color: var(--text-muted);
+
+  &.difficulty-easy {
+    color: #4caf50;
+    border: 1px solid rgba(76, 175, 80, 0.3);
+  }
+
+  &.difficulty-moderate {
+    color: #ff9800;
+    border: 1px solid rgba(255, 152, 0, 0.3);
+  }
+
+  &.difficulty-hard {
+    color: #f44336;
+    border: 1px solid rgba(244, 67, 54, 0.3);
+  }
+
+  &.difficulty-expert {
+    color: #9c27b0;
+    border: 1px solid rgba(156, 39, 176, 0.3);
+  }
+}
+
+.trainer-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: 'Lexend', sans-serif;
+  font-size: 0.625rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--text-muted);
+  margin-bottom: 2rem;
+
+  .material-symbols-outlined {
+    font-size: 1rem;
+    color: var(--pp);
+  }
+}
+
+.event-description {
+  margin-bottom: 2rem;
+
+  p {
+    font-size: 0.9375rem;
+    line-height: 1.7;
+    color: var(--text-muted);
+    margin: 0;
+  }
+}
+
+// === INFO GRID ===
+.info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+
+  @include m.respond-to(v.$bp-sm) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.info-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  background: var(--bg-card);
+  padding: 1.25rem;
+  border-radius: 0.25rem;
+
+  > .material-symbols-outlined {
+    font-size: 1.25rem;
+    color: var(--pp);
+    margin-top: 0.125rem;
+  }
+}
+
+.info-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+
+  .info-label {
+    font-family: 'Lexend', sans-serif;
+    font-size: 0.5625rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--text-muted);
+  }
+
+  .info-value {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: 0.9375rem;
+  }
+}
+
+// === SIDEBAR ===
+.sidebar-card {
+  background: var(--bg-card);
+  border-radius: 0.25rem;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.cost-display {
+  text-align: center;
+
+  .cost-value {
+    display: block;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 2rem;
+    font-weight: 900;
+    color: var(--pp);
+  }
+
+  .cost-label {
+    font-family: 'Lexend', sans-serif;
+    font-size: 0.5625rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--text-muted);
+  }
+}
+
+.participants-display {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.participants-count {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--text-muted);
+
+  .material-symbols-outlined {
+    font-size: 1.125rem;
+  }
+
+  span:last-child {
+    font-family: 'Lexend', sans-serif;
+    font-size: 0.625rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+  }
+}
+
+.spots-left {
+  font-family: 'Lexend', sans-serif;
+  font-size: 0.625rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--text-muted);
+
+  &.spots-low {
+    color: #f44336;
+  }
+}
+
+// === ACTION BUTTONS ===
+.btn-register {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 1rem;
+  background: var(--pp);
+  color: var(--btn-active-text);
+  border: none;
+  border-radius: 0.25rem;
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 900;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  cursor: pointer;
+  transition: filter v.$transition-normal;
+
+  &:hover:not(:disabled) {
+    filter: brightness(1.1);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .material-symbols-outlined {
+    font-size: 1.125rem;
+  }
+}
+
+.btn-cancel-registration {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 1rem;
+  background: transparent;
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+  border-radius: 0.25rem;
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 900;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  cursor: pointer;
+  transition: all v.$transition-normal;
+
+  &:hover:not(:disabled) {
+    border-color: #f44336;
+    color: #f44336;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .material-symbols-outlined {
+    font-size: 1.125rem;
+  }
+}
+
+// === STATES ===
+.loading-state,
+.error-state {
+  text-align: center;
+  padding: 5rem 2rem;
+  color: var(--text-muted);
+
+  .material-symbols-outlined {
+    font-size: 3.5rem;
+    margin-bottom: 1.5rem;
+    display: block;
+  }
+
+  h3 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: 1.25rem;
+    color: var(--text);
+    margin: 0 0 0.5rem;
+    text-transform: uppercase;
+  }
+
+  p {
+    margin: 0;
+    font-size: 0.8125rem;
+  }
+}
+
+.spinning {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
