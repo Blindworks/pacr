@@ -87,6 +87,23 @@
             </div>
           }
         </div>
+
+        <!-- Location Map -->
+        @if (ev.latitude != null && ev.longitude != null) {
+          <div class="map-card">
+            <div class="map-card-header">
+              <span class="material-symbols-outlined">map</span>
+              <span class="map-card-title">{{ 'GROUP_EVENTS.MEETING_POINT' | translate }}</span>
+            </div>
+            <div class="map-container">
+              <div #eventMap class="event-map"></div>
+            </div>
+            <div class="map-location-label">
+              <span class="material-symbols-outlined">location_on</span>
+              <span>{{ ev.locationName }}</span>
+            </div>
+          </div>
+        }
       </div>
 
       <!-- Sidebar -->
