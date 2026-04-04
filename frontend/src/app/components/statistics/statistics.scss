@@ -16,19 +16,32 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
-  gap: 1rem;
+  gap: 2rem;
+}
 
+.header-left {
   h1 {
-    margin: 0;
-    font-size: clamp(1.8rem, 3.6vw, 2.5rem);
-    font-weight: 800;
-    letter-spacing: -0.02em;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    font-weight: 900;
+    font-style: italic;
+    line-height: 0.95;
+    letter-spacing: -0.04em;
+    text-transform: uppercase;
+    margin: 0 0 0.75rem;
+
+    .accent {
+      color: var(--pp);
+    }
   }
 
-  p {
-    margin: 0.35rem 0 0;
+  .subtitle {
+    font-family: 'Lexend', sans-serif;
+    font-size: 0.6875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.3em;
     color: var(--text-muted);
-    font-size: 0.95rem;
+    margin: 0;
   }
 }
 

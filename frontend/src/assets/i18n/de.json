@@ -281,7 +281,8 @@
     "ACWR": "ACWR"
   },
   "SETTINGS": {
-    "TITLE": "Einstellungen",
+    "TITLE": "Deine",
+    "TITLE_ACCENT": "Einstellungen",
     "SUBTITLE": "Verwalte dein Profil, Messwerte und App-Einstellungen.",
     "PROFILE_PICTURE": "Profilbild",
     "PROFILE_PICTURE_HINT": "Klicke auf den Avatar, um ein neues Profilbild hochzuladen.",
@@ -405,7 +406,8 @@
     "INTENSITY_REDUCE": "Intensität senken"
   },
   "COMPETITIONS": {
-    "TITLE": "Wähle dein Ziel",
+    "TITLE": "Wähle",
+    "TITLE_ACCENT": "Dein Ziel",
     "SUBTITLE": "Wähle einen Wettkampf, um deinen persönlichen Trainingsweg freizuschalten.",
     "FILTER_ALL": "Alle Rennen",
     "FILTER_MARATHON": "Marathon",
@@ -490,7 +492,8 @@
     "VIEW_DETAILS": "Details anzeigen"
   },
   "STATISTICS": {
-    "TITLE": "Statistik & Performance",
+    "TITLE": "Statistik &",
+    "TITLE_ACCENT": "Performance",
     "SUBTITLE": "Tauche tief in deine physiologischen Daten und Trainingsfortschritte ein.",
     "EXPORT_PDF": "PDF exportieren",
     "PERIOD_THIS_WEEK": "Diese Woche",
@@ -701,7 +704,8 @@
   },
   "AI_TRAINER": {
     "EYEBROW": "KI Trainer",
-    "TITLE": "Dein täglicher Coach",
+    "TITLE": "Dein täglicher",
+    "TITLE_ACCENT": "Coach",
     "PREV_DAY": "Vorheriger Tag",
     "NEXT_DAY": "Nächster Tag",
     "NOT_AVAILABLE": "AI Trainer nicht verfügbar.",

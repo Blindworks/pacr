@@ -281,7 +281,8 @@
     "ACWR": "ACWR"
   },
   "SETTINGS": {
-    "TITLE": "Settings",
+    "TITLE": "Your",
+    "TITLE_ACCENT": "Settings",
     "SUBTITLE": "Manage your profile, metrics, and app preferences.",
     "PROFILE_PICTURE": "Profile Picture",
     "PROFILE_PICTURE_HINT": "Click on the avatar to upload a new profile picture.",
@@ -405,7 +406,8 @@
     "INTENSITY_REDUCE": "Reduce Intensity"
   },
   "COMPETITIONS": {
-    "TITLE": "Select Your Goal",
+    "TITLE": "Select",
+    "TITLE_ACCENT": "Your Goal",
     "SUBTITLE": "Choose a competition to unlock your personalized training path.",
     "FILTER_ALL": "All Races",
     "FILTER_MARATHON": "Marathon",
@@ -490,7 +492,8 @@
     "VIEW_DETAILS": "View Details"
   },
   "STATISTICS": {
-    "TITLE": "Analytics & Performance",
+    "TITLE": "Analytics &",
+    "TITLE_ACCENT": "Performance",
     "SUBTITLE": "Deep dive into your physiological data and training progression.",
     "EXPORT_PDF": "Export PDF",
     "PERIOD_THIS_WEEK": "This Week",
@@ -701,7 +704,8 @@
   },
   "AI_TRAINER": {
     "EYEBROW": "AI Trainer",
-    "TITLE": "Your Daily Coach",
+    "TITLE": "Your Daily",
+    "TITLE_ACCENT": "Coach",
     "PREV_DAY": "Previous day",
     "NEXT_DAY": "Next day",
     "NOT_AVAILABLE": "AI Trainer not available.",

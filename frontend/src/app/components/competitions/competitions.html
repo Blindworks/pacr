@@ -1,8 +1,10 @@
 <!-- Race Selection View -->
 <div class="competitions-page" *ngIf="!selectedRace">
   <header class="page-header">
-    <h2 class="page-title">{{ 'COMPETITIONS.TITLE' | translate }}</h2>
-    <p class="page-subtitle">{{ 'COMPETITIONS.SUBTITLE' | translate }}</p>
+    <div class="header-left">
+      <h1>{{ 'COMPETITIONS.TITLE' | translate }}<br/><span class="accent">{{ 'COMPETITIONS.TITLE_ACCENT' | translate }}</span></h1>
+      <p class="subtitle">{{ 'COMPETITIONS.SUBTITLE' | translate }}</p>
+    </div>
   </header>
 
   <!-- Filters -->

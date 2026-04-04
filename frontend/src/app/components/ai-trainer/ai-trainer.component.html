@@ -3,12 +3,9 @@
 
   <!-- Page Header with Date Navigation -->
   <header class="page-header">
-    <div class="page-header__left">
-      <span class="page-eyebrow">
-        <span class="material-symbols-outlined">psychology</span>
-        {{ 'AI_TRAINER.EYEBROW' | translate }}
-      </span>
-      <h2 class="page-title">{{ 'AI_TRAINER.TITLE' | translate }}</h2>
+    <div class="header-left">
+      <h1>{{ 'AI_TRAINER.TITLE' | translate }}<br/><span class="accent">{{ 'AI_TRAINER.TITLE_ACCENT' | translate }}</span></h1>
+      <p class="subtitle">{{ 'AI_TRAINER.EYEBROW' | translate }}</p>
     </div>
     <div class="date-nav">
       <button class="date-btn" (click)="changeDay(-1)" [attr.aria-label]="'AI_TRAINER.PREV_DAY' | translate">
