@@ -195,11 +195,32 @@
 
         <div class="form-field">
           <label for="locationName">{{ 'TRAINER_EVENTS.FIELD_LOCATION' | translate }} *</label>
-          <input id="locationName" type="text" formControlName="locationName"
-                 [placeholder]="'TRAINER_EVENTS.PLACEHOLDER_LOCATION' | translate"
-                 [class.invalid]="isFieldInvalid('locationName')" />
+          <div class="location-input-row">
+            <input id="locationName" type="text" formControlName="locationName"
+                   [placeholder]="'TRAINER_EVENTS.PLACEHOLDER_LOCATION' | translate"
+                   [class.invalid]="isFieldInvalid('locationName')" />
+            <button type="button" class="btn-icon-action" (click)="geocodeLocation()"
+                    [disabled]="geocoding()"
+                    [title]="'TRAINER_EVENTS.GEOCODE_BTN' | translate">
+              @if (geocoding()) {
+                <span class="material-symbols-outlined spinning">progress_activity</span>
+              } @else {
+                <span class="material-symbols-outlined">search</span>
+              }
+            </button>
+            <button type="button" class="btn-icon-action" (click)="openLocationPicker()"
+                    [title]="'TRAINER_EVENTS.MAP_PICKER_BTN' | translate">
+              <span class="material-symbols-outlined">map</span>
+            </button>
+          </div>
           @if (isFieldInvalid('locationName')) {
             <span class="field-error">{{ 'TRAINER_EVENTS.REQUIRED_FIELD' | translate }}</span>
+          }
+          @if (geocodeError()) {
+            <span class="geocode-error">
+              <span class="material-symbols-outlined">warning</span>
+              {{ geocodeError() }}
+            </span>
           }
         </div>
 
@@ -216,6 +237,13 @@
                    placeholder="11.576124" />
           </div>
         </div>
+
+        @if (form.get('latitude')?.value && form.get('longitude')?.value) {
+          <span class="field-hint coords-hint">
+            <span class="material-symbols-outlined">check_circle</span>
+            {{ 'TRAINER_EVENTS.COORDS_HINT' | translate }}
+          </span>
+        }
 
         <div class="form-field">
           <label for="distanceKm">{{ 'TRAINER_EVENTS.FIELD_DISTANCE' | translate }}</label>
@@ -303,5 +331,9 @@
         </button>
       </div>
     </form>
+
+    <app-location-picker-dialog #locationPicker
+      (confirmed)="onLocationPicked($event)">
+    </app-location-picker-dialog>
   }
 </div>

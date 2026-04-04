@@ -1,15 +1,17 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, ViewChild, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, ActivatedRoute, Router } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TrainerEventService, CreateGroupEventRequest, UpdateGroupEventRequest } from '../../services/trainer-event.service';
 import { GroupEventDto } from '../../services/group-event.service';
+import { GeocodingService } from '../../services/geocoding.service';
+import { LocationPickerDialogComponent } from '../location-picker-dialog/location-picker-dialog';
 
 @Component({
   selector: 'app-trainer-event-form',
   standalone: true,
-  imports: [CommonModule, RouterModule, ReactiveFormsModule, TranslateModule],
+  imports: [CommonModule, RouterModule, ReactiveFormsModule, TranslateModule, LocationPickerDialogComponent],
   templateUrl: './trainer-event-form.html',
   styleUrl: './trainer-event-form.scss'
 })
@@ -18,7 +20,10 @@ export class TrainerEventForm implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly trainerService = inject(TrainerEventService);
+  private readonly geocodingService = inject(GeocodingService);
   readonly translate = inject(TranslateService);
+
+  @ViewChild('locationPicker') locationPicker!: LocationPickerDialogComponent;
 
   form!: FormGroup;
   isEditMode = signal(false);
@@ -26,6 +31,8 @@ export class TrainerEventForm implements OnInit {
   loading = signal(false);
   saving = signal(false);
   error = signal<string | null>(null);
+  geocoding = signal(false);
+  geocodeError = signal<string | null>(null);
 
   readonly difficulties = ['BEGINNER', 'INTERMEDIATE', 'ADVANCED'];
   readonly currencies = ['EUR', 'USD', 'GBP', 'CHF'];
@@ -208,6 +215,48 @@ export class TrainerEventForm implements OnInit {
         }
       });
     }
+  }
+
+  geocodeLocation(): void {
+    const query = this.form.get('locationName')?.value;
+    if (!query || query.trim().length < 2) return;
+
+    this.geocoding.set(true);
+    this.geocodeError.set(null);
+
+    this.geocodingService.geocode(query).subscribe({
+      next: results => {
+        this.geocoding.set(false);
+        if (results.length > 0) {
+          const first = results[0];
+          this.form.patchValue({
+            latitude: Math.round(parseFloat(first.lat) * 1000000) / 1000000,
+            longitude: Math.round(parseFloat(first.lon) * 1000000) / 1000000
+          });
+          this.geocodeError.set(null);
+        } else {
+          this.geocodeError.set(this.translate.instant('TRAINER_EVENTS.GEOCODE_NOT_FOUND'));
+        }
+      },
+      error: () => {
+        this.geocoding.set(false);
+        this.geocodeError.set(this.translate.instant('TRAINER_EVENTS.GEOCODE_NOT_FOUND'));
+      }
+    });
+  }
+
+  openLocationPicker(): void {
+    const lat = this.form.get('latitude')?.value;
+    const lng = this.form.get('longitude')?.value;
+    this.locationPicker.open(lat, lng);
+  }
+
+  onLocationPicked(coords: { lat: number; lng: number }): void {
+    this.form.patchValue({
+      latitude: coords.lat,
+      longitude: coords.lng
+    });
+    this.geocodeError.set(null);
   }
 
   goBack(): void {

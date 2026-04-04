@@ -1,0 +1,40 @@
+<dialog #dialog class="location-picker-dialog" (click)="onBackdropClick($event)">
+  <div class="picker-inner" (click)="$event.stopPropagation()">
+
+    <header class="picker-header">
+      <div class="picker-header-title">
+        <span class="material-symbols-outlined picker-icon">map</span>
+        <span>{{ 'TRAINER_EVENTS.LOCATION_PICKER_TITLE' | translate }}</span>
+      </div>
+      <button class="picker-close" (click)="close()">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </header>
+
+    <p class="picker-hint">{{ 'TRAINER_EVENTS.LOCATION_PICKER_HINT' | translate }}</p>
+
+    <div class="picker-map-container">
+      <div class="picker-map"></div>
+    </div>
+
+    <footer class="picker-footer">
+      <div class="picker-coords">
+        @if (selectedLat() != null && selectedLng() != null) {
+          <span class="material-symbols-outlined coords-icon">location_on</span>
+          <span>{{ selectedLat() }}, {{ selectedLng() }}</span>
+        } @else {
+          <span class="coords-placeholder">{{ 'TRAINER_EVENTS.LOCATION_PICKER_NO_SELECTION' | translate }}</span>
+        }
+      </div>
+      <div class="picker-actions">
+        <button type="button" class="btn-ghost" (click)="close()">
+          {{ 'TRAINER_EVENTS.LOCATION_PICKER_CANCEL' | translate }}
+        </button>
+        <button type="button" class="btn-primary" (click)="confirm()" [disabled]="selectedLat() == null">
+          {{ 'TRAINER_EVENTS.LOCATION_PICKER_CONFIRM' | translate }}
+        </button>
+      </div>
+    </footer>
+
+  </div>
+</dialog>
