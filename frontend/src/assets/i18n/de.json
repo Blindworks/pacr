@@ -246,9 +246,6 @@
     "VO2_MAX": "VO2 Max",
     "HR_CORRECTED": "HF-korrigiert",
     "NO_RUN_UPLOADED": "Noch kein Lauf hochgeladen",
-    "CURRENT_STREAK": "Aktuelle Serie",
-    "DAYS_IN_ROW": "Tage am Stück",
-    "LONGEST_STREAK": "Längste Serie",
     "LOAD_STATUS_21": "21-Tage Trainingsbelastung",
     "LOAD_STATUS": "Trainingsbelastungsstatus",
     "NEXT_COMPETITION": "Nächster Wettkampf",
@@ -530,7 +527,10 @@
     "COACH_INSIGHT_TEXT": "Deine 80/20-Balance ist leicht verschoben. Überlege, Tempo-Einheiten zu reduzieren, um die aerobe Effizienz zu maximieren.",
     "PERSONAL_BESTS": "Persönliche Bestleistungen",
     "GOAL": "Ziel:",
-    "ADD_NEW_GOAL": "Neues Ziel hinzufügen"
+    "ADD_NEW_GOAL": "Neues Ziel hinzufügen",
+    "CURRENT_STREAK": "Aktuelle Serie",
+    "DAYS_IN_ROW": "Tage am Stück",
+    "LONGEST_STREAK": "Längste Serie"
   },
   "ACHIEVEMENTS": {
     "TITLE": "Erfolge",
@@ -1585,6 +1585,16 @@
     "EXTEND_CUSTOM": "Eigenes Datum",
     "EXTENDED_SUCCESS": "Serie verlängert",
     "LOAD_ERROR": "Event konnte nicht geladen werden",
-    "SAVE_ERROR": "Event konnte nicht gespeichert werden"
+    "SAVE_ERROR": "Event konnte nicht gespeichert werden",
+    "GEOCODE_BTN": "Koordinaten suchen",
+    "MAP_PICKER_BTN": "Auf Karte auswählen",
+    "GEOCODE_NOT_FOUND": "Ort nicht gefunden. Versuche eine genauere Adresse oder nutze die Kartenauswahl.",
+    "GEOCODE_SEARCHING": "Suche...",
+    "COORDS_HINT": "Koordinaten gesetzt",
+    "LOCATION_PICKER_TITLE": "Ort auswählen",
+    "LOCATION_PICKER_HINT": "Klicke auf die Karte, um den Treffpunkt zu markieren.",
+    "LOCATION_PICKER_NO_SELECTION": "Kein Ort ausgewählt",
+    "LOCATION_PICKER_CONFIRM": "Übernehmen",
+    "LOCATION_PICKER_CANCEL": "Abbrechen"
   }
 }

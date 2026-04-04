@@ -246,9 +246,6 @@
     "VO2_MAX": "VO2 Max",
     "HR_CORRECTED": "HR-corrected",
     "NO_RUN_UPLOADED": "No run uploaded yet",
-    "CURRENT_STREAK": "Current Streak",
-    "DAYS_IN_ROW": "Days in a row",
-    "LONGEST_STREAK": "Longest Streak",
     "LOAD_STATUS_21": "21-Day Training Load",
     "LOAD_STATUS": "Training Load Status",
     "NEXT_COMPETITION": "Next Competition",
@@ -530,7 +527,10 @@
     "COACH_INSIGHT_TEXT": "Your 80/20 balance is slightly off. Consider reducing Tempo sessions to maximize aerobic efficiency.",
     "PERSONAL_BESTS": "Personal Bests",
     "GOAL": "Goal:",
-    "ADD_NEW_GOAL": "Add New Goal"
+    "ADD_NEW_GOAL": "Add New Goal",
+    "CURRENT_STREAK": "Current Streak",
+    "DAYS_IN_ROW": "Days in a row",
+    "LONGEST_STREAK": "Longest Streak"
   },
   "ACHIEVEMENTS": {
     "TITLE": "Achievements",
@@ -1585,6 +1585,16 @@
     "EXTEND_CUSTOM": "Custom date",
     "EXTENDED_SUCCESS": "Series extended",
     "LOAD_ERROR": "Failed to load event",
-    "SAVE_ERROR": "Failed to save event"
+    "SAVE_ERROR": "Failed to save event",
+    "GEOCODE_BTN": "Search coordinates",
+    "MAP_PICKER_BTN": "Pick on map",
+    "GEOCODE_NOT_FOUND": "Location not found. Try a more specific address or use the map picker.",
+    "GEOCODE_SEARCHING": "Searching...",
+    "COORDS_HINT": "Coordinates set",
+    "LOCATION_PICKER_TITLE": "Pick Location",
+    "LOCATION_PICKER_HINT": "Click on the map to place a marker at the meeting point.",
+    "LOCATION_PICKER_NO_SELECTION": "No location selected",
+    "LOCATION_PICKER_CONFIRM": "Confirm",
+    "LOCATION_PICKER_CANCEL": "Cancel"
   }
 }

@@ -3,6 +3,7 @@ import { Component, OnInit, signal, computed, inject, ViewChild } from '@angular
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { StatisticsService, TrainingStatsDto, StatsBucket, Vo2MaxPoint } from '../../services/statistics.service';
 import { PersonalRecordService, PersonalRecord } from '../../services/personal-record.service';
+import { AchievementService, StreakInfo } from '../../services/achievement.service';
 import { PersonalRecordDetailDialogComponent } from '../personal-record-detail-dialog/personal-record-detail-dialog.component';
 import { AddPersonalRecordDialogComponent } from '../add-personal-record-dialog/add-personal-record-dialog.component';
 import { ProOverlay } from '../shared/pro-overlay/pro-overlay';
@@ -51,6 +52,7 @@ const PERIOD_API_MAP: Record<string, string> = {
 export class Statistics implements OnInit {
   private readonly statisticsService = inject(StatisticsService);
   private readonly personalRecordService = inject(PersonalRecordService);
+  private readonly achievementService = inject(AchievementService);
   private readonly translate = inject(TranslateService);
 
   @ViewChild('detailDialog') private detailDialog!: PersonalRecordDetailDialogComponent;
@@ -78,12 +80,17 @@ export class Statistics implements OnInit {
 
   private fitnessTrendDots: { x: number; y: number; vo2max: number; timestamp: number }[] = [];
 
+  protected streak = signal<StreakInfo | null>(null);
   protected personalBests: PersonalRecord[] = [];
   protected selectedRecord: PersonalRecord | null = null;
 
   ngOnInit(): void {
     this.loadStats();
     this.loadPersonalRecords();
+    this.achievementService.getStreak().subscribe({
+      next: s => this.streak.set(s),
+      error: () => {},
+    });
     this.statisticsService.getVo2MaxHistory().subscribe({
       next: data => this.buildFitnessTrend(data),
       error: () => {},

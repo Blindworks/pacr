@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { DashboardService, DashboardData } from '../../services/dashboard.service';
-import { AchievementService, StreakInfo } from '../../services/achievement.service';
 import { AcwrInfoDialogService } from '../../services/acwr-info-dialog.service';
 import { AcwrInfoDialog } from '../acwr-info-dialog/acwr-info-dialog';
 import { StrainInfoDialogService } from '../../services/strain-info-dialog.service';
@@ -20,7 +19,6 @@ import { ReadinessInfoDialog } from '../readiness-info-dialog/readiness-info-dia
 })
 export class Dashboard implements OnInit {
   private readonly dashboardService = inject(DashboardService);
-  private readonly achievementService = inject(AchievementService);
   private readonly translate = inject(TranslateService);
   protected readonly acwrInfoService = inject(AcwrInfoDialogService);
   protected readonly strainInfoService = inject(StrainInfoDialogService);
@@ -29,7 +27,6 @@ export class Dashboard implements OnInit {
   data: DashboardData | null = null;
   profileError = signal<string | null>(null);
   missingFields = signal<string[]>([]);
-  streak = signal<StreakInfo | null>(null);
 
   private readonly FIELD_LABELS: Record<string, string> = {
     firstName: 'DASHBOARD.FIELD_FIRST_NAME',
@@ -57,10 +54,6 @@ export class Dashboard implements OnInit {
       }
     });
 
-    this.achievementService.getStreak().subscribe({
-      next: s => this.streak.set(s),
-      error: () => {}
-    });
   }
 
   // ── Load Trend Bar Chart (aktuelle Woche Mo–So) ──────────────────

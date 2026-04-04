@@ -59,6 +59,31 @@
     </article>
   </div>
 
+  @if (streak(); as s) {
+    <div class="streak-row">
+      <div class="stat-card">
+        <div class="stat-icon stat-icon--streak">
+          <span class="material-symbols-outlined">local_fire_department</span>
+        </div>
+        <div class="stat-body">
+          <p class="stat-label">{{ 'STATISTICS.CURRENT_STREAK' | translate }}</p>
+          <p class="stat-value">{{ s.currentStreak }} <span class="stat-unit">{{ 'STATISTICS.DAYS_IN_ROW' | translate }}</span></p>
+        </div>
+      </div>
+      @if (s.longestStreak > 0) {
+        <div class="stat-card">
+          <div class="stat-icon stat-icon--amber">
+            <span class="material-symbols-outlined">military_tech</span>
+          </div>
+          <div class="stat-body">
+            <p class="stat-label">{{ 'STATISTICS.LONGEST_STREAK' | translate }}</p>
+            <p class="stat-value">{{ s.longestStreak }} <span class="stat-unit">{{ 'COMMON.DAYS' | translate }}</span></p>
+          </div>
+        </div>
+      }
+    </div>
+  }
+
   <div class="chart-grid">
     <article class="panel">
       <div class="panel-head">
