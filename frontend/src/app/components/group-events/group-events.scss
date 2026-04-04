@@ -91,7 +91,66 @@
 .filter-bar {
   display: flex;
   gap: 1rem;
+  align-items: center;
   margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+
+.pace-filter {
+  .pace-filter-input {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--bg-card);
+    border-radius: 0.25rem;
+    padding: 0.5rem 1rem;
+
+    .material-symbols-outlined {
+      font-size: 1.125rem;
+      color: var(--text-muted);
+    }
+
+    input {
+      background: transparent;
+      border: none;
+      outline: none;
+      font-family: 'Lexend', sans-serif;
+      font-size: 0.6875rem;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      color: var(--text);
+      width: 3.5rem;
+
+      &::placeholder {
+        color: var(--text-muted);
+      }
+    }
+
+    .pace-unit {
+      font-family: 'Lexend', sans-serif;
+      font-size: 0.6875rem;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      color: var(--text-muted);
+    }
+
+    .btn-clear-filter {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      display: flex;
+      color: var(--text-muted);
+
+      .material-symbols-outlined {
+        font-size: 1rem;
+      }
+
+      &:hover {
+        color: var(--text);
+      }
+    }
+  }
 }
 
 .select-wrapper {

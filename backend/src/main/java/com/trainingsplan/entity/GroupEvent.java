@@ -49,6 +49,12 @@ public class GroupEvent {
     @Column(name = "distance_km")
     private Double distanceKm;
 
+    @Column(name = "pace_min_seconds_per_km")
+    private Integer paceMinSecondsPerKm;
+
+    @Column(name = "pace_max_seconds_per_km")
+    private Integer paceMaxSecondsPerKm;
+
     @Column(name = "max_participants")
     private Integer maxParticipants;
 
@@ -112,6 +118,12 @@ public class GroupEvent {
 
     public Double getDistanceKm() { return distanceKm; }
     public void setDistanceKm(Double distanceKm) { this.distanceKm = distanceKm; }
+
+    public Integer getPaceMinSecondsPerKm() { return paceMinSecondsPerKm; }
+    public void setPaceMinSecondsPerKm(Integer paceMinSecondsPerKm) { this.paceMinSecondsPerKm = paceMinSecondsPerKm; }
+
+    public Integer getPaceMaxSecondsPerKm() { return paceMaxSecondsPerKm; }
+    public void setPaceMaxSecondsPerKm(Integer paceMaxSecondsPerKm) { this.paceMaxSecondsPerKm = paceMaxSecondsPerKm; }
 
     public Integer getMaxParticipants() { return maxParticipants; }
     public void setMaxParticipants(Integer maxParticipants) { this.maxParticipants = maxParticipants; }

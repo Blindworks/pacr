@@ -76,6 +76,16 @@
               </div>
             </div>
           }
+
+          @if (ev.paceMinSecondsPerKm && ev.paceMaxSecondsPerKm) {
+            <div class="info-item">
+              <span class="material-symbols-outlined">speed</span>
+              <div class="info-content">
+                <span class="info-label">{{ 'GROUP_EVENTS.PACE' | translate }}</span>
+                <span class="info-value">{{ formatPace(ev.paceMinSecondsPerKm) }} - {{ formatPace(ev.paceMaxSecondsPerKm) }} /km</span>
+              </div>
+            </div>
+          }
         </div>
       </div>
 

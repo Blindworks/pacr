@@ -15,6 +15,8 @@ public record GroupEventDto(
         Double latitude,
         Double longitude,
         Double distanceKm,
+        Integer paceMinSecondsPerKm,
+        Integer paceMaxSecondsPerKm,
         Integer maxParticipants,
         int currentParticipants,
         Integer costCents,

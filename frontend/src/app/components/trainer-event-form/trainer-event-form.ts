@@ -27,7 +27,7 @@ export class TrainerEventForm implements OnInit {
   saving = signal(false);
   error = signal<string | null>(null);
 
-  readonly difficulties = ['EASY', 'MODERATE', 'HARD', 'EXPERT'];
+  readonly difficulties = ['BEGINNER', 'INTERMEDIATE', 'ADVANCED'];
   readonly currencies = ['EUR', 'USD', 'GBP', 'CHF'];
 
   ngOnInit(): void {
@@ -52,6 +52,8 @@ export class TrainerEventForm implements OnInit {
       latitude: [null],
       longitude: [null],
       distanceKm: [null],
+      paceMinSecondsPerKm: [null],
+      paceMaxSecondsPerKm: [null],
       maxParticipants: [null],
       costCents: [null],
       costCurrency: ['EUR'],
@@ -87,6 +89,8 @@ export class TrainerEventForm implements OnInit {
       latitude: event.latitude,
       longitude: event.longitude,
       distanceKm: event.distanceKm,
+      paceMinSecondsPerKm: event.paceMinSecondsPerKm,
+      paceMaxSecondsPerKm: event.paceMaxSecondsPerKm,
       maxParticipants: event.maxParticipants,
       costCents: event.costCents,
       costCurrency: event.costCurrency || 'EUR',
@@ -125,6 +129,8 @@ export class TrainerEventForm implements OnInit {
       latitude: formValue.latitude || undefined,
       longitude: formValue.longitude || undefined,
       distanceKm: formValue.distanceKm || undefined,
+      paceMinSecondsPerKm: formValue.paceMinSecondsPerKm || undefined,
+      paceMaxSecondsPerKm: formValue.paceMaxSecondsPerKm || undefined,
       maxParticipants: formValue.maxParticipants || undefined,
       costCents: formValue.costCents || undefined,
       costCurrency: formValue.costCurrency || undefined,
@@ -177,5 +183,24 @@ export class TrainerEventForm implements OnInit {
   isFieldInvalid(fieldName: string): boolean {
     const field = this.form.get(fieldName);
     return !!field && field.invalid && field.touched;
+  }
+
+  formatPaceDisplay(seconds: number | null): string {
+    if (!seconds) return '';
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  }
+
+  parsePaceInput(value: string): number | null {
+    const match = value.match(/^(\d{1,2}):(\d{2})$/);
+    if (!match) return null;
+    return parseInt(match[1]) * 60 + parseInt(match[2]);
+  }
+
+  onPaceInput(field: string, event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const seconds = this.parsePaceInput(input.value);
+    this.form.get(field)?.setValue(seconds);
   }
 }

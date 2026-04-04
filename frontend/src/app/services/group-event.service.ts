@@ -16,6 +16,8 @@ export interface GroupEventDto {
   latitude: number | null;
   longitude: number | null;
   distanceKm: number | null;
+  paceMinSecondsPerKm: number | null;
+  paceMaxSecondsPerKm: number | null;
   maxParticipants: number | null;
   currentParticipants: number;
   costCents: number | null;

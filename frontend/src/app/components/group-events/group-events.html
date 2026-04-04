@@ -24,17 +24,34 @@
     </button>
   </div>
 
-  <!-- Radius selector (only for Near Me tab) -->
-  @if (activeTab() === 'near') {
+  <!-- Filters -->
+  @if (activeTab() === 'near' || activeTab() === 'upcoming') {
     <div class="filter-bar">
-      <div class="select-wrapper">
-        <select (change)="onRadiusChange(+$any($event.target).value)">
-          <option value="5" [selected]="radiusKm() === 5">{{ 'GROUP_EVENTS.RADIUS_5' | translate }}</option>
-          <option value="10" [selected]="radiusKm() === 10">{{ 'GROUP_EVENTS.RADIUS_10' | translate }}</option>
-          <option value="25" [selected]="radiusKm() === 25">{{ 'GROUP_EVENTS.RADIUS_25' | translate }}</option>
-          <option value="50" [selected]="radiusKm() === 50">{{ 'GROUP_EVENTS.RADIUS_50' | translate }}</option>
-        </select>
-        <span class="material-symbols-outlined select-arrow">expand_more</span>
+      @if (activeTab() === 'near') {
+        <div class="select-wrapper">
+          <select (change)="onRadiusChange(+$any($event.target).value)">
+            <option value="5" [selected]="radiusKm() === 5">{{ 'GROUP_EVENTS.RADIUS_5' | translate }}</option>
+            <option value="10" [selected]="radiusKm() === 10">{{ 'GROUP_EVENTS.RADIUS_10' | translate }}</option>
+            <option value="25" [selected]="radiusKm() === 25">{{ 'GROUP_EVENTS.RADIUS_25' | translate }}</option>
+            <option value="50" [selected]="radiusKm() === 50">{{ 'GROUP_EVENTS.RADIUS_50' | translate }}</option>
+          </select>
+          <span class="material-symbols-outlined select-arrow">expand_more</span>
+        </div>
+      }
+      <div class="pace-filter">
+        <div class="pace-filter-input">
+          <span class="material-symbols-outlined">speed</span>
+          <input type="text" placeholder="5:30"
+                 [value]="paceFilterSeconds() ? formatPace(paceFilterSeconds()!) : ''"
+                 (blur)="onPaceFilterChange($event)"
+                 (keyup.enter)="onPaceFilterChange($event)" />
+          <span class="pace-unit">{{ 'GROUP_EVENTS.PACE_UNIT' | translate }}</span>
+          @if (paceFilterSeconds()) {
+            <button class="btn-clear-filter" (click)="clearPaceFilter()">
+              <span class="material-symbols-outlined">close</span>
+            </button>
+          }
+        </div>
       </div>
     </div>
   }
@@ -62,7 +79,7 @@
   } @else {
     <!-- Event Cards Grid -->
     <div class="event-grid">
-      @for (event of events(); track event.id) {
+      @for (event of filteredEvents(); track event.id) {
         <a [routerLink]="['/community/groups', event.id]" class="event-card">
           <!-- Card Header -->
           <div class="card-header">
@@ -98,6 +115,12 @@
               <div class="event-info-row">
                 <span class="material-symbols-outlined">route</span>
                 <span>{{ event.distanceKm }} km</span>
+              </div>
+            }
+            @if (event.paceMinSecondsPerKm && event.paceMaxSecondsPerKm) {
+              <div class="event-info-row">
+                <span class="material-symbols-outlined">speed</span>
+                <span>{{ formatPace(event.paceMinSecondsPerKm) }} - {{ formatPace(event.paceMaxSecondsPerKm) }} /km</span>
               </div>
             }
           </div>

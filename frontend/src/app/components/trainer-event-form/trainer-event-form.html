@@ -138,6 +138,32 @@
         </div>
       </div>
 
+      <!-- Pace Section -->
+      <div class="form-section">
+        <h2 class="section-title">
+          <span class="material-symbols-outlined">speed</span>
+          {{ 'TRAINER_EVENTS.SECTION_PACE' | translate }}
+        </h2>
+
+        <div class="form-row">
+          <div class="form-field">
+            <label for="paceMin">{{ 'TRAINER_EVENTS.FIELD_PACE_FROM' | translate }}</label>
+            <input id="paceMin" type="text" placeholder="5:00"
+                   [value]="formatPaceDisplay(form.get('paceMinSecondsPerKm')?.value)"
+                   (blur)="onPaceInput('paceMinSecondsPerKm', $event)" />
+            <span class="field-hint">{{ 'TRAINER_EVENTS.PACE_HINT_FAST' | translate }}</span>
+          </div>
+
+          <div class="form-field">
+            <label for="paceMax">{{ 'TRAINER_EVENTS.FIELD_PACE_TO' | translate }}</label>
+            <input id="paceMax" type="text" placeholder="6:30"
+                   [value]="formatPaceDisplay(form.get('paceMaxSecondsPerKm')?.value)"
+                   (blur)="onPaceInput('paceMaxSecondsPerKm', $event)" />
+            <span class="field-hint">{{ 'TRAINER_EVENTS.PACE_HINT_SLOW' | translate }}</span>
+          </div>
+        </div>
+      </div>
+
       <!-- Capacity & Cost Section -->
       <div class="form-section">
         <h2 class="section-title">

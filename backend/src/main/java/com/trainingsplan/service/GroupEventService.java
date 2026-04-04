@@ -42,6 +42,8 @@ public class GroupEventService {
         event.setLatitude(request.latitude());
         event.setLongitude(request.longitude());
         event.setDistanceKm(request.distanceKm());
+        event.setPaceMinSecondsPerKm(request.paceMinSecondsPerKm());
+        event.setPaceMaxSecondsPerKm(request.paceMaxSecondsPerKm());
         event.setMaxParticipants(request.maxParticipants());
         event.setCostCents(request.costCents());
         if (request.costCurrency() != null) {
@@ -72,6 +74,8 @@ public class GroupEventService {
         if (request.latitude() != null) event.setLatitude(request.latitude());
         if (request.longitude() != null) event.setLongitude(request.longitude());
         if (request.distanceKm() != null) event.setDistanceKm(request.distanceKm());
+        if (request.paceMinSecondsPerKm() != null) event.setPaceMinSecondsPerKm(request.paceMinSecondsPerKm());
+        if (request.paceMaxSecondsPerKm() != null) event.setPaceMaxSecondsPerKm(request.paceMaxSecondsPerKm());
         if (request.maxParticipants() != null) event.setMaxParticipants(request.maxParticipants());
         if (request.costCents() != null) event.setCostCents(request.costCents());
         if (request.costCurrency() != null) event.setCostCurrency(request.costCurrency());
@@ -250,6 +254,8 @@ public class GroupEventService {
                 event.getLatitude(),
                 event.getLongitude(),
                 event.getDistanceKm(),
+                event.getPaceMinSecondsPerKm(),
+                event.getPaceMaxSecondsPerKm(),
                 event.getMaxParticipants(),
                 participants,
                 event.getCostCents(),

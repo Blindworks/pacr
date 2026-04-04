@@ -16,6 +16,8 @@ export interface CreateGroupEventRequest {
   latitude?: number;
   longitude?: number;
   distanceKm?: number;
+  paceMinSecondsPerKm?: number;
+  paceMaxSecondsPerKm?: number;
   maxParticipants?: number;
   costCents?: number;
   costCurrency?: string;
@@ -32,6 +34,8 @@ export interface UpdateGroupEventRequest {
   latitude?: number;
   longitude?: number;
   distanceKm?: number;
+  paceMinSecondsPerKm?: number;
+  paceMaxSecondsPerKm?: number;
   maxParticipants?: number;
   costCents?: number;
   costCurrency?: string;

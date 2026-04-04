@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Pace range (from/to) for group events: trainers can specify target pace in mm:ss/km format when creating events
+- Pace filter in group events overview: users can enter their pace to find matching events
+- Pace display on event cards and detail view
+- New Liquibase migration (086) for pace columns on group_events table
+- i18n support (en + de) for all pace-related labels
+
 ## [0.9.0] - 2026-04-03
 
 ### Added

@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -26,6 +26,16 @@ export class GroupEvents implements OnInit {
   radiusKm = signal(10);
   userLat = signal<number | null>(null);
   userLon = signal<number | null>(null);
+  paceFilterSeconds = signal<number | null>(null);
+
+  filteredEvents = computed(() => {
+    const pace = this.paceFilterSeconds();
+    if (!pace) return this.events();
+    return this.events().filter(e => {
+      if (!e.paceMinSecondsPerKm || !e.paceMaxSecondsPerKm) return true;
+      return pace >= e.paceMinSecondsPerKm && pace <= e.paceMaxSecondsPerKm;
+    });
+  });
 
   ngOnInit(): void {
     this.getUserLocation();
@@ -113,5 +123,28 @@ export class GroupEvents implements OnInit {
   getSpotsLeft(event: GroupEventDto): number | null {
     if (!event.maxParticipants) return null;
     return event.maxParticipants - event.currentParticipants;
+  }
+
+  formatPace(seconds: number): string {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  }
+
+  onPaceFilterChange(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const value = input.value.trim();
+    if (!value) {
+      this.paceFilterSeconds.set(null);
+      return;
+    }
+    const match = value.match(/^(\d{1,2}):(\d{2})$/);
+    if (match) {
+      this.paceFilterSeconds.set(parseInt(match[1]) * 60 + parseInt(match[2]));
+    }
+  }
+
+  clearPaceFilter(): void {
+    this.paceFilterSeconds.set(null);
   }
 }
