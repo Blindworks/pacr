@@ -127,6 +127,25 @@
   }
 }
 
+.recurring-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-family: 'Lexend', sans-serif;
+  font-size: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  padding: 0.25rem 0.625rem;
+  border-radius: 1rem;
+  white-space: nowrap;
+  background: rgba(var(--pp-rgb, 169, 224, 0), 0.15);
+  color: var(--pp);
+
+  .material-symbols-outlined {
+    font-size: 0.75rem;
+  }
+}
+
 .status-badge {
   font-family: 'Lexend', sans-serif;
   font-size: 0.5rem;
@@ -226,32 +245,32 @@
   }
 }
 
-// === FAB ===
-.fab {
-  position: fixed;
-  bottom: 2rem;
-  right: 2rem;
-  width: 3.5rem;
-  height: 3.5rem;
+// === HEADER ACTION BUTTON ===
+.header-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.5rem;
   background: var(--pp);
   color: var(--btn-active-text);
   border: none;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
-  transition: transform v.$transition-normal, filter v.$transition-normal;
+  border-radius: 0.25rem;
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 900;
+  font-size: 0.6875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
   text-decoration: none;
-  z-index: v.$z-sticky;
+  cursor: pointer;
+  transition: filter v.$transition-normal;
+  white-space: nowrap;
+  flex-shrink: 0;
 
   .material-symbols-outlined {
-    font-size: 1.5rem;
+    font-size: 1.125rem;
   }
 
   &:hover {
-    transform: scale(1.08);
     filter: brightness(1.1);
   }
 }
