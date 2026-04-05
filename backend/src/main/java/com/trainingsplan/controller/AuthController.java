@@ -32,6 +32,8 @@ import java.util.Map;
 @RequestMapping("/api/auth")
 public class AuthController {
 
+    private static final int MIN_PASSWORD_LENGTH = 10;
+
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
@@ -39,12 +41,16 @@ public class AuthController {
     private final EmailService emailService;
     private final AuditLogService auditLogService;
     private final TokenBlacklistService tokenBlacklistService;
+    private final com.trainingsplan.security.RateLimitingService rateLimitingService;
+    private final com.trainingsplan.service.RefreshTokenService refreshTokenService;
     private final SecureRandom secureRandom = new SecureRandom();
 
     public AuthController(UserRepository userRepository, PasswordEncoder passwordEncoder,
                           JwtService jwtService, AuthenticationManager authenticationManager,
                           EmailService emailService, AuditLogService auditLogService,
-                          TokenBlacklistService tokenBlacklistService) {
+                          TokenBlacklistService tokenBlacklistService,
+                          com.trainingsplan.security.RateLimitingService rateLimitingService,
+                          com.trainingsplan.service.RefreshTokenService refreshTokenService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
@@ -52,10 +58,25 @@ public class AuthController {
         this.emailService = emailService;
         this.auditLogService = auditLogService;
         this.tokenBlacklistService = tokenBlacklistService;
+        this.rateLimitingService = rateLimitingService;
+        this.refreshTokenService = refreshTokenService;
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody RegisterRequest request) {
+    public ResponseEntity<?> register(@RequestBody RegisterRequest request, HttpServletRequest httpRequest) {
+        String clientIp = httpRequest.getRemoteAddr();
+        if (rateLimitingService.isRegisterRateLimited(clientIp)) {
+            return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS)
+                    .body(new MessageResponse("Too many registration attempts. Please try again later."));
+        }
+        rateLimitingService.recordRegisterAttempt(clientIp);
+
+        // Password policy validation
+        String passwordError = validatePassword(request.password());
+        if (passwordError != null) {
+            return ResponseEntity.badRequest().body(new MessageResponse(passwordError));
+        }
+
         if (userRepository.findByUsername(request.username()).isPresent()) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Username already taken");
         }
@@ -82,12 +103,19 @@ public class AuthController {
         );
 
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(new AuthResponse(null, saved.getId(), saved.getUsername(), saved.getEmail(),
+                .body(new AuthResponse(null, null, saved.getId(), saved.getUsername(), saved.getEmail(),
                         saved.getRole().name(), saved.getStatus().name()));
     }
 
     @PostMapping("/verify-email")
-    public ResponseEntity<?> verifyEmail(@RequestBody EmailVerificationRequest request) {
+    public ResponseEntity<?> verifyEmail(@RequestBody EmailVerificationRequest request, HttpServletRequest httpRequest) {
+        String clientIp = httpRequest.getRemoteAddr();
+        if (rateLimitingService.isVerificationRateLimited(clientIp)) {
+            return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS)
+                    .body(new MessageResponse("Too many verification attempts. Please try again later."));
+        }
+        rateLimitingService.recordVerificationAttempt(clientIp);
+
         User user = userRepository.findByEmail(request.email()).orElse(null);
         if (user == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MessageResponse("Ungueltige E-Mail oder Code"));
@@ -138,6 +166,13 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody AuthRequest request, HttpServletRequest httpRequest) {
+        String clientIp = httpRequest.getRemoteAddr();
+        if (rateLimitingService.isLoginRateLimited(clientIp)) {
+            return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS)
+                    .body(new MessageResponse("Too many login attempts. Please try again later."));
+        }
+        rateLimitingService.recordLoginAttempt(clientIp);
+
         User user = userRepository.findByUsername(request.username())
                 .or(() -> userRepository.findByEmail(request.username()))
                 .orElse(null);
@@ -158,8 +193,9 @@ public class AuthController {
         auditLogService.log(authenticatedUser, AuditAction.LOGIN, null, null,
                 Map.of("ip", httpRequest.getRemoteAddr()));
         String token = jwtService.generateToken(authenticatedUser);
+        String refreshToken = refreshTokenService.createRefreshToken(authenticatedUser);
 
-        return ResponseEntity.ok(new AuthResponse(token, authenticatedUser.getId(), authenticatedUser.getUsername(),
+        return ResponseEntity.ok(new AuthResponse(token, refreshToken, authenticatedUser.getId(), authenticatedUser.getUsername(),
                 authenticatedUser.getEmail(), authenticatedUser.getRole().name(), authenticatedUser.getStatus().name()));
     }
 
@@ -173,14 +209,37 @@ public class AuthController {
         };
     }
 
+    public record RefreshRequest(String refreshToken) {}
+
+    @PostMapping("/refresh")
+    public ResponseEntity<?> refresh(@RequestBody RefreshRequest request) {
+        if (request.refreshToken() == null || request.refreshToken().isBlank()) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Refresh token is required"));
+        }
+
+        return refreshTokenService.validateAndRotate(request.refreshToken())
+                .map(user -> {
+                    String newAccessToken = jwtService.generateToken(user);
+                    String newRefreshToken = refreshTokenService.createRefreshToken(user);
+                    return ResponseEntity.ok(new AuthResponse(newAccessToken, newRefreshToken, user.getId(),
+                            user.getUsername(), user.getEmail(), user.getRole().name(), user.getStatus().name()));
+                })
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body(new AuthResponse(null, null, null, null, null, null, "INVALID_REFRESH_TOKEN")));
+    }
+
     @PostMapping("/logout")
-    public ResponseEntity<MessageResponse> logout(HttpServletRequest request) {
+    public ResponseEntity<MessageResponse> logout(HttpServletRequest request, @RequestBody(required = false) RefreshRequest refreshRequest) {
         String authHeader = request.getHeader("Authorization");
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String token = authHeader.substring(7);
             try {
                 java.util.Date expiration = jwtService.extractClaim(token, io.jsonwebtoken.Claims::getExpiration);
                 tokenBlacklistService.blacklist(token, expiration);
+                // Also revoke all refresh tokens for this user
+                String username = jwtService.extractUsername(token);
+                userRepository.findByUsername(username).ifPresent(
+                        user -> refreshTokenService.revokeAllForUser(user.getId()));
             } catch (Exception e) {
                 // Token already expired or invalid — nothing to blacklist
             }
@@ -190,5 +249,22 @@ public class AuthController {
 
     private String generateVerificationCode() {
         return String.format("%06d", secureRandom.nextInt(1_000_000));
+    }
+
+    private String validatePassword(String password) {
+        if (password == null || password.length() < MIN_PASSWORD_LENGTH) {
+            return "Password must be at least " + MIN_PASSWORD_LENGTH + " characters long";
+        }
+        boolean hasUpper = false, hasLower = false, hasDigit = false, hasSpecial = false;
+        for (char c : password.toCharArray()) {
+            if (Character.isUpperCase(c)) hasUpper = true;
+            else if (Character.isLowerCase(c)) hasLower = true;
+            else if (Character.isDigit(c)) hasDigit = true;
+            else hasSpecial = true;
+        }
+        if (!hasUpper || !hasLower || !hasDigit || !hasSpecial) {
+            return "Password must contain at least one uppercase letter, one lowercase letter, one digit, and one special character";
+        }
+        return null;
     }
 }

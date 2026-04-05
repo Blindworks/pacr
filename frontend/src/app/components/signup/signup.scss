@@ -204,6 +204,70 @@
   &:active { transform: scale(0.98); }
 }
 
+// Password strength indicator
+.password-strength {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.strength-bar-track {
+  flex: 1;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.strength-bar-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.3s ease, background 0.3s ease;
+}
+
+.strength-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+  min-width: 4rem;
+  text-align: right;
+}
+
+.password-rules {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+
+  li {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8125rem;
+    color: var(--text-muted);
+    transition: color 0.2s ease;
+
+    &.met {
+      color: #22c55e;
+    }
+  }
+
+  .rule-icon {
+    font-size: 1rem;
+    font-variation-settings: 'FILL' 1;
+  }
+
+  li:not(.met) .rule-icon {
+    font-size: 1rem;
+    font-variation-settings: 'FILL' 0;
+    opacity: 0.4;
+  }
+}
+
 .signup-error {
   background: rgba(239, 68, 68, 0.1);
   border: 1px solid rgba(239, 68, 68, 0.3);

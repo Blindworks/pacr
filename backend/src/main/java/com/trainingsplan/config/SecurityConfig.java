@@ -89,7 +89,7 @@ public class SecurityConfig {
                 .toList();
         configuration.setAllowedOrigins(origins);
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
-        configuration.setAllowedHeaders(List.of("*"));
+        configuration.setAllowedHeaders(List.of("Authorization", "Content-Type", "Accept", "X-Correlation-Id", "Accept-Language"));
         configuration.setAllowCredentials(true);
         configuration.setExposedHeaders(List.of(CorrelationIdFilter.CORRELATION_ID_HEADER));
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

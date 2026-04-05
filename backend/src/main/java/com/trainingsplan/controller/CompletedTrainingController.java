@@ -120,8 +120,12 @@ public class CompletedTrainingController {
     @GetMapping("/by-date")
     public ResponseEntity<List<CompletedTraining>> getCompletedTrainingsByDate(
             @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
-        
-        List<CompletedTraining> trainings = completedTrainingService.getCompletedTrainingsByDate(date);
+        User user = securityUtils.getCurrentUser();
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        List<CompletedTraining> trainings = completedTrainingRepository
+                .findByUserIdAndTrainingDateOrderByUploadDateDesc(user.getId(), date);
         return ResponseEntity.ok(trainings);
     }
 
@@ -142,6 +146,18 @@ public class CompletedTrainingController {
 
     @GetMapping("/{id}/metrics")
     public ResponseEntity<ActivityMetrics> getActivityMetrics(@PathVariable Long id) {
+        User user = securityUtils.getCurrentUser();
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        // Verify the completed training belongs to the current user
+        Optional<CompletedTraining> training = completedTrainingRepository.findById(id);
+        if (training.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        if (training.get().getUser() != null && !training.get().getUser().getId().equals(user.getId())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
         return activityMetricsRepository.findByCompletedTrainingId(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());

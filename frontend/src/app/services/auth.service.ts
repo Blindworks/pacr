@@ -8,11 +8,13 @@ import { ThemeService } from './theme.service';
 import { LoginMessageService } from './login-message.service';
 
 const TOKEN_KEY = 'auth_token';
+const REFRESH_TOKEN_KEY = 'auth_refresh_token';
 const ROLE_KEY = 'auth_role';
 const BASE = apiUrl('/auth');
 
 export interface AuthResponse {
   token: string;
+  refreshToken: string;
   id: number;
   username: string;
   email: string;
@@ -40,6 +42,9 @@ export class AuthService {
     return this.http.post<AuthResponse>(`${BASE}/login`, { username: email, password }).pipe(
       tap(res => {
         localStorage.setItem(TOKEN_KEY, res.token);
+        if (res.refreshToken) {
+          localStorage.setItem(REFRESH_TOKEN_KEY, res.refreshToken);
+        }
         localStorage.setItem(ROLE_KEY, res.role);
         this._isLoggedIn.set(true);
       })
@@ -67,6 +72,7 @@ export class AuthService {
 
     // Clear local state immediately
     localStorage.removeItem(TOKEN_KEY);
+    localStorage.removeItem(REFRESH_TOKEN_KEY);
     localStorage.removeItem(ROLE_KEY);
     this._isLoggedIn.set(false);
     this.userService.clearUser();
@@ -82,8 +88,26 @@ export class AuthService {
     }
   }
 
+  refreshAccessToken(): Observable<AuthResponse> {
+    const refreshToken = localStorage.getItem(REFRESH_TOKEN_KEY);
+    return this.http.post<AuthResponse>(`${BASE}/refresh`, { refreshToken }, {
+      context: new HttpContext().set(SKIP_AUTH_LOGOUT, true)
+    }).pipe(
+      tap(res => {
+        localStorage.setItem(TOKEN_KEY, res.token);
+        if (res.refreshToken) {
+          localStorage.setItem(REFRESH_TOKEN_KEY, res.refreshToken);
+        }
+      })
+    );
+  }
+
   getToken(): string | null {
     return localStorage.getItem(TOKEN_KEY);
+  }
+
+  getRefreshToken(): string | null {
+    return localStorage.getItem(REFRESH_TOKEN_KEY);
   }
 
   getRole(): string | null {

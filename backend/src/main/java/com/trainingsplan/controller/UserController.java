@@ -130,12 +130,20 @@ public class UserController {
     }
 
     @GetMapping
+    @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<User>> getAllUsers() {
         return ResponseEntity.ok(userService.findAll());
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<User> getUserById(@PathVariable Long id) {
+        User currentUser = securityUtils.getCurrentUser();
+        if (currentUser == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        if (!currentUser.getId().equals(id) && currentUser.getRole() != com.trainingsplan.entity.UserRole.ADMIN) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
         try {
             return ResponseEntity.ok(userService.findById(id));
         } catch (RuntimeException e) {
@@ -145,16 +153,29 @@ public class UserController {
 
     @PutMapping("/{id}")
     public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody UpdateUserRequest request) {
+        User currentUser = securityUtils.getCurrentUser();
+        if (currentUser == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        boolean isAdmin = currentUser.getRole() == com.trainingsplan.entity.UserRole.ADMIN;
+        if (!currentUser.getId().equals(id) && !isAdmin) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+        // Non-admin users cannot modify sensitive fields (role, status, subscription)
+        String role = isAdmin ? request.role() : null;
+        String status = isAdmin ? request.status() : null;
+        String subscriptionPlan = isAdmin ? request.subscriptionPlan() : null;
+        LocalDateTime subscriptionExpiresAt = isAdmin ? request.subscriptionExpiresAt() : null;
         try {
             User updated = userService.updateUser(id, request.username(), request.email(),
                     request.firstName(), request.lastName(),
                     request.dateOfBirth(), request.heightCm(), request.weightKg(),
-                    request.maxHeartRate(), request.hrRest(), request.gender(), request.status(),
+                    request.maxHeartRate(), request.hrRest(), request.gender(), status,
                     request.dwdRegionId(), Boolean.TRUE.equals(request.asthmaTrackingEnabled()),
                     Boolean.TRUE.equals(request.cycleTrackingEnabled()),
                     Boolean.TRUE.equals(request.communityRoutesEnabled()),
                     Boolean.TRUE.equals(request.groupEventsEnabled()),
-                    request.role(), request.subscriptionPlan(), request.subscriptionExpiresAt(),
+                    role, subscriptionPlan, subscriptionExpiresAt,
                     request.targetDistance(), request.weeklyVolumeKm(), request.theme());
             return ResponseEntity.ok(updated);
         } catch (IllegalArgumentException e) {
@@ -213,6 +234,13 @@ public class UserController {
 
     @PostMapping(path = "/{id}/profile-image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Void> uploadProfileImage(@PathVariable Long id, @RequestParam("file") MultipartFile file) {
+        User currentUser = securityUtils.getCurrentUser();
+        if (currentUser == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        if (!currentUser.getId().equals(id) && currentUser.getRole() != com.trainingsplan.entity.UserRole.ADMIN) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
         userService.uploadProfileImage(id, file);
         return ResponseEntity.ok().build();
     }

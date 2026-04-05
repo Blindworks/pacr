@@ -61,7 +61,8 @@
             <div class="password-wrapper">
               <input
                 [type]="showPassword ? 'text' : 'password'"
-                [(ngModel)]="password"
+                [ngModel]="password"
+                (ngModelChange)="onPasswordChange($event)"
                 name="password"
                 [placeholder]="'SIGNUP.PASSWORD_PLACEHOLDER' | translate"
                 autocomplete="new-password"
@@ -70,6 +71,32 @@
                 <span class="material-symbols-outlined">{{ showPassword ? 'visibility_off' : 'visibility' }}</span>
               </button>
             </div>
+
+            @if (passwordInput().length > 0) {
+              <div class="password-strength">
+                <div class="strength-bar-track">
+                  <div
+                    class="strength-bar-fill"
+                    [style.width.%]="passwordStrengthPercent()"
+                    [style.background]="passwordStrengthColor()"
+                  ></div>
+                </div>
+                <span class="strength-label" [style.color]="passwordStrengthColor()">
+                  {{ passwordStrengthLabel() | translate }}
+                </span>
+              </div>
+
+              <ul class="password-rules">
+                @for (rule of passwordRules(); track rule.key) {
+                  <li [class.met]="rule.met">
+                    <span class="material-symbols-outlined rule-icon">
+                      {{ rule.met ? 'check_circle' : 'circle' }}
+                    </span>
+                    {{ rule.key | translate }}
+                  </li>
+                }
+              </ul>
+            }
           </div>
 
           @if (error()) {

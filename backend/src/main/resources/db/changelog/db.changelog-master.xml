@@ -92,5 +92,6 @@
     <include file="db/changelog/changes/086-add-group-event-pace.xml"/>
     <include file="db/changelog/changes/087-add-group-event-recurrence.xml"/>
     <include file="db/changelog/changes/088-add-login-messages.xml"/>
+    <include file="db/changelog/changes/089-add-refresh-tokens.xml"/>
 
 </databaseChangeLog>
