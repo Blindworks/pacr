@@ -7,15 +7,17 @@ import { AboutDialog } from './components/about-dialog/about-dialog';
 import { Toast } from './components/toast/toast';
 import { FeedbackFab } from './components/feedback-fab/feedback-fab';
 import { FeedbackDialog } from './components/feedback-dialog/feedback-dialog';
+import { LoginMessageDialog } from './components/login-message-dialog/login-message-dialog';
 import { filter, map, startWith } from 'rxjs/operators';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { UserService } from './services/user.service';
 import { ThemeService } from './services/theme.service';
+import { LoginMessageService } from './services/login-message.service';
 import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, NgClass, Sidebar, PaceCalculatorDialog, AboutDialog, Toast, FeedbackFab, FeedbackDialog],
+  imports: [RouterOutlet, NgClass, Sidebar, PaceCalculatorDialog, AboutDialog, Toast, FeedbackFab, FeedbackDialog, LoginMessageDialog],
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })
@@ -29,6 +31,7 @@ export class App {
   private readonly router = inject(Router);
   private readonly userService = inject(UserService);
   private readonly themeService = inject(ThemeService);
+  private readonly loginMessageService = inject(LoginMessageService);
   private readonly translate = inject(TranslateService);
 
   private mobileQuery!: MediaQueryList;
@@ -41,6 +44,7 @@ export class App {
       const user = this.userService.currentUser();
       if (user) {
         this.themeService.initFromProfile(user.theme);
+        this.loginMessageService.fetchPending();
       }
     });
 

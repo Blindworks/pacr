@@ -8,6 +8,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- Admin Login Messages: admins can create info messages shown as one-time dialog after user login
+- New admin tab "Login Messages" with create/edit/publish/unpublish/delete functionality
+- User-facing dialog shows pending messages after login with dismiss tracking per user
+- New Liquibase migration 088: `login_messages` and `login_message_seen_log` tables
+- New endpoints: `GET/POST/PUT/DELETE /api/admin/login-messages`, `GET /api/login-messages/pending`, `POST /api/login-messages/{id}/dismiss`
+- i18n support (en + de) for all login message labels
+
+## [0.11.0]
+
+### Added
 - Recurring group events with full RRULE support (RFC 5545): daily, weekly, bi-weekly, monthly (Nth weekday), yearly
 - Recurrence UI in trainer event form: frequency, interval, weekday chips, monthly position selector, series end date
 - Dynamic RRULE expansion: recurring events are expanded on-the-fly for API responses without pre-generating instances

@@ -1,0 +1,29 @@
+<dialog #dialog class="login-msg-dialog" (click)="onBackdropClick($event)">
+  <div class="login-msg-inner" (click)="$event.stopPropagation()">
+
+    <header class="login-msg-header">
+      <div class="login-msg-header-title">
+        <span class="material-symbols-outlined login-msg-icon">campaign</span>
+        <span>{{ 'DIALOGS.LOGIN_MSG_TITLE' | translate }}</span>
+      </div>
+    </header>
+
+    @if (msgService.currentMessage(); as msg) {
+      <div class="login-msg-body">
+        <h3 class="login-msg-title">{{ msg.title }}</h3>
+        <p class="login-msg-content">{{ msg.content }}</p>
+      </div>
+
+      <footer class="login-msg-footer">
+        @if (msgService.initialTotal > 1) {
+          <span class="login-msg-counter">
+            {{ 'DIALOGS.LOGIN_MSG_COUNTER' | translate : { current: msgService.initialTotal - msgService.messages().length + 1, total: msgService.initialTotal } }}
+          </span>
+        }
+        <button class="login-msg-dismiss" (click)="dismiss()">
+          {{ 'DIALOGS.LOGIN_MSG_DISMISS' | translate }}
+        </button>
+      </footer>
+    }
+  </div>
+</dialog>

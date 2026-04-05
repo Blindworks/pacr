@@ -80,6 +80,18 @@ export const adminRoutes: Routes = [
         loadComponent: () => import('./news/news-form/news-form').then(m => m.NewsForm)
       },
       {
+        path: 'login-messages',
+        loadComponent: () => import('./login-messages/login-message-list/login-message-list').then(m => m.LoginMessageList)
+      },
+      {
+        path: 'login-messages/new',
+        loadComponent: () => import('./login-messages/login-message-form/login-message-form').then(m => m.LoginMessageForm)
+      },
+      {
+        path: 'login-messages/:id/edit',
+        loadComponent: () => import('./login-messages/login-message-form/login-message-form').then(m => m.LoginMessageForm)
+      },
+      {
         path: 'feedback',
         loadComponent: () => import('./feedback/feedback-list/feedback-list').then(m => m.FeedbackList)
       }

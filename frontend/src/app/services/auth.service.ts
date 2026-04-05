@@ -5,6 +5,7 @@ import { Observable, tap } from 'rxjs';
 import { SKIP_AUTH_LOGOUT } from '../interceptors/auth.interceptor';
 import { UserService } from './user.service';
 import { ThemeService } from './theme.service';
+import { LoginMessageService } from './login-message.service';
 
 const TOKEN_KEY = 'auth_token';
 const ROLE_KEY = 'auth_role';
@@ -28,6 +29,7 @@ export class AuthService {
   private readonly http = inject(HttpClient);
   private readonly userService = inject(UserService);
   private readonly themeService = inject(ThemeService);
+  private readonly loginMessageService = inject(LoginMessageService);
   private _isLoggedIn = signal(!!localStorage.getItem(TOKEN_KEY));
 
   get isLoggedIn() {
@@ -68,6 +70,7 @@ export class AuthService {
     localStorage.removeItem(ROLE_KEY);
     this._isLoggedIn.set(false);
     this.userService.clearUser();
+    this.loginMessageService.reset();
     this.themeService.setTheme('dark');
 
     // Fire-and-forget: blacklist token on backend (use captured token directly)

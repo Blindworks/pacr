@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="088-1-create-login-messages" author="claude">
+        <preConditions onFail="MARK_RAN">
+            <not><tableExists tableName="login_messages"/></not>
+        </preConditions>
+        <comment>Create login_messages table for admin-managed post-login info dialogs</comment>
+        <createTable tableName="login_messages">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="title" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="content" type="TEXT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_by_user_id" type="BIGINT">
+                <constraints foreignKeyName="fk_login_msg_creator" references="users(id)"/>
+            </column>
+            <column name="created_at" type="DATETIME"/>
+            <column name="published_at" type="DATETIME"/>
+            <column name="is_published" type="BOOLEAN" defaultValueBoolean="false"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="088-2-create-login-message-seen-log" author="claude">
+        <preConditions onFail="MARK_RAN">
+            <not><tableExists tableName="login_message_seen_log"/></not>
+        </preConditions>
+        <comment>Track which users have dismissed which login messages</comment>
+        <createTable tableName="login_message_seen_log">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="user_id" type="BIGINT">
+                <constraints foreignKeyName="fk_lm_seen_user" references="users(id)"/>
+            </column>
+            <column name="login_message_id" type="BIGINT">
+                <constraints foreignKeyName="fk_lm_seen_msg" references="login_messages(id)"/>
+            </column>
+            <column name="seen_at" type="DATETIME"/>
+        </createTable>
+        <addUniqueConstraint tableName="login_message_seen_log" columnNames="user_id,login_message_id"
+            constraintName="uq_lm_seen_user_msg"/>
+    </changeSet>
+</databaseChangeLog>

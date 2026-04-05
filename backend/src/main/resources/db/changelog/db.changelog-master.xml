@@ -91,5 +91,6 @@
     <include file="db/changelog/changes/085-add-group-event-registrations.xml"/>
     <include file="db/changelog/changes/086-add-group-event-pace.xml"/>
     <include file="db/changelog/changes/087-add-group-event-recurrence.xml"/>
+    <include file="db/changelog/changes/088-add-login-messages.xml"/>
 
 </databaseChangeLog>

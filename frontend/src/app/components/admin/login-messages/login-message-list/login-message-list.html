@@ -1,0 +1,55 @@
+<div class="list-page">
+  <div class="list-header">
+    <h2>{{ 'ADMIN.LOGIN_MSG_TITLE' | translate }}</h2>
+    <button class="btn-primary" (click)="goNew()">{{ 'ADMIN.NEW_LOGIN_MSG' | translate }}</button>
+  </div>
+
+  @if (isLoading()) {
+    <p class="loading">{{ 'ADMIN.LOADING_LOGIN_MSG' | translate }}</p>
+  } @else if (messages().length === 0) {
+    <p class="empty">{{ 'ADMIN.NO_LOGIN_MSG' | translate }}</p>
+  } @else {
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>{{ 'ADMIN.LOGIN_MSG_COL_TITLE' | translate }}</th>
+          <th>{{ 'ADMIN.LOGIN_MSG_COL_STATUS' | translate }}</th>
+          <th>{{ 'ADMIN.LOGIN_MSG_COL_CREATED' | translate }}</th>
+          <th>{{ 'ADMIN.LOGIN_MSG_PUBLISHED' | translate }}</th>
+          <th>{{ 'COMMON.ACTIONS' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (item of messages(); track item.id) {
+          <tr>
+            <td>{{ item.title }}</td>
+            <td>
+              <span class="badge" [class.badge--published]="item.published">
+                {{ item.published ? ('ADMIN.LOGIN_MSG_PUBLISHED' | translate) : ('ADMIN.LOGIN_MSG_DRAFT' | translate) }}
+              </span>
+            </td>
+            <td>{{ item.createdAt | date:'dd.MM.yyyy HH:mm' }}</td>
+            <td>{{ item.publishedAt ? (item.publishedAt | date:'dd.MM.yyyy HH:mm') : '—' }}</td>
+            <td class="actions">
+              <button class="btn-icon" (click)="edit(item)" [title]="'COMMON.EDIT' | translate">
+                <span class="material-symbols-outlined">edit</span>
+              </button>
+              @if (!item.published) {
+                <button class="btn-icon btn-icon--publish" (click)="publish(item)" [title]="'ADMIN.PUBLISH' | translate">
+                  <span class="material-symbols-outlined">publish</span>
+                </button>
+              } @else {
+                <button class="btn-icon btn-icon--unpublish" (click)="unpublish(item)" [title]="'ADMIN.UNPUBLISH' | translate">
+                  <span class="material-symbols-outlined">unpublished</span>
+                </button>
+              }
+              <button class="btn-icon btn-icon--danger" (click)="delete(item)" [title]="'COMMON.DELETE' | translate">
+                <span class="material-symbols-outlined">delete</span>
+              </button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+</div>

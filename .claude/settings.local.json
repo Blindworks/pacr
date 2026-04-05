@@ -50,7 +50,8 @@
       "Bash(npm install:*)",
       "Bash(magick --version)",
       "Bash(convert --version)",
-      "Bash(npx sharp-cli:*)"
+      "Bash(npx sharp-cli:*)",
+      "Bash(bash version-bump.sh minor)"
     ],
     "deny": [],
     "ask": []

@@ -1,0 +1,30 @@
+<div class="form-page">
+  <div class="form-header">
+    <h2>{{ messageId() ? ('ADMIN.EDIT_LOGIN_MSG_TITLE' | translate) : ('ADMIN.NEW_LOGIN_MSG_TITLE' | translate) }}</h2>
+  </div>
+
+  <form class="form-body" (ngSubmit)="save()">
+    <div class="field">
+      <label for="title">{{ 'ADMIN.LOGIN_MSG_TITLE_LABEL' | translate }}</label>
+      <input id="title" type="text" [ngModel]="title()" (ngModelChange)="title.set($event)"
+             name="title" [placeholder]="'ADMIN.LOGIN_MSG_TITLE_PLACEHOLDER' | translate" />
+    </div>
+
+    <div class="field">
+      <label for="content">{{ 'ADMIN.LOGIN_MSG_CONTENT' | translate }}</label>
+      <textarea id="content" [ngModel]="content()" (ngModelChange)="content.set($event)"
+                name="content" rows="8" [placeholder]="'ADMIN.LOGIN_MSG_CONTENT_PLACEHOLDER' | translate"></textarea>
+    </div>
+
+    @if (error()) {
+      <p class="form-error">{{ error() }}</p>
+    }
+
+    <div class="form-actions">
+      <button type="submit" class="btn-primary" [disabled]="saving()">
+        {{ saving() ? ('COMMON.SAVING' | translate) : ('COMMON.SAVE' | translate) }}
+      </button>
+      <button type="button" class="btn-secondary" (click)="cancel()">{{ 'COMMON.CANCEL' | translate }}</button>
+    </div>
+  </form>
+</div>
