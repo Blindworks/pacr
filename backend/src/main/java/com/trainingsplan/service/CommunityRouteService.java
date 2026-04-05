@@ -10,6 +10,7 @@ import com.trainingsplan.repository.CommunityRouteRepository;
 import com.trainingsplan.repository.CompletedTrainingRepository;
 import com.trainingsplan.repository.RouteAttemptRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -56,19 +57,27 @@ public class CommunityRouteService {
             throw new IllegalArgumentException("Activity does not belong to the user");
         }
 
-        if (activity.getStartLatitude() == null || activity.getStartLongitude() == null) {
-            throw new IllegalArgumentException("Activity has no GPS data");
-        }
-
         if (communityRouteRepository.existsBySourceActivityId(request.activityId())) {
             throw new IllegalArgumentException("Activity is already shared as a community route");
         }
 
         ActivityStream stream = activityStreamRepository.findByCompletedTrainingId(request.activityId())
-                .orElseThrow(() -> new IllegalArgumentException("Activity has no GPS stream data"));
+                .orElseThrow(() -> new IllegalArgumentException("Activity has no GPS data"));
 
         if (stream.getLatlngJson() == null || stream.getLatlngJson().isBlank()) {
-            throw new IllegalArgumentException("Activity has no GPS track data");
+            throw new IllegalArgumentException("Activity has no GPS data");
+        }
+
+        // Use start coordinates from activity, or extract from first GPS point in stream
+        Double startLat = activity.getStartLatitude();
+        Double startLng = activity.getStartLongitude();
+        if (startLat == null || startLng == null) {
+            double[] firstPoint = extractFirstGpsPoint(stream.getLatlngJson());
+            if (firstPoint == null) {
+                throw new IllegalArgumentException("Activity has no GPS data");
+            }
+            startLat = firstPoint[0];
+            startLng = firstPoint[1];
         }
 
         CommunityRoute route = new CommunityRoute();
@@ -77,8 +86,8 @@ public class CommunityRouteService {
         route.setName(request.name());
         route.setDistanceKm(activity.getDistanceKm());
         route.setElevationGainM(activity.getElevationGainM());
-        route.setStartLatitude(activity.getStartLatitude());
-        route.setStartLongitude(activity.getStartLongitude());
+        route.setStartLatitude(startLat);
+        route.setStartLongitude(startLng);
         route.setGpsTrackJson(stream.getLatlngJson());
         route.setCreatedAt(LocalDateTime.now());
 
@@ -219,6 +228,31 @@ public class CommunityRouteService {
                 route.getVisibility().name(),
                 route.getCreatedAt()
         );
+    }
+
+    private double[] extractFirstGpsPoint(String latlngJson) {
+        try {
+            JsonNode root = objectMapper.readTree(latlngJson);
+            JsonNode dataNode;
+            if (root.isArray()) {
+                dataNode = root;
+            } else if (root.isObject() && root.has("data")) {
+                dataNode = root.get("data");
+            } else {
+                return null;
+            }
+            for (JsonNode point : dataNode) {
+                if (point.isArray() && point.size() >= 2 && !point.get(0).isNull() && !point.get(1).isNull()) {
+                    double lat = point.get(0).doubleValue();
+                    double lng = point.get(1).doubleValue();
+                    if (lat != 0.0 || lng != 0.0) {
+                        return new double[]{lat, lng};
+                    }
+                }
+            }
+        } catch (Exception ignored) {
+        }
+        return null;
     }
 
     private double[][] parseGpsTrack(String json) {
