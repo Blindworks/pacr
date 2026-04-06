@@ -59,7 +59,7 @@ export class Statistics implements OnInit {
   @ViewChild('addDialog') private addDialog!: AddPersonalRecordDialogComponent;
 
   protected readonly periodKeys = PERIOD_KEYS;
-  protected readonly selectedPeriodKey = signal('STATISTICS.PERIOD_LAST_WEEK');
+  protected readonly selectedPeriodKey = signal('STATISTICS.PERIOD_THIS_WEEK');
 
   protected stats: TrainingStatsDto | null = null;
   protected loading = false;
