@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Fixed
+- Verification email link no longer falls back to `localhost:4200`. `EmailService` now fails fast at startup if `app.frontend-url` is not configured, preventing broken links in production
+- `app.frontend-url` is set to `https://pacr.app` in `application-prod.properties` (no env var indirection)
+
+### Fixed
 - Verify-email page no longer renders the sidebar, which previously triggered an unauthenticated `/me` request and bounced new users to the login screen
 - Registration flow: login with an unverified email now automatically redirects to the verify-email screen instead of only showing an error
 - Verification email now contains a direct link (`/verify-email?email=…&code=…`) that pre-fills the code and auto-submits verification

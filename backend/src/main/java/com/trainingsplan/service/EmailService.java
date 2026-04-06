@@ -20,10 +20,19 @@ public class EmailService {
 
     public EmailService(JavaMailSender mailSender,
                         @Value("${app.mail.from:${spring.mail.username}}") String fromAddress,
-                        @Value("${app.frontend-url:http://localhost:4200}") String frontendUrl) {
+                        @Value("${app.frontend-url:}") String frontendUrl) {
         this.mailSender = mailSender;
         this.fromAddress = fromAddress;
-        this.frontendUrl = frontendUrl;
+        if (!StringUtils.hasText(frontendUrl)) {
+            throw new IllegalStateException(
+                    "app.frontend-url is not configured. Set the APP_FRONTEND_URL environment variable "
+                            + "(e.g. https://pacr.app) - hardcoded fallbacks are not allowed.");
+        }
+        String trimmed = frontendUrl.trim();
+        while (trimmed.endsWith("/")) {
+            trimmed = trimmed.substring(0, trimmed.length() - 1);
+        }
+        this.frontendUrl = trimmed;
     }
 
     public void sendSimpleMessage(String to, String subject, String text) {
@@ -41,11 +50,7 @@ public class EmailService {
      * and a direct link that pre-fills the code on the verify-email screen.
      */
     public void sendVerificationEmail(String to, String code, boolean resend) {
-        String base = StringUtils.hasText(frontendUrl) ? frontendUrl.trim() : "http://localhost:4200";
-        if (base.endsWith("/")) {
-            base = base.substring(0, base.length() - 1);
-        }
-        String link = base + "/verify-email?email="
+        String link = frontendUrl + "/verify-email?email="
                 + URLEncoder.encode(to, StandardCharsets.UTF_8)
                 + "&code=" + URLEncoder.encode(code, StandardCharsets.UTF_8);
 
