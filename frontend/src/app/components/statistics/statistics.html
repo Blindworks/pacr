@@ -87,20 +87,28 @@
   <div class="chart-grid">
     <article class="panel">
       <div class="panel-head">
-        <h2>Volume per Period</h2>
+        <h2>{{ 'STATISTICS.VOLUME_PER_PERIOD' | translate }}</h2>
         <div class="legend">
-          <span><i class="dot dot--primary"></i>Distance (km)</span>
+          <span><i class="dot dot--primary"></i>{{ 'STATISTICS.DISTANCE_KM' | translate }}</span>
         </div>
       </div>
       <div class="bar-chart">
         @if (monthlyBars.length === 0) {
-          <p class="no-data">No data available</p>
+          <p class="no-data">{{ 'STATISTICS.NO_DATA' | translate }}</p>
         }
         @for (bar of monthlyBars; track bar.month) {
           <div class="bar-col">
-            <div class="bar-stack" [style.height.%]="bar.heightPct" [title]="bar.distanceKm + ' km'">
+            <div class="bar-stack"
+                 [class.bar-stack--empty]="bar.distanceKm === 0"
+                 [style.height.%]="bar.heightPct"
+                 [title]="bar.distanceKm + ' km'">
             </div>
-            <span>{{ bar.month }}</span>
+            <span class="bar-label">
+              @if (bar.weekday) {
+                <span class="bar-weekday">{{ bar.weekday }}</span>
+              }
+              {{ bar.month }}
+            </span>
           </div>
         }
       </div>

@@ -10,6 +10,7 @@ import { ProOverlay } from '../shared/pro-overlay/pro-overlay';
 
 type MonthlyBar = {
   month: string;
+  weekday: string;
   heightPct: number;
   distanceKm: number;
 };
@@ -173,13 +174,21 @@ export class Statistics implements OnInit {
   }
 
   private buildMonthlyBars(buckets: StatsBucket[]): MonthlyBar[] {
-    const last6 = buckets.slice(-6);
-    const maxDistance = Math.max(...last6.map(b => b.distanceKm), 1);
-    return last6.map(b => ({
-      month: b.label,
-      heightPct: Math.round((b.distanceKm / maxDistance) * 100),
-      distanceKm: b.distanceKm,
-    }));
+    const last7 = buckets.slice(-7);
+    const maxDistance = Math.max(...last7.map(b => b.distanceKm), 1);
+    const locale = this.translate.currentLang || 'en';
+    return last7.map(b => {
+      const d = b.startDate ? new Date(b.startDate) : null;
+      const weekday = d && !isNaN(d.getTime())
+        ? d.toLocaleDateString(locale, { weekday: 'short' })
+        : '';
+      return {
+        month: b.label,
+        weekday,
+        heightPct: Math.round((b.distanceKm / maxDistance) * 100),
+        distanceKm: b.distanceKm,
+      };
+    });
   }
 
   protected onTrendMouseMove(event: MouseEvent): void {
