@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- Verify-email page no longer renders the sidebar, which previously triggered an unauthenticated `/me` request and bounced new users to the login screen
+- Registration flow: login with an unverified email now automatically redirects to the verify-email screen instead of only showing an error
+- Verification email now contains a direct link (`/verify-email?email=…&code=…`) that pre-fills the code and auto-submits verification
+- Verify-email screen accepts `email` and `code` via query parameters as a fallback when router state is missing
+
+### Added
+- New backend property `app.frontend-url` (env `APP_FRONTEND_URL`) used to build links in outgoing emails
+- `EmailService.sendVerificationEmail(to, code, resend)` centralises the verification email content
+- Login error response for unverified users now includes the `email` field so the frontend can navigate
+
 ### Added
 - Admin Login Messages: admins can create info messages shown as one-time dialog after user login
 - New admin tab "Login Messages" with create/edit/publish/unpublish/delete functionality

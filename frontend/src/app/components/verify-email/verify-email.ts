@@ -1,5 +1,5 @@
 import { Component, OnInit, signal, OnDestroy } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { AuthService } from '../../services/auth.service';
@@ -21,14 +21,33 @@ export class VerifyEmail implements OnInit, OnDestroy {
 
   private cooldownInterval: ReturnType<typeof setInterval> | null = null;
 
-  constructor(private router: Router, private auth: AuthService, private translate: TranslateService) {}
+  constructor(
+    private router: Router,
+    private route: ActivatedRoute,
+    private auth: AuthService,
+    private translate: TranslateService
+  ) {}
 
   ngOnInit() {
     const state = window.history.state;
-    if (state?.email) {
-      this.email.set(state.email);
+    const queryEmail = this.route.snapshot.queryParamMap.get('email');
+    const queryCode = this.route.snapshot.queryParamMap.get('code');
+
+    const email = state?.email ?? queryEmail;
+    if (email) {
+      this.email.set(email);
     } else {
       this.router.navigate(['/signup']);
+      return;
+    }
+
+    if (queryCode) {
+      const digits = queryCode.replace(/\D/g, '').slice(0, 6).split('');
+      digits.forEach((d, i) => { this.digits[i] = d; });
+      if (this.code.length === 6) {
+        // Auto-submit slightly delayed so the user sees the pre-filled code
+        setTimeout(() => this.onVerify(), 300);
+      }
     }
   }
 

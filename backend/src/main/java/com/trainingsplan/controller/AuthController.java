@@ -96,11 +96,7 @@ public class AuthController {
 
         User saved = userRepository.save(user);
 
-        emailService.sendSimpleMessage(
-                saved.getEmail(),
-                "Dein Verifizierungscode",
-                "Dein Code lautet: " + saved.getEmailVerificationCode() + "\n\nDer Code ist 15 Minuten gueltig."
-        );
+        emailService.sendVerificationEmail(saved.getEmail(), saved.getEmailVerificationCode(), false);
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new AuthResponse(null, null, saved.getId(), saved.getUsername(), saved.getEmail(),
@@ -155,11 +151,7 @@ public class AuthController {
         user.setEmailVerificationExpiresAt(LocalDateTime.now().plusMinutes(15));
         userRepository.save(user);
 
-        emailService.sendSimpleMessage(
-                user.getEmail(),
-                "Dein Verifizierungscode",
-                "Dein neuer Code lautet: " + user.getEmailVerificationCode() + "\n\nDer Code ist 15 Minuten gueltig."
-        );
+        emailService.sendVerificationEmail(user.getEmail(), user.getEmailVerificationCode(), true);
 
         return ResponseEntity.ok(new MessageResponse("Verifizierungscode erneut gesendet."));
     }
@@ -179,7 +171,8 @@ public class AuthController {
         if (user != null && user.getStatus() != UserStatus.ACTIVE) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of(
                     "status", user.getStatus().name(),
-                    "message", getStatusMessage(user.getStatus())
+                    "message", getStatusMessage(user.getStatus()),
+                    "email", user.getEmail()
             ));
         }
 

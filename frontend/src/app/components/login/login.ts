@@ -33,6 +33,11 @@ export class Login implements OnInit {
       next: () => this.router.navigate(['/dashboard']),
       error: (err) => {
         this.loading.set(false);
+        if (err?.status === 403 && err?.error?.status === 'EMAIL_VERIFICATION_PENDING') {
+          const email = err?.error?.email ?? this.email;
+          this.router.navigate(['/verify-email'], { state: { email } });
+          return;
+        }
         const msg = err?.error?.message ?? err?.error ?? this.translate.instant('LOGIN.FAILED');
         this.error.set(typeof msg === 'string' ? msg : this.translate.instant('LOGIN.FAILED'));
       }

@@ -53,7 +53,7 @@ export class App {
     this.mobileQuery.addEventListener('change', this.mobileListener);
   }
 
-  private readonly hideSidebarPaths = ['/login', '/signup', '/forgot-password', '/new-password', '/onboarding'];
+  private readonly hideSidebarPaths = ['/login', '/signup', '/forgot-password', '/new-password', '/verify-email', '/onboarding'];
 
   private shouldShowSidebar(url: string): boolean {
     return url !== '/' && !this.hideSidebarPaths.some(p => url.startsWith(p));
