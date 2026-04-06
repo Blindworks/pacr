@@ -24,6 +24,7 @@ export interface UserProfile {
   cycleTrackingEnabled: boolean;
   communityRoutesEnabled: boolean;
   groupEventsEnabled: boolean;
+  discoverableByOthers: boolean;
   theme: string;
   role: string | null;
   subscriptionPlan: string | null;
@@ -51,6 +52,7 @@ export interface UpdateUserRequest {
   cycleTrackingEnabled?: boolean;
   communityRoutesEnabled?: boolean;
   groupEventsEnabled?: boolean;
+  discoverableByOthers?: boolean;
   role?: string | null;
   subscriptionPlan?: string | null;
   subscriptionExpiresAt?: string | null;

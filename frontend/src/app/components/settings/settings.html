@@ -243,33 +243,23 @@
       </div>
     </article>
 
-    <!-- Community Routes -->
+    <!-- Community -->
     <article class="section">
       <div class="section-head">
-        <span class="material-symbols-outlined">explore</span>
-        <h2>Community Routes</h2>
+        <span class="material-symbols-outlined">diversity_3</span>
+        <h2>{{ 'SETTINGS.COMMUNITY_SECTION' | translate }}</h2>
       </div>
       <div class="toggles">
         <div class="toggle-row">
           <div class="toggle-info">
-            <span class="toggle-title">Community Routes aktivieren</span>
-            <span class="toggle-sub">Teile Routen, entdecke Strecken in deiner Nähe und konkurriere auf Bestenlisten</span>
+            <span class="toggle-title">{{ 'SETTINGS.COMMUNITY_ROUTES_TOGGLE' | translate }}</span>
+            <span class="toggle-sub">{{ 'SETTINGS.COMMUNITY_ROUTES_TOGGLE_SUB' | translate }}</span>
           </div>
           <label class="switch">
             <input type="checkbox" [ngModel]="communityRoutesEnabled()" (ngModelChange)="onCommunityRoutesChange($event)" />
             <span class="track"></span>
           </label>
         </div>
-      </div>
-    </article>
-
-    <!-- Group Events -->
-    <article class="section">
-      <div class="section-head">
-        <span class="material-symbols-outlined">groups</span>
-        <h2>{{ 'SETTINGS.GROUP_EVENTS_SECTION' | translate }}</h2>
-      </div>
-      <div class="toggles">
         <div class="toggle-row">
           <div class="toggle-info">
             <span class="toggle-title">{{ 'SETTINGS.GROUP_EVENTS_TOGGLE' | translate }}</span>
@@ -277,6 +267,16 @@
           </div>
           <label class="switch">
             <input type="checkbox" [ngModel]="groupEventsEnabled()" (ngModelChange)="onGroupEventsChange($event)" />
+            <span class="track"></span>
+          </label>
+        </div>
+        <div class="toggle-row">
+          <div class="toggle-info">
+            <span class="toggle-title">{{ 'SETTINGS.DISCOVERABLE_TOGGLE' | translate }}</span>
+            <span class="toggle-sub">{{ 'SETTINGS.DISCOVERABLE_TOGGLE_SUB' | translate }}</span>
+          </div>
+          <label class="switch">
+            <input type="checkbox" [ngModel]="discoverableByOthersEnabled()" (ngModelChange)="onDiscoverableByOthersChange($event)" />
             <span class="track"></span>
           </label>
         </div>

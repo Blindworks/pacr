@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Settings: merged "Community Routes" and "Group Events" into a single **Community** card
+- New toggle "Discoverable by other runners" in the Community settings card, backed by a new `discoverable_by_others` flag on the user (Liquibase migration `090`)
+
 ### Fixed
 - Verification email link no longer falls back to `localhost:4200`. `EmailService` now fails fast at startup if `app.frontend-url` is not configured, preventing broken links in production
 - `app.frontend-url` is set to `https://pacr.app` in `application-prod.properties` (no env var indirection)

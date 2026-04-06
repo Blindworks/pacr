@@ -77,6 +77,7 @@ public class UserController {
             Boolean cycleTrackingEnabled,
             Boolean communityRoutesEnabled,
             Boolean groupEventsEnabled,
+            Boolean discoverableByOthers,
             String role,
             String subscriptionPlan,
             LocalDateTime subscriptionExpiresAt,
@@ -175,6 +176,7 @@ public class UserController {
                     Boolean.TRUE.equals(request.cycleTrackingEnabled()),
                     Boolean.TRUE.equals(request.communityRoutesEnabled()),
                     Boolean.TRUE.equals(request.groupEventsEnabled()),
+                    Boolean.TRUE.equals(request.discoverableByOthers()),
                     role, subscriptionPlan, subscriptionExpiresAt,
                     request.targetDistance(), request.weeklyVolumeKm(), request.theme());
             return ResponseEntity.ok(updated);

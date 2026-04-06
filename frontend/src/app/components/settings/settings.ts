@@ -79,6 +79,7 @@ export class Settings implements OnInit, OnDestroy {
   protected cycleTrackingEnabled = signal(false);
   protected communityRoutesEnabled = signal(false);
   protected groupEventsEnabled = signal(false);
+  protected discoverableByOthersEnabled = signal(false);
 
   protected stravaLoading = signal(false);
   protected corosLoading = signal(false);
@@ -173,6 +174,7 @@ export class Settings implements OnInit, OnDestroy {
         this.cycleTrackingEnabled.set(user.cycleTrackingEnabled ?? false);
         this.communityRoutesEnabled.set(user.communityRoutesEnabled ?? false);
         this.groupEventsEnabled.set(user.groupEventsEnabled ?? false);
+        this.discoverableByOthersEnabled.set(user.discoverableByOthers ?? false);
         this.theme.set((user.theme as ThemeChoice) ?? 'dark');
         this.themeService.initFromProfile(user.theme);
         this.profileLoaded = true;
@@ -275,6 +277,12 @@ export class Settings implements OnInit, OnDestroy {
     this.triggerAutoSave();
   }
 
+  protected onDiscoverableByOthersChange(value: boolean): void {
+    this.discoverableByOthersEnabled.set(value);
+    this.userService.currentUser.update(u => u ? { ...u, discoverableByOthers: value } : null);
+    this.triggerAutoSave();
+  }
+
   protected setUnit(value: 'metric' | 'imperial'): void {
     this.unit.set(value);
     this.triggerAutoSave();
@@ -367,6 +375,7 @@ export class Settings implements OnInit, OnDestroy {
       cycleTrackingEnabled: this.cycleTrackingEnabled(),
       communityRoutesEnabled: this.communityRoutesEnabled(),
       groupEventsEnabled: this.groupEventsEnabled(),
+      discoverableByOthers: this.discoverableByOthersEnabled(),
       theme: this.theme()
     }).subscribe({
       next: updated => {

@@ -71,6 +71,7 @@ public class UserService {
                            Integer dwdRegionId, boolean asthmaTrackingEnabled,
                            boolean cycleTrackingEnabled, boolean communityRoutesEnabled,
                            boolean groupEventsEnabled,
+                           boolean discoverableByOthers,
                            String role,
                            String subscriptionPlan, LocalDateTime subscriptionExpiresAt,
                            String targetDistance, String weeklyVolumeKm, String theme) {
@@ -98,6 +99,7 @@ public class UserService {
         user.setCycleTrackingEnabled(cycleTrackingEnabled);
         user.setCommunityRoutesEnabled(communityRoutesEnabled);
         user.setGroupEventsEnabled(groupEventsEnabled);
+        user.setDiscoverableByOthers(discoverableByOthers);
         if (subscriptionPlan != null && !subscriptionPlan.isBlank()) {
             user.setSubscriptionPlan(SubscriptionPlan.valueOf(subscriptionPlan));
         }

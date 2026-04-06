@@ -113,6 +113,10 @@ public class User implements UserDetails {
     @Column(name = "group_events_enabled", nullable = false)
     private boolean groupEventsEnabled = false;
 
+    /** Whether this user can be discovered/found by other runners. */
+    @Column(name = "discoverable_by_others", nullable = false)
+    private boolean discoverableByOthers = false;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "subscription_plan", nullable = false, length = 20)
     private SubscriptionPlan subscriptionPlan = SubscriptionPlan.FREE;
@@ -373,6 +377,9 @@ public class User implements UserDetails {
 
     public boolean isGroupEventsEnabled() { return groupEventsEnabled; }
     public void setGroupEventsEnabled(boolean groupEventsEnabled) { this.groupEventsEnabled = groupEventsEnabled; }
+
+    public boolean isDiscoverableByOthers() { return discoverableByOthers; }
+    public void setDiscoverableByOthers(boolean discoverableByOthers) { this.discoverableByOthers = discoverableByOthers; }
 
     public SubscriptionPlan getSubscriptionPlan() { return subscriptionPlan; }
     public void setSubscriptionPlan(SubscriptionPlan subscriptionPlan) {
