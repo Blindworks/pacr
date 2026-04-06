@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal, OnDestroy } from '@angular/core';
+import { Component, OnInit, inject, signal, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
@@ -8,19 +8,23 @@ import {
   LeaderboardEntryDto,
   RouteAttemptDto
 } from '../../services/community-route.service';
-import * as L from 'leaflet';
+import { GpsStreamDto } from '../../services/activity.service';
+import { ActivityMapComponent } from '../activity-map/activity-map';
+import { MapDialogComponent } from '../map-dialog/map-dialog';
 
 @Component({
   selector: 'app-community-route-detail',
   standalone: true,
-  imports: [CommonModule, TranslateModule],
+  imports: [CommonModule, TranslateModule, ActivityMapComponent, MapDialogComponent],
   templateUrl: './community-route-detail.html',
   styleUrl: './community-route-detail.scss'
 })
-export class CommunityRouteDetail implements OnInit, OnDestroy {
+export class CommunityRouteDetail implements OnInit {
   private readonly activatedRoute = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly routeService = inject(CommunityRouteService);
+
+  @ViewChild('mapDialog') private mapDialog!: MapDialogComponent;
 
   route = signal<CommunityRouteDetailDto | null>(null);
   leaderboard = signal<LeaderboardEntryDto[]>([]);
@@ -28,7 +32,7 @@ export class CommunityRouteDetail implements OnInit, OnDestroy {
   loading = signal(true);
   period = signal<string>('ALL_TIME');
   selectingRoute = signal(false);
-  private map: L.Map | null = null;
+  gpsData = signal<GpsStreamDto | null>(null);
 
   ngOnInit(): void {
     const id = Number(this.activatedRoute.snapshot.paramMap.get('id'));
@@ -40,7 +44,7 @@ export class CommunityRouteDetail implements OnInit, OnDestroy {
         this.loading.set(false);
         this.loadLeaderboard(id);
         this.loadPendingAttempt();
-        setTimeout(() => this.initMap(route), 0);
+        this.buildGpsData(route);
       },
       error: () => {
         this.loading.set(false);
@@ -49,8 +53,30 @@ export class CommunityRouteDetail implements OnInit, OnDestroy {
     });
   }
 
-  ngOnDestroy(): void {
-    this.map?.remove();
+  private buildGpsData(route: CommunityRouteDetailDto): void {
+    if (!route.gpsTrack || route.gpsTrack.length === 0) {
+      this.gpsData.set(null);
+      return;
+    }
+    const len = route.gpsTrack.length;
+    this.gpsData.set({
+      completedTrainingId: 0,
+      latlng: route.gpsTrack,
+      distance: new Array(len).fill(0),
+      heartRate: null,
+      paceSecondsPerKm: null,
+      altitude: null,
+      hasHeartRate: false,
+      hasPace: false,
+      hasAltitude: false,
+    });
+  }
+
+  openMapDialog(): void {
+    const gps = this.gpsData();
+    if (gps) {
+      this.mapDialog.open(gps, 'pace');
+    }
   }
 
   private loadLeaderboard(routeId: number): void {
@@ -65,22 +91,6 @@ export class CommunityRouteDetail implements OnInit, OnDestroy {
       next: attempt => this.pendingAttempt.set(attempt),
       error: () => {}
     });
-  }
-
-  private initMap(route: CommunityRouteDetailDto): void {
-    if (!route.gpsTrack || route.gpsTrack.length === 0) return;
-
-    const container = document.getElementById('route-map');
-    if (!container) return;
-
-    this.map = L.map('route-map');
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; OpenStreetMap'
-    }).addTo(this.map);
-
-    const latlngs = route.gpsTrack.map(p => L.latLng(p[0], p[1]));
-    const polyline = L.polyline(latlngs, { color: '#3b82f6', weight: 3 }).addTo(this.map);
-    this.map.fitBounds(polyline.getBounds(), { padding: [20, 20] });
   }
 
   onPeriodChange(period: string): void {

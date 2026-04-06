@@ -15,7 +15,14 @@
       </div>
     </div>
 
-    <div id="route-map" class="route-map"></div>
+    @if (gpsData(); as gps) {
+      <div class="route-map-wrapper">
+        <app-activity-map [gpsData]="gps" [colorMode]="'pace'"></app-activity-map>
+        <button class="map-expand-btn" (click)="openMapDialog()" [title]="'COMMON.EXPAND_MAP' | translate">
+          <span class="material-symbols-outlined">open_in_full</span>
+        </button>
+      </div>
+    }
 
     <div class="stats-row">
       <div class="stat-card">
@@ -109,4 +116,5 @@
       }
     </div>
   </div>
+  <app-map-dialog #mapDialog></app-map-dialog>
 }

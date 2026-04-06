@@ -40,6 +40,7 @@
     "DELETE": "Delete",
     "EDIT": "Edit",
     "CLOSE": "Close",
+    "EXPAND_MAP": "Expand map",
     "BACK": "Back",
     "NEXT": "Next",
     "PREVIOUS": "Previous",

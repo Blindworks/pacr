@@ -256,9 +256,36 @@ public class CommunityRouteService {
     }
 
     private double[][] parseGpsTrack(String json) {
+        if (json == null || json.isBlank()) {
+            return new double[0][];
+        }
         try {
-            return objectMapper.readValue(json, double[][].class);
-        } catch (JsonProcessingException e) {
+            JsonNode root = objectMapper.readTree(json);
+            JsonNode dataNode;
+            if (root.isArray()) {
+                dataNode = root;
+            } else if (root.isObject() && root.has("data")) {
+                dataNode = root.get("data");
+            } else {
+                return new double[0][];
+            }
+            int size = dataNode.size();
+            double[][] result = new double[size][2];
+            int idx = 0;
+            for (JsonNode point : dataNode) {
+                if (point.isArray() && point.size() >= 2 && !point.get(0).isNull() && !point.get(1).isNull()) {
+                    result[idx][0] = point.get(0).doubleValue();
+                    result[idx][1] = point.get(1).doubleValue();
+                    idx++;
+                }
+            }
+            if (idx < size) {
+                double[][] trimmed = new double[idx][];
+                System.arraycopy(result, 0, trimmed, 0, idx);
+                return trimmed;
+            }
+            return result;
+        } catch (Exception e) {
             return new double[0][];
         }
     }
