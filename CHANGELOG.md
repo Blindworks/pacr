@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - New toggle "Discoverable by other runners" in the Community settings card, backed by a new `discoverable_by_others` flag on the user (Liquibase migration `090`)
 
 ### Fixed
+- **Security: Strava integration is now user-scoped.** Previously, `StravaToken` queries used a global `findFirstByOrderByIdAsc()` lookup, so any authenticated user saw the first connected Strava account as "Verbunden", could sync that user's activities, and could disconnect it for everyone. `StravaService` now resolves tokens via `findByUser(currentUser)`, `exchangeCodeForToken` stores the `user_id` on the token, and `disconnect` only removes the current user's token. Liquibase migration `094-strava-token-user-scope.xml` deletes orphaned tokens, marks `strava_token.user_id` NOT NULL and adds a unique constraint on it.
 - Verification email link no longer falls back to `localhost:4200`. `EmailService` now fails fast at startup if `app.frontend-url` is not configured, preventing broken links in production
 - `app.frontend-url` is set to `https://pacr.app` in `application-prod.properties` (no env var indirection)
 

@@ -113,6 +113,11 @@ public class StravaService {
     }
 
     public void exchangeCodeForToken(String code) {
+        User currentUser = securityUtils.getCurrentUser();
+        if (currentUser == null) {
+            throw new RuntimeException("Strava connection requires an authenticated user");
+        }
+
         MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
         formData.add("client_id", clientId);
         formData.add("client_secret", clientSecret);
@@ -129,7 +134,8 @@ public class StravaService {
 
             JsonNode root = objectMapper.readTree(responseBody);
 
-            StravaToken token = tokenRepository.findFirstByOrderByIdAsc().orElse(new StravaToken());
+            StravaToken token = tokenRepository.findByUser(currentUser).orElseGet(StravaToken::new);
+            token.setUser(currentUser);
             token.setAccessToken(root.path("access_token").asText());
             token.setRefreshToken(root.path("refresh_token").asText());
             token.setExpiresAt(root.path("expires_at").asLong());
@@ -143,11 +149,11 @@ public class StravaService {
             token.setProfileMedium(athlete.path("profile_medium").asText(null));
 
             tokenRepository.save(token);
-            log.info("Strava connected: athlete='{}', city='{}'", token.getAthleteName(), token.getAthleteCity());
+            log.info("Strava connected: userId={}, athlete='{}', city='{}'",
+                    currentUser.getId(), token.getAthleteName(), token.getAthleteCity());
 
-            User user = securityUtils.getCurrentUser();
-            auditLogService.log(user, AuditAction.STRAVA_CONNECTED, "USER",
-                    user != null ? String.valueOf(user.getId()) : null,
+            auditLogService.log(currentUser, AuditAction.STRAVA_CONNECTED, "USER",
+                    String.valueOf(currentUser.getId()),
                     java.util.Map.of("athlete", token.getAthleteName() != null ? token.getAthleteName() : "unknown"));
         } catch (Exception e) {
             log.error("Strava token exchange failed: {}", e.getMessage());
@@ -186,19 +192,25 @@ public class StravaService {
     }
 
     public StravaStatusDto getStatus() {
-        Optional<StravaToken> tokenOpt = tokenRepository.findFirstByOrderByIdAsc();
+        User currentUser = securityUtils.getCurrentUser();
+        if (currentUser == null) {
+            return new StravaStatusDto(false, null, null, null);
+        }
+        Optional<StravaToken> tokenOpt = tokenRepository.findByUser(currentUser);
         if (tokenOpt.isEmpty()) {
-            log.info("Strava status: not connected");
             return new StravaStatusDto(false, null, null, null);
         }
         StravaToken token = tokenOpt.get();
-        log.info("Strava status: connected, athlete='{}'", token.getAthleteName());
         return new StravaStatusDto(true, token.getAthleteName(), token.getAthleteCity(), token.getProfileMedium());
     }
 
     @Transactional
     public List<StravaActivityDto> getActivities(LocalDate start, LocalDate end) {
-        Optional<StravaToken> tokenOpt = tokenRepository.findFirstByOrderByIdAsc();
+        User currentUser = securityUtils.getCurrentUser();
+        if (currentUser == null) {
+            return List.of();
+        }
+        Optional<StravaToken> tokenOpt = tokenRepository.findByUser(currentUser);
         if (tokenOpt.isEmpty()) {
             return List.of();
         }
@@ -209,7 +221,6 @@ public class StravaService {
 
         try {
             List<StravaActivityDto> activities = fetchAllActivitiesInRange(token.getAccessToken(), after, before);
-            User currentUser = securityUtils.getCurrentUser();
             log.info("Strava sync {}/{}: {} activities found, userId={}", start, end, activities.size(),
                     currentUser != null ? currentUser.getId() : "null");
             syncActivitiesToDb(activities, token.getAccessToken(), currentUser);
@@ -441,12 +452,15 @@ public class StravaService {
             throw new RuntimeException("Activity " + completedTrainingId + " is not a Strava activity");
         }
 
-        StravaToken token = tokenRepository.findFirstByOrderByIdAsc()
-                .orElseThrow(() -> new RuntimeException("No Strava token found"));
+        User user = securityUtils.getCurrentUser();
+        if (user == null) {
+            throw new RuntimeException("No authenticated user");
+        }
+        StravaToken token = tokenRepository.findByUser(user)
+                .orElseThrow(() -> new RuntimeException("No Strava token found for current user"));
         token = refreshTokenIfExpired(token);
 
-        User user = securityUtils.getCurrentUser();
-        if (ct.getUser() == null && user != null) {
+        if (ct.getUser() == null) {
             ct.setUser(user);
             ct = completedTrainingRepository.save(ct);
         }
@@ -468,11 +482,14 @@ public class StravaService {
             throw new RuntimeException("Activity " + completedTrainingId + " is not a Strava activity");
         }
 
-        StravaToken token = tokenRepository.findFirstByOrderByIdAsc()
-                .orElseThrow(() -> new RuntimeException("No Strava token found"));
+        User user = ct.getUser();
+        if (user == null) {
+            throw new RuntimeException("CompletedTraining has no associated user");
+        }
+        StravaToken token = tokenRepository.findByUser(user)
+                .orElseThrow(() -> new RuntimeException("No Strava token found for user"));
         token = refreshTokenIfExpired(token);
 
-        User user = ct.getUser();
         fetchStreamsAndPersistMetrics(ct.getStravaActivityId(), ct, token.getAccessToken(), user);
     }
 
@@ -542,10 +559,14 @@ public class StravaService {
         }
     }
 
+    @Transactional
     public void disconnect() {
         User user = securityUtils.getCurrentUser();
-        tokenRepository.deleteAll();
+        if (user == null) {
+            return;
+        }
+        tokenRepository.deleteByUser(user);
         auditLogService.log(user, AuditAction.STRAVA_DISCONNECTED, "USER",
-                user != null ? String.valueOf(user.getId()) : null, null);
+                String.valueOf(user.getId()), null);
     }
 }

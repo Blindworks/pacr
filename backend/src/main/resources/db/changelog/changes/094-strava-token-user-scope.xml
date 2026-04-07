@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <!-- Security fix: remove orphaned (non-user-scoped) Strava tokens that were
+         previously shared across all users due to global findFirstByOrderByIdAsc() queries. -->
+    <changeSet id="094-delete-orphan-strava-tokens" author="system">
+        <preConditions onFail="MARK_RAN">
+            <columnExists tableName="strava_token" columnName="user_id"/>
+        </preConditions>
+        <delete tableName="strava_token">
+            <where>user_id IS NULL</where>
+        </delete>
+    </changeSet>
+
+    <changeSet id="094-strava-token-user-id-not-null" author="system">
+        <preConditions onFail="MARK_RAN">
+            <columnExists tableName="strava_token" columnName="user_id"/>
+        </preConditions>
+        <addNotNullConstraint tableName="strava_token" columnName="user_id" columnDataType="BIGINT"/>
+    </changeSet>
+
+    <changeSet id="094-strava-token-user-id-unique" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <indexExists tableName="strava_token" indexName="uk_strava_token_user_id"/>
+            </not>
+        </preConditions>
+        <addUniqueConstraint tableName="strava_token" columnNames="user_id" constraintName="uk_strava_token_user_id"/>
+    </changeSet>
+
+</databaseChangeLog>
