@@ -308,12 +308,105 @@
   align-items: center;
   gap: 0.55rem;
   height: 100%;
+  position: relative;
 
   span {
     color: var(--text-muted);
     font-size: 0.72rem;
     font-weight: 700;
   }
+
+  &:hover .bar-tooltip {
+    opacity: 1;
+    transform: translateX(-50%) translateY(-2px);
+  }
+
+  &:hover .bar-stack:not(.bar-stack--empty) {
+    background: var(--pp);
+  }
+}
+
+.bar-tooltip {
+  position: absolute;
+  bottom: calc(100% - 1.2rem);
+  left: 50%;
+  transform: translateX(-50%);
+  background: color-mix(in srgb, var(--bg) 95%, transparent);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 0.5rem;
+  padding: 0.4rem 0.6rem;
+  pointer-events: none;
+  z-index: 10;
+  min-width: 7rem;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 5px solid transparent;
+    border-top-color: color-mix(in srgb, var(--bg) 95%, transparent);
+  }
+
+  &__date {
+    font-size: 0.65rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    margin-bottom: 0.25rem;
+    padding-bottom: 0.25rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    text-align: center;
+  }
+
+  &__row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--pp);
+    line-height: 1.4;
+  }
+
+  &__dot {
+    width: 0.45rem;
+    height: 0.45rem;
+    border-radius: 50%;
+    background: var(--pp);
+    flex-shrink: 0;
+  }
+}
+
+.bar-col:first-child .bar-tooltip {
+  left: 0;
+  transform: translateX(0);
+}
+.bar-col:first-child:hover .bar-tooltip {
+  transform: translateX(0) translateY(-2px);
+}
+.bar-col:first-child .bar-tooltip::after {
+  left: 1rem;
+  transform: translateX(0);
+}
+
+.bar-col:last-child .bar-tooltip {
+  left: auto;
+  right: 0;
+  transform: translateX(0);
+}
+.bar-col:last-child:hover .bar-tooltip {
+  transform: translateX(0) translateY(-2px);
+}
+.bar-col:last-child .bar-tooltip::after {
+  left: auto;
+  right: 1rem;
+  transform: translateX(0);
 }
 
 .bar-stack {

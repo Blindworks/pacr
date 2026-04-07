@@ -13,6 +13,7 @@ type MonthlyBar = {
   weekday: string;
   heightPct: number;
   distanceKm: number;
+  fullDate: string;
 };
 
 type IntensityZone = {
@@ -182,11 +183,15 @@ export class Statistics implements OnInit {
       const weekday = d && !isNaN(d.getTime())
         ? d.toLocaleDateString(locale, { weekday: 'short' })
         : '';
+      const fullDate = d && !isNaN(d.getTime())
+        ? d.toLocaleDateString(locale, { weekday: 'short', day: '2-digit', month: '2-digit', year: 'numeric' })
+        : b.label;
       return {
         month: b.label,
         weekday,
         heightPct: Math.round((b.distanceKm / maxDistance) * 100),
         distanceKm: b.distanceKm,
+        fullDate,
       };
     });
   }

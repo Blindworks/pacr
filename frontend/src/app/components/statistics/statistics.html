@@ -98,10 +98,16 @@
         }
         @for (bar of monthlyBars; track bar.month) {
           <div class="bar-col">
+            <div class="bar-tooltip">
+              <div class="bar-tooltip__date">{{ bar.fullDate }}</div>
+              <div class="bar-tooltip__row">
+                <span class="bar-tooltip__dot"></span>
+                <span>{{ bar.distanceKm | number:'1.1-1' }} km</span>
+              </div>
+            </div>
             <div class="bar-stack"
                  [class.bar-stack--empty]="bar.distanceKm === 0"
-                 [style.height.%]="bar.heightPct"
-                 [title]="bar.distanceKm + ' km'">
+                 [style.height.%]="bar.heightPct">
             </div>
             <span class="bar-label">
               @if (bar.weekday) {
