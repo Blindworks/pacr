@@ -32,6 +32,10 @@ export class Friends implements OnInit, OnDestroy {
     this.avatarLoading.add(userId);
     this.userService.getProfileImage(userId).subscribe({
       next: blob => {
+        if (!blob) {
+          this.avatarLoading.delete(userId);
+          return;
+        }
         const url = URL.createObjectURL(blob);
         this.avatarUrls.update(map => ({ ...map, [userId]: url }));
         this.avatarLoading.delete(userId);

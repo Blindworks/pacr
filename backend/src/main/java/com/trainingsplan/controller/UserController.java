@@ -295,6 +295,9 @@ public class UserController {
     @GetMapping("/{id}/profile-image")
     public ResponseEntity<Resource> getProfileImage(@PathVariable Long id) {
         UserService.ProfileImageData profileImage = userService.loadProfileImage(id);
+        if (profileImage == null) {
+            return ResponseEntity.noContent().build();
+        }
         MediaType mediaType;
         try {
             mediaType = MediaType.parseMediaType(profileImage.contentType());

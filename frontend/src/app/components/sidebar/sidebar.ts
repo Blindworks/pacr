@@ -164,6 +164,7 @@ export class Sidebar implements OnInit, OnDestroy {
   private loadProfileImage(userId: number): void {
     this.userService.getProfileImage(userId).subscribe({
       next: blob => {
+        if (!blob) return;
         const url = URL.createObjectURL(blob);
         const old = this.profileImageUrl();
         if (old) URL.revokeObjectURL(old);

@@ -179,7 +179,7 @@ public class UserService {
         User targetUser = findById(targetUserId);
         String filename = targetUser.getProfileImageFilename();
         if (filename == null || filename.isBlank()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Image not found");
+            return null;
         }
 
         Resource resource = imageStoragePort.load(filename);

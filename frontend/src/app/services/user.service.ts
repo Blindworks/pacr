@@ -1,7 +1,7 @@
 import { apiUrl } from '../core/api-base';
 import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient, HttpContext } from '@angular/common/http';
-import { Observable, tap } from 'rxjs';
+import { Observable, map, tap } from 'rxjs';
 import { SKIP_AUTH_LOGOUT } from '../interceptors/auth.interceptor';
 
 const BASE = apiUrl('/users');
@@ -127,10 +127,10 @@ export class UserService {
     return this.http.put<{ message: string }>(`${BASE}/me/password`, { currentPassword, newPassword });
   }
 
-  getProfileImage(id: number): Observable<Blob> {
+  getProfileImage(id: number): Observable<Blob | null> {
     return this.http.get(`${BASE}/${id}/profile-image`, {
       responseType: 'blob',
       context: new HttpContext().set(SKIP_AUTH_LOGOUT, true)
-    });
+    }).pipe(map(blob => blob && blob.size > 0 ? blob : null));
   }
 }

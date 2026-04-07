@@ -206,6 +206,7 @@ export class Settings implements OnInit, OnDestroy {
     if (!this.userId) return;
     this.userService.getProfileImage(this.userId).subscribe({
       next: blob => {
+        if (!blob) return;
         if (this.profileImageObjectUrl) {
           URL.revokeObjectURL(this.profileImageObjectUrl);
         }
