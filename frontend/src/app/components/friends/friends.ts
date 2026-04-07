@@ -1,8 +1,9 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { FriendshipService, Friendship, UserSearchResult, FriendActivity } from '../../services/friendship.service';
+import { UserService } from '../../services/user.service';
 
 type TabKey = 'feed' | 'friends' | 'requests' | 'find';
 
@@ -13,8 +14,33 @@ type TabKey = 'feed' | 'friends' | 'requests' | 'find';
   templateUrl: './friends.html',
   styleUrl: './friends.scss'
 })
-export class Friends implements OnInit {
+export class Friends implements OnInit, OnDestroy {
   private readonly friendshipService = inject(FriendshipService);
+  private readonly userService = inject(UserService);
+
+  avatarUrls = signal<Record<number, string>>({});
+  private readonly avatarLoading = new Set<number>();
+
+  avatarUrl(userId: number): string | null {
+    return this.avatarUrls()[userId] ?? null;
+  }
+
+  private loadAvatar(userId: number, _filename?: string | null): void {
+    if (this.avatarUrls()[userId] || this.avatarLoading.has(userId)) return;
+    this.avatarLoading.add(userId);
+    this.userService.getProfileImage(userId).subscribe({
+      next: blob => {
+        const url = URL.createObjectURL(blob);
+        this.avatarUrls.update(map => ({ ...map, [userId]: url }));
+        this.avatarLoading.delete(userId);
+      },
+      error: () => { this.avatarLoading.delete(userId); }
+    });
+  }
+
+  ngOnDestroy(): void {
+    Object.values(this.avatarUrls()).forEach(url => URL.revokeObjectURL(url));
+  }
 
   activeTab = signal<TabKey>('feed');
   loading = signal(false);
@@ -44,7 +70,11 @@ export class Friends implements OnInit {
   loadActivity(): void {
     this.loading.set(true);
     this.friendshipService.getActivity().subscribe({
-      next: a => { this.activity.set(a); this.loading.set(false); },
+      next: a => {
+        this.activity.set(a);
+        a.forEach(x => this.loadAvatar(x.friendId, x.profileImageFilename));
+        this.loading.set(false);
+      },
       error: () => { this.error.set('Failed to load activity'); this.loading.set(false); }
     });
   }
@@ -52,7 +82,11 @@ export class Friends implements OnInit {
   loadFriends(): void {
     this.loading.set(true);
     this.friendshipService.listFriends().subscribe({
-      next: f => { this.friends.set(f); this.loading.set(false); },
+      next: f => {
+        this.friends.set(f);
+        f.forEach(x => this.loadAvatar(x.otherUser.id, x.otherUser.profileImageFilename));
+        this.loading.set(false);
+      },
       error: () => { this.error.set('Failed to load friends'); this.loading.set(false); }
     });
   }
@@ -60,11 +94,18 @@ export class Friends implements OnInit {
   loadRequests(): void {
     this.loading.set(true);
     this.friendshipService.listIncoming().subscribe({
-      next: i => { this.incoming.set(i); },
+      next: i => {
+        this.incoming.set(i);
+        i.forEach(x => this.loadAvatar(x.otherUser.id, x.otherUser.profileImageFilename));
+      },
       error: () => { this.error.set('Failed to load requests'); }
     });
     this.friendshipService.listOutgoing().subscribe({
-      next: o => { this.outgoing.set(o); this.loading.set(false); },
+      next: o => {
+        this.outgoing.set(o);
+        o.forEach(x => this.loadAvatar(x.otherUser.id, x.otherUser.profileImageFilename));
+        this.loading.set(false);
+      },
       error: () => { this.loading.set(false); }
     });
   }
@@ -82,7 +123,11 @@ export class Friends implements OnInit {
   runSearch(q: string): void {
     this.searching.set(true);
     this.friendshipService.search(q).subscribe({
-      next: results => { this.searchResults.set(results); this.searching.set(false); },
+      next: results => {
+        this.searchResults.set(results);
+        results.forEach(u => this.loadAvatar(u.id, u.profileImageFilename));
+        this.searching.set(false);
+      },
       error: () => { this.searching.set(false); }
     });
   }

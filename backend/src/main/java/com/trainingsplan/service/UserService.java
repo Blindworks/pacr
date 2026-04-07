@@ -153,10 +153,7 @@ public class UserService {
     }
 
     public ProfileImageData loadProfileImage(Long targetUserId) {
-        User currentUser = requireAuthenticatedUser();
-        if (!currentUser.getId().equals(targetUserId) && currentUser.getRole() != UserRole.ADMIN) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Not allowed");
-        }
+        requireAuthenticatedUser();
 
         User targetUser = findById(targetUserId);
         String filename = targetUser.getProfileImageFilename();

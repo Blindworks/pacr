@@ -36,7 +36,13 @@
         <div class="activity-list">
           @for (a of activity(); track a.friendId + '-' + a.date + '-' + a.title) {
             <article class="activity-card">
-              <div class="avatar">{{ a.friendDisplayName[0] }}</div>
+              <div class="avatar">
+                @if (avatarUrl(a.friendId); as url) {
+                  <img [src]="url" alt="" />
+                } @else {
+                  {{ a.friendDisplayName[0] }}
+                }
+              </div>
               <div class="body">
                 <header>
                   <strong>{{ a.friendDisplayName }}</strong>
@@ -66,7 +72,13 @@
         <div class="user-list">
           @for (f of friends(); track f.id) {
             <div class="user-card">
-              <div class="avatar">{{ f.otherUser.displayName[0] }}</div>
+              <div class="avatar">
+                @if (avatarUrl(f.otherUser.id); as url) {
+                  <img [src]="url" alt="" />
+                } @else {
+                  {{ f.otherUser.displayName[0] }}
+                }
+              </div>
               <div class="info">
                 <div class="name">{{ f.otherUser.displayName }}</div>
                 <div class="username">&#64;{{ f.otherUser.username }}</div>
@@ -92,7 +104,13 @@
         <div class="user-list">
           @for (r of incoming(); track r.id) {
             <div class="user-card">
-              <div class="avatar">{{ r.otherUser.displayName[0] }}</div>
+              <div class="avatar">
+                @if (avatarUrl(r.otherUser.id); as url) {
+                  <img [src]="url" alt="" />
+                } @else {
+                  {{ r.otherUser.displayName[0] }}
+                }
+              </div>
               <div class="info">
                 <div class="name">{{ r.otherUser.displayName }}</div>
                 <div class="username">&#64;{{ r.otherUser.username }}</div>
@@ -119,7 +137,13 @@
         <div class="user-list">
           @for (r of outgoing(); track r.id) {
             <div class="user-card">
-              <div class="avatar">{{ r.otherUser.displayName[0] }}</div>
+              <div class="avatar">
+                @if (avatarUrl(r.otherUser.id); as url) {
+                  <img [src]="url" alt="" />
+                } @else {
+                  {{ r.otherUser.displayName[0] }}
+                }
+              </div>
               <div class="info">
                 <div class="name">{{ r.otherUser.displayName }}</div>
                 <div class="username">&#64;{{ r.otherUser.username }}</div>
@@ -155,7 +179,13 @@
         <div class="user-list">
           @for (u of searchResults(); track u.id) {
             <div class="user-card">
-              <div class="avatar">{{ u.displayName[0] }}</div>
+              <div class="avatar">
+                @if (avatarUrl(u.id); as url) {
+                  <img [src]="url" alt="" />
+                } @else {
+                  {{ u.displayName[0] }}
+                }
+              </div>
               <div class="info">
                 <div class="name">{{ u.displayName }}</div>
                 <div class="username">&#64;{{ u.username }}</div>
