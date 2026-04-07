@@ -46,4 +46,16 @@ public interface UserRepository extends JpaRepository<User, Long> {
     List<User> searchDiscoverableUsers(@Param("query") String query,
                                         @Param("excludeUserId") Long excludeUserId,
                                         Pageable pageable);
+
+    @Query("SELECT u FROM User u WHERE u.discoverableByOthers = true " +
+            "AND u.status = com.trainingsplan.entity.UserStatus.ACTIVE " +
+            "AND u.id <> :excludeUserId " +
+            "AND u.latitude IS NOT NULL AND u.longitude IS NOT NULL " +
+            "AND u.latitude BETWEEN :minLat AND :maxLat " +
+            "AND u.longitude BETWEEN :minLon AND :maxLon")
+    List<User> findNearbyDiscoverableUsers(@Param("minLat") double minLat,
+                                            @Param("maxLat") double maxLat,
+                                            @Param("minLon") double minLon,
+                                            @Param("maxLon") double maxLon,
+                                            @Param("excludeUserId") Long excludeUserId);
 }

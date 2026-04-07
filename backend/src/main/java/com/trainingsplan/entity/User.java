@@ -117,6 +117,18 @@ public class User implements UserDetails {
     @Column(name = "discoverable_by_others", nullable = false)
     private boolean discoverableByOthers = false;
 
+    /** User's latitude for nearby discovery (optional). */
+    @Column(name = "latitude")
+    private Double latitude;
+
+    /** User's longitude for nearby discovery (optional). */
+    @Column(name = "longitude")
+    private Double longitude;
+
+    /** When the user's location was last updated. */
+    @Column(name = "location_updated_at")
+    private LocalDateTime locationUpdatedAt;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "subscription_plan", nullable = false, length = 20)
     private SubscriptionPlan subscriptionPlan = SubscriptionPlan.FREE;
@@ -380,6 +392,15 @@ public class User implements UserDetails {
 
     public boolean isDiscoverableByOthers() { return discoverableByOthers; }
     public void setDiscoverableByOthers(boolean discoverableByOthers) { this.discoverableByOthers = discoverableByOthers; }
+
+    public Double getLatitude() { return latitude; }
+    public void setLatitude(Double latitude) { this.latitude = latitude; }
+
+    public Double getLongitude() { return longitude; }
+    public void setLongitude(Double longitude) { this.longitude = longitude; }
+
+    public LocalDateTime getLocationUpdatedAt() { return locationUpdatedAt; }
+    public void setLocationUpdatedAt(LocalDateTime locationUpdatedAt) { this.locationUpdatedAt = locationUpdatedAt; }
 
     public SubscriptionPlan getSubscriptionPlan() { return subscriptionPlan; }
     public void setSubscriptionPlan(SubscriptionPlan subscriptionPlan) {

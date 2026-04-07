@@ -58,6 +58,11 @@ export class Friends implements OnInit, OnDestroy {
   searching = signal(false);
   private searchTimer: any = null;
 
+  searchMode = signal<'name' | 'nearby'>('name');
+  nearbyRadius = signal<number>(25);
+  nearbyRadiusOptions = [10, 25, 50, 100];
+  nearbyError = signal<string | null>(null);
+
   ngOnInit(): void {
     const tabParam = this.route.snapshot.queryParamMap.get('tab') as TabKey | null;
     if (tabParam && ['feed', 'friends', 'requests', 'find'].includes(tabParam)) {
@@ -175,6 +180,54 @@ export class Friends implements OnInit, OnDestroy {
     if (!confirm('Remove friend?')) return;
     this.friendshipService.remove(f.id).subscribe({
       next: () => this.friends.update(list => list.filter(x => x.id !== f.id))
+    });
+  }
+
+  setSearchMode(mode: 'name' | 'nearby'): void {
+    this.searchMode.set(mode);
+    this.searchResults.set([]);
+    this.nearbyError.set(null);
+    if (mode === 'nearby') {
+      this.runNearbySearch();
+    }
+  }
+
+  onNearbyRadiusChange(radius: number): void {
+    this.nearbyRadius.set(Number(radius));
+    if (this.searchMode() === 'nearby') this.runNearbySearch();
+  }
+
+  runNearbySearch(): void {
+    const me = this.userService.currentUser();
+    const radius = this.nearbyRadius();
+    this.nearbyError.set(null);
+    if (me?.latitude != null && me?.longitude != null) {
+      this.searchNearbyAt(me.latitude, me.longitude, radius);
+      return;
+    }
+    if (!navigator.geolocation) {
+      this.nearbyError.set('GEOLOCATION_UNSUPPORTED');
+      return;
+    }
+    this.searching.set(true);
+    navigator.geolocation.getCurrentPosition(
+      pos => this.searchNearbyAt(pos.coords.latitude, pos.coords.longitude, radius),
+      () => {
+        this.searching.set(false);
+        this.nearbyError.set('LOCATION_PERMISSION_DENIED');
+      }
+    );
+  }
+
+  private searchNearbyAt(lat: number, lon: number, radiusKm: number): void {
+    this.searching.set(true);
+    this.friendshipService.searchNearby(lat, lon, radiusKm).subscribe({
+      next: results => {
+        this.searchResults.set(results);
+        results.forEach(u => this.loadAvatar(u.id, u.profileImageFilename));
+        this.searching.set(false);
+      },
+      error: () => { this.searching.set(false); }
     });
   }
 

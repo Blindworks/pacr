@@ -14,6 +14,7 @@ export interface UserSearchResult {
   profileImageFilename: string | null;
   friendshipStatus: FriendshipStatusValue;
   friendshipId: number | null;
+  distanceKm?: number | null;
 }
 
 export interface Friendship {
@@ -45,6 +46,14 @@ export class FriendshipService {
   search(query: string): Observable<UserSearchResult[]> {
     const params = new HttpParams().set('q', query);
     return this.http.get<UserSearchResult[]>(`${BASE}/search`, { params });
+  }
+
+  searchNearby(lat: number, lon: number, radiusKm: number): Observable<UserSearchResult[]> {
+    const params = new HttpParams()
+      .set('lat', String(lat))
+      .set('lon', String(lon))
+      .set('radiusKm', String(radiusKm));
+    return this.http.get<UserSearchResult[]>(`${BASE}/search/nearby`, { params });
   }
 
   listFriends(): Observable<Friendship[]> {

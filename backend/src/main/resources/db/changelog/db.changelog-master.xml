@@ -95,5 +95,6 @@
     <include file="db/changelog/changes/089-add-refresh-tokens.xml"/>
     <include file="db/changelog/changes/090-add-user-discoverable-by-others.xml"/>
     <include file="db/changelog/changes/091-add-friendships.xml"/>
+    <include file="db/changelog/changes/092-add-user-location-fields.xml"/>
 
 </databaseChangeLog>

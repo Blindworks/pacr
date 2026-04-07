@@ -247,6 +247,27 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
+    public record UpdateLocationRequest(Double latitude, Double longitude) {}
+
+    @PutMapping("/me/location")
+    public ResponseEntity<?> updateMyLocation(@RequestBody UpdateLocationRequest request) {
+        User user = securityUtils.getCurrentUser();
+        if (user == null) return ResponseEntity.status(401).build();
+        try {
+            return ResponseEntity.ok(userService.updateLocation(user.getId(),
+                    request.latitude(), request.longitude()));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/me/location")
+    public ResponseEntity<?> clearMyLocation() {
+        User user = securityUtils.getCurrentUser();
+        if (user == null) return ResponseEntity.status(401).build();
+        return ResponseEntity.ok(userService.clearLocation(user.getId()));
+    }
+
     @PutMapping("/me/complete-onboarding")
     public ResponseEntity<User> completeOnboarding() {
         User user = securityUtils.getCurrentUser();

@@ -280,6 +280,32 @@
             <span class="track"></span>
           </label>
         </div>
+        <div class="toggle-row">
+          <div class="toggle-info">
+            <span class="toggle-title">{{ 'SETTINGS.MY_LOCATION_TITLE' | translate }}</span>
+            <span class="toggle-sub">{{ 'SETTINGS.MY_LOCATION_SUB' | translate }}</span>
+            <span class="toggle-sub" *ngIf="hasLocation(); else noLoc">
+              {{ currentLocationLabel() }}
+            </span>
+            <ng-template #noLoc>
+              <span class="toggle-sub">{{ 'SETTINGS.LOCATION_NOT_SET' | translate }}</span>
+            </ng-template>
+          </div>
+          <div class="location-actions">
+            <button type="button" class="btn-small" (click)="setLocationOnMap()">
+              <span class="material-symbols-outlined">map</span>
+              {{ 'SETTINGS.SET_ON_MAP' | translate }}
+            </button>
+            <button type="button" class="btn-small" (click)="useCurrentPosition()">
+              <span class="material-symbols-outlined">my_location</span>
+              {{ 'SETTINGS.USE_CURRENT_POSITION' | translate }}
+            </button>
+            <button type="button" class="btn-small btn-danger" *ngIf="hasLocation()" (click)="removeLocation()">
+              <span class="material-symbols-outlined">delete</span>
+              {{ 'SETTINGS.REMOVE_LOCATION' | translate }}
+            </button>
+          </div>
+        </div>
       </div>
     </article>
 
@@ -381,3 +407,5 @@
 
   </div>
 </section>
+
+<app-location-picker-dialog></app-location-picker-dialog>

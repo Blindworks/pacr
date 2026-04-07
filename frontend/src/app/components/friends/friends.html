@@ -162,19 +162,58 @@
   <!-- Find Tab -->
   @if (activeTab() === 'find') {
     <section class="tab-content">
-      <div class="search-bar">
-        <span class="material-symbols-outlined">search</span>
-        <input
-          type="text"
-          [(ngModel)]="searchQuery"
-          (input)="onSearchInput()"
-          [placeholder]="'COMMUNITY.FRIENDS.SEARCH_PLACEHOLDER' | translate" />
+      <div class="search-mode-toggle">
+        <button class="mode-btn" [class.active]="searchMode() === 'name'" (click)="setSearchMode('name')">
+          <span class="material-symbols-outlined">person_search</span>
+          {{ 'COMMUNITY.FRIENDS.SEARCH_MODE_NAME' | translate }}
+        </button>
+        <button class="mode-btn" [class.active]="searchMode() === 'nearby'" (click)="setSearchMode('nearby')">
+          <span class="material-symbols-outlined">near_me</span>
+          {{ 'COMMUNITY.FRIENDS.SEARCH_MODE_NEARBY' | translate }}
+        </button>
       </div>
+
+      @if (searchMode() === 'name') {
+        <div class="search-bar">
+          <span class="material-symbols-outlined">search</span>
+          <input
+            type="text"
+            [(ngModel)]="searchQuery"
+            (input)="onSearchInput()"
+            [placeholder]="'COMMUNITY.FRIENDS.SEARCH_PLACEHOLDER' | translate" />
+        </div>
+      } @else {
+        <div class="nearby-controls">
+          <label>
+            {{ 'COMMUNITY.FRIENDS.RADIUS_LABEL' | translate }}
+            <select [ngModel]="nearbyRadius()" (ngModelChange)="onNearbyRadiusChange($event)">
+              @for (r of nearbyRadiusOptions; track r) {
+                <option [ngValue]="r">{{ r }} km</option>
+              }
+            </select>
+          </label>
+          <button class="btn btn-secondary" (click)="runNearbySearch()">
+            <span class="material-symbols-outlined">refresh</span>
+            {{ 'COMMUNITY.FRIENDS.REFRESH' | translate }}
+          </button>
+        </div>
+        @if (nearbyError(); as err) {
+          <p class="empty">
+            @if (err === 'LOCATION_PERMISSION_DENIED') {
+              {{ 'COMMUNITY.FRIENDS.LOCATION_PERMISSION_DENIED' | translate }}
+            } @else {
+              {{ 'COMMUNITY.FRIENDS.GEOLOCATION_UNSUPPORTED' | translate }}
+            }
+          </p>
+        }
+      }
 
       @if (searching()) {
         <p class="loading">{{ 'COMMON.LOADING' | translate }}</p>
-      } @else if (searchResults().length === 0 && searchQuery.length >= 2) {
+      } @else if (searchMode() === 'name' && searchResults().length === 0 && searchQuery.length >= 2) {
         <p class="empty">{{ 'COMMUNITY.FRIENDS.NO_RESULTS' | translate }}</p>
+      } @else if (searchMode() === 'nearby' && searchResults().length === 0 && !nearbyError()) {
+        <p class="empty">{{ 'COMMUNITY.FRIENDS.NO_NEARBY_RESULTS' | translate }}</p>
       } @else {
         <div class="user-list">
           @for (u of searchResults(); track u.id) {
@@ -189,6 +228,12 @@
               <div class="info">
                 <div class="name">{{ u.displayName }}</div>
                 <div class="username">&#64;{{ u.username }}</div>
+                @if (u.distanceKm != null) {
+                  <div class="distance">
+                    <span class="material-symbols-outlined">near_me</span>
+                    {{ u.distanceKm }} km
+                  </div>
+                }
               </div>
               @switch (u.friendshipStatus) {
                 @case ('NONE') {

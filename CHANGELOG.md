@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Nearby friends discovery**: the Friends "Find" tab now supports searching for other discoverable users in your vicinity via a new "Nearby" mode with selectable radius (10/25/50/100 km). Users can set their location in settings either via the map picker or the browser's current position (`PUT /api/users/me/location`, `DELETE /api/users/me/location`). New endpoint `GET /api/friendships/search/nearby?lat=&lon=&radiusKm=` returns results with Haversine-calculated distances. Liquibase migration `092-add-user-location-fields.xml` adds `latitude`, `longitude`, and `location_updated_at` columns to `users`.
 - **Friends / Connections** feature in the Community menu: search for other discoverable users, send/accept friend requests, view a feed of recent activities from connected users. New backend module (`Friendship` entity, `FriendshipService`, `/api/friendships` endpoints) and new Angular `Friends` component with tabs for Activity, Friends, Requests and Find. Liquibase migration `091-add-friendships.xml` creates the `friendships` table.
 - Settings: merged "Community Routes" and "Group Events" into a single **Community** card
 - New toggle "Discoverable by other runners" in the Community settings card, backed by a new `discoverable_by_others` flag on the user (Liquibase migration `090`)

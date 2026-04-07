@@ -10,6 +10,7 @@ import { CorosService } from '../../services/coros.service';
 import { UserService, UserProfile } from '../../services/user.service';
 import { NotificationPreferencesService } from '../../services/notification-preferences.service';
 import { ThemeService, ThemeChoice } from '../../services/theme.service';
+import { LocationPickerDialogComponent } from '../location-picker-dialog/location-picker-dialog';
 
 type Integration = {
   id: string;
@@ -22,12 +23,16 @@ type Integration = {
 @Component({
   selector: 'app-settings',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslateModule],
+  imports: [CommonModule, FormsModule, TranslateModule, LocationPickerDialogComponent],
   templateUrl: './settings.html',
   styleUrl: './settings.scss'
 })
 export class Settings implements OnInit, OnDestroy {
   @ViewChild('fileInput') private fileInput!: ElementRef<HTMLInputElement>;
+  @ViewChild(LocationPickerDialogComponent) private locationPicker?: LocationPickerDialogComponent;
+
+  protected userLatitude = signal<number | null>(null);
+  protected userLongitude = signal<number | null>(null);
 
   private readonly router = inject(Router);
   private readonly stravaService = inject(StravaService);
@@ -175,6 +180,8 @@ export class Settings implements OnInit, OnDestroy {
         this.communityRoutesEnabled.set(user.communityRoutesEnabled ?? false);
         this.groupEventsEnabled.set(user.groupEventsEnabled ?? false);
         this.discoverableByOthersEnabled.set(user.discoverableByOthers ?? false);
+        this.userLatitude.set(user.latitude ?? null);
+        this.userLongitude.set(user.longitude ?? null);
         this.theme.set((user.theme as ThemeChoice) ?? 'dark');
         this.themeService.initFromProfile(user.theme);
         this.profileLoaded = true;
@@ -281,6 +288,55 @@ export class Settings implements OnInit, OnDestroy {
     this.discoverableByOthersEnabled.set(value);
     this.userService.currentUser.update(u => u ? { ...u, discoverableByOthers: value } : null);
     this.triggerAutoSave();
+  }
+
+  protected hasLocation(): boolean {
+    return this.userLatitude() != null && this.userLongitude() != null;
+  }
+
+  protected currentLocationLabel(): string {
+    const lat = this.userLatitude();
+    const lon = this.userLongitude();
+    if (lat == null || lon == null) return '';
+    return `${lat.toFixed(4)}, ${lon.toFixed(4)}`;
+  }
+
+  protected setLocationOnMap(): void {
+    if (!this.locationPicker) return;
+    const sub = this.locationPicker.confirmed.subscribe(coords => {
+      this.saveLocation(coords.lat, coords.lng);
+      sub.unsubscribe();
+    });
+    this.locationPicker.open(this.userLatitude(), this.userLongitude());
+  }
+
+  protected useCurrentPosition(): void {
+    if (!navigator.geolocation) {
+      alert(this.translate.instant('SETTINGS.GEOLOCATION_UNSUPPORTED'));
+      return;
+    }
+    navigator.geolocation.getCurrentPosition(
+      pos => this.saveLocation(pos.coords.latitude, pos.coords.longitude),
+      () => alert(this.translate.instant('SETTINGS.LOCATION_PERMISSION_DENIED'))
+    );
+  }
+
+  protected removeLocation(): void {
+    this.userService.clearLocation().subscribe({
+      next: () => {
+        this.userLatitude.set(null);
+        this.userLongitude.set(null);
+      }
+    });
+  }
+
+  private saveLocation(lat: number, lon: number): void {
+    this.userService.updateLocation(lat, lon).subscribe({
+      next: () => {
+        this.userLatitude.set(lat);
+        this.userLongitude.set(lon);
+      }
+    });
   }
 
   protected setUnit(value: 'metric' | 'imperial'): void {

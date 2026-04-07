@@ -37,6 +37,45 @@ public class FriendshipService {
     }
 
     @Transactional(readOnly = true)
+    public List<UserSearchResultDto> searchNearbyUsers(double lat, double lon, double radiusKm, User currentUser) {
+        if (lat < -90 || lat > 90 || lon < -180 || lon > 180) {
+            throw new IllegalArgumentException("Invalid coordinates");
+        }
+        if (radiusKm < 1) radiusKm = 1;
+        if (radiusKm > 200) radiusKm = 200;
+        double latDelta = radiusKm / 111.0;
+        double cos = Math.cos(Math.toRadians(lat));
+        double lonDelta = radiusKm / (111.0 * Math.max(cos, 0.0001));
+        List<User> candidates = userRepository.findNearbyDiscoverableUsers(
+                lat - latDelta, lat + latDelta,
+                lon - lonDelta, lon + lonDelta,
+                currentUser.getId());
+        List<UserSearchResultDto> result = new ArrayList<>();
+        for (User u : candidates) {
+            double d = haversineKm(lat, lon, u.getLatitude(), u.getLongitude());
+            if (d <= radiusKm) {
+                UserSearchResultDto dto = toSearchDto(u, currentUser.getId());
+                dto.setDistanceKm(Math.round(d * 10.0) / 10.0);
+                result.add(dto);
+            }
+        }
+        result.sort(Comparator.comparing(UserSearchResultDto::getDistanceKm,
+                Comparator.nullsLast(Comparator.naturalOrder())));
+        if (result.size() > 50) return result.subList(0, 50);
+        return result;
+    }
+
+    private static double haversineKm(double lat1, double lon1, double lat2, double lon2) {
+        double R = 6371.0;
+        double dLat = Math.toRadians(lat2 - lat1);
+        double dLon = Math.toRadians(lon2 - lon1);
+        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2)
+                + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2))
+                * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+        return 2 * R * Math.asin(Math.sqrt(a));
+    }
+
+    @Transactional(readOnly = true)
     public List<UserSearchResultDto> searchUsers(String query, User currentUser) {
         if (query == null || query.trim().length() < 2) return List.of();
         List<User> matches = userRepository.searchDiscoverableUsers(

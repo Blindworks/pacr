@@ -33,6 +33,19 @@ public class FriendshipController {
         return ResponseEntity.ok(results);
     }
 
+    @GetMapping("/search/nearby")
+    public ResponseEntity<?> searchNearby(@RequestParam("lat") double lat,
+                                           @RequestParam("lon") double lon,
+                                           @RequestParam(value = "radiusKm", defaultValue = "25") double radiusKm) {
+        User user = securityUtils.getCurrentUser();
+        if (user == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        try {
+            return ResponseEntity.ok(friendshipService.searchNearbyUsers(lat, lon, radiusKm, user));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
     @GetMapping
     public ResponseEntity<?> listFriends() {
         User user = securityUtils.getCurrentUser();

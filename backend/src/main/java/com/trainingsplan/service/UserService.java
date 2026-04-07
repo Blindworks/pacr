@@ -58,6 +58,27 @@ public class UserService {
                 .orElseThrow(() -> new RuntimeException("User not found: " + id));
     }
 
+    public User updateLocation(Long userId, Double latitude, Double longitude) {
+        if (latitude == null || longitude == null
+                || latitude < -90 || latitude > 90
+                || longitude < -180 || longitude > 180) {
+            throw new IllegalArgumentException("Invalid coordinates");
+        }
+        User user = findById(userId);
+        user.setLatitude(latitude);
+        user.setLongitude(longitude);
+        user.setLocationUpdatedAt(LocalDateTime.now());
+        return userRepository.save(user);
+    }
+
+    public User clearLocation(Long userId) {
+        User user = findById(userId);
+        user.setLatitude(null);
+        user.setLongitude(null);
+        user.setLocationUpdatedAt(null);
+        return userRepository.save(user);
+    }
+
     public User completeOnboarding(Long userId) {
         User user = findById(userId);
         user.setOnboardingCompleted(true);

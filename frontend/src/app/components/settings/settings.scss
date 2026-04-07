@@ -298,6 +298,62 @@
   color: var(--text-muted);
 }
 
+.location-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  flex-shrink: 0;
+  justify-content: flex-end;
+
+  .btn-small {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.5rem 0.85rem;
+    font-size: 0.78rem;
+    font-weight: 600;
+    border-radius: 0.6rem;
+    border: 1px solid var(--border-color, rgba(255, 255, 255, 0.12));
+    background: var(--panel, rgba(255, 255, 255, 0.04));
+    color: var(--text-primary, #fff);
+    cursor: pointer;
+    transition: background 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
+
+    .material-symbols-outlined {
+      font-size: 1.05rem;
+    }
+
+    &:hover {
+      background: var(--panel-hover, rgba(255, 255, 255, 0.08));
+      border-color: var(--accent, #9dff4a);
+    }
+
+    &:active {
+      transform: translateY(1px);
+    }
+
+    &.btn-danger {
+      color: #ff6b6b;
+      border-color: rgba(255, 107, 107, 0.3);
+
+      &:hover {
+        background: rgba(255, 107, 107, 0.1);
+        border-color: #ff6b6b;
+      }
+    }
+  }
+}
+
+@media (max-width: 640px) {
+  .toggle-row:has(.location-actions) {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .location-actions {
+    justify-content: flex-start;
+  }
+}
+
 /* Custom toggle switch */
 .switch {
   position: relative;

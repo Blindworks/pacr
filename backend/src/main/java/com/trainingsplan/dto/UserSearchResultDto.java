@@ -8,6 +8,7 @@ public class UserSearchResultDto {
     /** NONE, PENDING_OUT, PENDING_IN, FRIENDS */
     private String friendshipStatus;
     private Long friendshipId;
+    private Double distanceKm;
 
     public UserSearchResultDto() {}
 
@@ -33,4 +34,6 @@ public class UserSearchResultDto {
     public void setFriendshipStatus(String friendshipStatus) { this.friendshipStatus = friendshipStatus; }
     public Long getFriendshipId() { return friendshipId; }
     public void setFriendshipId(Long friendshipId) { this.friendshipId = friendshipId; }
+    public Double getDistanceKm() { return distanceKm; }
+    public void setDistanceKm(Double distanceKm) { this.distanceKm = distanceKm; }
 }

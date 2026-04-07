@@ -25,6 +25,9 @@ export interface UserProfile {
   communityRoutesEnabled: boolean;
   groupEventsEnabled: boolean;
   discoverableByOthers: boolean;
+  latitude?: number | null;
+  longitude?: number | null;
+  locationUpdatedAt?: string | null;
   theme: string;
   role: string | null;
   subscriptionPlan: string | null;
@@ -110,6 +113,14 @@ export class UserService {
 
   setupOnboardingPlan(planId: number, startDate: string, competitionId?: number): Observable<any> {
     return this.http.post(apiUrl('/users/me/onboarding-plan-setup'), { planId, startDate, competitionId });
+  }
+
+  updateLocation(latitude: number, longitude: number): Observable<UserProfile> {
+    return this.http.put<UserProfile>(`${BASE}/me/location`, { latitude, longitude });
+  }
+
+  clearLocation(): Observable<UserProfile> {
+    return this.http.delete<UserProfile>(`${BASE}/me/location`);
   }
 
   changePassword(currentPassword: string, newPassword: string): Observable<{ message: string }> {
