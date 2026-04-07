@@ -1,6 +1,7 @@
 import { Component, OnDestroy, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { FriendshipService, Friendship, UserSearchResult, FriendActivity } from '../../services/friendship.service';
 import { UserService } from '../../services/user.service';
@@ -17,6 +18,7 @@ type TabKey = 'feed' | 'friends' | 'requests' | 'find';
 export class Friends implements OnInit, OnDestroy {
   private readonly friendshipService = inject(FriendshipService);
   private readonly userService = inject(UserService);
+  private readonly route = inject(ActivatedRoute);
 
   avatarUrls = signal<Record<number, string>>({});
   private readonly avatarLoading = new Set<number>();
@@ -57,7 +59,12 @@ export class Friends implements OnInit, OnDestroy {
   private searchTimer: any = null;
 
   ngOnInit(): void {
-    this.loadActivity();
+    const tabParam = this.route.snapshot.queryParamMap.get('tab') as TabKey | null;
+    if (tabParam && ['feed', 'friends', 'requests', 'find'].includes(tabParam)) {
+      this.setTab(tabParam);
+    } else {
+      this.loadActivity();
+    }
   }
 
   setTab(tab: TabKey): void {

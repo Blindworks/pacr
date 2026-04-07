@@ -1161,7 +1161,14 @@
       "NO_ACTIVITY": "No recent activity from your friends",
       "NO_RESULTS": "No users found",
       "INCOMING": "Incoming",
-      "OUTGOING": "Sent"
+      "OUTGOING": "Sent",
+      "PENDING_DIALOG": {
+        "TITLE": "New friend requests",
+        "MESSAGE_ONE": "You have 1 pending friend request.",
+        "MESSAGE_MANY": "You have {{count}} pending friend requests.",
+        "VIEW": "View",
+        "LATER": "Later"
+      }
     },
     "TITLE": "COMMUNITY",
     "ROUTES": "ROUTES",

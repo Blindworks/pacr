@@ -1,0 +1,28 @@
+<dialog #dialog class="login-msg-dialog" (click)="onBackdropClick($event)">
+  <div class="login-msg-inner" (click)="$event.stopPropagation()">
+
+    <header class="login-msg-header">
+      <div class="login-msg-header-title">
+        <span class="material-symbols-outlined login-msg-icon">person_add</span>
+        <span>{{ 'COMMUNITY.FRIENDS.PENDING_DIALOG.TITLE' | translate }}</span>
+      </div>
+    </header>
+
+    <div class="login-msg-body">
+      @if (pendingService.pendingCount() === 1) {
+        <p class="login-msg-content">{{ 'COMMUNITY.FRIENDS.PENDING_DIALOG.MESSAGE_ONE' | translate }}</p>
+      } @else {
+        <p class="login-msg-content">{{ 'COMMUNITY.FRIENDS.PENDING_DIALOG.MESSAGE_MANY' | translate : { count: pendingService.pendingCount() } }}</p>
+      }
+    </div>
+
+    <footer class="login-msg-footer">
+      <button class="login-msg-later" (click)="dismiss()">
+        {{ 'COMMUNITY.FRIENDS.PENDING_DIALOG.LATER' | translate }}
+      </button>
+      <button class="login-msg-dismiss" (click)="view()">
+        {{ 'COMMUNITY.FRIENDS.PENDING_DIALOG.VIEW' | translate }}
+      </button>
+    </footer>
+  </div>
+</dialog>

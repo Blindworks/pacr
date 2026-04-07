@@ -1161,7 +1161,14 @@
       "NO_ACTIVITY": "Keine aktuellen Aktivitäten deiner Freunde",
       "NO_RESULTS": "Keine Benutzer gefunden",
       "INCOMING": "Eingehend",
-      "OUTGOING": "Gesendet"
+      "OUTGOING": "Gesendet",
+      "PENDING_DIALOG": {
+        "TITLE": "Neue Freundschaftsanfragen",
+        "MESSAGE_ONE": "Du hast 1 offene Freundschaftsanfrage.",
+        "MESSAGE_MANY": "Du hast {{count}} offene Freundschaftsanfragen.",
+        "VIEW": "Anzeigen",
+        "LATER": "Später"
+      }
     },
     "TITLE": "COMMUNITY",
     "ROUTES": "ROUTES",

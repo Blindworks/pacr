@@ -8,16 +8,18 @@ import { Toast } from './components/toast/toast';
 import { FeedbackFab } from './components/feedback-fab/feedback-fab';
 import { FeedbackDialog } from './components/feedback-dialog/feedback-dialog';
 import { LoginMessageDialog } from './components/login-message-dialog/login-message-dialog';
+import { PendingFriendRequestsDialog } from './components/pending-friend-requests-dialog/pending-friend-requests-dialog';
 import { filter, map, startWith } from 'rxjs/operators';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { UserService } from './services/user.service';
 import { ThemeService } from './services/theme.service';
 import { LoginMessageService } from './services/login-message.service';
+import { PendingFriendRequestsService } from './services/pending-friend-requests.service';
 import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, NgClass, Sidebar, PaceCalculatorDialog, AboutDialog, Toast, FeedbackFab, FeedbackDialog, LoginMessageDialog],
+  imports: [RouterOutlet, NgClass, Sidebar, PaceCalculatorDialog, AboutDialog, Toast, FeedbackFab, FeedbackDialog, LoginMessageDialog, PendingFriendRequestsDialog],
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })
@@ -32,6 +34,7 @@ export class App {
   private readonly userService = inject(UserService);
   private readonly themeService = inject(ThemeService);
   private readonly loginMessageService = inject(LoginMessageService);
+  private readonly pendingFriendRequestsService = inject(PendingFriendRequestsService);
   private readonly translate = inject(TranslateService);
 
   private mobileQuery!: MediaQueryList;
@@ -45,6 +48,7 @@ export class App {
       if (user) {
         this.themeService.initFromProfile(user.theme);
         this.loginMessageService.fetchPending();
+        this.pendingFriendRequestsService.check();
       }
     });
 

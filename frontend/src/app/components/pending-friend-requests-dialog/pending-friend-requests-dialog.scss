@@ -1,0 +1,88 @@
+@use 'mixins' as m;
+@use 'variables' as v;
+
+.login-msg-dialog {
+  margin: auto;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: v.$radius-xl;
+  background: var(--bg-card);
+  color: var(--text);
+  width: min(460px, 92vw);
+  max-height: 85vh;
+  overflow: hidden;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.6);
+
+  &::backdrop {
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(4px);
+  }
+}
+
+.login-msg-inner {
+  display: flex;
+  flex-direction: column;
+  max-height: 85vh;
+  overflow-y: auto;
+}
+
+.login-msg-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.login-msg-header-title {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text);
+
+  .login-msg-icon {
+    font-size: 20px;
+    color: var(--pp);
+  }
+}
+
+.login-msg-body {
+  padding: 1.5rem;
+}
+
+.login-msg-content {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--text);
+  margin: 0;
+}
+
+.login-msg-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  padding: 1rem 1.5rem;
+  border-top: 1px solid var(--border);
+}
+
+.login-msg-dismiss {
+  @include m.btn-primary;
+  padding: 0.6rem 1.5rem;
+}
+
+.login-msg-later {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 0.6rem 1.25rem;
+  border-radius: v.$radius-md;
+  cursor: pointer;
+  font-size: 0.9rem;
+
+  &:hover {
+    background: var(--bg-hover, rgba(255, 255, 255, 0.05));
+  }
+}
