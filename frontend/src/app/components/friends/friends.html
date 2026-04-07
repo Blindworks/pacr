@@ -1,0 +1,186 @@
+<div class="friends-page">
+  <header class="page-header">
+    <h1>
+      <span class="material-symbols-outlined">group</span>
+      {{ 'COMMUNITY.FRIENDS.TITLE' | translate }}
+    </h1>
+  </header>
+
+  <nav class="tabs">
+    <button class="tab" [class.active]="activeTab() === 'feed'" (click)="setTab('feed')">
+      <span class="material-symbols-outlined">dynamic_feed</span>
+      <span>{{ 'COMMUNITY.FRIENDS.TAB_FEED' | translate }}</span>
+    </button>
+    <button class="tab" [class.active]="activeTab() === 'friends'" (click)="setTab('friends')">
+      <span class="material-symbols-outlined">group</span>
+      <span>{{ 'COMMUNITY.FRIENDS.TAB_FRIENDS' | translate }}</span>
+    </button>
+    <button class="tab" [class.active]="activeTab() === 'requests'" (click)="setTab('requests')">
+      <span class="material-symbols-outlined">mark_email_unread</span>
+      <span>{{ 'COMMUNITY.FRIENDS.TAB_REQUESTS' | translate }}</span>
+    </button>
+    <button class="tab" [class.active]="activeTab() === 'find'" (click)="setTab('find')">
+      <span class="material-symbols-outlined">person_search</span>
+      <span>{{ 'COMMUNITY.FRIENDS.TAB_FIND' | translate }}</span>
+    </button>
+  </nav>
+
+  <!-- Activity Feed Tab -->
+  @if (activeTab() === 'feed') {
+    <section class="tab-content">
+      @if (loading()) {
+        <p class="loading">{{ 'COMMON.LOADING' | translate }}</p>
+      } @else if (activity().length === 0) {
+        <p class="empty">{{ 'COMMUNITY.FRIENDS.NO_ACTIVITY' | translate }}</p>
+      } @else {
+        <div class="activity-list">
+          @for (a of activity(); track a.friendId + '-' + a.date + '-' + a.title) {
+            <article class="activity-card">
+              <div class="avatar">{{ a.friendDisplayName[0] }}</div>
+              <div class="body">
+                <header>
+                  <strong>{{ a.friendDisplayName }}</strong>
+                  <span class="muted">{{ a.date }}</span>
+                </header>
+                <div class="title">{{ a.title }}</div>
+                <div class="metrics">
+                  @if (a.distanceKm) { <span>{{ a.distanceKm.toFixed(2) }} km</span> }
+                  @if (a.durationSeconds) { <span>{{ formatDuration(a.durationSeconds) }}</span> }
+                </div>
+              </div>
+            </article>
+          }
+        </div>
+      }
+    </section>
+  }
+
+  <!-- Friends Tab -->
+  @if (activeTab() === 'friends') {
+    <section class="tab-content">
+      @if (loading()) {
+        <p class="loading">{{ 'COMMON.LOADING' | translate }}</p>
+      } @else if (friends().length === 0) {
+        <p class="empty">{{ 'COMMUNITY.FRIENDS.NO_FRIENDS' | translate }}</p>
+      } @else {
+        <div class="user-list">
+          @for (f of friends(); track f.id) {
+            <div class="user-card">
+              <div class="avatar">{{ f.otherUser.displayName[0] }}</div>
+              <div class="info">
+                <div class="name">{{ f.otherUser.displayName }}</div>
+                <div class="username">&#64;{{ f.otherUser.username }}</div>
+              </div>
+              <button class="btn btn-danger" (click)="removeFriend(f)">
+                <span class="material-symbols-outlined">person_remove</span>
+                {{ 'COMMUNITY.FRIENDS.REMOVE' | translate }}
+              </button>
+            </div>
+          }
+        </div>
+      }
+    </section>
+  }
+
+  <!-- Requests Tab -->
+  @if (activeTab() === 'requests') {
+    <section class="tab-content">
+      <h2 class="section-title">{{ 'COMMUNITY.FRIENDS.INCOMING' | translate }}</h2>
+      @if (incoming().length === 0) {
+        <p class="empty">{{ 'COMMUNITY.FRIENDS.NO_REQUESTS' | translate }}</p>
+      } @else {
+        <div class="user-list">
+          @for (r of incoming(); track r.id) {
+            <div class="user-card">
+              <div class="avatar">{{ r.otherUser.displayName[0] }}</div>
+              <div class="info">
+                <div class="name">{{ r.otherUser.displayName }}</div>
+                <div class="username">&#64;{{ r.otherUser.username }}</div>
+              </div>
+              <div class="actions">
+                <button class="btn btn-primary" (click)="accept(r)">
+                  <span class="material-symbols-outlined">check</span>
+                  {{ 'COMMUNITY.FRIENDS.ACCEPT' | translate }}
+                </button>
+                <button class="btn btn-secondary" (click)="decline(r)">
+                  <span class="material-symbols-outlined">close</span>
+                  {{ 'COMMUNITY.FRIENDS.DECLINE' | translate }}
+                </button>
+              </div>
+            </div>
+          }
+        </div>
+      }
+
+      <h2 class="section-title">{{ 'COMMUNITY.FRIENDS.OUTGOING' | translate }}</h2>
+      @if (outgoing().length === 0) {
+        <p class="empty">{{ 'COMMUNITY.FRIENDS.NO_REQUESTS' | translate }}</p>
+      } @else {
+        <div class="user-list">
+          @for (r of outgoing(); track r.id) {
+            <div class="user-card">
+              <div class="avatar">{{ r.otherUser.displayName[0] }}</div>
+              <div class="info">
+                <div class="name">{{ r.otherUser.displayName }}</div>
+                <div class="username">&#64;{{ r.otherUser.username }}</div>
+              </div>
+              <button class="btn btn-secondary" (click)="cancelOutgoing(r)">
+                <span class="material-symbols-outlined">undo</span>
+                {{ 'COMMUNITY.FRIENDS.REQUEST_PENDING' | translate }}
+              </button>
+            </div>
+          }
+        </div>
+      }
+    </section>
+  }
+
+  <!-- Find Tab -->
+  @if (activeTab() === 'find') {
+    <section class="tab-content">
+      <div class="search-bar">
+        <span class="material-symbols-outlined">search</span>
+        <input
+          type="text"
+          [(ngModel)]="searchQuery"
+          (input)="onSearchInput()"
+          [placeholder]="'COMMUNITY.FRIENDS.SEARCH_PLACEHOLDER' | translate" />
+      </div>
+
+      @if (searching()) {
+        <p class="loading">{{ 'COMMON.LOADING' | translate }}</p>
+      } @else if (searchResults().length === 0 && searchQuery.length >= 2) {
+        <p class="empty">{{ 'COMMUNITY.FRIENDS.NO_RESULTS' | translate }}</p>
+      } @else {
+        <div class="user-list">
+          @for (u of searchResults(); track u.id) {
+            <div class="user-card">
+              <div class="avatar">{{ u.displayName[0] }}</div>
+              <div class="info">
+                <div class="name">{{ u.displayName }}</div>
+                <div class="username">&#64;{{ u.username }}</div>
+              </div>
+              @switch (u.friendshipStatus) {
+                @case ('NONE') {
+                  <button class="btn btn-primary" (click)="sendRequest(u)">
+                    <span class="material-symbols-outlined">person_add</span>
+                    {{ 'COMMUNITY.FRIENDS.SEND_REQUEST' | translate }}
+                  </button>
+                }
+                @case ('PENDING_OUT') {
+                  <span class="status-chip">{{ 'COMMUNITY.FRIENDS.REQUEST_PENDING' | translate }}</span>
+                }
+                @case ('PENDING_IN') {
+                  <span class="status-chip">{{ 'COMMUNITY.FRIENDS.INCOMING' | translate }}</span>
+                }
+                @case ('FRIENDS') {
+                  <span class="status-chip status-chip--friends">{{ 'COMMUNITY.FRIENDS.TAB_FRIENDS' | translate }}</span>
+                }
+              }
+            </div>
+          }
+        </div>
+      }
+    </section>
+  }
+</div>

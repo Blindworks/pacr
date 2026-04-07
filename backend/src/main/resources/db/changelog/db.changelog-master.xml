@@ -94,5 +94,6 @@
     <include file="db/changelog/changes/088-add-login-messages.xml"/>
     <include file="db/changelog/changes/089-add-refresh-tokens.xml"/>
     <include file="db/changelog/changes/090-add-user-discoverable-by-others.xml"/>
+    <include file="db/changelog/changes/091-add-friendships.xml"/>
 
 </databaseChangeLog>

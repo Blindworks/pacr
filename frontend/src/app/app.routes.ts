@@ -122,6 +122,11 @@ export const routes: Routes = [
     loadComponent: () => import('./components/group-event-detail/group-event-detail').then(m => m.GroupEventDetail)
   },
   {
+    path: 'community/friends',
+    canActivate: [authGuard],
+    loadComponent: () => import('./components/friends/friends').then(m => m.Friends)
+  },
+  {
     path: 'trainer/events',
     canActivate: [authGuard, trainerGuard],
     loadComponent: () => import('./components/trainer-events/trainer-events').then(m => m.TrainerEvents)

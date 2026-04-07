@@ -9,6 +9,7 @@
     "COMMUNITY": "Community",
     "COMMUNITY_ROUTES": "Routes",
     "GROUP_EVENTS": "Groups",
+    "FRIENDS": "Friends",
     "TRAINER_EVENTS": "Trainer",
     "BODY_DATA": "Body Data",
     "BODY_METRICS": "Body Metrics",
@@ -1110,6 +1111,25 @@
     "SYMPTOM_MUSCLE": "Muscle Soreness"
   },
   "COMMUNITY": {
+    "FRIENDS": {
+      "TITLE": "Friends",
+      "TAB_FEED": "Activity",
+      "TAB_FRIENDS": "Friends",
+      "TAB_REQUESTS": "Requests",
+      "TAB_FIND": "Find People",
+      "SEARCH_PLACEHOLDER": "Search by name or username",
+      "SEND_REQUEST": "Add Friend",
+      "REQUEST_PENDING": "Request Pending",
+      "ACCEPT": "Accept",
+      "DECLINE": "Decline",
+      "REMOVE": "Remove",
+      "NO_FRIENDS": "No connections yet",
+      "NO_REQUESTS": "No pending requests",
+      "NO_ACTIVITY": "No recent activity from your friends",
+      "NO_RESULTS": "No users found",
+      "INCOMING": "Incoming",
+      "OUTGOING": "Sent"
+    },
     "TITLE": "COMMUNITY",
     "ROUTES": "ROUTES",
     "SUBTITLE": "High performance curated paths",

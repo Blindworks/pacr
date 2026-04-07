@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Friends / Connections** feature in the Community menu: search for other discoverable users, send/accept friend requests, view a feed of recent activities from connected users. New backend module (`Friendship` entity, `FriendshipService`, `/api/friendships` endpoints) and new Angular `Friends` component with tabs for Activity, Friends, Requests and Find. Liquibase migration `091-add-friendships.xml` creates the `friendships` table.
 - Settings: merged "Community Routes" and "Group Events" into a single **Community** card
 - New toggle "Discoverable by other runners" in the Community settings card, backed by a new `discoverable_by_others` flag on the user (Liquibase migration `090`)
 

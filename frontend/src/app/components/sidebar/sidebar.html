@@ -80,6 +80,12 @@
                 <span>{{ 'NAV.GROUP_EVENTS' | translate }}</span>
               </a>
             }
+            @if (userService.currentUser()?.discoverableByOthers) {
+              <a routerLink="/community/friends" routerLinkActive="active" class="nav-item nav-item--sub">
+                <span class="material-symbols-outlined">group</span>
+                <span>{{ 'NAV.FRIENDS' | translate }}</span>
+              </a>
+            }
           </div>
         </div>
       } @else {

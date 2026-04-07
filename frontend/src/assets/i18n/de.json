@@ -9,6 +9,7 @@
     "COMMUNITY": "Community",
     "COMMUNITY_ROUTES": "Routen",
     "GROUP_EVENTS": "Gruppen",
+    "FRIENDS": "Freunde",
     "TRAINER_EVENTS": "Trainer",
     "BODY_DATA": "Körperdaten",
     "BODY_METRICS": "Körpermesswerte",
@@ -1110,6 +1111,25 @@
     "SYMPTOM_MUSCLE": "Muskelkater"
   },
   "COMMUNITY": {
+    "FRIENDS": {
+      "TITLE": "Freunde",
+      "TAB_FEED": "Aktivität",
+      "TAB_FRIENDS": "Freunde",
+      "TAB_REQUESTS": "Anfragen",
+      "TAB_FIND": "Personen finden",
+      "SEARCH_PLACEHOLDER": "Nach Name oder Benutzername suchen",
+      "SEND_REQUEST": "Freund hinzufügen",
+      "REQUEST_PENDING": "Anfrage offen",
+      "ACCEPT": "Annehmen",
+      "DECLINE": "Ablehnen",
+      "REMOVE": "Entfernen",
+      "NO_FRIENDS": "Noch keine Verbindungen",
+      "NO_REQUESTS": "Keine offenen Anfragen",
+      "NO_ACTIVITY": "Keine aktuellen Aktivitäten deiner Freunde",
+      "NO_RESULTS": "Keine Benutzer gefunden",
+      "INCOMING": "Eingehend",
+      "OUTGOING": "Gesendet"
+    },
     "TITLE": "COMMUNITY",
     "ROUTES": "ROUTES",
     "SUBTITLE": "Kuratierte Hochleistungsstrecken",
