@@ -3,6 +3,9 @@ import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { DashboardService, DashboardData } from '../../services/dashboard.service';
+import { UserService } from '../../services/user.service';
+import { AsthmaService, BioWeatherDto } from '../../services/asthma.service';
+import { CycleSettingsService, CycleStatusDto } from '../../services/cycle-settings.service';
 import { AcwrInfoDialogService } from '../../services/acwr-info-dialog.service';
 import { AcwrInfoDialog } from '../acwr-info-dialog/acwr-info-dialog';
 import { StrainInfoDialogService } from '../../services/strain-info-dialog.service';
@@ -19,6 +22,9 @@ import { ReadinessInfoDialog } from '../readiness-info-dialog/readiness-info-dia
 })
 export class Dashboard implements OnInit {
   private readonly dashboardService = inject(DashboardService);
+  private readonly userService = inject(UserService);
+  private readonly asthmaService = inject(AsthmaService);
+  private readonly cycleSettingsService = inject(CycleSettingsService);
   private readonly translate = inject(TranslateService);
   protected readonly acwrInfoService = inject(AcwrInfoDialogService);
   protected readonly strainInfoService = inject(StrainInfoDialogService);
@@ -27,6 +33,8 @@ export class Dashboard implements OnInit {
   data: DashboardData | null = null;
   profileError = signal<string | null>(null);
   missingFields = signal<string[]>([]);
+  bioWeather = signal<BioWeatherDto | null>(null);
+  cycleStatus = signal<CycleStatusDto | null>(null);
 
   private readonly FIELD_LABELS: Record<string, string> = {
     firstName: 'DASHBOARD.FIELD_FIRST_NAME',
@@ -54,6 +62,105 @@ export class Dashboard implements OnInit {
       }
     });
 
+    const loadOptional = () => {
+      const user = this.userService.currentUser();
+      if (!user) return;
+      if (user.asthmaTrackingEnabled) {
+        this.asthmaService.getEnvironment(user.dwdRegionId ?? undefined).subscribe({
+          next: env => this.bioWeather.set(env),
+          error: err => console.warn('Asthma environment load failed', err)
+        });
+      }
+      if (user.cycleTrackingEnabled) {
+        this.cycleSettingsService.getStatus().subscribe({
+          next: status => this.cycleStatus.set(status),
+          error: err => console.warn('Cycle status load failed', err)
+        });
+      }
+    };
+
+    if (this.userService.currentUser()) {
+      loadOptional();
+    } else {
+      this.userService.getMe().subscribe({
+        next: () => loadOptional(),
+        error: err => console.warn('User load failed', err)
+      });
+    }
+  }
+
+  // ── Optional second-row helpers ──────────────────────────────────
+  asthmaEnabled(): boolean {
+    return this.userService.currentUser()?.asthmaTrackingEnabled === true;
+  }
+
+  cycleEnabled(): boolean {
+    return this.userService.currentUser()?.cycleTrackingEnabled === true;
+  }
+
+  showSecondRow(): boolean {
+    return this.asthmaEnabled() || this.cycleEnabled();
+  }
+
+  asthmaRiskValue(): number | null {
+    return this.bioWeather()?.asthmaRiskIndex ?? null;
+  }
+
+  asthmaRiskClass(): 'good' | 'warn' | 'bad' {
+    const r = this.asthmaRiskValue() ?? 0;
+    if (r < 30) return 'good';
+    if (r < 60) return 'warn';
+    return 'bad';
+  }
+
+  asthmaRiskLabel(): string {
+    const r = this.asthmaRiskValue() ?? 0;
+    if (r < 30) return 'DASHBOARD.ASTHMA_RISK_LOW';
+    if (r < 60) return 'DASHBOARD.ASTHMA_RISK_MEDIUM';
+    return 'DASHBOARD.ASTHMA_RISK_HIGH';
+  }
+
+  asthmaBarWidth(): number {
+    const r = this.asthmaRiskValue();
+    if (r == null) return 0;
+    return Math.min(100, Math.max(0, r));
+  }
+
+  bloomingPollen(): Array<{ key: string; level: number; levelLabel: string }> {
+    const bw = this.bioWeather();
+    if (!bw) return [];
+    const types: Array<{ key: string; value: number | null }> = [
+      { key: 'DASHBOARD.POLLEN_BIRCH',   value: bw.pollenBirch },
+      { key: 'DASHBOARD.POLLEN_GRASSES', value: bw.pollenGrasses },
+      { key: 'DASHBOARD.POLLEN_MUGWORT', value: bw.pollenMugwort },
+      { key: 'DASHBOARD.POLLEN_RAGWEED', value: bw.pollenRagweed },
+      { key: 'DASHBOARD.POLLEN_HAZEL',   value: bw.pollenHazel },
+      { key: 'DASHBOARD.POLLEN_ALDER',   value: bw.pollenAlder },
+      { key: 'DASHBOARD.POLLEN_ASH',     value: bw.pollenAsh },
+    ];
+    const labelMap: Record<number, string> = {
+      1: 'DASHBOARD.POLLEN_LEVEL_LOW',
+      2: 'DASHBOARD.POLLEN_LEVEL_MEDIUM',
+      3: 'DASHBOARD.POLLEN_LEVEL_HIGH'
+    };
+    return types
+      .filter(t => (t.value ?? 0) > 0)
+      .sort((a, b) => (b.value ?? 0) - (a.value ?? 0))
+      .map(t => ({
+        key: t.key,
+        level: t.value as number,
+        levelLabel: labelMap[Math.min(3, t.value as number)] ?? 'DASHBOARD.POLLEN_LEVEL_LOW'
+      }));
+  }
+
+  cyclePhaseLabel(): string {
+    const phase = this.cycleStatus()?.currentPhase ?? '';
+    return `DASHBOARD.CYCLE_PHASE_${phase.toUpperCase()}`;
+  }
+
+  cyclePhasePerformanceHint(): string {
+    const phase = (this.cycleStatus()?.currentPhase ?? '').toUpperCase();
+    return `DASHBOARD.CYCLE_HINT_${phase}`;
   }
 
   // ── Load Trend Bar Chart (aktuelle Woche Mo–So) ──────────────────

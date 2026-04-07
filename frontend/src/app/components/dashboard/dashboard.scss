@@ -140,6 +140,135 @@
   gap: 14px;
 }
 
+.main-grid--secondary {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+
+  .metric-hint {
+    margin: 8px 0 0;
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.4;
+  }
+
+  .metric-sub {
+    margin: 12px 0 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .cycle-phase {
+    margin: 16px 0 0;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--pp);
+    letter-spacing: -0.01em;
+  }
+
+  .metric-badge--good { background: rgba(120, 220, 120, 0.18); color: #6dd36d; }
+  .metric-badge--warn { background: rgba(242, 200, 75, 0.18); color: #f2c84b; }
+  .metric-badge--bad  { background: rgba(255, 107, 107, 0.18); color: #ff6b6b; }
+
+  .asthma-value-row {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-top: 12px;
+  }
+  .asthma-value {
+    font-size: clamp(3rem, 7vw, 4.5rem);
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: -0.04em;
+  }
+  .asthma-value--good { color: #6dd36d; }
+  .asthma-value--warn { color: #f2c84b; }
+  .asthma-value--bad  { color: #ff6b6b; }
+  .asthma-value-max {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-muted);
+  }
+
+  .risk-bar-track {
+    margin-top: 14px;
+    height: 10px;
+    background: var(--panel-soft, rgba(255, 255, 255, 0.08));
+    border-radius: 999px;
+    overflow: hidden;
+  }
+  .risk-bar-fill {
+    height: 100%;
+    border-radius: 999px;
+    transition: width 0.4s ease;
+  }
+  .risk-bar-fill--good { background: linear-gradient(90deg, #6dd36d, #4caf50); }
+  .risk-bar-fill--warn { background: linear-gradient(90deg, #f2c84b, #f39c12); }
+  .risk-bar-fill--bad  { background: linear-gradient(90deg, #ff6b6b, #c0392b); }
+
+  .risk-bar-scale {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 6px;
+    font-size: 10px;
+    color: var(--text-muted);
+    letter-spacing: 0.05em;
+  }
+
+  .pollen-list {
+    margin-top: 14px;
+  }
+  .pollen-heading {
+    margin: 0 0 8px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+  }
+  .pollen-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .pollen-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 500;
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--text);
+
+    strong {
+      font-weight: 700;
+      font-size: 11px;
+      opacity: 0.85;
+    }
+  }
+  .pollen-chip--lvl1 { background: rgba(120, 220, 120, 0.15); color: #6dd36d; }
+  .pollen-chip--lvl2 { background: rgba(242, 200, 75, 0.18);  color: #f2c84b; }
+  .pollen-chip--lvl3 { background: rgba(255, 107, 107, 0.18); color: #ff6b6b; }
+
+  .btn-settings {
+    display: inline-block;
+    margin-top: 12px;
+    padding: 8px 16px;
+    background: var(--pp);
+    color: #1e2210;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+    text-decoration: none;
+  }
+}
+
+@media (max-width: 720px) {
+  .main-grid--secondary { grid-template-columns: 1fr; }
+}
+
 .metric-card {
   @include m.card(v.$radius-xl, 20px);
   display: flex;
@@ -787,7 +916,7 @@
 // ── Responsive ────────────────────────────────────────────────────
 @include m.respond-to(v.$bp-lg) {
   .main-grid { grid-template-columns: 1fr 1fr; }
-  .metric-card:first-child { grid-column: 1 / -1; }
+  .main-grid:not(.main-grid--secondary) .metric-card:first-child { grid-column: 1 / -1; }
 }
 
 @media (max-width: 600px) {

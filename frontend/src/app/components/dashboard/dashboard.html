@@ -115,6 +115,59 @@
 
   </div>
 
+  <!-- ── Optional Second Row: Asthma Risk + Cycle Status ── -->
+  <div class="main-grid main-grid--secondary" *ngIf="showSecondRow()">
+    <div class="metric-card" *ngIf="asthmaEnabled() && bioWeather()">
+      <div class="card-head">
+        <h4>{{ 'DASHBOARD.ASTHMA_RISK' | translate }}</h4>
+      </div>
+
+      <div class="asthma-value-row">
+        <span class="asthma-value" [ngClass]="'asthma-value--' + asthmaRiskClass()">{{ asthmaRiskValue() ?? '—' }}</span>
+        <span class="asthma-value-max">/ 100</span>
+      </div>
+
+      <div class="risk-bar-track">
+        <div class="risk-bar-fill"
+             [ngClass]="'risk-bar-fill--' + asthmaRiskClass()"
+             [style.width.%]="asthmaBarWidth()"></div>
+      </div>
+      <div class="risk-bar-scale">
+        <span>0</span><span>50</span><span>100</span>
+      </div>
+
+      <p class="metric-sub">{{ asthmaRiskLabel() | translate }}</p>
+
+      <div class="pollen-list" *ngIf="bloomingPollen().length > 0; else noPollen">
+        <p class="pollen-heading">{{ 'DASHBOARD.POLLEN_BLOOMING_NOW' | translate }}</p>
+        <div class="pollen-chips">
+          <span class="pollen-chip" *ngFor="let p of bloomingPollen()" [ngClass]="'pollen-chip--lvl' + p.level">
+            {{ p.key | translate }}
+            <strong>{{ p.levelLabel | translate }}</strong>
+          </span>
+        </div>
+      </div>
+      <ng-template #noPollen>
+        <p class="metric-hint">{{ 'DASHBOARD.POLLEN_NONE' | translate }}</p>
+      </ng-template>
+    </div>
+
+    <div class="metric-card" *ngIf="cycleEnabled()">
+      <div class="card-head">
+        <h4>{{ 'DASHBOARD.CYCLE_STATUS' | translate }}</h4>
+        <span class="card-tag" *ngIf="cycleStatus()">{{ 'DASHBOARD.CYCLE_DAY' | translate }} {{ cycleStatus()?.currentDay }}/{{ cycleStatus()?.cycleLength }}</span>
+      </div>
+      <ng-container *ngIf="cycleStatus(); else noCycle">
+        <p class="cycle-phase">{{ cyclePhaseLabel() | translate }}</p>
+        <p class="metric-hint">{{ cyclePhasePerformanceHint() | translate }}</p>
+      </ng-container>
+      <ng-template #noCycle>
+        <p class="metric-hint">{{ 'DASHBOARD.CYCLE_NO_DATA' | translate }}</p>
+        <a routerLink="/body-data" class="btn-settings">{{ 'DASHBOARD.CYCLE_SETUP' | translate }}</a>
+      </ng-template>
+    </div>
+  </div>
+
   <!-- ── Stats Row: Strain + Load Status ── -->
   <div class="stats-row">
     <div class="stat-card">
