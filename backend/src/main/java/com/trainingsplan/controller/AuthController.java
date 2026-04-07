@@ -24,8 +24,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.servlet.http.HttpServletRequest;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
+import java.util.Base64;
 import java.util.Map;
 
 @RestController
@@ -238,6 +242,74 @@ public class AuthController {
             }
         }
         return ResponseEntity.ok(new MessageResponse("Logged out successfully"));
+    }
+
+    public record ForgotPasswordRequest(String email) {}
+    public record ResetPasswordRequest(String token, String newPassword) {}
+
+    @PostMapping("/forgot-password")
+    public ResponseEntity<MessageResponse> forgotPassword(@RequestBody ForgotPasswordRequest request) {
+        MessageResponse generic = new MessageResponse(
+                "Falls die E-Mail-Adresse existiert, wurde eine Anleitung zum Zuruecksetzen versendet.");
+        if (request == null || request.email() == null || request.email().isBlank()) {
+            return ResponseEntity.ok(generic);
+        }
+        User user = userRepository.findByEmail(request.email().trim()).orElse(null);
+        if (user == null) {
+            return ResponseEntity.ok(generic);
+        }
+
+        byte[] tokenBytes = new byte[32];
+        secureRandom.nextBytes(tokenBytes);
+        String token = Base64.getUrlEncoder().withoutPadding().encodeToString(tokenBytes);
+        user.setPasswordResetTokenHash(sha256(token));
+        user.setPasswordResetTokenExpiresAt(LocalDateTime.now().plusMinutes(60));
+        userRepository.save(user);
+
+        try {
+            emailService.sendPasswordResetEmail(user.getEmail(), token);
+        } catch (Exception ignored) {
+            // Do not leak failures to the caller
+        }
+        return ResponseEntity.ok(generic);
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<MessageResponse> resetPassword(@RequestBody ResetPasswordRequest request) {
+        if (request == null || request.token() == null || request.token().isBlank()
+                || request.newPassword() == null) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Ungueltiger Link oder abgelaufen"));
+        }
+
+        String passwordError = validatePassword(request.newPassword());
+        if (passwordError != null) {
+            return ResponseEntity.badRequest().body(new MessageResponse(passwordError));
+        }
+
+        String hash = sha256(request.token());
+        User user = userRepository.findByPasswordResetTokenHash(hash).orElse(null);
+        if (user == null || user.getPasswordResetTokenExpiresAt() == null
+                || LocalDateTime.now().isAfter(user.getPasswordResetTokenExpiresAt())) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Ungueltiger Link oder abgelaufen"));
+        }
+
+        user.setPasswordHash(passwordEncoder.encode(request.newPassword()));
+        user.setPasswordResetTokenHash(null);
+        user.setPasswordResetTokenExpiresAt(null);
+        userRepository.save(user);
+        refreshTokenService.revokeAllForUser(user.getId());
+
+        return ResponseEntity.ok(new MessageResponse("Passwort wurde zurueckgesetzt."));
+    }
+
+    private String sha256(String input) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            byte[] digest = md.digest(input.getBytes(StandardCharsets.UTF_8));
+            return Base64.getUrlEncoder().withoutPadding().encodeToString(digest);
+        } catch (NoSuchAlgorithmException e) {
+            throw new IllegalStateException("SHA-256 not available", e);
+        }
     }
 
     private String generateVerificationCode() {

@@ -67,6 +67,18 @@ export class AuthService {
     });
   }
 
+  forgotPassword(email: string): Observable<MessageResponse> {
+    return this.http.post<MessageResponse>(`${BASE}/forgot-password`, { email }, {
+      context: new HttpContext().set(SKIP_AUTH_LOGOUT, true)
+    });
+  }
+
+  resetPassword(token: string, newPassword: string): Observable<MessageResponse> {
+    return this.http.post<MessageResponse>(`${BASE}/reset-password`, { token, newPassword }, {
+      context: new HttpContext().set(SKIP_AUTH_LOGOUT, true)
+    });
+  }
+
   logout() {
     const token = this.getToken();
 

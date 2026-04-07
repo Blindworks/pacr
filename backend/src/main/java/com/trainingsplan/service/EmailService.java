@@ -64,4 +64,20 @@ public class EmailService {
 
         sendSimpleMessage(to, "Dein Verifizierungscode", body);
     }
+
+    /**
+     * Sends a password reset email containing a link with the reset token.
+     */
+    public void sendPasswordResetEmail(String to, String token) {
+        String link = frontendUrl + "/new-password?token="
+                + URLEncoder.encode(token, StandardCharsets.UTF_8);
+
+        String body = "Du hast eine Zuruecksetzung deines Passworts angefordert.\n\n"
+                + "Klicke auf den folgenden Link, um ein neues Passwort zu setzen:\n"
+                + link + "\n\n"
+                + "Der Link ist 60 Minuten gueltig.\n\n"
+                + "Falls du keine Zuruecksetzung angefordert hast, kannst du diese E-Mail ignorieren.\n";
+
+        sendSimpleMessage(to, "Passwort zuruecksetzen", body);
+    }
 }

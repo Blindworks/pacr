@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Component, inject } from '@angular/core';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-forgot-password-confirmation',
@@ -11,10 +12,19 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 })
 export class ForgotPasswordConfirmation {
   resent = false;
+  private readonly email: string;
+  private readonly auth = inject(AuthService);
 
-  constructor(private translate: TranslateService) {}
+  constructor(private translate: TranslateService, route: ActivatedRoute) {
+    this.email = route.snapshot.queryParamMap.get('email') ?? '';
+  }
 
   onResend() {
-    this.resent = true;
+    if (!this.email) {
+      this.resent = true;
+      return;
+    }
+    const done = () => { this.resent = true; };
+    this.auth.forgotPassword(this.email).subscribe({ next: done, error: done });
   }
 }

@@ -74,6 +74,14 @@ public class User implements UserDetails {
     @Column(name = "email_verification_expires_at")
     private LocalDateTime emailVerificationExpiresAt;
 
+    @JsonIgnore
+    @Column(name = "password_reset_token_hash", length = 255)
+    private String passwordResetTokenHash;
+
+    @JsonIgnore
+    @Column(name = "password_reset_token_expires_at")
+    private LocalDateTime passwordResetTokenExpiresAt;
+
     @Column(name = "profile_image", length = 255)
     private String profileImageFilename;
 
@@ -333,6 +341,22 @@ public class User implements UserDetails {
 
     public void setEmailVerificationExpiresAt(LocalDateTime emailVerificationExpiresAt) {
         this.emailVerificationExpiresAt = emailVerificationExpiresAt;
+    }
+
+    public String getPasswordResetTokenHash() {
+        return passwordResetTokenHash;
+    }
+
+    public void setPasswordResetTokenHash(String passwordResetTokenHash) {
+        this.passwordResetTokenHash = passwordResetTokenHash;
+    }
+
+    public LocalDateTime getPasswordResetTokenExpiresAt() {
+        return passwordResetTokenExpiresAt;
+    }
+
+    public void setPasswordResetTokenExpiresAt(LocalDateTime passwordResetTokenExpiresAt) {
+        this.passwordResetTokenExpiresAt = passwordResetTokenExpiresAt;
     }
 
     public String getProfileImageFilename() {

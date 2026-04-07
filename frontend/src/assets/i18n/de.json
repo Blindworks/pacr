@@ -230,7 +230,9 @@
     "REQ_NUMBER": "Eine Zahl",
     "REQ_SPECIAL": "Ein Sonderzeichen",
     "RESET": "Passwort zurücksetzen",
-    "BACK_TO_LOGIN": "Zurück zum Login"
+    "BACK_TO_LOGIN": "Zurück zum Login",
+    "SUCCESS": "Passwort wurde zurückgesetzt. Weiterleitung zum Login...",
+    "INVALID_OR_EXPIRED": "Dieser Link ist ungültig oder abgelaufen."
   },
   "VERIFY_EMAIL": {
     "TITLE": "E-Mail bestätigen",

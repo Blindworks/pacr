@@ -230,7 +230,9 @@
     "REQ_NUMBER": "One number",
     "REQ_SPECIAL": "One special character",
     "RESET": "Reset Password",
-    "BACK_TO_LOGIN": "Back to Login"
+    "BACK_TO_LOGIN": "Back to Login",
+    "SUCCESS": "Password has been reset. Redirecting to login...",
+    "INVALID_OR_EXPIRED": "This reset link is invalid or has expired."
   },
   "VERIFY_EMAIL": {
     "TITLE": "Verify Email",
