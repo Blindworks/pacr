@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { CycleSettingsService } from '../../../services/cycle-settings.service';
+import { AdaptiveSuggestionDto, CycleSettingsService } from '../../../services/cycle-settings.service';
 import { CycleEntryService } from '../../../services/cycle-entry.service';
 import { ProOverlay } from '../../shared/pro-overlay/pro-overlay';
 
@@ -49,6 +49,10 @@ export class CycleTracking implements OnInit {
 
   currentMonth = '';
   calendarDays: CycleDay[] = [];
+
+  adaptiveSuggestion: AdaptiveSuggestionDto | null = null;
+  adaptiveLoading = false;
+  adaptiveError = false;
 
   readonly phaseLabels: Record<CyclePhase, string> = {
     menstrual: 'BODY_DATA.PHASE_MENSTRUAL',
@@ -113,6 +117,24 @@ export class CycleTracking implements OnInit {
       error: () => {
         // No settings yet — use defaults and show no prompt
         this.buildCalendar();
+      }
+    });
+
+    this.loadAdaptiveSuggestion();
+  }
+
+  private loadAdaptiveSuggestion(): void {
+    this.adaptiveLoading = true;
+    this.adaptiveError = false;
+    const lang = localStorage.getItem('pacr-language') || this.translate.currentLang || this.translate.getDefaultLang() || 'de';
+    this.cycleSettingsService.getAdaptiveSuggestion(lang).subscribe({
+      next: (suggestion) => {
+        this.adaptiveSuggestion = suggestion;
+        this.adaptiveLoading = false;
+      },
+      error: () => {
+        this.adaptiveLoading = false;
+        this.adaptiveError = true;
       }
     });
   }

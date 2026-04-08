@@ -133,27 +133,36 @@
         <span class="pulse-dot"></span>
         {{ 'BODY_DATA.ADAPTIVE_ADJUSTMENT' | translate }}
       </h4>
-      <div class="adaptive-items">
+      <div class="adaptive-items" *ngIf="!adaptiveLoading && !adaptiveError">
         <div class="adaptive-item adaptive-item--prev">
           <div class="adaptive-icon adaptive-icon--muted">
             <span class="material-symbols-outlined">arrow_downward</span>
           </div>
           <div>
             <p class="adaptive-item-label">{{ 'BODY_DATA.PREVIOUS_PLAN' | translate }}</p>
-            <p class="adaptive-item-value">Active Recovery Walk (45 min)</p>
+            <p class="adaptive-item-value" *ngIf="adaptiveSuggestion?.originalTraining as orig">
+              {{ orig.name }}<ng-container *ngIf="orig.durationMinutes"> ({{ orig.durationMinutes }} min)</ng-container>
+            </p>
+            <p class="adaptive-item-value" *ngIf="!adaptiveSuggestion?.originalTraining">
+              {{ 'BODY_DATA.NO_TRAINING_TODAY' | translate }}
+            </p>
           </div>
         </div>
-        <div class="adaptive-item adaptive-item--adjusted">
+        <div class="adaptive-item adaptive-item--adjusted" *ngIf="adaptiveSuggestion?.suggestedTraining as sug">
           <div class="adaptive-icon adaptive-icon--primary">
             <span class="material-symbols-outlined">arrow_upward</span>
           </div>
           <div>
             <p class="adaptive-item-label adaptive-item-label--primary">{{ 'BODY_DATA.AI_ADJUSTED' | translate }} ({{ phaseLabels[currentPhase] | translate }})</p>
-            <p class="adaptive-item-value adaptive-item-value--large">Tempo Run: 8km @ 4:45 min/km</p>
+            <p class="adaptive-item-value adaptive-item-value--large">{{ sug.summary || sug.name }}</p>
           </div>
         </div>
       </div>
-      <p class="adaptive-quote">"Based on your rising estrogen and low RHR, we've swapped today's low intensity for a threshold session to maximize your hormonal peak."</p>
+      <p class="adaptive-quote" *ngIf="adaptiveLoading">{{ 'BODY_DATA.ADAPTIVE_LOADING' | translate }}</p>
+      <p class="adaptive-quote" *ngIf="adaptiveError">{{ 'BODY_DATA.ADAPTIVE_ERROR' | translate }}</p>
+      <p class="adaptive-quote" *ngIf="!adaptiveLoading && !adaptiveError && adaptiveSuggestion?.explanation">
+        "{{ adaptiveSuggestion?.explanation }}"
+      </p>
       <div class="adaptive-glow"></div>
     </section>
 
