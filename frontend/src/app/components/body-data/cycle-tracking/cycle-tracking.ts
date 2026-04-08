@@ -63,26 +63,26 @@ export class CycleTracking implements OnInit {
 
   readonly phaseInsights: Record<CyclePhase, { performance: string; fueling: string; intensity: number; label: string }> = {
     follicular: {
-      performance: 'High energy levels. Estrogen is rising, improving muscle strength and recovery speed. Great window for PR attempts or speedwork.',
-      fueling: 'Higher carbohydrate tolerance. Focus on complex carbs for sustained intensity.',
+      performance: 'BODY_DATA.PHASE_FOLLICULAR_PERFORMANCE',
+      fueling: 'BODY_DATA.PHASE_FOLLICULAR_FUELING',
       intensity: 90,
       label: 'BODY_DATA.PHASE_FOLLICULAR',
     },
     ovulation: {
-      performance: 'Peak strength and coordination. Testosterone peaks alongside estrogen — ideal for power training and race efforts.',
-      fueling: 'Moderate carbs and protein. Hydration is key as body temperature rises slightly.',
+      performance: 'BODY_DATA.PHASE_OVULATION_PERFORMANCE',
+      fueling: 'BODY_DATA.PHASE_OVULATION_FUELING',
       intensity: 95,
       label: 'BODY_DATA.PHASE_OVULATION',
     },
     luteal: {
-      performance: 'Energy may dip in late luteal phase. Progesterone rises, increasing perceived effort. Favour steady-state and tempo runs.',
-      fueling: 'Increased caloric needs. Focus on iron-rich foods and complex carbs to support elevated metabolism.',
+      performance: 'BODY_DATA.PHASE_LUTEAL_PERFORMANCE',
+      fueling: 'BODY_DATA.PHASE_LUTEAL_FUELING',
       intensity: 70,
       label: 'BODY_DATA.PHASE_LUTEAL',
     },
     menstrual: {
-      performance: 'Rest and recovery priority. Low hormone levels — listen to your body. Light movement supports wellbeing.',
-      fueling: 'Iron and magnesium intake is important. Anti-inflammatory foods help manage discomfort.',
+      performance: 'BODY_DATA.PHASE_MENSTRUAL_PERFORMANCE',
+      fueling: 'BODY_DATA.PHASE_MENSTRUAL_FUELING',
       intensity: 40,
       label: 'BODY_DATA.PHASE_MENSTRUAL',
     },
