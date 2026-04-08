@@ -30,7 +30,9 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.Base64;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -101,6 +103,18 @@ public class AuthController {
         User saved = userRepository.save(user);
 
         emailService.sendVerificationEmail(saved.getEmail(), saved.getEmailVerificationCode(), false);
+
+        try {
+            List<String> adminEmails = userRepository.findByRole(UserRole.ADMIN).stream()
+                    .map(User::getEmail)
+                    .filter(Objects::nonNull)
+                    .toList();
+            if (!adminEmails.isEmpty()) {
+                emailService.sendAdminNewUserNotification(saved, adminEmails);
+            }
+        } catch (Exception e) {
+            System.err.println("Admin new-user notification failed: " + e.getMessage());
+        }
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new AuthResponse(null, null, saved.getId(), saved.getUsername(), saved.getEmail(),

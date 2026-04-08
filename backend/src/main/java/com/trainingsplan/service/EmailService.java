@@ -1,5 +1,6 @@
 package com.trainingsplan.service;
 
+import com.trainingsplan.entity.User;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -8,6 +9,8 @@ import org.springframework.util.StringUtils;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 @Service
 public class EmailService {
@@ -79,5 +82,30 @@ public class EmailService {
                 + "Falls du keine Zuruecksetzung angefordert hast, kannst du diese E-Mail ignorieren.\n";
 
         sendSimpleMessage(to, "Passwort zuruecksetzen", body);
+    }
+
+    /**
+     * Notifies administrators about a newly registered user.
+     */
+    public void sendAdminNewUserNotification(User newUser, List<String> adminEmails) {
+        if (adminEmails == null || adminEmails.isEmpty()) {
+            return;
+        }
+        String createdAt = newUser.getCreatedAt() != null
+                ? newUser.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))
+                : "-";
+        String subject = "[PACR] Neue Registrierung: " + newUser.getUsername();
+        String body = "Ein neuer User hat sich registriert.\n\n"
+                + "Username: " + newUser.getUsername() + "\n"
+                + "E-Mail:   " + newUser.getEmail() + "\n"
+                + "Zeit:     " + createdAt + "\n"
+                + "User-ID:  " + newUser.getId() + "\n\n"
+                + "Status: " + (newUser.getStatus() != null ? newUser.getStatus().name() : "-") + "\n";
+
+        for (String adminEmail : adminEmails) {
+            if (StringUtils.hasText(adminEmail)) {
+                sendSimpleMessage(adminEmail, subject, body);
+            }
+        }
     }
 }
