@@ -2,14 +2,14 @@ body[data-theme="light"] {
   --font-family: 'Be Vietnam Pro', 'Inter', 'Segoe UI', sans-serif;
 
   // ── Primary Accent ──
-  --pp: #9370DB;
-  --pp-container: #a688e3;
-  --pp-dim: rgba(147, 112, 219, 0.12);
-  --pp-border: rgba(147, 112, 219, 0.15);
-  --pp-hover: rgba(147, 112, 219, 0.06);
-  --pp-active-bg: rgba(147, 112, 219, 0.12);
-  --pp-active-border: rgba(147, 112, 219, 0.25);
-  --pp-glow: 0 0 20px rgba(147, 112, 219, 0.2);
+  --pp: #8ffc2e;
+  --pp-container: rgba(143, 252, 46, 0.12);
+  --pp-dim: rgba(143, 252, 46, 0.12);
+  --pp-border: rgba(143, 252, 46, 0.15);
+  --pp-hover: rgba(143, 252, 46, 0.05);
+  --pp-active-bg: rgba(143, 252, 46, 0.10);
+  --pp-active-border: rgba(143, 252, 46, 0.20);
+  --pp-glow: 0 0 20px rgba(143, 252, 46, 0.3);
 
   // ── Backgrounds & Surfaces ──
   --bg: #FDFBF7;
@@ -25,7 +25,7 @@ body[data-theme="light"] {
   // ── Text ──
   --text: #1b1c1a;
   --text-muted: #6b7280;
-  --btn-active-text: #ffffff;
+  --btn-active-text: #0d1117;
 
   // ── Shadows ──
   --shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
