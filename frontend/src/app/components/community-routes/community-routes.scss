@@ -213,7 +213,7 @@
 }
 
 .card-image {
-  height: 12rem;
+  height: 9rem;
   position: relative;
   overflow: hidden;
 
@@ -224,10 +224,27 @@
     transition: transform 0.7s;
   }
 
+  app-route-mini-map.card-map {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+  }
+
   .image-overlay {
     position: absolute;
     inset: 0;
-    background: linear-gradient(to top, var(--bg-card) 0%, transparent 100%);
+    z-index: 1;
+    background: linear-gradient(to top,
+      var(--bg-card) 0%,
+      rgba(0, 0, 0, 0.55) 35%,
+      rgba(0, 0, 0, 0.15) 65%,
+      transparent 100%);
+    pointer-events: none;
+  }
+
+  .card-title {
+    z-index: 2;
   }
 
   .card-title {

@@ -294,13 +294,22 @@ public class CommunityRouteService {
         long athleteCount = routeAttemptRepository.countDistinctUsersByRouteIdAndStatus(route.getId(), AttemptStatus.COMPLETED);
         Optional<RouteAttempt> record = routeAttemptRepository.findFirstByRouteIdAndStatusOrderByTimeSecondsAsc(route.getId(), AttemptStatus.COMPLETED);
 
+        double[][] previewTrack = downsampleTrack(parseGpsTrack(route.getGpsTrackJson()), 60);
+
         return toDto(route, (int) athleteCount,
                 record.map(RouteAttempt::getTimeSeconds).orElse(null),
-                record.map(r -> r.getUser().getUsername()).orElse(null));
+                record.map(r -> r.getUser().getUsername()).orElse(null),
+                previewTrack);
     }
 
     private CommunityRouteDto toDto(CommunityRoute route, int athleteCount,
                                      Integer recordTimeSeconds, String recordHolder) {
+        return toDto(route, athleteCount, recordTimeSeconds, recordHolder, null);
+    }
+
+    private CommunityRouteDto toDto(CommunityRoute route, int athleteCount,
+                                     Integer recordTimeSeconds, String recordHolder,
+                                     double[][] previewTrack) {
         return new CommunityRouteDto(
                 route.getId(),
                 route.getName(),
@@ -316,8 +325,29 @@ public class CommunityRouteService {
                 route.getVisibility().name(),
                 route.getCreatedAt(),
                 route.getLocationCity(),
-                route.isAdminUploaded()
+                route.isAdminUploaded(),
+                previewTrack
         );
+    }
+
+    private double[][] downsampleTrack(double[][] full, int maxPoints) {
+        if (full == null || full.length == 0) {
+            return null;
+        }
+        if (full.length <= maxPoints) {
+            return full;
+        }
+        int step = (int) Math.ceil((double) full.length / maxPoints);
+        List<double[]> reduced = new ArrayList<>(maxPoints + 1);
+        for (int i = 0; i < full.length; i += step) {
+            reduced.add(full[i]);
+        }
+        // Ensure the very last point is included for a closed silhouette
+        double[] last = full[full.length - 1];
+        if (reduced.get(reduced.size() - 1) != last) {
+            reduced.add(last);
+        }
+        return reduced.toArray(new double[0][]);
     }
 
     private double[] extractFirstGpsPoint(String latlngJson) {

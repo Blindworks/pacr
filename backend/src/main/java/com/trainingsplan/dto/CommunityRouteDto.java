@@ -17,5 +17,6 @@ public record CommunityRouteDto(
         String visibility,
         LocalDateTime createdAt,
         String locationCity,
-        boolean adminUploaded
+        boolean adminUploaded,
+        double[][] previewTrack
 ) {}

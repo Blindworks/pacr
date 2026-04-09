@@ -6,11 +6,12 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { CommunityRouteService, CommunityRouteDto } from '../../services/community-route.service';
 import { UserService } from '../../services/user.service';
 import { ProOverlay } from '../shared/pro-overlay/pro-overlay';
+import { RouteMiniMapComponent } from '../shared/route-mini-map/route-mini-map';
 
 @Component({
   selector: 'app-community-routes',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule, TranslateModule, ProOverlay],
+  imports: [CommonModule, RouterModule, FormsModule, TranslateModule, ProOverlay, RouteMiniMapComponent],
   templateUrl: './community-routes.html',
   styleUrl: './community-routes.scss'
 })

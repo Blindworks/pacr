@@ -23,6 +23,7 @@ export interface CommunityRouteDto {
   createdAt: string;
   locationCity: string | null;
   adminUploaded: boolean;
+  previewTrack?: [number, number][] | null;
 }
 
 export interface CommunityRouteDetailDto extends CommunityRouteDto {

@@ -71,7 +71,11 @@
         <div class="route-card">
           <!-- Card Image -->
           <div class="card-image">
-            <div class="image-placeholder"></div>
+            @if (route.previewTrack && route.previewTrack.length > 1) {
+              <app-route-mini-map class="card-map" [track]="route.previewTrack"></app-route-mini-map>
+            } @else {
+              <div class="image-placeholder"></div>
+            }
             <div class="image-overlay"></div>
             <div class="card-title">
               <h3>{{ route.name }}</h3>

@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- **Community routes cards now show a mini-map preview**: Each card in the `/community-routes` grid renders a small non-interactive Leaflet map of the route in the header area instead of the unused gradient placeholder. Backend `CommunityRouteDto` gains a nullable `previewTrack` (`double[][]`) field populated by a new stride-based `downsampleTrack()` helper in `CommunityRouteService` (capped at 60 points so JSON stays small). New standalone `RouteMiniMapComponent` (`frontend/src/app/components/shared/route-mini-map/`) renders the polyline in brand green `#8ffc2e` on CartoDB dark tiles, auto-fits to the route bounds, and disables all user interaction (drag/zoom/scroll). Card header height reduced from 12rem to 9rem, overlay gradient strengthened so the route name remains legible. Routes without a GPS track fall back to the original gradient placeholder.
+
 ### Added
 - **Admin: rename community routes**: The `/admin/community-routes` list now supports inline editing of route names directly in the table row. Clicking the edit icon turns the name cell into a focused text input with Save/Cancel buttons; Enter saves, Escape cancels. Validation errors are shown beneath the input. New backend endpoint `PUT /api/admin/community-routes/{id}` (body `{ "name": "..." }`) via `AdminCommunityRouteController.renameRoute` and `CommunityRouteService.adminRenameRoute`, secured with `@PreAuthorize("hasRole('ADMIN')")`. Works for both admin-uploaded and user-shared routes.
 
