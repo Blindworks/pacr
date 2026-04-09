@@ -1,0 +1,67 @@
+<div class="list-page">
+  <div class="list-header">
+    <h2>{{ 'ADMIN.BOT_RUNNERS_TITLE' | translate }}</h2>
+    <button class="btn-primary" (click)="goNew()">{{ 'ADMIN.BOT_RUNNERS_NEW' | translate }}</button>
+  </div>
+
+  @if (isLoading()) {
+    <p class="loading">{{ 'COMMON.LOADING' | translate }}</p>
+  } @else if (bots().length === 0) {
+    <p class="empty">{{ 'ADMIN.BOT_RUNNERS_EMPTY' | translate }}</p>
+  } @else {
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>{{ 'ADMIN.BOT_RUNNERS_COL_NAME' | translate }}</th>
+          <th>{{ 'ADMIN.BOT_RUNNERS_COL_CITY' | translate }}</th>
+          <th>{{ 'ADMIN.BOT_RUNNERS_COL_PACE' | translate }}</th>
+          <th>{{ 'ADMIN.BOT_RUNNERS_COL_DISTANCE' | translate }}</th>
+          <th>{{ 'ADMIN.BOT_RUNNERS_COL_SCHEDULE' | translate }}</th>
+          <th>{{ 'ADMIN.BOT_RUNNERS_COL_ENABLED' | translate }}</th>
+          <th>{{ 'ADMIN.BOT_RUNNERS_COL_LAST_RUN' | translate }}</th>
+          <th>{{ 'COMMON.ACTIONS' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (bot of bots(); track bot.id) {
+          <tr>
+            <td>
+              <strong>{{ bot.firstName || bot.username }} {{ bot.lastName }}</strong>
+              <div class="muted">{{ '@' + bot.username }}</div>
+            </td>
+            <td>{{ bot.cityName || '—' }}</td>
+            <td>{{ formatPace(bot) }} min/km</td>
+            <td>{{ bot.distanceMinKm }}–{{ bot.distanceMaxKm }} km</td>
+            <td>{{ formatSchedule(bot) }}</td>
+            <td>
+              <span class="badge" [class.badge--published]="bot.enabled">
+                {{ bot.enabled ? ('COMMON.YES' | translate) : ('COMMON.NO' | translate) }}
+              </span>
+            </td>
+            <td>
+              @if (bot.lastRunAt) {
+                <div>{{ bot.lastRunAt | date:'dd.MM. HH:mm' }}</div>
+                <div class="muted">{{ bot.lastRunStatus }}</div>
+              } @else {
+                <span class="muted">—</span>
+              }
+            </td>
+            <td class="actions">
+              <button class="btn-icon" (click)="edit(bot)" [title]="'COMMON.EDIT' | translate">
+                <span class="material-symbols-outlined">edit</span>
+              </button>
+              <button class="btn-icon btn-icon--publish" (click)="runNow(bot)"
+                      [disabled]="runningId() === bot.id"
+                      [title]="'ADMIN.BOT_RUNNERS_RUN_NOW' | translate">
+                <span class="material-symbols-outlined">play_arrow</span>
+              </button>
+              <button class="btn-icon btn-icon--danger" (click)="delete(bot)" [title]="'COMMON.DELETE' | translate">
+                <span class="material-symbols-outlined">delete</span>
+              </button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+</div>

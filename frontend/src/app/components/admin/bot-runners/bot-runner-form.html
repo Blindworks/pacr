@@ -1,0 +1,148 @@
+<div class="form-page">
+  <div class="form-header">
+    <h2>{{ botId() ? ('ADMIN.BOT_RUNNERS_EDIT_TITLE' | translate) : ('ADMIN.BOT_RUNNERS_NEW_TITLE' | translate) }}</h2>
+  </div>
+
+  <form class="form-body" (ngSubmit)="save()">
+
+    <h3>{{ 'ADMIN.BOT_RUNNERS_SECTION_IDENTITY' | translate }}</h3>
+
+    @if (!botId()) {
+      <div class="field">
+        <label>{{ 'ADMIN.BOT_RUNNERS_USERNAME' | translate }}</label>
+        <input type="text" [ngModel]="username()" (ngModelChange)="username.set($event)" name="username" />
+      </div>
+      <div class="field">
+        <label>{{ 'ADMIN.BOT_RUNNERS_EMAIL' | translate }}</label>
+        <input type="email" [ngModel]="email()" (ngModelChange)="email.set($event)" name="email" />
+      </div>
+    }
+    <div class="field-row">
+      <div class="field">
+        <label>{{ 'ADMIN.BOT_RUNNERS_FIRST_NAME' | translate }}</label>
+        <input type="text" [ngModel]="firstName()" (ngModelChange)="firstName.set($event)" name="firstName" />
+      </div>
+      <div class="field">
+        <label>{{ 'ADMIN.BOT_RUNNERS_LAST_NAME' | translate }}</label>
+        <input type="text" [ngModel]="lastName()" (ngModelChange)="lastName.set($event)" name="lastName" />
+      </div>
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label>{{ 'ADMIN.BOT_RUNNERS_GENDER' | translate }}</label>
+        <select [ngModel]="gender()" (ngModelChange)="gender.set($event)" name="gender">
+          <option value="MALE">{{ 'ADMIN.BOT_RUNNERS_GENDER_MALE' | translate }}</option>
+          <option value="FEMALE">{{ 'ADMIN.BOT_RUNNERS_GENDER_FEMALE' | translate }}</option>
+          <option value="OTHER">{{ 'ADMIN.BOT_RUNNERS_GENDER_OTHER' | translate }}</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>{{ 'ADMIN.BOT_RUNNERS_AGE' | translate }}</label>
+        <input type="number" [ngModel]="age()" (ngModelChange)="age.set($event)" name="age" min="10" max="99" />
+      </div>
+    </div>
+
+    <h3>{{ 'ADMIN.BOT_RUNNERS_SECTION_LOCATION' | translate }}</h3>
+
+    <div class="field">
+      <label>{{ 'ADMIN.BOT_RUNNERS_CITY' | translate }}</label>
+      <input type="text" [ngModel]="cityName()" (ngModelChange)="cityName.set($event)" name="cityName" />
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label>{{ 'ADMIN.BOT_RUNNERS_LATITUDE' | translate }}</label>
+        <input type="number" step="0.000001" [ngModel]="homeLatitude()" (ngModelChange)="homeLatitude.set($event)" name="lat" />
+      </div>
+      <div class="field">
+        <label>{{ 'ADMIN.BOT_RUNNERS_LONGITUDE' | translate }}</label>
+        <input type="number" step="0.000001" [ngModel]="homeLongitude()" (ngModelChange)="homeLongitude.set($event)" name="lon" />
+      </div>
+      <div class="field">
+        <label>{{ 'ADMIN.BOT_RUNNERS_SEARCH_RADIUS' | translate }}</label>
+        <input type="number" [ngModel]="searchRadiusKm()" (ngModelChange)="searchRadiusKm.set($event)" name="radius" min="1" max="100" />
+      </div>
+    </div>
+
+    <h3>{{ 'ADMIN.BOT_RUNNERS_SECTION_PROFILE' | translate }}</h3>
+
+    <div class="field-row">
+      <div class="field">
+        <label>{{ 'ADMIN.BOT_RUNNERS_PACE_MIN' | translate }} (mm:ss/km)</label>
+        <input type="text" [ngModel]="paceMinDisplay()" (ngModelChange)="paceMinDisplay.set($event)" (blur)="commitPaceMin()" name="paceMin" placeholder="4:30" pattern="[0-9]{1,2}:[0-5][0-9]" />
+      </div>
+      <div class="field">
+        <label>{{ 'ADMIN.BOT_RUNNERS_PACE_MAX' | translate }} (mm:ss/km)</label>
+        <input type="text" [ngModel]="paceMaxDisplay()" (ngModelChange)="paceMaxDisplay.set($event)" (blur)="commitPaceMax()" name="paceMax" placeholder="5:30" pattern="[0-9]{1,2}:[0-5][0-9]" />
+      </div>
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label>{{ 'ADMIN.BOT_RUNNERS_DISTANCE_MIN' | translate }} (km)</label>
+        <input type="number" step="0.5" [ngModel]="distanceMinKm()" (ngModelChange)="distanceMinKm.set($event)" name="distMin" min="1" max="100" />
+      </div>
+      <div class="field">
+        <label>{{ 'ADMIN.BOT_RUNNERS_DISTANCE_MAX' | translate }} (km)</label>
+        <input type="number" step="0.5" [ngModel]="distanceMaxKm()" (ngModelChange)="distanceMaxKm.set($event)" name="distMax" min="1" max="100" />
+      </div>
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label>{{ 'ADMIN.BOT_RUNNERS_MAX_HR' | translate }}</label>
+        <input type="number" [ngModel]="maxHeartRate()" (ngModelChange)="maxHeartRate.set($event)" name="maxHr" min="120" max="220" />
+      </div>
+      <div class="field">
+        <label>{{ 'ADMIN.BOT_RUNNERS_REST_HR' | translate }}</label>
+        <input type="number" [ngModel]="restingHeartRate()" (ngModelChange)="restingHeartRate.set($event)" name="restHr" min="30" max="100" />
+      </div>
+    </div>
+
+    <h3>{{ 'ADMIN.BOT_RUNNERS_SECTION_SCHEDULE' | translate }}</h3>
+
+    <div class="field">
+      <label>{{ 'ADMIN.BOT_RUNNERS_DAYS' | translate }}</label>
+      <div class="day-chips">
+        @for (day of allDays; track day) {
+          <button type="button" class="day-chip" [class.active]="isDaySelected(day)" (click)="toggleDay(day)">
+            {{ 'ADMIN.BOT_RUNNERS_DAY_' + day | translate }}
+          </button>
+        }
+      </div>
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label>{{ 'ADMIN.BOT_RUNNERS_START_TIME' | translate }}</label>
+        <input type="time" [ngModel]="scheduleStartTime()" (ngModelChange)="scheduleStartTime.set($event)" name="startTime" />
+      </div>
+      <div class="field">
+        <label>{{ 'ADMIN.BOT_RUNNERS_JITTER' | translate }} (min)</label>
+        <input type="number" [ngModel]="scheduleJitterMinutes()" (ngModelChange)="scheduleJitterMinutes.set($event)" name="jitter" min="0" max="120" />
+      </div>
+    </div>
+
+    <h3>{{ 'ADMIN.BOT_RUNNERS_SECTION_OPTIONS' | translate }}</h3>
+
+    <div class="field">
+      <label class="checkbox-label">
+        <input type="checkbox" [ngModel]="includeInLeaderboard()" (ngModelChange)="includeInLeaderboard.set($event)" name="includeLb" />
+        {{ 'ADMIN.BOT_RUNNERS_INCLUDE_LEADERBOARD' | translate }}
+      </label>
+    </div>
+    <div class="field">
+      <label class="checkbox-label">
+        <input type="checkbox" [ngModel]="enabled()" (ngModelChange)="enabled.set($event)" name="enabled" />
+        {{ 'ADMIN.BOT_RUNNERS_ENABLED' | translate }}
+      </label>
+    </div>
+
+    @if (error()) {
+      <p class="form-error">{{ error() }}</p>
+    }
+
+    <div class="form-actions">
+      <button type="submit" class="btn-primary" [disabled]="saving()">
+        {{ saving() ? ('COMMON.SAVING' | translate) : ('COMMON.SAVE' | translate) }}
+      </button>
+      <button type="button" class="btn-secondary" (click)="cancel()">{{ 'COMMON.CANCEL' | translate }}</button>
+    </div>
+  </form>
+</div>

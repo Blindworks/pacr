@@ -159,6 +159,10 @@ public class User implements UserDetails {
     @Column(name = "theme", nullable = false, length = 10)
     private String theme = "dark";
 
+    /** True if this user is a scheduled bot runner (virtual activity generator). */
+    @Column(name = "is_bot", nullable = false)
+    private boolean isBot = false;
+
     @JsonIgnore
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY, optional = true)
     private StravaToken stravaToken;
@@ -448,4 +452,7 @@ public class User implements UserDetails {
 
     public String getTheme() { return theme; }
     public void setTheme(String theme) { this.theme = theme != null ? theme : "dark"; }
+
+    public boolean isBot() { return isBot; }
+    public void setBot(boolean bot) { this.isBot = bot; }
 }

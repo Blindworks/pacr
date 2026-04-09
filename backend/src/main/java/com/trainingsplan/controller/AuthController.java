@@ -186,6 +186,12 @@ public class AuthController {
         User user = userRepository.findByUsername(request.username())
                 .or(() -> userRepository.findByEmail(request.username()))
                 .orElse(null);
+        if (user != null && user.isBot()) {
+            // Bot accounts cannot be logged into. Respond with the same generic error as
+            // unknown credentials to avoid leaking bot existence.
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(new MessageResponse("Invalid credentials"));
+        }
         if (user != null && user.getStatus() != UserStatus.ACTIVE) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of(
                     "status", user.getStatus().name(),

@@ -98,6 +98,18 @@ export const adminRoutes: Routes = [
       {
         path: 'community-routes',
         loadComponent: () => import('./community-routes/admin-community-routes').then(m => m.AdminCommunityRoutes)
+      },
+      {
+        path: 'bot-runners',
+        loadComponent: () => import('./bot-runners/bot-runner-list').then(m => m.BotRunnerList)
+      },
+      {
+        path: 'bot-runners/new',
+        loadComponent: () => import('./bot-runners/bot-runner-form').then(m => m.BotRunnerForm)
+      },
+      {
+        path: 'bot-runners/:id/edit',
+        loadComponent: () => import('./bot-runners/bot-runner-form').then(m => m.BotRunnerForm)
       }
     ]
   }

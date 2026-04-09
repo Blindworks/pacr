@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="098-1" author="claude">
+        <preConditions onFail="MARK_RAN">
+            <not><columnExists tableName="users" columnName="is_bot"/></not>
+        </preConditions>
+        <comment>Add is_bot flag to users so bot runners can be distinguished from real users</comment>
+        <addColumn tableName="users">
+            <column name="is_bot" type="BOOLEAN" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="098-2" author="claude">
+        <preConditions onFail="MARK_RAN">
+            <not><indexExists tableName="users" indexName="idx_users_is_bot"/></not>
+        </preConditions>
+        <comment>Index is_bot for fast bot queries</comment>
+        <createIndex tableName="users" indexName="idx_users_is_bot">
+            <column name="is_bot"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="098-3" author="claude">
+        <preConditions onFail="MARK_RAN">
+            <not><tableExists tableName="bot_profiles"/></not>
+        </preConditions>
+        <comment>Create bot_profiles table for scheduled virtual runners</comment>
+        <createTable tableName="bot_profiles">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="user_id" type="BIGINT">
+                <constraints nullable="false" unique="true"
+                             foreignKeyName="fk_bot_profiles_user"
+                             references="users(id)"/>
+            </column>
+            <column name="city_name" type="VARCHAR(100)"/>
+            <column name="home_latitude" type="DOUBLE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="home_longitude" type="DOUBLE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="search_radius_km" type="DOUBLE" defaultValueNumeric="10">
+                <constraints nullable="false"/>
+            </column>
+            <column name="gender" type="VARCHAR(20)"/>
+            <column name="age" type="INT"/>
+            <column name="pace_min_sec_per_km" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="pace_max_sec_per_km" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="distance_min_km" type="DOUBLE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="distance_max_km" type="DOUBLE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="max_heart_rate" type="INT"/>
+            <column name="resting_heart_rate" type="INT"/>
+            <column name="schedule_days" type="VARCHAR(100)"/>
+            <column name="schedule_start_time" type="TIME"/>
+            <column name="schedule_jitter_minutes" type="INT" defaultValueNumeric="15">
+                <constraints nullable="false"/>
+            </column>
+            <column name="next_scheduled_run_at" type="DATETIME"/>
+            <column name="last_run_at" type="DATETIME"/>
+            <column name="last_run_status" type="VARCHAR(30)"/>
+            <column name="last_run_message" type="VARCHAR(500)"/>
+            <column name="include_in_leaderboard" type="BOOLEAN" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+            <column name="enabled" type="BOOLEAN" defaultValueBoolean="true">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="DATETIME"/>
+            <column name="updated_at" type="DATETIME"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="098-4" author="claude">
+        <preConditions onFail="MARK_RAN">
+            <and>
+                <tableExists tableName="bot_profiles"/>
+                <not><indexExists tableName="bot_profiles" indexName="idx_bot_profiles_next_run"/></not>
+            </and>
+        </preConditions>
+        <comment>Index for scheduler query by enabled + next_scheduled_run_at</comment>
+        <createIndex tableName="bot_profiles" indexName="idx_bot_profiles_next_run">
+            <column name="enabled"/>
+            <column name="next_scheduled_run_at"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>
