@@ -176,6 +176,7 @@ public class CommunityRouteService {
         route.setStartLongitude(startLng);
         route.setGpsTrackJson(stream.getLatlngJson());
         route.setCreatedAt(LocalDateTime.now());
+        route.setLocationCity(reverseGeocodingService.findNearestCity(startLat, startLng));
 
         if (request.visibility() != null && !request.visibility().isBlank()) {
             route.setVisibility(RouteVisibility.valueOf(request.visibility()));

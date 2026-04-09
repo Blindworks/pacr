@@ -11,7 +11,15 @@
       </button>
       <div>
         <h1>{{ r.name }}</h1>
-        <span class="creator">{{ r.creatorUsername }}</span>
+        <div class="header-meta">
+          <span class="creator">{{ r.creatorUsername }}</span>
+          @if (r.locationCity) {
+            <span class="detail-location">
+              <span class="material-symbols-outlined">location_on</span>
+              <span>{{ r.locationCity }}</span>
+            </span>
+          }
+        </div>
       </div>
     </div>
 

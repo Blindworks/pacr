@@ -77,6 +77,12 @@
               <div class="image-placeholder"></div>
             }
             <div class="image-overlay"></div>
+            @if (route.locationCity) {
+              <div class="card-location">
+                <span class="material-symbols-outlined">location_on</span>
+                <span>{{ route.locationCity }}</span>
+              </div>
+            }
             <div class="card-title">
               <h3>{{ route.name }}</h3>
               <div class="creator">{{ route.creatorUsername }}</div>
