@@ -29,9 +29,15 @@
   @if (activeTab() === 'feed') {
     <section class="tab-content">
       @if (loading()) {
-        <p class="loading">{{ 'COMMON.LOADING' | translate }}</p>
+        <div class="state-box">
+          <span class="material-symbols-outlined">hourglass_empty</span>
+          <p>{{ 'COMMON.LOADING' | translate }}</p>
+        </div>
       } @else if (activity().length === 0) {
-        <p class="empty">{{ 'COMMUNITY.FRIENDS.NO_ACTIVITY' | translate }}</p>
+        <div class="state-box">
+          <span class="material-symbols-outlined">dynamic_feed</span>
+          <p>{{ 'COMMUNITY.FRIENDS.NO_ACTIVITY' | translate }}</p>
+        </div>
       } @else {
         <div class="activity-list">
           @for (a of activity(); track a.friendId + '-' + a.date + '-' + a.title) {
@@ -65,9 +71,15 @@
   @if (activeTab() === 'friends') {
     <section class="tab-content">
       @if (loading()) {
-        <p class="loading">{{ 'COMMON.LOADING' | translate }}</p>
+        <div class="state-box">
+          <span class="material-symbols-outlined">hourglass_empty</span>
+          <p>{{ 'COMMON.LOADING' | translate }}</p>
+        </div>
       } @else if (friends().length === 0) {
-        <p class="empty">{{ 'COMMUNITY.FRIENDS.NO_FRIENDS' | translate }}</p>
+        <div class="state-box">
+          <span class="material-symbols-outlined">group_off</span>
+          <p>{{ 'COMMUNITY.FRIENDS.NO_FRIENDS' | translate }}</p>
+        </div>
       } @else {
         <div class="user-list">
           @for (f of friends(); track f.id) {
@@ -99,7 +111,10 @@
     <section class="tab-content">
       <h2 class="section-title">{{ 'COMMUNITY.FRIENDS.INCOMING' | translate }}</h2>
       @if (incoming().length === 0) {
-        <p class="empty">{{ 'COMMUNITY.FRIENDS.NO_REQUESTS' | translate }}</p>
+        <div class="state-box">
+          <span class="material-symbols-outlined">inbox</span>
+          <p>{{ 'COMMUNITY.FRIENDS.NO_REQUESTS' | translate }}</p>
+        </div>
       } @else {
         <div class="user-list">
           @for (r of incoming(); track r.id) {
@@ -132,7 +147,10 @@
 
       <h2 class="section-title">{{ 'COMMUNITY.FRIENDS.OUTGOING' | translate }}</h2>
       @if (outgoing().length === 0) {
-        <p class="empty">{{ 'COMMUNITY.FRIENDS.NO_REQUESTS' | translate }}</p>
+        <div class="state-box">
+          <span class="material-symbols-outlined">outbox</span>
+          <p>{{ 'COMMUNITY.FRIENDS.NO_REQUESTS' | translate }}</p>
+        </div>
       } @else {
         <div class="user-list">
           @for (r of outgoing(); track r.id) {
@@ -198,22 +216,34 @@
           </button>
         </div>
         @if (nearbyError(); as err) {
-          <p class="empty">
-            @if (err === 'LOCATION_PERMISSION_DENIED') {
-              {{ 'COMMUNITY.FRIENDS.LOCATION_PERMISSION_DENIED' | translate }}
-            } @else {
-              {{ 'COMMUNITY.FRIENDS.GEOLOCATION_UNSUPPORTED' | translate }}
-            }
-          </p>
+          <div class="state-box state-box--error">
+            <span class="material-symbols-outlined">location_off</span>
+            <p>
+              @if (err === 'LOCATION_PERMISSION_DENIED') {
+                {{ 'COMMUNITY.FRIENDS.LOCATION_PERMISSION_DENIED' | translate }}
+              } @else {
+                {{ 'COMMUNITY.FRIENDS.GEOLOCATION_UNSUPPORTED' | translate }}
+              }
+            </p>
+          </div>
         }
       }
 
       @if (searching()) {
-        <p class="loading">{{ 'COMMON.LOADING' | translate }}</p>
+        <div class="state-box">
+          <span class="material-symbols-outlined">hourglass_empty</span>
+          <p>{{ 'COMMON.LOADING' | translate }}</p>
+        </div>
       } @else if (searchMode() === 'name' && searchResults().length === 0 && searchQuery.length >= 2) {
-        <p class="empty">{{ 'COMMUNITY.FRIENDS.NO_RESULTS' | translate }}</p>
+        <div class="state-box">
+          <span class="material-symbols-outlined">search_off</span>
+          <p>{{ 'COMMUNITY.FRIENDS.NO_RESULTS' | translate }}</p>
+        </div>
       } @else if (searchMode() === 'nearby' && searchResults().length === 0 && !nearbyError()) {
-        <p class="empty">{{ 'COMMUNITY.FRIENDS.NO_NEARBY_RESULTS' | translate }}</p>
+        <div class="state-box">
+          <span class="material-symbols-outlined">near_me_disabled</span>
+          <p>{{ 'COMMUNITY.FRIENDS.NO_NEARBY_RESULTS' | translate }}</p>
+        </div>
       } @else {
         <div class="user-list">
           @for (u of searchResults(); track u.id) {
