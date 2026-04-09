@@ -36,6 +36,12 @@ export interface UserProfile {
   onboardingCompleted: boolean;
   targetDistance: string | null;
   weeklyVolumeKm: string | null;
+  createdAt?: string | null;
+  isBot?: boolean;
+  paceRefDistanceM?: number | null;
+  paceRefTimeSeconds?: number | null;
+  paceRefLabel?: string | null;
+  thresholdPaceSecPerKm?: number | null;
 }
 
 export interface UpdateUserRequest {

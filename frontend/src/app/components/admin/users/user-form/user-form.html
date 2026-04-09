@@ -32,13 +32,83 @@
     </div>
   }
 
-  @if (!isLoading()) {
+  @if (!isLoading() && loaded(); as u) {
     <form [formGroup]="form" (ngSubmit)="save()" class="form-body">
 
+      <!-- ====== 1. ACCOUNT ====== -->
       <section class="form-card">
         <h3 class="section-title">
           <span class="material-symbols-outlined">manage_accounts</span>
           {{ 'ADMIN.ACCOUNT' | translate }}
+        </h3>
+
+        <div class="info-grid">
+          <div class="info-row">
+            <span class="info-label">{{ 'ADMIN.USER_ID' | translate }}</span>
+            <span class="info-value">#{{ u.id }}</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">{{ 'ADMIN.CREATED_AT' | translate }}</span>
+            <span class="info-value">{{ (u.createdAt | date:'medium') || '—' }}</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">{{ 'ADMIN.LAST_LOGIN_AT' | translate }}</span>
+            <span class="info-value">{{ (u.lastLoginAt | date:'medium') || '—' }}</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">{{ 'ADMIN.ONBOARDING_COMPLETED' | translate }}</span>
+            <span class="info-value">
+              <span class="material-symbols-outlined badge-icon" [class.ok]="u.onboardingCompleted">
+                {{ u.onboardingCompleted ? 'check_circle' : 'radio_button_unchecked' }}
+              </span>
+            </span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">{{ 'ADMIN.IS_BOT' | translate }}</span>
+            <span class="info-value">
+              <span class="material-symbols-outlined badge-icon" [class.ok]="u.isBot">
+                {{ u.isBot ? 'smart_toy' : 'person' }}
+              </span>
+            </span>
+          </div>
+        </div>
+
+        <div class="field-grid">
+          <div class="field">
+            <label>{{ 'ADMIN.USERNAME' | translate }} <span class="required">*</span></label>
+            <input formControlName="username" type="text" class="input"
+              [class.invalid]="form.get('username')?.invalid && form.get('username')?.touched" />
+            @if (form.get('username')?.invalid && form.get('username')?.touched) {
+              <span class="field-error">{{ 'ADMIN.USERNAME_REQUIRED' | translate }}</span>
+            }
+          </div>
+
+          <div class="field">
+            <label>{{ 'ADMIN.EMAIL' | translate }} <span class="required">*</span></label>
+            <input formControlName="email" type="email" class="input"
+              [class.invalid]="form.get('email')?.invalid && form.get('email')?.touched" />
+            @if (form.get('email')?.invalid && form.get('email')?.touched) {
+              <span class="field-error">{{ 'ADMIN.EMAIL_REQUIRED' | translate }}</span>
+            }
+          </div>
+
+          <div class="field">
+            <label>{{ 'ADMIN.FIRST_NAME' | translate }}</label>
+            <input formControlName="firstName" type="text" class="input" />
+          </div>
+
+          <div class="field">
+            <label>{{ 'ADMIN.LAST_NAME' | translate }}</label>
+            <input formControlName="lastName" type="text" class="input" />
+          </div>
+        </div>
+      </section>
+
+      <!-- ====== 2. ROLE & STATUS ====== -->
+      <section class="form-card">
+        <h3 class="section-title">
+          <span class="material-symbols-outlined">admin_panel_settings</span>
+          {{ 'ADMIN.ROLE_AND_STATUS' | translate }}
         </h3>
         <div class="field-grid">
           <div class="field">
@@ -74,59 +144,149 @@
             <label>{{ 'ADMIN.SUB_EXPIRES' | translate }}</label>
             <input formControlName="subscriptionExpiresAt" type="date" class="input" />
           </div>
-
-          <div class="field">
-            <label>{{ 'ADMIN.USERNAME' | translate }} <span class="required">*</span></label>
-            <input formControlName="username" type="text" class="input"
-              [class.invalid]="form.get('username')?.invalid && form.get('username')?.touched" />
-            @if (form.get('username')?.invalid && form.get('username')?.touched) {
-              <span class="field-error">{{ 'ADMIN.USERNAME_REQUIRED' | translate }}</span>
-            }
-          </div>
-
-          <div class="field">
-            <label>{{ 'ADMIN.EMAIL' | translate }} <span class="required">*</span></label>
-            <input formControlName="email" type="email" class="input"
-              [class.invalid]="form.get('email')?.invalid && form.get('email')?.touched" />
-            @if (form.get('email')?.invalid && form.get('email')?.touched) {
-              <span class="field-error">{{ 'ADMIN.EMAIL_REQUIRED' | translate }}</span>
-            }
-          </div>
         </div>
       </section>
 
+      <!-- ====== 3. BODY DATA ====== -->
       <section class="form-card">
         <h3 class="section-title">
-          <span class="material-symbols-outlined">person</span>
-          {{ 'ADMIN.PROFILE' | translate }}
+          <span class="material-symbols-outlined">accessibility_new</span>
+          {{ 'ADMIN.BODY_DATA' | translate }}
         </h3>
         <div class="field-grid">
           <div class="field">
-            <label>{{ 'ADMIN.FIRST_NAME' | translate }}</label>
-            <input formControlName="firstName" type="text" class="input" />
+            <label>{{ 'ADMIN.DATE_OF_BIRTH' | translate }}</label>
+            <input formControlName="dateOfBirth" type="date" class="input" />
           </div>
-
           <div class="field">
-            <label>{{ 'ADMIN.LAST_NAME' | translate }}</label>
-            <input formControlName="lastName" type="text" class="input" />
+            <label>{{ 'ADMIN.GENDER' | translate }}</label>
+            <select formControlName="gender" class="input">
+              <option [ngValue]="null">{{ 'ADMIN.SELECT' | translate }}</option>
+              @for (g of genders; track g.value) {
+                <option [value]="g.value">{{ g.label }}</option>
+              }
+            </select>
+          </div>
+          <div class="field">
+            <label>{{ 'ADMIN.HEIGHT_CM' | translate }}</label>
+            <input formControlName="heightCm" type="number" min="100" max="230" class="input" />
+          </div>
+          <div class="field">
+            <label>{{ 'ADMIN.WEIGHT_KG' | translate }}</label>
+            <input formControlName="weightKg" type="number" min="30" max="200" step="0.1" class="input" />
           </div>
         </div>
       </section>
 
+      <!-- ====== 4. RUNNING / PERFORMANCE ====== -->
       <section class="form-card">
         <h3 class="section-title">
-          <span class="material-symbols-outlined">favorite</span>
-          {{ 'ADMIN.HEALTH_DATA' | translate }}
+          <span class="material-symbols-outlined">directions_run</span>
+          {{ 'ADMIN.PERFORMANCE' | translate }}
         </h3>
         <div class="field-grid">
           <div class="field">
             <label>{{ 'ADMIN.MAX_HR' | translate }}</label>
             <input formControlName="maxHeartRate" type="number" min="100" max="220" class="input" />
           </div>
-
           <div class="field">
             <label>{{ 'ADMIN.REST_HR' | translate }}</label>
             <input formControlName="hrRest" type="number" min="30" max="120" class="input" />
+          </div>
+        </div>
+
+        <div class="info-grid info-grid--readonly">
+          <div class="info-row">
+            <span class="info-label">{{ 'ADMIN.PACE_REFERENCE' | translate }}</span>
+            <span class="info-value">{{ paceRefDisplay() || '—' }}</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">{{ 'ADMIN.THRESHOLD_PACE' | translate }}</span>
+            <span class="info-value">{{ thresholdPaceDisplay() || '—' }}</span>
+          </div>
+        </div>
+        <p class="section-hint">{{ 'ADMIN.PACE_READONLY_HINT' | translate }}</p>
+      </section>
+
+      <!-- ====== 5. FEATURE TOGGLES ====== -->
+      <section class="form-card">
+        <h3 class="section-title">
+          <span class="material-symbols-outlined">toggle_on</span>
+          {{ 'ADMIN.FEATURE_TOGGLES' | translate }}
+        </h3>
+        <div class="toggle-grid">
+          <label class="toggle-row">
+            <input type="checkbox" formControlName="asthmaTrackingEnabled" />
+            <span>{{ 'ADMIN.FEATURE_ASTHMA' | translate }}</span>
+          </label>
+          <label class="toggle-row">
+            <input type="checkbox" formControlName="cycleTrackingEnabled" />
+            <span>{{ 'ADMIN.FEATURE_CYCLE' | translate }}</span>
+          </label>
+          <label class="toggle-row">
+            <input type="checkbox" formControlName="communityRoutesEnabled" />
+            <span>{{ 'ADMIN.FEATURE_COMMUNITY_ROUTES' | translate }}</span>
+          </label>
+          <label class="toggle-row">
+            <input type="checkbox" formControlName="groupEventsEnabled" />
+            <span>{{ 'ADMIN.FEATURE_GROUP_EVENTS' | translate }}</span>
+          </label>
+          <label class="toggle-row">
+            <input type="checkbox" formControlName="discoverableByOthers" />
+            <span>{{ 'ADMIN.FEATURE_DISCOVERABLE' | translate }}</span>
+          </label>
+        </div>
+
+        @if (form.get('asthmaTrackingEnabled')?.value) {
+          <div class="field-grid">
+            <div class="field">
+              <label>{{ 'ADMIN.DWD_REGION_ID' | translate }}</label>
+              <input formControlName="dwdRegionId" type="number" class="input" />
+            </div>
+          </div>
+        }
+      </section>
+
+      <!-- ====== 6. LOCATION (readonly) ====== -->
+      <section class="form-card">
+        <h3 class="section-title">
+          <span class="material-symbols-outlined">location_on</span>
+          {{ 'ADMIN.LOCATION' | translate }}
+        </h3>
+        <div class="info-grid">
+          <div class="info-row">
+            <span class="info-label">{{ 'ADMIN.LATITUDE' | translate }}</span>
+            <span class="info-value">{{ u.latitude ?? '—' }}</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">{{ 'ADMIN.LONGITUDE' | translate }}</span>
+            <span class="info-value">{{ u.longitude ?? '—' }}</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">{{ 'ADMIN.LOCATION_UPDATED_AT' | translate }}</span>
+            <span class="info-value">{{ (u.locationUpdatedAt | date:'medium') || '—' }}</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ====== 7. PREFERENCES (readonly) ====== -->
+      <section class="form-card">
+        <h3 class="section-title">
+          <span class="material-symbols-outlined">tune</span>
+          {{ 'ADMIN.PREFERENCES' | translate }}
+        </h3>
+        <div class="info-grid">
+          <div class="info-row">
+            <span class="info-label">{{ 'ADMIN.THEME' | translate }}</span>
+            <span class="info-value">{{ u.theme || '—' }}</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">{{ 'ADMIN.TARGET_DISTANCE' | translate }}</span>
+            <span class="info-value">{{ u.targetDistance || '—' }}</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">{{ 'ADMIN.WEEKLY_VOLUME' | translate }}</span>
+            <span class="info-value">{{ u.weeklyVolumeKm || '—' }}</span>
           </div>
         </div>
       </section>
