@@ -9,6 +9,7 @@ import com.trainingsplan.service.AuditLogService;
 import com.trainingsplan.service.OnboardingService;
 import com.trainingsplan.service.PaceZoneService;
 import com.trainingsplan.service.UserProfileValidationService;
+import com.trainingsplan.service.UserDeletionService;
 import com.trainingsplan.service.UserService;
 import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
@@ -34,13 +35,15 @@ public class UserController {
     private final OnboardingService onboardingService;
     private final PasswordEncoder passwordEncoder;
     private final AuditLogService auditLogService;
+    private final UserDeletionService userDeletionService;
 
     public UserController(UserService userService, SecurityUtils securityUtils,
                           UserProfileValidationService userProfileValidationService,
                           PaceZoneService paceZoneService,
                           OnboardingService onboardingService,
                           PasswordEncoder passwordEncoder,
-                          AuditLogService auditLogService) {
+                          AuditLogService auditLogService,
+                          UserDeletionService userDeletionService) {
         this.userService = userService;
         this.securityUtils = securityUtils;
         this.userProfileValidationService = userProfileValidationService;
@@ -48,6 +51,7 @@ public class UserController {
         this.onboardingService = onboardingService;
         this.passwordEncoder = passwordEncoder;
         this.auditLogService = auditLogService;
+        this.userDeletionService = userDeletionService;
     }
 
     public record CreateUserRequest(String username, String email) {}
@@ -59,6 +63,8 @@ public class UserController {
     ) {}
 
     public record ChangePasswordRequest(String currentPassword, String newPassword) {}
+
+    public record DeleteUserRequest(String confirmUsername) {}
 
     public record UpdateUserRequest(
             String username,
@@ -184,6 +190,26 @@ public class UserController {
             return ResponseEntity.badRequest().build();
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> deleteUser(@PathVariable Long id, @RequestBody DeleteUserRequest request) {
+        User currentUser = securityUtils.getCurrentUser();
+        if (currentUser == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        try {
+            userDeletionService.deleteUserCompletely(id, currentUser.getId(),
+                    request != null ? request.confirmUsername() : null);
+            auditLogService.log(currentUser, AuditAction.USER_DELETED, "USER", String.valueOf(id), null);
+            return ResponseEntity.noContent().build();
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(Map.of("message", e.getMessage()));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
         }
     }
 

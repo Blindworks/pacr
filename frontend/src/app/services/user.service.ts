@@ -97,6 +97,12 @@ export class UserService {
     return this.http.get<UserProfile[]>(BASE);
   }
 
+  deleteUser(id: number, confirmUsername: string): Observable<void> {
+    return this.http.request<void>('delete', `${BASE}/${id}`, {
+      body: { confirmUsername }
+    });
+  }
+
   getUserById(id: number): Observable<UserProfile> {
     return this.http.get<UserProfile>(`${BASE}/${id}`);
   }

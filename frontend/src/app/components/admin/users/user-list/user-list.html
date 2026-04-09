@@ -72,11 +72,54 @@
                 <button class="icon-btn" [title]="'ADMIN.EDIT_USER' | translate" (click)="navigateEdit(user.id)">
                   <span class="material-symbols-outlined">edit</span>
                 </button>
+                <button class="icon-btn icon-btn--danger" [title]="'ADMIN.DELETE_USER' | translate" (click)="requestDelete(user)">
+                  <span class="material-symbols-outlined">delete</span>
+                </button>
               </td>
             </tr>
           }
         </tbody>
       </table>
+    </div>
+  }
+
+  @if (confirmDeleteUser(); as target) {
+    <div class="delete-overlay" (click)="cancelDelete()">
+      <div class="delete-dialog" (click)="$event.stopPropagation()">
+        <div class="delete-dialog__header">
+          <span class="material-symbols-outlined">warning</span>
+          <h3>{{ 'ADMIN.USERS_DELETE_TITLE' | translate }}</h3>
+        </div>
+        <p class="delete-dialog__warning">
+          {{ 'ADMIN.USERS_DELETE_WARNING' | translate:{ username: target.username } }}
+        </p>
+        <p class="delete-dialog__hint">{{ 'ADMIN.USERS_DELETE_KEEP_ROUTES' | translate }}</p>
+        <label class="delete-dialog__label" for="delete-confirm-input">
+          {{ 'ADMIN.USERS_DELETE_TYPE_USERNAME' | translate:{ username: target.username } }}
+        </label>
+        <input
+          id="delete-confirm-input"
+          type="text"
+          class="delete-dialog__input"
+          [ngModel]="confirmInput()"
+          (ngModelChange)="confirmInput.set($event)"
+          [disabled]="deleteInProgress()"
+          autocomplete="off" />
+        @if (deleteError()) {
+          <p class="delete-dialog__error">{{ deleteError() }}</p>
+        }
+        <div class="delete-dialog__actions">
+          <button class="btn-ghost" (click)="cancelDelete()" [disabled]="deleteInProgress()">
+            {{ 'COMMON.CANCEL' | translate }}
+          </button>
+          <button class="btn-danger" (click)="confirmDelete()" [disabled]="!canConfirmDelete()">
+            @if (deleteInProgress()) {
+              <span class="material-symbols-outlined spin">progress_activity</span>
+            }
+            {{ 'ADMIN.USERS_DELETE_CONFIRM' | translate }}
+          </button>
+        </div>
+      </div>
     </div>
   }
 </div>

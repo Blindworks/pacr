@@ -102,5 +102,6 @@
     <include file="db/changelog/changes/096-community-route-location-city.xml"/>
     <include file="db/changelog/changes/097-community-route-admin-uploaded.xml"/>
     <include file="db/changelog/changes/098-add-bot-runners.xml"/>
+    <include file="db/changelog/changes/099-community-routes-creator-nullable.xml"/>
 
 </databaseChangeLog>

@@ -61,7 +61,129 @@
 
 .cell-username { font-weight: 500; }
 .cell-email { color: var(--text-muted); }
-.cell-actions { width: 48px; }
+.cell-actions { width: 96px; white-space: nowrap; display: flex; gap: 4px; }
+
+.icon-btn--danger {
+  color: #e74c3c;
+  &:hover { background: rgba(231,76,60,0.12); }
+}
+
+.delete-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.65);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 16px;
+}
+
+.delete-dialog {
+  background: var(--surface, #1a1a1a);
+  border: 1px solid var(--border, rgba(255,255,255,0.1));
+  border-radius: 12px;
+  padding: 24px;
+  max-width: 480px;
+  width: 100%;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+
+    .material-symbols-outlined {
+      font-size: 28px;
+      color: #e74c3c;
+    }
+
+    h3 {
+      margin: 0;
+      font-size: 18px;
+      color: var(--text, #fff);
+    }
+  }
+
+  &__warning {
+    margin: 0 0 8px;
+    color: var(--text, #fff);
+    line-height: 1.5;
+  }
+
+  &__hint {
+    margin: 0 0 20px;
+    color: var(--text-muted);
+    font-size: 13px;
+  }
+
+  &__label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+
+  &__input {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid var(--border, rgba(255,255,255,0.15));
+    background: rgba(0,0,0,0.3);
+    color: var(--text, #fff);
+    font-size: 14px;
+    box-sizing: border-box;
+
+    &:focus {
+      outline: none;
+      border-color: #e74c3c;
+    }
+  }
+
+  &__error {
+    margin: 12px 0 0;
+    padding: 8px 12px;
+    background: rgba(231,76,60,0.12);
+    border-radius: 6px;
+    color: #e74c3c;
+    font-size: 13px;
+  }
+
+  &__actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 20px;
+  }
+}
+
+.btn-danger {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 16px;
+  background: #e74c3c;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease;
+
+  &:hover:not(:disabled) { background: #c0392b; }
+  &:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .spin {
+    animation: spin 1s linear infinite;
+    font-size: 18px;
+  }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
 
 .status-badge {
   @include m.badge(transparent, inherit);
