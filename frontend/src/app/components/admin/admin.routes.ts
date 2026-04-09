@@ -94,6 +94,10 @@ export const adminRoutes: Routes = [
       {
         path: 'feedback',
         loadComponent: () => import('./feedback/feedback-list/feedback-list').then(m => m.FeedbackList)
+      },
+      {
+        path: 'community-routes',
+        loadComponent: () => import('./community-routes/admin-community-routes').then(m => m.AdminCommunityRoutes)
       }
     ]
   }

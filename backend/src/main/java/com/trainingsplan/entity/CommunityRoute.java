@@ -19,7 +19,7 @@ public class CommunityRoute {
     private User creator;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "source_activity_id", nullable = false, unique = true)
+    @JoinColumn(name = "source_activity_id", nullable = true, unique = true)
     @JsonIgnore
     private CompletedTraining sourceActivity;
 
@@ -44,6 +44,12 @@ public class CommunityRoute {
 
     @Column(name = "gps_track_json", columnDefinition = "LONGTEXT", nullable = false)
     private String gpsTrackJson;
+
+    @Column(name = "location_city", length = 255)
+    private String locationCity;
+
+    @Column(name = "admin_uploaded", nullable = false)
+    private boolean adminUploaded = false;
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
@@ -84,6 +90,12 @@ public class CommunityRoute {
 
     public String getGpsTrackJson() { return gpsTrackJson; }
     public void setGpsTrackJson(String gpsTrackJson) { this.gpsTrackJson = gpsTrackJson; }
+
+    public String getLocationCity() { return locationCity; }
+    public void setLocationCity(String locationCity) { this.locationCity = locationCity; }
+
+    public boolean isAdminUploaded() { return adminUploaded; }
+    public void setAdminUploaded(boolean adminUploaded) { this.adminUploaded = adminUploaded; }
 
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }

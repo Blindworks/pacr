@@ -42,6 +42,7 @@ public class GpxParsingService {
 
         List<Integer> timeSecondsList = new ArrayList<>();
         List<Integer> heartRatesList = new ArrayList<>();
+        List<double[]> latLngPointsList = new ArrayList<>();
 
         // Sport from <type> element (direct child of <trk>)
         NodeList typeNodes = doc.getElementsByTagName("type");
@@ -91,6 +92,7 @@ public class GpxParsingService {
 
             double lat = Double.parseDouble(trkpt.getAttribute("lat"));
             double lon = Double.parseDouble(trkpt.getAttribute("lon"));
+            latLngPointsList.add(new double[]{lat, lon});
 
             // Elevation
             Double ele = null;
@@ -219,6 +221,7 @@ public class GpxParsingService {
         result.training = training;
         result.timeSeconds = timeSecondsList;
         result.heartRates = heartRatesList;
+        result.latLngPoints = latLngPointsList;
         return result;
     }
 

@@ -98,5 +98,8 @@
     <include file="db/changelog/changes/092-add-user-location-fields.xml"/>
     <include file="db/changelog/changes/093-add-password-reset-token.xml"/>
     <include file="db/changelog/changes/094-strava-token-user-scope.xml"/>
+    <include file="db/changelog/changes/095-community-route-source-activity-nullable.xml"/>
+    <include file="db/changelog/changes/096-community-route-location-city.xml"/>
+    <include file="db/changelog/changes/097-community-route-admin-uploaded.xml"/>
 
 </databaseChangeLog>

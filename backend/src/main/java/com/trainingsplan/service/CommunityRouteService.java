@@ -32,17 +32,89 @@ public class CommunityRouteService {
     private final ActivityStreamRepository activityStreamRepository;
     private final RouteAttemptRepository routeAttemptRepository;
     private final ObjectMapper objectMapper;
+    private final GpxParsingService gpxParsingService;
+    private final ReverseGeocodingService reverseGeocodingService;
 
     public CommunityRouteService(CommunityRouteRepository communityRouteRepository,
                                  CompletedTrainingRepository completedTrainingRepository,
                                  ActivityStreamRepository activityStreamRepository,
                                  RouteAttemptRepository routeAttemptRepository,
-                                 ObjectMapper objectMapper) {
+                                 ObjectMapper objectMapper,
+                                 GpxParsingService gpxParsingService,
+                                 ReverseGeocodingService reverseGeocodingService) {
         this.communityRouteRepository = communityRouteRepository;
         this.completedTrainingRepository = completedTrainingRepository;
         this.activityStreamRepository = activityStreamRepository;
         this.routeAttemptRepository = routeAttemptRepository;
         this.objectMapper = objectMapper;
+        this.gpxParsingService = gpxParsingService;
+        this.reverseGeocodingService = reverseGeocodingService;
+    }
+
+    /**
+     * Admin-only: create a curated community route directly from an uploaded GPX file.
+     * No source activity is associated (sourceActivity == null).
+     */
+    public CommunityRouteDto createFromGpx(User admin, String name, byte[] gpxBytes) {
+        if (name == null || name.isBlank()) {
+            throw new IllegalArgumentException("Name is required");
+        }
+        if (gpxBytes == null || gpxBytes.length == 0) {
+            throw new IllegalArgumentException("Empty GPX file");
+        }
+
+        ParsedActivityData parsed;
+        try {
+            parsed = gpxParsingService.parse(gpxBytes);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Could not parse GPX file: " + e.getMessage());
+        }
+
+        if (parsed.latLngPoints == null || parsed.latLngPoints.isEmpty()) {
+            throw new IllegalArgumentException("GPX file contains no track points");
+        }
+
+        String gpsTrackJson;
+        try {
+            gpsTrackJson = objectMapper.writeValueAsString(parsed.latLngPoints);
+        } catch (JsonProcessingException e) {
+            throw new IllegalArgumentException("Failed to serialize GPS track: " + e.getMessage());
+        }
+
+        double[] first = parsed.latLngPoints.get(0);
+
+        CommunityRoute route = new CommunityRoute();
+        route.setCreator(admin);
+        route.setSourceActivity(null);
+        route.setName(name.trim());
+        route.setDistanceKm(parsed.training.getDistanceKm() != null ? parsed.training.getDistanceKm() : 0.0);
+        route.setElevationGainM(parsed.training.getElevationGainM());
+        route.setStartLatitude(first[0]);
+        route.setStartLongitude(first[1]);
+        route.setGpsTrackJson(gpsTrackJson);
+        route.setVisibility(RouteVisibility.PUBLIC);
+        route.setCreatedAt(LocalDateTime.now());
+        route.setLocationCity(reverseGeocodingService.findNearestCity(first[0], first[1]));
+        route.setAdminUploaded(true);
+
+        CommunityRoute saved = communityRouteRepository.save(route);
+        return toDto(saved, 0, null, null);
+    }
+
+    /**
+     * Admin-only: delete any community route regardless of creator.
+     */
+    public void adminDeleteRoute(Long routeId) {
+        CommunityRoute route = communityRouteRepository.findById(routeId)
+                .orElseThrow(() -> new IllegalArgumentException("Route not found"));
+        communityRouteRepository.delete(route);
+    }
+
+    @Transactional(readOnly = true)
+    public List<CommunityRouteDto> getAllRoutesForAdmin() {
+        return communityRouteRepository.findAll().stream()
+                .map(this::enrichDto)
+                .toList();
     }
 
     public CommunityRouteDto shareRoute(User user, CreateCommunityRouteRequest request) {
@@ -191,7 +263,9 @@ public class CommunityRouteService {
                 record.map(r -> r.getUser().getUsername()).orElse(null),
                 route.getVisibility().name(),
                 route.getCreatedAt(),
-                gpsTrack
+                gpsTrack,
+                route.getLocationCity(),
+                route.isAdminUploaded()
         );
     }
 
@@ -226,7 +300,9 @@ public class CommunityRouteService {
                 recordTimeSeconds,
                 recordHolder,
                 route.getVisibility().name(),
-                route.getCreatedAt()
+                route.getCreatedAt(),
+                route.getLocationCity(),
+                route.isAdminUploaded()
         );
     }
 

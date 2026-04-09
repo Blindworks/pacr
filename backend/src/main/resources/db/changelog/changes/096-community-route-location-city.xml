@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="096-1" author="claude">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="community_routes" columnName="location_city"/>
+            </not>
+        </preConditions>
+        <comment>Add location_city column to community_routes for nearest-city display</comment>
+        <addColumn tableName="community_routes">
+            <column name="location_city" type="VARCHAR(255)">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+</databaseChangeLog>

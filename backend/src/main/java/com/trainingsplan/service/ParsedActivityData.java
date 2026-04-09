@@ -8,4 +8,5 @@ public class ParsedActivityData {
     public CompletedTraining training;
     public List<Integer> timeSeconds;
     public List<Integer> heartRates;
+    public List<double[]> latLngPoints;
 }

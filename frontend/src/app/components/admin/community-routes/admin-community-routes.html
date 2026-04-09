@@ -1,0 +1,130 @@
+<div class="list-page">
+  <div class="list-header">
+    <h2>{{ 'ADMIN.COMMUNITY_ROUTES_TITLE' | translate }}</h2>
+  </div>
+
+  <section class="upload-card">
+    <h3>{{ 'ADMIN.COMMUNITY_ROUTES_UPLOAD_TITLE' | translate }}</h3>
+    <p class="hint">{{ 'ADMIN.COMMUNITY_ROUTES_UPLOAD_HINT' | translate }}</p>
+
+    <div class="form-row">
+      <label for="routeName">{{ 'ADMIN.COMMUNITY_ROUTES_NAME' | translate }}</label>
+      <input id="routeName" type="text" [(ngModel)]="uploadName"
+             [placeholder]="'ADMIN.COMMUNITY_ROUTES_NAME_PLACEHOLDER' | translate"/>
+    </div>
+
+    <div class="form-row">
+      <label for="gpxFileInput">{{ 'ADMIN.COMMUNITY_ROUTES_FILE' | translate }}</label>
+      <input id="gpxFileInput" type="file" accept=".gpx" (change)="onFileSelected($event)"/>
+    </div>
+
+    @if (errorMessage()) {
+      <p class="error">{{ errorMessage() }}</p>
+    }
+
+    <div class="form-actions">
+      <button class="btn-primary"
+              [disabled]="!selectedFile || !uploadName.trim() || isUploading()"
+              (click)="upload()">
+        @if (isUploading()) {
+          {{ 'ADMIN.COMMUNITY_ROUTES_UPLOADING' | translate }}
+        } @else {
+          {{ 'ADMIN.COMMUNITY_ROUTES_UPLOAD' | translate }}
+        }
+      </button>
+    </div>
+  </section>
+
+  @if (isLoading()) {
+    <p class="loading">{{ 'ADMIN.LOADING' | translate }}</p>
+  } @else if (routes().length === 0) {
+    <p class="empty">{{ 'ADMIN.COMMUNITY_ROUTES_EMPTY' | translate }}</p>
+  } @else {
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>{{ 'ADMIN.COMMUNITY_ROUTES_NAME' | translate }}</th>
+          <th>{{ 'ADMIN.COMMUNITY_ROUTES_LOCATION' | translate }}</th>
+          <th>{{ 'ADMIN.COMMUNITY_ROUTES_DISTANCE' | translate }}</th>
+          <th>{{ 'ADMIN.COMMUNITY_ROUTES_ELEVATION' | translate }}</th>
+          <th>{{ 'ADMIN.COMMUNITY_ROUTES_SOURCE' | translate }}</th>
+          <th>{{ 'ADMIN.COMMUNITY_ROUTES_CREATOR' | translate }}</th>
+          <th>{{ 'ADMIN.COMMUNITY_ROUTES_CREATED' | translate }}</th>
+          <th>{{ 'COMMON.ACTIONS' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (route of routes(); track route.id) {
+          <tr>
+            <td>{{ route.name }}</td>
+            <td>
+              @if (route.locationCity) {
+                <span class="location-chip">
+                  <span class="material-symbols-outlined">location_on</span>
+                  {{ route.locationCity }}
+                </span>
+              } @else {
+                <span class="muted">—</span>
+              }
+            </td>
+            <td>{{ route.distanceKm | number:'1.1-2' }} km</td>
+            <td>{{ route.elevationGainM ?? 0 }} m</td>
+            <td>
+              @if (route.adminUploaded) {
+                <span class="source-badge source-badge--admin">
+                  <span class="material-symbols-outlined">admin_panel_settings</span>
+                  {{ 'ADMIN.COMMUNITY_ROUTES_SOURCE_ADMIN' | translate }}
+                </span>
+              } @else {
+                <span class="source-badge source-badge--user">
+                  <span class="material-symbols-outlined">person</span>
+                  {{ 'ADMIN.COMMUNITY_ROUTES_SOURCE_USER' | translate }}
+                </span>
+              }
+            </td>
+            <td>{{ route.creatorUsername }}</td>
+            <td>{{ route.createdAt | date:'dd.MM.yyyy HH:mm' }}</td>
+            <td class="actions">
+              <button class="btn-icon btn-icon--map" (click)="openMap(route)"
+                      [title]="'ADMIN.COMMUNITY_ROUTES_VIEW_MAP' | translate">
+                <span class="material-symbols-outlined">map</span>
+              </button>
+              <button class="btn-icon btn-icon--danger" (click)="delete(route)"
+                      [title]="'COMMON.DELETE' | translate">
+                <span class="material-symbols-outlined">delete</span>
+              </button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+</div>
+
+@if (mapRoute() || isLoadingMap()) {
+  <div class="map-overlay" (click)="closeMap()">
+    <div class="map-dialog" (click)="$event.stopPropagation()">
+      <div class="map-dialog-header">
+        <div>
+          <h3>{{ mapRoute()?.name || ('ADMIN.COMMUNITY_ROUTES_LOADING_MAP' | translate) }}</h3>
+          @if (mapRoute(); as r) {
+            <div class="map-meta">
+              <span>{{ r.distanceKm | number:'1.1-2' }} km</span>
+              <span>{{ r.elevationGainM ?? 0 }} m {{ 'ADMIN.COMMUNITY_ROUTES_ELEVATION' | translate }}</span>
+            </div>
+          }
+        </div>
+        <button class="close-btn" (click)="closeMap()" [title]="'COMMON.CLOSE' | translate">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+      <div class="map-container">
+        @if (isLoadingMap()) {
+          <div class="map-loading">{{ 'ADMIN.COMMUNITY_ROUTES_LOADING_MAP' | translate }}</div>
+        } @else {
+          <div class="leaflet-map" [id]="mapContainerId"></div>
+        }
+      </div>
+    </div>
+  </div>
+}

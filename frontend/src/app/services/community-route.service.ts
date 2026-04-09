@@ -5,6 +5,7 @@ import { apiUrl } from '../core/api-base';
 
 const ROUTES_BASE = apiUrl('/community-routes');
 const ATTEMPTS_BASE = apiUrl('/route-attempts');
+const ADMIN_ROUTES_BASE = apiUrl('/admin/community-routes');
 
 export interface CommunityRouteDto {
   id: number;
@@ -20,6 +21,8 @@ export interface CommunityRouteDto {
   recordHolder: string | null;
   visibility: string;
   createdAt: string;
+  locationCity: string | null;
+  adminUploaded: boolean;
 }
 
 export interface CommunityRouteDetailDto extends CommunityRouteDto {
@@ -116,5 +119,22 @@ export class CommunityRouteService {
 
   getMyAttempts(): Observable<RouteAttemptDto[]> {
     return this.http.get<RouteAttemptDto[]>(`${ATTEMPTS_BASE}/my`);
+  }
+
+  // ---------- Admin ----------
+
+  adminGetAllRoutes(): Observable<CommunityRouteDto[]> {
+    return this.http.get<CommunityRouteDto[]>(ADMIN_ROUTES_BASE);
+  }
+
+  adminUploadGpx(file: File, name: string): Observable<CommunityRouteDto> {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('name', name);
+    return this.http.post<CommunityRouteDto>(`${ADMIN_ROUTES_BASE}/upload`, formData);
+  }
+
+  adminDeleteRoute(id: number): Observable<void> {
+    return this.http.delete<void>(`${ADMIN_ROUTES_BASE}/${id}`);
   }
 }
