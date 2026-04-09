@@ -134,6 +134,10 @@ export class CommunityRouteService {
     return this.http.post<CommunityRouteDto>(`${ADMIN_ROUTES_BASE}/upload`, formData);
   }
 
+  adminRenameRoute(id: number, name: string): Observable<CommunityRouteDto> {
+    return this.http.put<CommunityRouteDto>(`${ADMIN_ROUTES_BASE}/${id}`, { name });
+  }
+
   adminDeleteRoute(id: number): Observable<void> {
     return this.http.delete<void>(`${ADMIN_ROUTES_BASE}/${id}`);
   }

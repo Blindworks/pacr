@@ -58,6 +58,17 @@ public class AdminCommunityRouteController {
         }
     }
 
+    public record RenameRequest(String name) {}
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> renameRoute(@PathVariable Long id, @RequestBody RenameRequest request) {
+        try {
+            return ResponseEntity.ok(communityRouteService.adminRenameRoute(id, request.name()));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteRoute(@PathVariable Long id) {
         try {

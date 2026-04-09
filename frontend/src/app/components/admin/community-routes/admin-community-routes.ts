@@ -24,6 +24,12 @@ export class AdminCommunityRoutes implements OnInit, OnDestroy {
   selectedFile: File | null = null;
   errorMessage = signal<string | null>(null);
 
+  // Inline rename state
+  editingRouteId = signal<number | null>(null);
+  editingName = signal<string>('');
+  isSavingName = signal(false);
+  renameError = signal<string | null>(null);
+
   // Map dialog
   mapRoute = signal<CommunityRouteDetailDto | null>(null);
   isLoadingMap = signal(false);
@@ -72,6 +78,52 @@ export class AdminCommunityRoutes implements OnInit, OnDestroy {
       error: (err) => {
         this.isUploading.set(false);
         this.errorMessage.set(typeof err?.error === 'string' ? err.error : 'Upload failed');
+      }
+    });
+  }
+
+  startEdit(route: CommunityRouteDto): void {
+    this.renameError.set(null);
+    this.editingRouteId.set(route.id);
+    this.editingName.set(route.name);
+    setTimeout(() => {
+      const input = document.getElementById('edit-route-' + route.id) as HTMLInputElement | null;
+      input?.focus();
+      input?.select();
+    }, 0);
+  }
+
+  cancelEdit(): void {
+    this.editingRouteId.set(null);
+    this.editingName.set('');
+    this.renameError.set(null);
+  }
+
+  onEditNameChange(value: string): void {
+    this.editingName.set(value);
+  }
+
+  saveEdit(route: CommunityRouteDto): void {
+    const trimmed = this.editingName().trim();
+    if (!trimmed) {
+      this.renameError.set('Name darf nicht leer sein');
+      return;
+    }
+    if (trimmed === route.name) {
+      this.cancelEdit();
+      return;
+    }
+    this.renameError.set(null);
+    this.isSavingName.set(true);
+    this.routeService.adminRenameRoute(route.id, trimmed).subscribe({
+      next: (updated) => {
+        this.isSavingName.set(false);
+        this.routes.update(list => list.map(r => r.id === route.id ? { ...r, name: updated.name } : r));
+        this.cancelEdit();
+      },
+      error: (err) => {
+        this.isSavingName.set(false);
+        this.renameError.set(typeof err?.error === 'string' ? err.error : 'Rename failed');
       }
     });
   }

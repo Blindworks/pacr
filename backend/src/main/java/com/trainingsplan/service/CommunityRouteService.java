@@ -110,6 +110,20 @@ public class CommunityRouteService {
         communityRouteRepository.delete(route);
     }
 
+    /**
+     * Admin-only: rename any community route regardless of creator.
+     */
+    public CommunityRouteDto adminRenameRoute(Long routeId, String newName) {
+        if (newName == null || newName.isBlank()) {
+            throw new IllegalArgumentException("Name must not be blank");
+        }
+        CommunityRoute route = communityRouteRepository.findById(routeId)
+                .orElseThrow(() -> new IllegalArgumentException("Route not found"));
+        route.setName(newName.trim());
+        route.setUpdatedAt(LocalDateTime.now());
+        return enrichDto(communityRouteRepository.save(route));
+    }
+
     @Transactional(readOnly = true)
     public List<CommunityRouteDto> getAllRoutesForAdmin() {
         return communityRouteRepository.findAll().stream()

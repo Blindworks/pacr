@@ -56,7 +56,24 @@
       <tbody>
         @for (route of routes(); track route.id) {
           <tr>
-            <td>{{ route.name }}</td>
+            <td>
+              @if (editingRouteId() === route.id) {
+                <div class="inline-edit">
+                  <input type="text"
+                         [id]="'edit-route-' + route.id"
+                         [ngModel]="editingName()"
+                         (ngModelChange)="onEditNameChange($event)"
+                         (keyup.enter)="saveEdit(route)"
+                         (keyup.escape)="cancelEdit()"
+                         [disabled]="isSavingName()" />
+                  @if (renameError()) {
+                    <span class="inline-edit-error">{{ renameError() }}</span>
+                  }
+                </div>
+              } @else {
+                {{ route.name }}
+              }
+            </td>
             <td>
               @if (route.locationCity) {
                 <span class="location-chip">
@@ -85,14 +102,31 @@
             <td>{{ route.creatorUsername }}</td>
             <td>{{ route.createdAt | date:'dd.MM.yyyy HH:mm' }}</td>
             <td class="actions">
-              <button class="btn-icon btn-icon--map" (click)="openMap(route)"
-                      [title]="'ADMIN.COMMUNITY_ROUTES_VIEW_MAP' | translate">
-                <span class="material-symbols-outlined">map</span>
-              </button>
-              <button class="btn-icon btn-icon--danger" (click)="delete(route)"
-                      [title]="'COMMON.DELETE' | translate">
-                <span class="material-symbols-outlined">delete</span>
-              </button>
+              @if (editingRouteId() === route.id) {
+                <button class="btn-icon btn-icon--success" (click)="saveEdit(route)"
+                        [disabled]="isSavingName()"
+                        [title]="'COMMON.SAVE' | translate">
+                  <span class="material-symbols-outlined">check</span>
+                </button>
+                <button class="btn-icon" (click)="cancelEdit()"
+                        [disabled]="isSavingName()"
+                        [title]="'COMMON.CANCEL' | translate">
+                  <span class="material-symbols-outlined">close</span>
+                </button>
+              } @else {
+                <button class="btn-icon" (click)="startEdit(route)"
+                        [title]="'COMMON.EDIT' | translate">
+                  <span class="material-symbols-outlined">edit</span>
+                </button>
+                <button class="btn-icon btn-icon--map" (click)="openMap(route)"
+                        [title]="'ADMIN.COMMUNITY_ROUTES_VIEW_MAP' | translate">
+                  <span class="material-symbols-outlined">map</span>
+                </button>
+                <button class="btn-icon btn-icon--danger" (click)="delete(route)"
+                        [title]="'COMMON.DELETE' | translate">
+                  <span class="material-symbols-outlined">delete</span>
+                </button>
+              }
             </td>
           </tr>
         }
