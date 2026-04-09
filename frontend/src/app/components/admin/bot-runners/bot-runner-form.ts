@@ -1,15 +1,17 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, ViewChild, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { AdminBotRunnerService, BotCreateRequest } from '../../../services/admin-bot-runner.service';
+import { LocationPickerDialogComponent } from '../../location-picker-dialog/location-picker-dialog';
+import { GeocodingService } from '../../../services/geocoding.service';
 
 const DAYS = ['MONDAY','TUESDAY','WEDNESDAY','THURSDAY','FRIDAY','SATURDAY','SUNDAY'];
 
 @Component({
   selector: 'app-bot-runner-form',
   standalone: true,
-  imports: [FormsModule, TranslateModule],
+  imports: [FormsModule, TranslateModule, LocationPickerDialogComponent],
   templateUrl: './bot-runner-form.html',
   styleUrl: './bot-runner-form.scss'
 })
@@ -18,6 +20,12 @@ export class BotRunnerForm implements OnInit {
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   private translate = inject(TranslateService);
+  private geocoding = inject(GeocodingService);
+
+  geocodeLoading = signal(false);
+  geocodeError = signal('');
+
+  @ViewChild('locationPicker') locationPicker!: LocationPickerDialogComponent;
 
   botId = signal<number | null>(null);
   saving = signal(false);
@@ -120,6 +128,39 @@ export class BotRunnerForm implements OnInit {
       this.paceMaxSecPerKm.set(s);
       this.paceMaxDisplay.set(this.secToMmss(s));
     }
+  }
+
+  geocodeCity(): void {
+    const city = this.cityName().trim();
+    if (city.length < 2) return;
+    this.geocodeError.set('');
+    this.geocodeLoading.set(true);
+    // City-level only: add "city" type hint via query
+    this.geocoding.geocode(city).subscribe({
+      next: results => {
+        this.geocodeLoading.set(false);
+        if (results.length === 0) {
+          this.geocodeError.set(this.translate.instant('ADMIN.BOT_RUNNERS_GEOCODE_NOT_FOUND'));
+          return;
+        }
+        const hit = results[0];
+        this.homeLatitude.set(parseFloat(hit.lat));
+        this.homeLongitude.set(parseFloat(hit.lon));
+      },
+      error: () => {
+        this.geocodeLoading.set(false);
+        this.geocodeError.set(this.translate.instant('ADMIN.BOT_RUNNERS_GEOCODE_NOT_FOUND'));
+      }
+    });
+  }
+
+  openLocationPicker(): void {
+    this.locationPicker.open(this.homeLatitude(), this.homeLongitude());
+  }
+
+  onLocationPicked(coords: { lat: number; lng: number }): void {
+    this.homeLatitude.set(coords.lat);
+    this.homeLongitude.set(coords.lng);
   }
 
   toggleDay(day: string): void {

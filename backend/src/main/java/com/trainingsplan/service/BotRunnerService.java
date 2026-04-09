@@ -116,6 +116,11 @@ public class BotRunnerService {
         botUser.setBot(true);
         // Bots must have community routes enabled so RouteAttemptService matches their runs.
         botUser.setCommunityRoutesEnabled(true);
+        // Mirror coordinates to User so nearby-runner discovery finds the bot.
+        botUser.setLatitude(req.homeLatitude);
+        botUser.setLongitude(req.homeLongitude);
+        botUser.setLocationUpdatedAt(LocalDateTime.now());
+        botUser.setDiscoverableByOthers(true);
         botUser.setGender(req.gender);
         botUser.setMaxHeartRate(req.maxHeartRate);
         botUser.setHrRest(req.restingHeartRate);
@@ -143,6 +148,12 @@ public class BotRunnerService {
         if (req.gender != null) user.setGender(req.gender);
         if (req.maxHeartRate != null) user.setMaxHeartRate(req.maxHeartRate);
         if (req.restingHeartRate != null) user.setHrRest(req.restingHeartRate);
+        // Keep User coordinates in sync with BotProfile so nearby-runner discovery works.
+        if (req.homeLatitude != null && req.homeLongitude != null) {
+            user.setLatitude(req.homeLatitude);
+            user.setLongitude(req.homeLongitude);
+            user.setLocationUpdatedAt(LocalDateTime.now());
+        }
         userRepository.save(user);
 
         applyRequest(bot, req);

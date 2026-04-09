@@ -101,6 +101,10 @@ public class FriendshipService {
             throw new IllegalStateException("Friendship already exists");
         }
         Friendship friendship = new Friendship(requester, addressee);
+        // Bots auto-accept friend requests so they act like lively community users.
+        if (addressee.isBot()) {
+            friendship.setStatus(FriendshipStatus.ACCEPTED);
+        }
         friendship = friendshipRepository.save(friendship);
         return toFriendshipDto(friendship, requester.getId());
     }

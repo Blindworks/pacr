@@ -46,21 +46,32 @@
 
     <div class="field">
       <label>{{ 'ADMIN.BOT_RUNNERS_CITY' | translate }}</label>
-      <input type="text" [ngModel]="cityName()" (ngModelChange)="cityName.set($event)" name="cityName" />
+      <div class="coords-row">
+        <input type="text" [ngModel]="cityName()" (ngModelChange)="cityName.set($event)" name="cityName"
+               (keydown.enter)="$event.preventDefault(); geocodeCity()" />
+        <button type="button" class="btn-secondary btn-map" (click)="geocodeCity()" [disabled]="geocodeLoading()">
+          <span class="material-symbols-outlined">{{ geocodeLoading() ? 'progress_activity' : 'search' }}</span>
+          {{ 'ADMIN.BOT_RUNNERS_GEOCODE' | translate }}
+        </button>
+      </div>
+      @if (geocodeError()) {
+        <span class="form-error">{{ geocodeError() }}</span>
+      }
     </div>
-    <div class="field-row">
-      <div class="field">
-        <label>{{ 'ADMIN.BOT_RUNNERS_LATITUDE' | translate }}</label>
-        <input type="number" step="0.000001" [ngModel]="homeLatitude()" (ngModelChange)="homeLatitude.set($event)" name="lat" />
+    <div class="field">
+      <label>{{ 'ADMIN.BOT_RUNNERS_COORDS' | translate }}</label>
+      <div class="coords-row">
+        <input type="number" step="0.000001" [ngModel]="homeLatitude()" (ngModelChange)="homeLatitude.set(+$event)" name="lat" placeholder="lat" />
+        <input type="number" step="0.000001" [ngModel]="homeLongitude()" (ngModelChange)="homeLongitude.set(+$event)" name="lon" placeholder="lon" />
+        <button type="button" class="btn-secondary btn-map" (click)="openLocationPicker()">
+          <span class="material-symbols-outlined">map</span>
+          {{ 'ADMIN.BOT_RUNNERS_PICK_ON_MAP' | translate }}
+        </button>
       </div>
-      <div class="field">
-        <label>{{ 'ADMIN.BOT_RUNNERS_LONGITUDE' | translate }}</label>
-        <input type="number" step="0.000001" [ngModel]="homeLongitude()" (ngModelChange)="homeLongitude.set($event)" name="lon" />
-      </div>
-      <div class="field">
-        <label>{{ 'ADMIN.BOT_RUNNERS_SEARCH_RADIUS' | translate }}</label>
-        <input type="number" [ngModel]="searchRadiusKm()" (ngModelChange)="searchRadiusKm.set($event)" name="radius" min="1" max="100" />
-      </div>
+    </div>
+    <div class="field">
+      <label>{{ 'ADMIN.BOT_RUNNERS_SEARCH_RADIUS' | translate }} (km)</label>
+      <input type="number" [ngModel]="searchRadiusKm()" (ngModelChange)="searchRadiusKm.set($event)" name="radius" min="1" max="100" />
     </div>
 
     <h3>{{ 'ADMIN.BOT_RUNNERS_SECTION_PROFILE' | translate }}</h3>
@@ -145,4 +156,7 @@
       <button type="button" class="btn-secondary" (click)="cancel()">{{ 'COMMON.CANCEL' | translate }}</button>
     </div>
   </form>
+
+  <app-location-picker-dialog #locationPicker (confirmed)="onLocationPicked($event)">
+  </app-location-picker-dialog>
 </div>
