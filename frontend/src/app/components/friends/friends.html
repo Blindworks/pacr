@@ -40,25 +40,78 @@
         </div>
       } @else {
         <div class="activity-list">
-          @for (a of activity(); track a.friendId + '-' + a.date + '-' + a.title) {
-            <article class="activity-card">
-              <div class="avatar">
-                @if (avatarUrl(a.friendId); as url) {
-                  <img [src]="url" alt="" />
-                } @else {
-                  {{ a.friendDisplayName[0] }}
-                }
-              </div>
-              <div class="body">
-                <header>
-                  <strong>{{ a.friendDisplayName }}</strong>
-                  <span class="muted">{{ a.date }}</span>
-                </header>
-                <div class="title">{{ a.title }}</div>
-                <div class="metrics">
-                  @if (a.distanceKm) { <span>{{ a.distanceKm.toFixed(2) }} km</span> }
-                  @if (a.durationSeconds) { <span>{{ formatDuration(a.durationSeconds) }}</span> }
+          @for (a of activity(); track $index) {
+            <article class="activity-card" [class.has-map]="!!getMapTileUrl(a.startLatitude, a.startLongitude)">
+              @if (getMapTileUrl(a.startLatitude, a.startLongitude); as mapUrl) {
+                <div class="map-bg">
+                  <img [src]="mapUrl" alt="" loading="lazy" />
                 </div>
+              }
+              <div class="card-content">
+                <div class="card-header">
+                  <div class="avatar">
+                    @if (avatarUrl(a.friendId); as url) {
+                      <img [src]="url" alt="" />
+                    } @else {
+                      {{ a.friendDisplayName[0] }}
+                    }
+                  </div>
+                  <div class="header-info">
+                    <span class="username">{{ a.friendDisplayName }}</span>
+                    <span class="meta">{{ timeAgo(a.date, a.startTime) }} <span class="separator">//</span> {{ getSportLabel(a.sport) }}</span>
+                  </div>
+                </div>
+
+                <h3 class="activity-title">{{ a.title }}</h3>
+
+                <div class="activity-datetime">
+                  <span class="material-symbols-outlined">calendar_today</span>
+                  <span>{{ toDate(a.date) | date:'EEE, MMM d' }}</span>
+                  @if (a.startTime) {
+                    <span class="separator">//</span>
+                    <span class="material-symbols-outlined">schedule</span>
+                    <span>{{ formatTime(a.startTime) }}</span>
+                  }
+                </div>
+              </div>
+
+              <div class="stats-grid">
+                @if (a.distanceKm) {
+                  <div class="stat-box">
+                    <span class="stat-value">{{ formatDistanceValue(a.distanceKm) }}</span>
+                    <span class="stat-label">{{ 'COMMUNITY.FRIENDS.FEED_STAT_DISTANCE' | translate }}</span>
+                  </div>
+                }
+                @if (a.durationSeconds) {
+                  <div class="stat-box">
+                    <span class="stat-value">{{ formatDurationShort(a.durationSeconds) }}</span>
+                    <span class="stat-label">{{ 'COMMUNITY.FRIENDS.FEED_STAT_DURATION' | translate }}</span>
+                  </div>
+                }
+                @if (a.averagePaceSecondsPerKm) {
+                  <div class="stat-box">
+                    <span class="stat-value">{{ formatPaceShort(a.averagePaceSecondsPerKm) }}</span>
+                    <span class="stat-label">{{ 'COMMUNITY.FRIENDS.FEED_STAT_PACE' | translate }}</span>
+                  </div>
+                }
+                @if (a.averageHeartRate) {
+                  <div class="stat-box">
+                    <span class="stat-value">{{ a.averageHeartRate }}</span>
+                    <span class="stat-label">{{ 'COMMUNITY.FRIENDS.FEED_STAT_BPM' | translate }}</span>
+                  </div>
+                }
+                @if (a.elevationGainM) {
+                  <div class="stat-box">
+                    <span class="stat-value">{{ a.elevationGainM }}</span>
+                    <span class="stat-label">{{ 'COMMUNITY.FRIENDS.FEED_STAT_ELEVATION' | translate }}</span>
+                  </div>
+                }
+                @if (a.calories) {
+                  <div class="stat-box">
+                    <span class="stat-value">{{ a.calories }}</span>
+                    <span class="stat-label">{{ 'COMMUNITY.FRIENDS.FEED_STAT_CALORIES' | translate }}</span>
+                  </div>
+                }
               </div>
             </article>
           }

@@ -1196,7 +1196,13 @@
         "MESSAGE_MANY": "Du hast {{count}} offene Freundschaftsanfragen.",
         "VIEW": "Anzeigen",
         "LATER": "Später"
-      }
+      },
+      "FEED_STAT_DISTANCE": "KM",
+      "FEED_STAT_DURATION": "DAUER",
+      "FEED_STAT_PACE": "TEMPO",
+      "FEED_STAT_BPM": "BPM",
+      "FEED_STAT_ELEVATION": "HM",
+      "FEED_STAT_CALORIES": "KCAL"
     },
     "TITLE": "COMMUNITY",
     "ROUTES": "ROUTES",

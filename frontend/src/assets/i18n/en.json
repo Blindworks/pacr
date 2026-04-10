@@ -1196,7 +1196,13 @@
         "MESSAGE_MANY": "You have {{count}} pending friend requests.",
         "VIEW": "View",
         "LATER": "Later"
-      }
+      },
+      "FEED_STAT_DISTANCE": "KM",
+      "FEED_STAT_DURATION": "DURATION",
+      "FEED_STAT_PACE": "PACE",
+      "FEED_STAT_BPM": "BPM",
+      "FEED_STAT_ELEVATION": "ELEV",
+      "FEED_STAT_CALORIES": "CAL"
     },
     "TITLE": "COMMUNITY",
     "ROUTES": "ROUTES",

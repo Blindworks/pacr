@@ -228,9 +228,16 @@ public class FriendshipService {
         dto.setActivityType("COMPLETED_TRAINING");
         dto.setTitle(ct.getSport() != null ? ct.getSport() : "Training");
         dto.setDate(ct.getTrainingDate());
+        dto.setStartTime(ct.getStartTime());
         dto.setDistanceKm(ct.getDistanceKm());
         dto.setDurationSeconds(ct.getDurationSeconds());
         dto.setSport(ct.getSport());
+        dto.setAveragePaceSecondsPerKm(ct.getAveragePaceSecondsPerKm());
+        dto.setAverageHeartRate(ct.getAverageHeartRate());
+        dto.setElevationGainM(ct.getElevationGainM());
+        dto.setCalories(ct.getCalories());
+        dto.setStartLatitude(ct.getStartLatitude());
+        dto.setStartLongitude(ct.getStartLongitude());
         return dto;
     }
 

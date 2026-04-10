@@ -1,6 +1,7 @@
 package com.trainingsplan.dto;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 
 public class FriendActivityDto {
     private Long friendId;
@@ -10,9 +11,16 @@ public class FriendActivityDto {
     private String activityType;
     private String title;
     private LocalDate date;
+    private LocalTime startTime;
     private Double distanceKm;
     private Integer durationSeconds;
     private String sport;
+    private Integer averagePaceSecondsPerKm;
+    private Integer averageHeartRate;
+    private Integer elevationGainM;
+    private Integer calories;
+    private Double startLatitude;
+    private Double startLongitude;
 
     public FriendActivityDto() {}
 
@@ -30,10 +38,24 @@ public class FriendActivityDto {
     public void setTitle(String title) { this.title = title; }
     public LocalDate getDate() { return date; }
     public void setDate(LocalDate date) { this.date = date; }
+    public LocalTime getStartTime() { return startTime; }
+    public void setStartTime(LocalTime startTime) { this.startTime = startTime; }
     public Double getDistanceKm() { return distanceKm; }
     public void setDistanceKm(Double distanceKm) { this.distanceKm = distanceKm; }
     public Integer getDurationSeconds() { return durationSeconds; }
     public void setDurationSeconds(Integer durationSeconds) { this.durationSeconds = durationSeconds; }
     public String getSport() { return sport; }
     public void setSport(String sport) { this.sport = sport; }
+    public Integer getAveragePaceSecondsPerKm() { return averagePaceSecondsPerKm; }
+    public void setAveragePaceSecondsPerKm(Integer averagePaceSecondsPerKm) { this.averagePaceSecondsPerKm = averagePaceSecondsPerKm; }
+    public Integer getAverageHeartRate() { return averageHeartRate; }
+    public void setAverageHeartRate(Integer averageHeartRate) { this.averageHeartRate = averageHeartRate; }
+    public Integer getElevationGainM() { return elevationGainM; }
+    public void setElevationGainM(Integer elevationGainM) { this.elevationGainM = elevationGainM; }
+    public Integer getCalories() { return calories; }
+    public void setCalories(Integer calories) { this.calories = calories; }
+    public Double getStartLatitude() { return startLatitude; }
+    public void setStartLatitude(Double startLatitude) { this.startLatitude = startLatitude; }
+    public Double getStartLongitude() { return startLongitude; }
+    public void setStartLongitude(Double startLongitude) { this.startLongitude = startLongitude; }
 }

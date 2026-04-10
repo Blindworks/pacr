@@ -34,9 +34,16 @@ export interface FriendActivity {
   activityType: string;
   title: string;
   date: string;
+  startTime: string | null;
   distanceKm: number | null;
   durationSeconds: number | null;
   sport: string | null;
+  averagePaceSecondsPerKm: number | null;
+  averageHeartRate: number | null;
+  elevationGainM: number | null;
+  calories: number | null;
+  startLatitude: number | null;
+  startLongitude: number | null;
 }
 
 @Injectable({ providedIn: 'root' })

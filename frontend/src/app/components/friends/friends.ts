@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit, inject, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
@@ -11,7 +11,7 @@ type TabKey = 'feed' | 'friends' | 'requests' | 'find';
 @Component({
   selector: 'app-friends',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslateModule],
+  imports: [CommonModule, FormsModule, TranslateModule, DatePipe],
   templateUrl: './friends.html',
   styleUrl: './friends.scss'
 })
@@ -241,5 +241,104 @@ export class Friends implements OnInit, OnDestroy {
     const m = Math.floor((seconds % 3600) / 60);
     if (h > 0) return `${h}h ${m}m`;
     return `${m}m`;
+  }
+
+  formatPace(secondsPerKm: number | null): string {
+    if (!secondsPerKm) return '';
+    const m = Math.floor(secondsPerKm / 60);
+    const s = secondsPerKm % 60;
+    return `${m}'${s.toString().padStart(2, '0')}" /km`;
+  }
+
+  getSportIcon(sport: string | null): string {
+    const s = (sport ?? '').toLowerCase();
+    if (s.includes('run')) return 'directions_run';
+    if (s.includes('cycl') || s.includes('bik') || s.includes('ride')) return 'directions_bike';
+    if (s.includes('swim')) return 'pool';
+    if (s.includes('walk') || s.includes('hik')) return 'hiking';
+    return 'fitness_center';
+  }
+
+  getSportLabel(sport: string | null): string {
+    const s = (sport ?? '').toLowerCase();
+    if (s.includes('run')) return 'RUNNING';
+    if (s.includes('cycl') || s.includes('bik') || s.includes('ride')) return 'CYCLING';
+    if (s.includes('swim')) return 'SWIMMING';
+    if (s.includes('walk') || s.includes('hik')) return 'HIKING';
+    return 'TRAINING';
+  }
+
+  timeAgo(dateStr: any, startTime: any): string {
+    const d = this.toDate(dateStr);
+    // Only apply startTime if dateStr didn't already include time info
+    if (startTime && typeof dateStr === 'string' && !dateStr.includes('T')) {
+      if (Array.isArray(startTime)) {
+        d.setHours(startTime[0] ?? 0, startTime[1] ?? 0, startTime[2] ?? 0);
+      } else if (typeof startTime === 'string') {
+        const tp = startTime.split(':').map(Number);
+        d.setHours(tp[0] ?? 0, tp[1] ?? 0, tp[2] ?? 0);
+      }
+    }
+    const diffMin = Math.floor((Date.now() - d.getTime()) / 60000);
+    if (diffMin < 1) return 'JUST NOW';
+    if (diffMin < 60) return `${diffMin}MIN AGO`;
+    const diffH = Math.floor(diffMin / 60);
+    if (diffH < 24) return `${diffH}H AGO`;
+    const diffD = Math.floor(diffH / 24);
+    return `${diffD}D AGO`;
+  }
+
+  formatDistanceValue(km: number | null): string {
+    return km != null ? km.toFixed(1) : '-';
+  }
+
+  formatDurationShort(seconds: number | null): string {
+    if (!seconds) return '-';
+    const h = Math.floor(seconds / 3600);
+    const m = Math.floor((seconds % 3600) / 60);
+    const s = seconds % 60;
+    const mm = m.toString().padStart(2, '0');
+    const ss = s.toString().padStart(2, '0');
+    return h > 0 ? `${h}:${mm}:${ss}` : `${m}:${ss}`;
+  }
+
+  formatPaceShort(secondsPerKm: number | null): string {
+    if (!secondsPerKm) return '-';
+    const m = Math.floor(secondsPerKm / 60);
+    const s = secondsPerKm % 60;
+    return `${m}:${s.toString().padStart(2, '0')}`;
+  }
+
+  getMapTileUrl(lat: number | null, lng: number | null): string | null {
+    if (lat == null || lng == null) return null;
+    const zoom = 13;
+    const x = Math.floor((lng + 180) / 360 * Math.pow(2, zoom));
+    const y = Math.floor((1 - Math.log(Math.tan(lat * Math.PI / 180) + 1 / Math.cos(lat * Math.PI / 180)) / Math.PI) / 2 * Math.pow(2, zoom));
+    return `https://basemaps.cartocdn.com/dark_all/${zoom}/${x}/${y}@2x.png`;
+  }
+
+  toDate(value: any): Date {
+    if (value instanceof Date) return value;
+    if (Array.isArray(value)) return new Date(value[0], (value[1] ?? 1) - 1, value[2] ?? 1);
+    if (typeof value === 'string') {
+      // Try native parse first (handles ISO strings like "2026-04-06T12:00:00Z")
+      const native = new Date(value);
+      if (!isNaN(native.getTime())) return native;
+      // Fallback: parse "YYYY-MM-DD"
+      const p = value.split('-').map(Number);
+      return new Date(p[0], (p[1] ?? 1) - 1, p[2] ?? 1);
+    }
+    return new Date();
+  }
+
+  formatTime(startTime: any): string {
+    if (!startTime) return '';
+    if (Array.isArray(startTime)) {
+      const h = String(startTime[0] ?? 0).padStart(2, '0');
+      const m = String(startTime[1] ?? 0).padStart(2, '0');
+      return `${h}:${m}`;
+    }
+    if (typeof startTime === 'string') return startTime.substring(0, 5);
+    return '';
   }
 }

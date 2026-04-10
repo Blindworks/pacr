@@ -5,6 +5,11 @@ All notable changes to PACR will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.22.0] - 2026-04-10
+
+### Changed
+- **Friends activity feed redesigned to match Stitch mockup**: Activity cards now use a vertical layout with prominent uppercase title, stat grid with green accent values in glass-effect boxes, squared avatars, relative timestamps ("2H AGO // RUNNING"), and date/time display. Map tile from CARTO dark basemap shown as subtle full-card background when GPS coordinates are available. Backend `FriendActivityDto` extended with `startLatitude`/`startLongitude` fields. New i18n keys for stat labels (distance, duration, pace, BPM, elevation, calories) in EN and DE.
+
 ## [Unreleased]
 
 ### Changed
