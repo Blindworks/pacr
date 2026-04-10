@@ -1,6 +1,6 @@
 package com.trainingsplan.dto;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public record LeaderboardEntryDto(
         int rank,
@@ -8,5 +8,5 @@ public record LeaderboardEntryDto(
         Long userId,
         int timeSeconds,
         Integer paceSecondsPerKm,
-        LocalDate date
+        LocalDateTime date
 ) {}

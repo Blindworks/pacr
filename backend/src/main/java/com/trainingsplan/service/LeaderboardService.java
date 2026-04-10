@@ -66,7 +66,7 @@ public class LeaderboardService {
                     a.getUser().getId(),
                     a.getTimeSeconds(),
                     a.getPaceSecondsPerKm(),
-                    a.getCompletedAt() != null ? a.getCompletedAt().toLocalDate() : null
+                    a.getCompletedAt()
             ));
         }
         return entries;

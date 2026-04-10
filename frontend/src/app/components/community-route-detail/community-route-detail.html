@@ -116,7 +116,7 @@
                 <td class="athlete-col">{{ entry.username }}</td>
                 <td>{{ formatTime(entry.timeSeconds) }}</td>
                 <td>{{ formatPace(entry.paceSecondsPerKm) }}</td>
-                <td class="date-col">{{ entry.date }}</td>
+                <td class="date-col">{{ entry.date | date:'dd.MM.yyyy, HH:mm' }}</td>
               </tr>
             }
           </tbody>
