@@ -85,7 +85,8 @@ export class Competitions implements OnInit {
     this.competitionService.getAll().subscribe({
       next: (data) => {
         try {
-          this.races = data.map(c => this.mapToRace(c));
+          this.races = data.map(c => this.mapToRace(c))
+            .sort((a, b) => a.rawDate.localeCompare(b.rawDate));
         } catch (e) {
           console.error('Error mapping competitions:', e);
           this.hasError = true;
@@ -172,7 +173,7 @@ export class Competitions implements OnInit {
     const u = (photoId: string) => `https://images.unsplash.com/photo-${photoId}?${w}`;
 
     const marathonImages = [
-      u('1452626038306-9aae5e071dd3'), // Massenstart Marathon
+      u('1513593771205-cb0c1e4905da'), // Massenstart Marathon
       u('1530137073521-c10668e264d3'), // Straßenrennen große Gruppe
       u('1476480862126-209bfaa8edc8'), // Stadtmarathon Brücke
       u('1571008887538-b36bb32f4571'), // Läufer Nahaufnahme Beine
