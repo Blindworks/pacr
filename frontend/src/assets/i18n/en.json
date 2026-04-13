@@ -530,6 +530,7 @@
     "VIEW_ON_MAP": "View on map",
     "SELECT_FORMAT": "Select Your Distance",
     "FORMATS_AVAILABLE": "{{count}} distances available",
+    "MULTI_FORMAT": "Multi-Distance",
     "FORMAT_STARTS_AT": "Starts at {{time}}",
     "DIFFERENT_DATE": "on {{date}}"
   },

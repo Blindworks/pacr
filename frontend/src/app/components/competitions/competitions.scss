@@ -224,6 +224,15 @@
     margin: 0;
   }
 
+  .race-multi-badge {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--pp);
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
   .race-location {
     font-size: 0.75rem;
     color: var(--text-muted);

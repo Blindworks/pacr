@@ -170,7 +170,7 @@ export class Competitions implements OnInit {
       date: this.formatDate(c.date),
       rawDate: c.date ?? '',
       name: c.name,
-      distance: formats.length > 0 ? formats.map(f => f.distance).join(' / ') : this.typeToDistance(c.type),
+      distance: formats.length === 1 ? formats[0].distance : this.typeToDistance(c.type),
       location: c.location ?? '',
       image: this.typeToImage(primaryType, c.id),
       registered: c.registered ?? false,
