@@ -415,9 +415,6 @@ public class TrainingPlanService {
                         if (stepNode.has("paceDisplay")) {
                             step.setPaceDisplay(stepNode.get("paceDisplay").asText());
                         }
-                        if (stepNode.has("repetitions")) {
-                            step.setRepetitions(stepNode.get("repetitions").asInt());
-                        }
                         if (stepNode.has("highlight")) {
                             step.setHighlight(stepNode.get("highlight").asBoolean());
                         }

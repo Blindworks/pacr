@@ -47,8 +47,6 @@ public class TrainingStep {
 
     private Boolean muted;
 
-    private Integer repetitions;
-
     public TrainingStep() {}
 
     public Long getId() { return id; }
@@ -89,7 +87,4 @@ public class TrainingStep {
 
     public Boolean getMuted() { return muted; }
     public void setMuted(Boolean muted) { this.muted = muted; }
-
-    public Integer getRepetitions() { return repetitions; }
-    public void setRepetitions(Integer repetitions) { this.repetitions = repetitions; }
 }

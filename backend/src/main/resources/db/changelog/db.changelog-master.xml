@@ -108,5 +108,6 @@
     <include file="db/changelog/changes/102-add-competition-lat-lng.xml"/>
     <include file="db/changelog/changes/103-create-competition-formats.xml"/>
     <include file="db/changelog/changes/104-migrate-existing-competitions-to-formats.xml"/>
+    <include file="db/changelog/changes/105-drop-training-steps-repetitions.xml"/>
 
 </databaseChangeLog>

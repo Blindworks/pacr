@@ -123,7 +123,6 @@ export class TrainingForm implements OnInit {
     icon: string;
     highlight: boolean;
     muted: boolean;
-    repetitions: number;
   }>): FormGroup {
     const durationSeconds = s?.durationSeconds ?? ((s?.durationMinutes ?? null) != null ? (s?.durationMinutes ?? 0) * 60 : null);
     return this.fb.group({
@@ -135,8 +134,7 @@ export class TrainingForm implements OnInit {
       paceDisplay: [s?.paceDisplay ?? ''],
       icon: [s?.icon ?? ''],
       highlight: [s?.highlight ?? false],
-      muted: [s?.muted ?? false],
-      repetitions: [s?.repetitions ?? null]
+      muted: [s?.muted ?? false]
     });
   }
 
@@ -163,8 +161,7 @@ export class TrainingForm implements OnInit {
       paceDisplay: v.paceDisplay,
       icon: v.icon,
       highlight: v.highlight,
-      muted: v.muted,
-      repetitions: v.repetitions
+      muted: v.muted
     }));
   }
 
@@ -215,7 +212,6 @@ export class TrainingForm implements OnInit {
           icon: s.icon || null,
           highlight: !!s.highlight,
           muted: !!s.muted,
-          repetitions: this.parsePositiveInteger(s.repetitions),
           sortOrder: i
         };
       }),
@@ -329,29 +325,27 @@ export class TrainingForm implements OnInit {
     let hasCaloriesData = false;
 
     for (const step of stepsValue) {
-      const reps = this.parsePositiveInteger(step.repetitions) ?? 1;
-
       if (step.measurementType === 'duration') {
         const secs = this.parseDurationText(step.durationText);
         if (secs != null) {
-          totalDurationSeconds += secs * reps;
+          totalDurationSeconds += secs;
           hasDurationSteps = true;
-          totalCalories += (secs * reps / 60) * this.kcalPerMinForStepType(step.stepType);
+          totalCalories += (secs / 60) * this.kcalPerMinForStepType(step.stepType);
           hasCaloriesData = true;
         }
       } else if (step.measurementType === 'distance') {
         const dist = this.parsePositiveInteger(step.distanceMeters);
         if (dist != null) {
-          totalDistanceMeters += dist * reps;
+          totalDistanceMeters += dist;
           hasDistanceSteps = true;
-          totalCalories += (dist * reps / 1000) * 70;
+          totalCalories += (dist / 1000) * 70;
           hasCaloriesData = true;
 
           // Derive duration from distance + pace if pace is available
           const paceSecs = this.parseDurationText(step.paceDisplay);
           if (paceSecs != null) {
             // pace is per 1000m (min:sec per km)
-            totalDurationSeconds += (dist / 1000) * paceSecs * reps;
+            totalDurationSeconds += (dist / 1000) * paceSecs;
             hasDurationSteps = true;
           }
         }

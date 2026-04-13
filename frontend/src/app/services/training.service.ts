@@ -16,7 +16,6 @@ export interface TrainingStep {
   icon?: string;
   highlight?: boolean;
   muted?: boolean;
-  repetitions?: number;
 }
 
 export interface TrainingPrepTip {

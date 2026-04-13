@@ -12,7 +12,6 @@ interface WorkoutStep {
   measurement: string;
   highlight: boolean;
   muted: boolean;
-  repetitions?: number;
 }
 
 interface PrepTip {
@@ -85,14 +84,13 @@ export class TrainingDetail implements OnInit {
         : '—',
       heroImage: t.heroImageUrl || null,
       steps: (t.steps || []).map(s => ({
-        icon: s.icon || '',
+        icon: s.icon || this.getDefaultStepIcon(s.stepType),
         title: s.title || this.formatStepTitle(s.stepType),
         subtitle: s.subtitle || '',
         pace: s.paceDisplay || '—',
         measurement: this.formatStepMeasurement(s.durationSeconds, s.durationMinutes, s.distanceMeters),
         highlight: s.highlight ?? false,
-        muted: s.muted ?? false,
-        repetitions: s.repetitions
+        muted: s.muted ?? false
       })),
       prepTips: (t.prepTips || []).map(p => ({
         icon: p.icon || '',
@@ -104,6 +102,17 @@ export class TrainingDetail implements OnInit {
 
   goBack(): void {
     this.router.navigate(['/training-plans']);
+  }
+
+  private getDefaultStepIcon(stepType?: string): string {
+    switch (stepType) {
+      case 'warmup': return 'directions_run';
+      case 'work': return 'speed';
+      case 'recovery': return 'pause';
+      case 'cooldown': return 'ac_unit';
+      case 'rest': return 'hotel';
+      default: return 'fitness_center';
+    }
   }
 
   private formatStepTitle(stepType?: string): string {

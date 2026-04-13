@@ -17,7 +17,7 @@
   justify-content: space-between;
   padding: 16px 24px;
   border-bottom: 1px solid var(--border);
-  background: color-mix(in srgb, var(--bg) 85%, transparent);
+  background: var(--bg);
   backdrop-filter: blur(10px);
   position: sticky;
   top: 0;
@@ -98,7 +98,7 @@
   max-width: 960px;
   width: 100%;
   margin: 0 auto;
-  padding: 24px 24px 120px;
+  padding: 24px 24px 32px;
   display: flex;
   flex-direction: column;
   gap: 32px;
@@ -362,10 +362,8 @@
 
 // ── CTA Bar ───────────────────────────────────────────────────────
 .td-cta-bar {
-  position: fixed;
+  position: sticky;
   bottom: 0;
-  left: 0;
-  right: 0;
   padding: 20px 24px;
   background: linear-gradient(to top, var(--bg) 60%, transparent);
   z-index: 30;
@@ -434,7 +432,7 @@
 }
 
 @include m.respond-to(v.$bp-xs) {
-  .td-main { padding: 16px 16px 120px; }
+  .td-main { padding: 16px 16px 24px; }
   .td-header { padding: 14px 16px; }
   .td-cta-bar { padding: 16px; }
 }
