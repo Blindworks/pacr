@@ -12,6 +12,41 @@
     </button>
   </div>
 
+  <section class="upload-card">
+    <div class="upload-header">
+      <span class="material-symbols-outlined">upload_file</span>
+      <div>
+        <h3>{{ 'ADMIN.PLANS.UPLOAD_TITLE' | translate }}</h3>
+        <p class="hint">{{ 'ADMIN.PLANS.UPLOAD_HINT' | translate }}</p>
+      </div>
+    </div>
+
+    <div class="upload-row">
+      <input #fileInput type="file" accept=".json" (change)="onFileSelected($event)" class="file-input" />
+      <button class="btn-primary" [disabled]="!selectedFile() || isUploading()" (click)="upload()">
+        @if (isUploading()) {
+          <span class="material-symbols-outlined spin">progress_activity</span>
+        } @else {
+          <span class="material-symbols-outlined">upload</span>
+        }
+        {{ 'ADMIN.PLANS.UPLOAD' | translate }}
+      </button>
+    </div>
+
+    @if (uploadSuccess()) {
+      <p class="upload-success">
+        <span class="material-symbols-outlined">check_circle</span>
+        {{ 'ADMIN.PLANS.UPLOAD_SUCCESS' | translate }}
+      </p>
+    }
+    @if (uploadError()) {
+      <p class="upload-error">
+        <span class="material-symbols-outlined">error</span>
+        {{ uploadError()! | translate }}
+      </p>
+    }
+  </section>
+
   @if (isLoading()) {
     <div class="state-box">
       <span class="material-symbols-outlined spin">progress_activity</span>

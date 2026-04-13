@@ -1395,6 +1395,13 @@
     "AUDIT_COMP_DELETED": "Competition deleted",
     "PLANS_TITLE": "Training Plans",
     "NEW_PLAN": "New Plan",
+    "PLANS": {
+      "UPLOAD_TITLE": "Upload Training Plan",
+      "UPLOAD_HINT": "Upload a JSON file (format v2.0) with a complete training plan",
+      "UPLOAD_SUCCESS": "Training plan uploaded successfully",
+      "UPLOAD_ERROR": "Error uploading training plan",
+      "UPLOAD": "Upload"
+    },
     "LOADING_PLANS": "Loading plans…",
     "PLANS_LOAD_FAILED": "Failed to load plans.",
     "NO_PLANS": "No training plans yet.",

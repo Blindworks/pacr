@@ -19,6 +19,71 @@
 
 .state-box { @include m.state-display; }
 
+/* Upload card */
+.upload-card {
+  @include m.card(v.$radius-lg, 20px);
+  margin-bottom: 20px;
+}
+
+.upload-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 14px;
+
+  > .material-symbols-outlined {
+    font-size: 24px;
+    color: var(--pp);
+  }
+
+  h3 {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .hint {
+    margin: 2px 0 0;
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+}
+
+.upload-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.file-input {
+  flex: 1;
+  font-size: 13px;
+  color: var(--text);
+}
+
+.upload-success {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 10px 0 0;
+  font-size: 13px;
+  color: var(--success, #22c55e);
+
+  .material-symbols-outlined { font-size: 16px; }
+}
+
+.upload-error {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 10px 0 0;
+  font-size: 13px;
+  color: var(--danger, #ef4444);
+
+  .material-symbols-outlined { font-size: 16px; }
+}
+
 /* Plan grid */
 .plan-grid {
   display: grid;

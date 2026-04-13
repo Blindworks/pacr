@@ -4,8 +4,10 @@ import com.trainingsplan.dto.TrainingPlanDto;
 import com.trainingsplan.entity.AuditAction;
 import com.trainingsplan.entity.Competition;
 import com.trainingsplan.entity.CompetitionRegistration;
+import com.trainingsplan.entity.CompetitionType;
 import com.trainingsplan.entity.Training;
 import com.trainingsplan.entity.TrainingPlan;
+import com.trainingsplan.entity.TrainingStep;
 import com.trainingsplan.entity.User;
 import com.trainingsplan.repository.CompetitionRegistrationRepository;
 import com.trainingsplan.repository.CompetitionRepository;
@@ -199,7 +201,9 @@ public class TrainingPlanService {
             JsonNode rootNode = objectMapper.readTree(jsonContent);
             List<Training> templates = new ArrayList<>();
 
-            if (rootNode.has("trainings") && rootNode.get("trainings").isArray()) {
+            if (rootNode.has("format_version") && "2.0".equals(rootNode.get("format_version").asText())) {
+                parseV2FormatAsTemplates(rootNode.get("plan"), templates, trainingPlan);
+            } else if (rootNode.has("trainings") && rootNode.get("trainings").isArray()) {
                 parseOldFormatAsTemplates(rootNode, templates, trainingPlan);
             } else if (rootNode.has("marathon_plan")) {
                 parseMarathonPlanAsTemplates(rootNode.get("marathon_plan"), templates, trainingPlan);
@@ -294,6 +298,127 @@ public class TrainingPlanService {
         }
     }
 
+    /**
+     * V2.0 format: universal format with full training details and steps.
+     */
+    private void parseV2FormatAsTemplates(JsonNode planNode, List<Training> templates, TrainingPlan trainingPlan) {
+        if (planNode == null) return;
+
+        // Set plan metadata
+        if (planNode.has("targetTime")) {
+            trainingPlan.setTargetTime(planNode.get("targetTime").asText());
+        }
+        if (planNode.has("prerequisites")) {
+            trainingPlan.setPrerequisites(planNode.get("prerequisites").asText());
+        }
+        if (planNode.has("competitionType")) {
+            try {
+                trainingPlan.setCompetitionType(CompetitionType.valueOf(planNode.get("competitionType").asText()));
+            } catch (IllegalArgumentException ignored) {}
+        }
+        trainingPlanRepository.save(trainingPlan);
+
+        JsonNode weeksNode = planNode.get("weeks");
+        if (weeksNode == null || !weeksNode.isArray()) return;
+
+        String[] weekdayNames = {"monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"};
+        DayOfWeek[] weekdays = {DayOfWeek.MONDAY, DayOfWeek.TUESDAY, DayOfWeek.WEDNESDAY,
+                DayOfWeek.THURSDAY, DayOfWeek.FRIDAY, DayOfWeek.SATURDAY, DayOfWeek.SUNDAY};
+
+        for (JsonNode weekNode : weeksNode) {
+            int weekNumber = weekNode.get("weekNumber").asInt();
+            JsonNode scheduleNode = weekNode.get("schedule");
+            if (scheduleNode == null) continue;
+
+            for (int dayIndex = 0; dayIndex < weekdayNames.length; dayIndex++) {
+                JsonNode dayNode = scheduleNode.get(weekdayNames[dayIndex]);
+                if (dayNode == null || !dayNode.has("name")) continue;
+
+                String trainingType = dayNode.path("trainingType").asText("general");
+                if ("rest".equals(trainingType)) continue;
+
+                Training template = new Training();
+                template.setName(dayNode.get("name").asText());
+                template.setDescription(dayNode.path("description").asText(null));
+                template.setWeekNumber(weekNumber);
+                template.setDayOfWeek(weekdays[dayIndex]);
+                template.setTrainingType(trainingType);
+                template.setIntensityLevel(dayNode.path("intensityLevel").asText("medium"));
+                template.setTrainingPlan(trainingPlan);
+
+                if (dayNode.has("intensityPercent")) {
+                    template.setIntensityScore(dayNode.get("intensityPercent").asInt());
+                }
+                if (dayNode.has("estimatedDistanceMeters")) {
+                    template.setEstimatedDistanceMeters(dayNode.get("estimatedDistanceMeters").asInt());
+                }
+                if (dayNode.has("durationMinutes")) {
+                    template.setDurationMinutes(dayNode.get("durationMinutes").asInt());
+                }
+                if (dayNode.has("benefit")) {
+                    template.setBenefit(dayNode.get("benefit").asText());
+                }
+
+                // Parse steps
+                JsonNode stepsNode = dayNode.get("steps");
+                if (stepsNode != null && stepsNode.isArray()) {
+                    int sortOrder = 0;
+                    for (JsonNode stepNode : stepsNode) {
+                        TrainingStep step = new TrainingStep();
+                        step.setSortOrder(sortOrder++);
+                        step.setStepType(stepNode.path("stepType").asText("active"));
+                        step.setTitle(stepNode.path("title").asText(""));
+                        if (stepNode.has("subtitle")) {
+                            step.setSubtitle(stepNode.get("subtitle").asText());
+                        }
+                        if (stepNode.has("distanceMeters")) {
+                            step.setDistanceMeters(stepNode.get("distanceMeters").asInt());
+                        }
+                        if (stepNode.has("durationMinutes")) {
+                            step.setDurationMinutes(stepNode.get("durationMinutes").asInt());
+                        }
+                        if (stepNode.has("durationSeconds")) {
+                            step.setDurationSeconds(stepNode.get("durationSeconds").asInt());
+                        }
+                        if (stepNode.has("paceDisplay")) {
+                            step.setPaceDisplay(stepNode.get("paceDisplay").asText());
+                        }
+                        if (stepNode.has("repetitions")) {
+                            step.setRepetitions(stepNode.get("repetitions").asInt());
+                        }
+                        if (stepNode.has("highlight")) {
+                            step.setHighlight(stepNode.get("highlight").asBoolean());
+                        }
+                        if (stepNode.has("muted")) {
+                            step.setMuted(stepNode.get("muted").asBoolean());
+                        }
+                        template.addStep(step);
+                    }
+                }
+
+                templates.add(template);
+            }
+        }
+    }
+
+    private Integer countV2Trainings(JsonNode planNode) {
+        if (planNode == null || !planNode.has("weeks")) return null;
+        int count = 0;
+        String[] weekdays = {"monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"};
+        for (JsonNode weekNode : planNode.get("weeks")) {
+            JsonNode schedule = weekNode.get("schedule");
+            if (schedule == null) continue;
+            for (String day : weekdays) {
+                JsonNode dayNode = schedule.get(day);
+                if (dayNode != null && dayNode.has("name")) {
+                    String type = dayNode.path("trainingType").asText("");
+                    if (!"rest".equals(type)) count++;
+                }
+            }
+        }
+        return count;
+    }
+
     // -------------------------------------------------------------------------
     // Utility helpers
     // -------------------------------------------------------------------------
@@ -314,6 +439,12 @@ public class TrainingPlanService {
     private Integer countTrainingsInJson(String jsonContent) {
         try {
             JsonNode root = objectMapper.readTree(jsonContent);
+
+            // v2.0 format
+            if (root.has("format_version") && "2.0".equals(root.get("format_version").asText())) {
+                return countV2Trainings(root.get("plan"));
+            }
+
             if (root.has("trainings") && root.get("trainings").isArray()) {
                 return root.get("trainings").size();
             }

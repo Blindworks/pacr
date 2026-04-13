@@ -49,4 +49,11 @@ export class TrainingPlanService {
       params: { planId: planId.toString(), competitionId: competitionId.toString() }
     });
   }
+
+  uploadTemplate(file: File): Observable<TrainingPlan> {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('name', file.name.replace('.json', ''));
+    return this.http.post<TrainingPlan>(`${this.baseUrl}/upload-template`, formData);
+  }
 }

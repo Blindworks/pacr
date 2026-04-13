@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal, ViewChild, ElementRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 
@@ -19,6 +19,13 @@ export class PlanList implements OnInit {
   isLoading = signal(false);
   hasError = signal(false);
   confirmDeleteId = signal<number | null>(null);
+
+  // Upload state
+  @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
+  selectedFile = signal<File | null>(null);
+  isUploading = signal(false);
+  uploadSuccess = signal(false);
+  uploadError = signal<string | null>(null);
 
   ngOnInit(): void {
     this.load();
@@ -58,6 +65,37 @@ export class PlanList implements OnInit {
     this.planService.delete(id).subscribe({
       next: () => { this.confirmDeleteId.set(null); this.load(); },
       error: () => this.hasError.set(true)
+    });
+  }
+
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0] ?? null;
+    this.selectedFile.set(file);
+    this.uploadSuccess.set(false);
+    this.uploadError.set(null);
+  }
+
+  upload(): void {
+    const file = this.selectedFile();
+    if (!file) return;
+
+    this.isUploading.set(true);
+    this.uploadError.set(null);
+    this.uploadSuccess.set(false);
+
+    this.planService.uploadTemplate(file).subscribe({
+      next: () => {
+        this.uploadSuccess.set(true);
+        this.selectedFile.set(null);
+        if (this.fileInput) this.fileInput.nativeElement.value = '';
+        this.isUploading.set(false);
+        this.load();
+      },
+      error: () => {
+        this.uploadError.set('ADMIN.PLANS.UPLOAD_ERROR');
+        this.isUploading.set(false);
+      }
     });
   }
 
