@@ -1,24 +1,30 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { TranslateModule } from '@ngx-translate/core';
+import { FormsModule } from '@angular/forms';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 import { CompetitionService, Competition } from '../../../../services/competition.service';
 
 @Component({
   selector: 'app-competition-list',
   standalone: true,
-  imports: [TranslateModule],
+  imports: [TranslateModule, FormsModule],
   templateUrl: './competition-list.html',
   styleUrl: './competition-list.scss'
 })
 export class CompetitionList implements OnInit {
   private service = inject(CompetitionService);
   private router = inject(Router);
+  private translate = inject(TranslateService);
 
   competitions = signal<Competition[]>([]);
   isLoading = signal(false);
   hasError = signal(false);
-  confirmDeleteId = signal<number | null>(null);
+
+  confirmDeleteComp = signal<Competition | null>(null);
+  confirmInput = signal('');
+  deleteInProgress = signal(false);
+  deleteError = signal<string | null>(null);
 
   ngOnInit(): void {
     this.load();
@@ -42,18 +48,40 @@ export class CompetitionList implements OnInit {
     this.router.navigate(['/admin/competitions', id, 'edit']);
   }
 
-  requestDelete(id: number): void {
-    this.confirmDeleteId.set(id);
+  requestDelete(comp: Competition): void {
+    this.confirmDeleteComp.set(comp);
+    this.confirmInput.set('');
+    this.deleteError.set(null);
   }
 
   cancelDelete(): void {
-    this.confirmDeleteId.set(null);
+    if (this.deleteInProgress()) return;
+    this.confirmDeleteComp.set(null);
+    this.confirmInput.set('');
+    this.deleteError.set(null);
   }
 
-  confirmDelete(id: number): void {
-    this.service.delete(id).subscribe({
-      next: () => { this.confirmDeleteId.set(null); this.load(); },
-      error: () => this.hasError.set(true)
+  canConfirmDelete(): boolean {
+    const target = this.confirmDeleteComp();
+    return !!target && this.confirmInput() === target.name && !this.deleteInProgress();
+  }
+
+  confirmDelete(): void {
+    const target = this.confirmDeleteComp();
+    if (!target || !this.canConfirmDelete()) return;
+    this.deleteInProgress.set(true);
+    this.deleteError.set(null);
+    this.service.delete(target.id).subscribe({
+      next: () => {
+        this.deleteInProgress.set(false);
+        this.confirmDeleteComp.set(null);
+        this.confirmInput.set('');
+        this.load();
+      },
+      error: (err) => {
+        this.deleteInProgress.set(false);
+        this.deleteError.set(err?.error?.message ?? this.translate.instant('ADMIN.COMP_DELETE_FAILED'));
+      }
     });
   }
 

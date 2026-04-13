@@ -15,6 +15,7 @@ public interface CompetitionRegistrationRepository extends JpaRepository<Competi
     Optional<CompetitionRegistration> findByCompetitionIdAndUserId(Long competitionId, Long userId);
     List<CompetitionRegistration> findByUserId(Long userId);
     boolean existsByCompetitionIdAndUserId(Long competitionId, Long userId);
+    List<CompetitionRegistration> findByCompetitionId(Long competitionId);
 
     @Modifying
     @Query("UPDATE CompetitionRegistration r SET r.trainingPlan = NULL WHERE r.trainingPlan.id = :planId")

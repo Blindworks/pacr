@@ -8,9 +8,11 @@ import com.trainingsplan.entity.User;
 import com.trainingsplan.repository.CompetitionRegistrationRepository;
 import com.trainingsplan.repository.CompetitionRepository;
 import com.trainingsplan.security.SecurityUtils;
+import com.trainingsplan.repository.UserTrainingEntryRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -25,15 +27,18 @@ public class CompetitionService {
 
     private final CompetitionRepository competitionRepository;
     private final CompetitionRegistrationRepository registrationRepository;
+    private final UserTrainingEntryRepository userTrainingEntryRepository;
     private final SecurityUtils securityUtils;
     private final AuditLogService auditLogService;
 
     public CompetitionService(CompetitionRepository competitionRepository,
                               CompetitionRegistrationRepository registrationRepository,
+                              UserTrainingEntryRepository userTrainingEntryRepository,
                               SecurityUtils securityUtils,
                               AuditLogService auditLogService) {
         this.competitionRepository = competitionRepository;
         this.registrationRepository = registrationRepository;
+        this.userTrainingEntryRepository = userTrainingEntryRepository;
         this.securityUtils = securityUtils;
         this.auditLogService = auditLogService;
     }
@@ -97,10 +102,23 @@ public class CompetitionService {
         return new CompetitionDto(saved, reg);
     }
 
+    @Transactional
     public void deleteById(Long id) {
         String competitionName = competitionRepository.findById(id)
                 .map(Competition::getName).orElse(null);
+
+        // 1. Delete UserTrainingEntries linked via CompetitionRegistration
+        userTrainingEntryRepository.deleteByCompetitionRegistration_Competition_Id(id);
+
+        // 2. Delete all CompetitionRegistrations for this competition
+        List<CompetitionRegistration> registrations = registrationRepository.findByCompetitionId(id);
+        if (!registrations.isEmpty()) {
+            registrationRepository.deleteAll(registrations);
+        }
+
+        // 3. Delete the competition itself
         competitionRepository.deleteById(id);
+
         User currentUser = securityUtils.getCurrentUser();
         Map<String, Object> details = new LinkedHashMap<>();
         if (competitionName != null) details.put("name", competitionName);

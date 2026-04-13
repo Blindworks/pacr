@@ -50,7 +50,7 @@
               <button class="icon-btn" [title]="'COMMON.EDIT' | translate" (click)="navigateEdit(comp.id)">
                 <span class="material-symbols-outlined">edit</span>
               </button>
-              <button class="icon-btn icon-btn--danger" [title]="'COMMON.DELETE' | translate" (click)="requestDelete(comp.id)">
+              <button class="icon-btn icon-btn--danger" [title]="'COMMON.DELETE' | translate" (click)="requestDelete(comp)">
                 <span class="material-symbols-outlined">delete</span>
               </button>
             </div>
@@ -77,15 +77,41 @@
     </div>
   }
 
-  @if (confirmDeleteId() !== null) {
-    <div class="dialog-overlay" (click)="cancelDelete()">
-      <div class="dialog" (click)="$event.stopPropagation()">
-        <span class="material-symbols-outlined dialog-icon">warning</span>
-        <h3>{{ 'ADMIN.DELETE_COMP_TITLE' | translate }}</h3>
-        <p>{{ 'ADMIN.DELETE_TRAINING_MSG' | translate }}</p>
-        <div class="dialog-actions">
-          <button class="btn-ghost" (click)="cancelDelete()">{{ 'COMMON.CANCEL' | translate }}</button>
-          <button class="btn-danger" (click)="confirmDelete(confirmDeleteId()!)">{{ 'COMMON.DELETE' | translate }}</button>
+  @if (confirmDeleteComp(); as target) {
+    <div class="delete-overlay" (click)="cancelDelete()">
+      <div class="delete-dialog" (click)="$event.stopPropagation()">
+        <div class="delete-dialog__header">
+          <span class="material-symbols-outlined">warning</span>
+          <h3>{{ 'ADMIN.DELETE_COMP_TITLE' | translate }}</h3>
+        </div>
+        <p class="delete-dialog__warning">
+          {{ 'ADMIN.DELETE_COMP_WARNING' | translate:{ name: target.name } }}
+        </p>
+        <p class="delete-dialog__hint">{{ 'ADMIN.DELETE_COMP_HINT' | translate }}</p>
+        <label class="delete-dialog__label" for="delete-confirm-input">
+          {{ 'ADMIN.DELETE_COMP_TYPE_NAME' | translate:{ name: target.name } }}
+        </label>
+        <input
+          id="delete-confirm-input"
+          type="text"
+          class="delete-dialog__input"
+          [ngModel]="confirmInput()"
+          (ngModelChange)="confirmInput.set($event)"
+          [disabled]="deleteInProgress()"
+          autocomplete="off" />
+        @if (deleteError()) {
+          <p class="delete-dialog__error">{{ deleteError() }}</p>
+        }
+        <div class="delete-dialog__actions">
+          <button class="btn-ghost" (click)="cancelDelete()" [disabled]="deleteInProgress()">
+            {{ 'COMMON.CANCEL' | translate }}
+          </button>
+          <button class="btn-danger" (click)="confirmDelete()" [disabled]="!canConfirmDelete()">
+            @if (deleteInProgress()) {
+              <span class="material-symbols-outlined spin">progress_activity</span>
+            }
+            {{ 'COMMON.DELETE' | translate }}
+          </button>
         </div>
       </div>
     </div>
