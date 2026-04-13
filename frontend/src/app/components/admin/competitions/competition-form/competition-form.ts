@@ -73,7 +73,7 @@ export class CompetitionForm implements OnInit {
         if (!c) return;
         this.form.patchValue({
           name: c.name,
-          date: c.date ?? '',
+          date: c.date ? c.date.substring(0, 10) : '',
           location: c.location ?? '',
           latitude: c.latitude ?? null,
           longitude: c.longitude ?? null,
@@ -93,11 +93,15 @@ export class CompetitionForm implements OnInit {
   }
 
   private createFormatGroup(format?: CompetitionFormat): FormGroup {
+    // API returns display name (e.g. "Halbmarathon") via @JsonValue, but select options use enum value (e.g. "HALF_MARATHON")
+    const typeValue = format?.type
+      ? (this.competitionTypes.find(t => t.value === format.type || t.label === format.type)?.value ?? format.type)
+      : '';
     return this.fb.group({
       id: [format?.id ?? null],
-      type: [format?.type ?? '', Validators.required],
+      type: [typeValue, Validators.required],
       startTime: [format?.startTime ?? ''],
-      startDate: [format?.startDate ?? ''],
+      startDate: [format?.startDate ? format.startDate.substring(0, 10) : ''],
       description: [format?.description ?? '']
     });
   }

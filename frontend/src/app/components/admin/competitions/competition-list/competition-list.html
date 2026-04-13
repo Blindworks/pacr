@@ -42,9 +42,15 @@
           <div class="comp-card-header">
             <div class="comp-info">
               <h3>{{ comp.name }}</h3>
-              @if (comp.type) {
-                <span class="type-badge">{{ comp.type }}</span>
-              }
+              <div class="type-badges">
+                @if (comp.formats && comp.formats.length > 0) {
+                  @for (f of comp.formats; track f.id) {
+                    <span class="type-badge">{{ formatType(f.type) }}</span>
+                  }
+                } @else if (comp.type) {
+                  <span class="type-badge">{{ comp.type }}</span>
+                }
+              </div>
             </div>
             <div class="comp-actions">
               <button class="icon-btn" [title]="'COMMON.EDIT' | translate" (click)="navigateEdit(comp.id)">

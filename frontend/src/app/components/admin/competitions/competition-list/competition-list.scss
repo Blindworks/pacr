@@ -57,6 +57,12 @@
   }
 }
 
+.type-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
 .type-badge { @include m.badge; }
 
 .comp-actions {

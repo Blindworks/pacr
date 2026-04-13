@@ -90,4 +90,14 @@ export class CompetitionList implements OnInit {
     const d = new Date(dateStr);
     return d.toLocaleDateString('de-DE', { day: '2-digit', month: 'short', year: 'numeric' });
   }
+
+  private readonly typeLabels: Record<string, string> = {
+    FIVE_K: '5K', TEN_K: '10K', HALF_MARATHON: 'Halbmarathon', MARATHON: 'Marathon',
+    FIFTY_K: '50K', HUNDRED_K: '100K', BACKYARD_ULTRA: 'Backyard Ultra',
+    CATCHER_CAR: 'Catcher Car', OTHER: 'Sonstige'
+  };
+
+  formatType(type: string): string {
+    return this.typeLabels[type] ?? type;
+  }
 }
