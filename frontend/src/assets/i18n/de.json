@@ -1517,6 +1517,7 @@
     "COMP_DETAILS": "Wettkampf-Details",
     "COMP_PLACEHOLDER": "z.B. Berlin Marathon",
     "DATE_REQUIRED": "Datum ist erforderlich",
+    "START_TIME": "Startzeit",
     "COMP_TYPE_HALF": "Halbmarathon",
     "COMP_TYPE_OTHER": "Sonstige",
     "LOCATION": "Ort",
