@@ -1,24 +1,30 @@
 import { Component, OnInit, inject, signal, ViewChild, ElementRef } from '@angular/core';
 import { Router } from '@angular/router';
-import { TranslateModule } from '@ngx-translate/core';
+import { FormsModule } from '@angular/forms';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 import { TrainingPlanService, TrainingPlan } from '../../../../services/training-plan.service';
 
 @Component({
   selector: 'app-plan-list',
   standalone: true,
-  imports: [TranslateModule],
+  imports: [TranslateModule, FormsModule],
   templateUrl: './plan-list.html',
   styleUrl: './plan-list.scss'
 })
 export class PlanList implements OnInit {
   private planService = inject(TrainingPlanService);
   private router = inject(Router);
+  private translate = inject(TranslateService);
 
   plans = signal<TrainingPlan[]>([]);
   isLoading = signal(false);
   hasError = signal(false);
-  confirmDeleteId = signal<number | null>(null);
+
+  confirmDeletePlan = signal<TrainingPlan | null>(null);
+  confirmInput = signal('');
+  deleteInProgress = signal(false);
+  deleteError = signal<string | null>(null);
 
   // Upload state
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
@@ -53,18 +59,40 @@ export class PlanList implements OnInit {
     this.router.navigate(['/admin/plans', id, 'trainings']);
   }
 
-  requestDelete(id: number): void {
-    this.confirmDeleteId.set(id);
+  requestDelete(plan: TrainingPlan): void {
+    this.confirmDeletePlan.set(plan);
+    this.confirmInput.set('');
+    this.deleteError.set(null);
   }
 
   cancelDelete(): void {
-    this.confirmDeleteId.set(null);
+    if (this.deleteInProgress()) return;
+    this.confirmDeletePlan.set(null);
+    this.confirmInput.set('');
+    this.deleteError.set(null);
   }
 
-  confirmDelete(id: number): void {
-    this.planService.delete(id).subscribe({
-      next: () => { this.confirmDeleteId.set(null); this.load(); },
-      error: () => this.hasError.set(true)
+  canConfirmDelete(): boolean {
+    const target = this.confirmDeletePlan();
+    return !!target && this.confirmInput() === target.name && !this.deleteInProgress();
+  }
+
+  confirmDelete(): void {
+    const target = this.confirmDeletePlan();
+    if (!target || !this.canConfirmDelete()) return;
+    this.deleteInProgress.set(true);
+    this.deleteError.set(null);
+    this.planService.delete(target.id).subscribe({
+      next: () => {
+        this.deleteInProgress.set(false);
+        this.confirmDeletePlan.set(null);
+        this.confirmInput.set('');
+        this.load();
+      },
+      error: (err) => {
+        this.deleteInProgress.set(false);
+        this.deleteError.set(err?.error?.message ?? this.translate.instant('ADMIN.PLANS_DELETE_FAILED'));
+      }
     });
   }
 

@@ -45,6 +45,8 @@ public interface UserTrainingEntryRepository extends JpaRepository<UserTrainingE
 
     void deleteByCompetitionRegistrationId(Long registrationId);
 
+    void deleteByTraining_TrainingPlan_Id(Long trainingPlanId);
+
     @Query("SELECT MAX(t.weekNumber) FROM Training t WHERE t.trainingPlan.id = :planId")
     Integer findMaxWeekNumberByPlanId(@Param("planId") Long planId);
 

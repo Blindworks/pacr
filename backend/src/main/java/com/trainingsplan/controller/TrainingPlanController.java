@@ -106,15 +106,6 @@ public class TrainingPlanController {
         return ResponseEntity.ok(new TrainingPlanDto(trainingPlanService.save(plan)));
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteTrainingPlan(@PathVariable Long id) {
-        if (trainingPlanService.findById(id) == null) {
-            return ResponseEntity.notFound().build();
-        }
-        trainingPlanService.deleteById(id);
-        return ResponseEntity.noContent().build();
-    }
-
     /**
      * Upload a plan JSON as a reusable template. No competition required.
      * No Training records are created at this point.

@@ -103,5 +103,6 @@
     <include file="db/changelog/changes/097-community-route-admin-uploaded.xml"/>
     <include file="db/changelog/changes/098-add-bot-runners.xml"/>
     <include file="db/changelog/changes/099-community-routes-creator-nullable.xml"/>
+    <include file="db/changelog/changes/100-plan-adjustments-cascade-fk.xml"/>
 
 </databaseChangeLog>

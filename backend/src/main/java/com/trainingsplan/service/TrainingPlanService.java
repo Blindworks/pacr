@@ -13,6 +13,7 @@ import com.trainingsplan.repository.CompetitionRegistrationRepository;
 import com.trainingsplan.repository.CompetitionRepository;
 import com.trainingsplan.repository.TrainingPlanRepository;
 import com.trainingsplan.repository.TrainingRepository;
+import com.trainingsplan.repository.UserTrainingEntryRepository;
 import com.trainingsplan.security.SecurityUtils;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -36,6 +37,7 @@ public class TrainingPlanService {
     private final CompetitionRepository competitionRepository;
     private final TrainingRepository trainingRepository;
     private final CompetitionRegistrationRepository registrationRepository;
+    private final UserTrainingEntryRepository userTrainingEntryRepository;
     private final SecurityUtils securityUtils;
     private final UserTrainingScheduleService userTrainingScheduleService;
     private final AuditLogService auditLogService;
@@ -45,6 +47,7 @@ public class TrainingPlanService {
                                CompetitionRepository competitionRepository,
                                TrainingRepository trainingRepository,
                                CompetitionRegistrationRepository registrationRepository,
+                               UserTrainingEntryRepository userTrainingEntryRepository,
                                SecurityUtils securityUtils,
                                UserTrainingScheduleService userTrainingScheduleService,
                                AuditLogService auditLogService,
@@ -53,6 +56,7 @@ public class TrainingPlanService {
         this.competitionRepository = competitionRepository;
         this.trainingRepository = trainingRepository;
         this.registrationRepository = registrationRepository;
+        this.userTrainingEntryRepository = userTrainingEntryRepository;
         this.securityUtils = securityUtils;
         this.userTrainingScheduleService = userTrainingScheduleService;
         this.auditLogService = auditLogService;
@@ -75,10 +79,27 @@ public class TrainingPlanService {
         return trainingPlanRepository.save(trainingPlan);
     }
 
+    @Transactional
     public void deleteById(Long id) {
         String planName = trainingPlanRepository.findById(id)
                 .map(TrainingPlan::getName).orElse(null);
+
+        // 1. Delete UserTrainingEntries referencing trainings of this plan
+        userTrainingEntryRepository.deleteByTraining_TrainingPlan_Id(id);
+
+        // 2. Nullify training_plan_id in CompetitionRegistrations
+        registrationRepository.nullifyTrainingPlan(id);
+
+        // 3. Delete all Training templates (cascades to TrainingStep + TrainingPrepTip)
+        List<Training> trainings = trainingRepository.findByTrainingPlan_Id(id);
+        if (!trainings.isEmpty()) {
+            trainingRepository.deleteAll(trainings);
+        }
+
+        // 4. Delete the TrainingPlan itself
         trainingPlanRepository.deleteById(id);
+
+        // 5. Audit log
         User currentUser = securityUtils.getCurrentUser();
         Map<String, Object> details = new LinkedHashMap<>();
         if (planName != null) details.put("name", planName);

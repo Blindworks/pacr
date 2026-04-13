@@ -37,7 +37,7 @@ export class TrainingPlanService {
   }
 
   delete(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.baseUrl}/${id}`);
+    return this.http.delete<void>(apiUrl(`/admin/training-plans/${id}`));
   }
 
   getTemplates(): Observable<TrainingPlan[]> {
