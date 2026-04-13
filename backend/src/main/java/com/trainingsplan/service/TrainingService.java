@@ -37,6 +37,7 @@ public class TrainingService {
         return training;
     }
 
+    @Transactional(readOnly = true)
     public List<Training> findByTrainingPlanId(Long planId) {
         return trainingRepository.findByTrainingPlan_Id(planId);
     }
