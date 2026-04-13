@@ -152,6 +152,21 @@ export class TrainingForm implements OnInit {
   removeStep(i: number): void { this.steps.removeAt(i); }
   moveStepUp(i: number): void { if (i === 0) return; const ctrl = this.steps.at(i); this.steps.removeAt(i); this.steps.insert(i - 1, ctrl); }
   moveStepDown(i: number): void { if (i >= this.steps.length - 1) return; const ctrl = this.steps.at(i); this.steps.removeAt(i); this.steps.insert(i + 1, ctrl); }
+  copyStep(i: number): void {
+    const v = this.steps.at(i).value;
+    const seconds = v.measurementType === 'duration' ? this.parseDurationText(v.durationText) : null;
+    this.steps.push(this.makeStepGroup({
+      stepType: v.stepType,
+      subtitle: v.subtitle,
+      distanceMeters: v.measurementType === 'distance' ? v.distanceMeters : undefined,
+      durationSeconds: seconds ?? undefined,
+      paceDisplay: v.paceDisplay,
+      icon: v.icon,
+      highlight: v.highlight,
+      muted: v.muted,
+      repetitions: v.repetitions
+    }));
+  }
 
   addTip(): void { this.prepTips.push(this.makeTipGroup()); }
   removeTip(i: number): void { this.prepTips.removeAt(i); }

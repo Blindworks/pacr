@@ -532,7 +532,10 @@
     "FORMATS_AVAILABLE": "{{count}} distances available",
     "MULTI_FORMAT": "Multi-Distance",
     "FORMAT_STARTS_AT": "Starts at {{time}}",
-    "DIFFERENT_DATE": "on {{date}}"
+    "DIFFERENT_DATE": "on {{date}}",
+    "OR_DIVIDER": "or",
+    "NO_PLAN_TITLE": "Participate without a training plan",
+    "NO_PLAN_SUBTITLE": "You can always assign a plan later."
   },
   "ACTIVITIES": {
     "TITLE": "Your",
@@ -1477,6 +1480,7 @@
     "HERO_IMAGE": "Hero Image URL",
     "WORKOUT_STEPS": "Workout Steps",
     "ADD_STEP": "Add Step",
+    "COPY_STEP": "Copy step",
     "NO_STEPS": "No steps yet. Click \"Add Step\" to define the workout structure.",
     "MOVE_UP": "Move up",
     "MOVE_DOWN": "Move down",

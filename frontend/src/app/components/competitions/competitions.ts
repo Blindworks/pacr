@@ -81,6 +81,7 @@ export class Competitions implements OnInit {
   hasError = false;
   isAssigning = false;
   assignError = false;
+  isRegistering = false;
   showPlanChangeConfirm = false;
   infoRace: Race | null = null;
 
@@ -404,6 +405,24 @@ export class Competitions implements OnInit {
 
   cancelPlanChange(): void {
     this.showPlanChangeConfirm = false;
+  }
+
+  participateWithoutPlan(): void {
+    if (!this.selectedRace || this.isRegistering) return;
+    this.isRegistering = true;
+    this.competitionService.register(this.selectedRace.id, this.selectedFormat?.id).subscribe({
+      next: () => {
+        const race = this.races.find(r => r.id === this.selectedRace?.id);
+        if (race) race.registered = true;
+        this.deselectRace();
+        this.isRegistering = false;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.isRegistering = false;
+        this.cdr.detectChanges();
+      }
+    });
   }
 
   openInfo(race: Race): void { this.infoRace = race; }

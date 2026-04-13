@@ -194,6 +194,9 @@
                 <button type="button" class="icon-btn" [title]="'ADMIN.MOVE_DOWN' | translate" (click)="moveStepDown($index)" [disabled]="$index === steps.length - 1">
                   <span class="material-symbols-outlined">arrow_downward</span>
                 </button>
+                <button type="button" class="icon-btn" [title]="'ADMIN.COPY_STEP' | translate" (click)="copyStep($index)">
+                  <span class="material-symbols-outlined">content_copy</span>
+                </button>
                 <button type="button" class="icon-btn icon-btn--danger" [title]="'ADMIN.REMOVE' | translate" (click)="removeStep($index)">
                   <span class="material-symbols-outlined">delete</span>
                 </button>

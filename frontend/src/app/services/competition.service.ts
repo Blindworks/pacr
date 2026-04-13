@@ -58,4 +58,10 @@ export class CompetitionService {
   updateRegistration(id: number, registeredWithOrganizer: boolean): Observable<unknown> {
     return this.http.put(`${this.base}/${id}/register`, { registeredWithOrganizer });
   }
+
+  register(competitionId: number, formatId?: number): Observable<unknown> {
+    const body: Record<string, unknown> = {};
+    if (formatId) body['formatId'] = formatId;
+    return this.http.post(`${this.base}/${competitionId}/register`, body);
+  }
 }

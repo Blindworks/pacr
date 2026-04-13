@@ -257,6 +257,24 @@
         </button>
       </div>
     </section>
+
+    <!-- Or Divider + No Plan Option -->
+    <div class="no-plan-divider">
+      <span class="no-plan-divider__line"></span>
+      <span class="no-plan-divider__text">{{ 'COMPETITIONS.OR_DIVIDER' | translate }}</span>
+      <span class="no-plan-divider__line"></span>
+    </div>
+
+    <div class="no-plan-card" (click)="participateWithoutPlan()">
+      <div class="no-plan-card__icon">
+        <span class="material-symbols-outlined">directions_run</span>
+      </div>
+      <div class="no-plan-card__content">
+        <h3 class="no-plan-card__title">{{ 'COMPETITIONS.NO_PLAN_TITLE' | translate }}</h3>
+        <p class="no-plan-card__subtitle">{{ 'COMPETITIONS.NO_PLAN_SUBTITLE' | translate }}</p>
+      </div>
+      <span class="material-symbols-outlined no-plan-card__arrow">arrow_forward</span>
+    </div>
   </div>
 </div>
 
