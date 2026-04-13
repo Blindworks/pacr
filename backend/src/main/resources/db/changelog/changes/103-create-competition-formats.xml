@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="103-create-competition-formats-table" author="benedikt">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="competition_formats"/>
+            </not>
+        </preConditions>
+        <comment>Create competition_formats table for multi-distance events</comment>
+        <createTable tableName="competition_formats">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="competition_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="type" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="start_time" type="TIME"/>
+            <column name="start_date" type="DATE"/>
+            <column name="description" type="VARCHAR(1000)"/>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="competition_formats" baseColumnNames="competition_id"
+                                 referencedTableName="competitions" referencedColumnNames="id"
+                                 constraintName="fk_competition_formats_competition"/>
+        <addUniqueConstraint tableName="competition_formats" columnNames="competition_id, type"
+                             constraintName="uq_competition_format_type"/>
+    </changeSet>
+
+    <changeSet id="103-add-format-id-to-registrations" author="benedikt">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="competition_registrations" columnName="competition_format_id"/>
+            </not>
+        </preConditions>
+        <comment>Add competition_format_id to competition_registrations</comment>
+        <addColumn tableName="competition_registrations">
+            <column name="competition_format_id" type="BIGINT"/>
+        </addColumn>
+        <addForeignKeyConstraint baseTableName="competition_registrations" baseColumnNames="competition_format_id"
+                                 referencedTableName="competition_formats" referencedColumnNames="id"
+                                 constraintName="fk_registration_competition_format"/>
+    </changeSet>
+
+</databaseChangeLog>

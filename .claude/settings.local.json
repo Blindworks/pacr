@@ -53,7 +53,9 @@
       "Bash(npx sharp-cli:*)",
       "Bash(bash version-bump.sh minor)",
       "Bash(./version-bump.sh minor:*)",
-      "Bash(echo \"EXIT: $?\")"
+      "Bash(echo \"EXIT: $?\")",
+      "Bash(mkdir -p \"C:/Users/bened/IdeaProjects/Smart_Trainingsplan/frontend/src/assets/images/competitions\")",
+      "Bash(touch \"C:/Users/bened/IdeaProjects/Smart_Trainingsplan/frontend/src/assets/images/competitions/.gitkeep\")"
     ],
     "deny": [],
     "ask": []

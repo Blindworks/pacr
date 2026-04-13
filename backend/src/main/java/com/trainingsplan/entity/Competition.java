@@ -4,8 +4,12 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "competitions")
@@ -33,11 +37,21 @@ public class Competition {
     @Column(name = "location", length = 255)
     private String location;
 
+    @Column
+    private Double latitude;
+
+    @Column
+    private Double longitude;
+
     @Column(name = "start_time")
     private LocalTime startTime;
 
     @Column(name = "system_generated", nullable = false)
     private boolean systemGenerated = false;
+
+    @OneToMany(mappedBy = "competition", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<CompetitionFormat> formats = new ArrayList<>();
 
     public Competition() {}
 
@@ -65,9 +79,18 @@ public class Competition {
     public String getLocation() { return location; }
     public void setLocation(String location) { this.location = location; }
 
+    public Double getLatitude() { return latitude; }
+    public void setLatitude(Double latitude) { this.latitude = latitude; }
+
+    public Double getLongitude() { return longitude; }
+    public void setLongitude(Double longitude) { this.longitude = longitude; }
+
     public LocalTime getStartTime() { return startTime; }
     public void setStartTime(LocalTime startTime) { this.startTime = startTime; }
 
     public boolean isSystemGenerated() { return systemGenerated; }
     public void setSystemGenerated(boolean systemGenerated) { this.systemGenerated = systemGenerated; }
+
+    public List<CompetitionFormat> getFormats() { return formats; }
+    public void setFormats(List<CompetitionFormat> formats) { this.formats = formats; }
 }

@@ -80,7 +80,9 @@ public class CompetitionController {
             String targetTime = body != null ? (String) body.get("targetTime") : null;
             Boolean registeredWithOrganizer = body != null ? (Boolean) body.get("registeredWithOrganizer") : null;
             String ranking = body != null ? (String) body.get("ranking") : null;
-            CompetitionRegistration reg = competitionService.register(id, targetTime, registeredWithOrganizer, ranking);
+            Long formatId = body != null && body.get("formatId") != null
+                    ? ((Number) body.get("formatId")).longValue() : null;
+            CompetitionRegistration reg = competitionService.register(id, formatId, targetTime, registeredWithOrganizer, ranking);
             return ResponseEntity.ok(reg);
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().build();
@@ -94,7 +96,9 @@ public class CompetitionController {
             String ranking = (String) body.get("ranking");
             String targetTime = (String) body.get("targetTime");
             Boolean registeredWithOrganizer = (Boolean) body.get("registeredWithOrganizer");
-            CompetitionRegistration reg = competitionService.updateRegistration(id, ranking, targetTime, registeredWithOrganizer);
+            Long formatId = body.get("formatId") != null
+                    ? ((Number) body.get("formatId")).longValue() : null;
+            CompetitionRegistration reg = competitionService.updateRegistration(id, ranking, targetTime, registeredWithOrganizer, formatId);
             return ResponseEntity.ok(reg);
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().build();

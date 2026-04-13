@@ -1,10 +1,8 @@
 package com.trainingsplan.service;
 
 import com.trainingsplan.dto.CompetitionDto;
-import com.trainingsplan.entity.AuditAction;
-import com.trainingsplan.entity.Competition;
-import com.trainingsplan.entity.CompetitionRegistration;
-import com.trainingsplan.entity.User;
+import com.trainingsplan.entity.*;
+import com.trainingsplan.repository.CompetitionFormatRepository;
 import com.trainingsplan.repository.CompetitionRegistrationRepository;
 import com.trainingsplan.repository.CompetitionRepository;
 import com.trainingsplan.security.SecurityUtils;
@@ -27,17 +25,20 @@ public class CompetitionService {
 
     private final CompetitionRepository competitionRepository;
     private final CompetitionRegistrationRepository registrationRepository;
+    private final CompetitionFormatRepository competitionFormatRepository;
     private final UserTrainingEntryRepository userTrainingEntryRepository;
     private final SecurityUtils securityUtils;
     private final AuditLogService auditLogService;
 
     public CompetitionService(CompetitionRepository competitionRepository,
                               CompetitionRegistrationRepository registrationRepository,
+                              CompetitionFormatRepository competitionFormatRepository,
                               UserTrainingEntryRepository userTrainingEntryRepository,
                               SecurityUtils securityUtils,
                               AuditLogService auditLogService) {
         this.competitionRepository = competitionRepository;
         this.registrationRepository = registrationRepository;
+        this.competitionFormatRepository = competitionFormatRepository;
         this.userTrainingEntryRepository = userTrainingEntryRepository;
         this.securityUtils = securityUtils;
         this.auditLogService = auditLogService;
@@ -83,8 +84,45 @@ public class CompetitionService {
         return competitionRepository.findById(id).orElse(null);
     }
 
+    @Transactional
     public CompetitionDto save(Competition competition) {
         boolean isNew = competition.getId() == null;
+
+        // Handle formats: set parent reference for cascade persistence
+        List<CompetitionFormat> incomingFormats = competition.getFormats();
+
+        if (!isNew) {
+            // For updates, load existing entity and merge formats
+            Competition existing = competitionRepository.findById(competition.getId()).orElse(null);
+            if (existing != null) {
+                existing.setName(competition.getName());
+                existing.setDate(competition.getDate());
+                existing.setDescription(competition.getDescription());
+                existing.setType(competition.getType());
+                existing.setLocation(competition.getLocation());
+                existing.setLatitude(competition.getLatitude());
+                existing.setLongitude(competition.getLongitude());
+                existing.setStartTime(competition.getStartTime());
+                existing.setSystemGenerated(competition.isSystemGenerated());
+
+                // Sync formats: clear and re-add to trigger orphanRemoval
+                existing.getFormats().clear();
+                if (incomingFormats != null) {
+                    for (CompetitionFormat f : incomingFormats) {
+                        f.setCompetition(existing);
+                        existing.getFormats().add(f);
+                    }
+                }
+                competition = existing;
+            }
+        } else {
+            if (incomingFormats != null) {
+                for (CompetitionFormat f : incomingFormats) {
+                    f.setCompetition(competition);
+                }
+            }
+        }
+
         Competition saved = competitionRepository.save(competition);
         Long userId = securityUtils.getCurrentUserId();
         CompetitionRegistration reg = userId != null
@@ -127,7 +165,8 @@ public class CompetitionService {
     }
 
     public CompetitionRegistration updateRegistration(Long competitionId, String ranking,
-                                                      String targetTime, Boolean registeredWithOrganizer) {
+                                                      String targetTime, Boolean registeredWithOrganizer,
+                                                      Long formatId) {
         Long userId = securityUtils.getCurrentUserId();
         if (userId == null) throw new RuntimeException("Not authenticated");
         CompetitionRegistration reg = registrationRepository
@@ -136,10 +175,15 @@ public class CompetitionService {
         if (ranking != null) reg.setRanking(ranking);
         if (targetTime != null) reg.setTargetTime(targetTime);
         if (registeredWithOrganizer != null) reg.setRegisteredWithOrganizer(registeredWithOrganizer);
+        if (formatId != null) {
+            CompetitionFormat format = competitionFormatRepository.findById(formatId)
+                    .orElseThrow(() -> new RuntimeException("Competition format not found: " + formatId));
+            reg.setCompetitionFormat(format);
+        }
         return registrationRepository.save(reg);
     }
 
-    public CompetitionRegistration register(Long competitionId, String targetTime,
+    public CompetitionRegistration register(Long competitionId, Long formatId, String targetTime,
                                             Boolean registeredWithOrganizer, String ranking) {
         Competition competition = competitionRepository.findById(competitionId)
                 .orElseThrow(() -> new RuntimeException("Competition not found: " + competitionId));
@@ -148,7 +192,21 @@ public class CompetitionService {
         Optional<CompetitionRegistration> existing = registrationRepository
                 .findByCompetitionIdAndUserId(competitionId, user.getId());
         if (existing.isPresent()) return existing.get();
+
         CompetitionRegistration reg = new CompetitionRegistration(competition, user);
+
+        // Resolve competition format if provided
+        if (formatId != null) {
+            CompetitionFormat format = competitionFormatRepository.findById(formatId)
+                    .orElseThrow(() -> new RuntimeException("Competition format not found: " + formatId));
+            if (!format.getCompetition().getId().equals(competitionId)) {
+                throw new RuntimeException("Format does not belong to this competition");
+            }
+            reg.setCompetitionFormat(format);
+        } else if (competition.getFormats() != null && !competition.getFormats().isEmpty()) {
+            throw new RuntimeException("Must select a format for this competition");
+        }
+
         if (targetTime != null) reg.setTargetTime(targetTime);
         if (registeredWithOrganizer != null) reg.setRegisteredWithOrganizer(registeredWithOrganizer);
         if (ranking != null) reg.setRanking(ranking);

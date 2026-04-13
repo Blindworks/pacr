@@ -58,7 +58,12 @@
         <div class="race-meta">
           <div class="race-meta-left">
             <div class="race-tags">
-              <span class="tag" [class]="race.tagClass">{{ race.tag }}</span>
+              <ng-container *ngIf="race.formats.length > 0; else singleTag">
+                <span class="tag" [class]="f.tagClass" *ngFor="let f of race.formats">{{ f.typeLabel }}</span>
+              </ng-container>
+              <ng-template #singleTag>
+                <span class="tag" [class]="race.tagClass">{{ race.tag }}</span>
+              </ng-template>
               <span class="race-date">{{ race.date }}</span>
             </div>
             <h3 class="race-name">{{ race.name }}</h3>
@@ -104,11 +109,61 @@
   </div>
 </div>
 
-<!-- Training Plan Selection View -->
-<div class="plan-selection-page" *ngIf="selectedRace && !selectedPlan">
-  <!-- Sub-header -->
+<!-- Format Selection View -->
+<div class="format-selection-page" *ngIf="needsFormatSelection">
   <div class="plan-subheader">
     <button class="back-btn" (click)="deselectRace()">
+      <span class="material-symbols-outlined">arrow_back</span>
+    </button>
+    <div class="plan-subheader-race">
+      <span class="plan-subheader-label">{{ 'COMPETITIONS.SELECTED_RACE' | translate }}</span>
+      <div class="plan-subheader-divider"></div>
+      <span class="plan-subheader-name">{{ selectedRace!.name }} | {{ selectedRace!.date }}</span>
+    </div>
+  </div>
+
+  <div class="plan-content">
+    <div class="plan-intro">
+      <h1 class="plan-main-title">{{ 'COMPETITIONS.SELECT_FORMAT' | translate }}</h1>
+      <p class="plan-main-subtitle">{{ 'COMPETITIONS.FORMATS_AVAILABLE' | translate:{ count: selectedRace!.formats.length } }}</p>
+    </div>
+
+    <section class="format-cards-grid">
+      <div
+        *ngFor="let format of selectedRace!.formats"
+        class="format-card"
+        [class.format-card--registered]="selectedRace!.registeredFormatId === format.id"
+        (click)="selectFormat(format)">
+        <div class="format-card__icon">
+          <span class="material-symbols-outlined">directions_run</span>
+        </div>
+        <div class="format-card__info">
+          <h3 class="format-card__type">{{ format.typeLabel }}</h3>
+          <p class="format-card__distance">{{ format.distance }}</p>
+          <p class="format-card__time" *ngIf="format.startTime">
+            {{ 'COMPETITIONS.FORMAT_STARTS_AT' | translate:{ time: format.startTime } }}
+          </p>
+          <p class="format-card__date" *ngIf="format.startDate">
+            {{ 'COMPETITIONS.DIFFERENT_DATE' | translate:{ date: format.startDate } }}
+          </p>
+          <p class="format-card__desc" *ngIf="format.description">{{ format.description }}</p>
+        </div>
+        <div class="format-card__arrow">
+          <span class="material-symbols-outlined">chevron_right</span>
+        </div>
+        <div class="format-card__registered-badge" *ngIf="selectedRace!.registeredFormatId === format.id">
+          <span class="material-symbols-outlined">check_circle</span>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>
+
+<!-- Training Plan Selection View -->
+<div class="plan-selection-page" *ngIf="selectedRace && !needsFormatSelection && !selectedPlan">
+  <!-- Sub-header -->
+  <div class="plan-subheader">
+    <button class="back-btn" (click)="selectedRace!.formats.length > 1 ? deselectFormat() : deselectRace()">
       <span class="material-symbols-outlined">arrow_back</span>
     </button>
     <div class="plan-subheader-race">
@@ -205,7 +260,7 @@
 </div>
 
 <!-- Plan Confirmation View -->
-<div class="confirmation-page" *ngIf="selectedRace && selectedPlan">
+<div class="confirmation-page" *ngIf="selectedRace && !needsFormatSelection && selectedPlan">
   <!-- Hero Section -->
   <section class="confirmation-hero" [style.background-image]="getImageStyle(selectedRace.image)">
     <div class="confirmation-hero__overlay"></div>
@@ -338,6 +393,12 @@
         <div class="info-meta-row">
           <span class="material-symbols-outlined">location_on</span>
           <span>{{ infoRace.location || '—' }}</span>
+          <a *ngIf="infoRace.latitude && infoRace.longitude"
+             [href]="'https://www.openstreetmap.org/?mlat=' + infoRace.latitude + '&mlon=' + infoRace.longitude + '#map=14/' + infoRace.latitude + '/' + infoRace.longitude"
+             target="_blank" rel="noopener" class="map-link">
+            <span class="material-symbols-outlined">map</span>
+            {{ 'COMPETITIONS.VIEW_ON_MAP' | translate }}
+          </a>
         </div>
         <div class="info-meta-row">
           <span class="material-symbols-outlined">straighten</span>
@@ -349,6 +410,15 @@
           {{ infoRace.registeredWithOrganizer ? 'how_to_reg' : 'person_add' }}
         </span>
         <span>{{ infoRace.registeredWithOrganizer ? ('COMPETITIONS.REGISTERED' | translate) : ('COMPETITIONS.NOT_REGISTERED_INFO' | translate) }}</span>
+      </div>
+      <div class="info-dialog__formats" *ngIf="infoRace.formats.length > 0">
+        <h4 class="info-dialog__formats-title">{{ 'ADMIN.FORMATS_SECTION' | translate }}</h4>
+        <div class="info-format-row" *ngFor="let f of infoRace.formats">
+          <span class="tag" [class]="f.tagClass">{{ f.typeLabel }}</span>
+          <span class="info-format-distance">{{ f.distance }}</span>
+          <span class="info-format-time" *ngIf="f.startTime">{{ f.startTime }}</span>
+          <span class="info-format-date" *ngIf="f.startDate">{{ f.startDate }}</span>
+        </div>
       </div>
       <p class="info-dialog__desc" *ngIf="infoRace.description">{{ infoRace.description }}</p>
       <div class="info-dialog__plan" *ngIf="infoRace.trainingPlanName">

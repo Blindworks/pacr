@@ -3,6 +3,14 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
+export interface CompetitionFormat {
+  id?: number;
+  type: string;
+  startTime?: string;
+  startDate?: string;
+  description?: string;
+}
+
 export interface Competition {
   id: number;
   name: string;
@@ -10,11 +18,16 @@ export interface Competition {
   description?: string;
   type?: string;
   location?: string;
+  latitude?: number;
+  longitude?: number;
   startTime?: string;
   registered?: boolean;
   registeredWithOrganizer?: boolean;
   trainingPlanId?: number;
   trainingPlanName?: string;
+  formats?: CompetitionFormat[];
+  registeredFormatId?: number;
+  registeredFormatType?: string;
 }
 
 @Injectable({ providedIn: 'root' })

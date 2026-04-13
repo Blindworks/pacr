@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="104-migrate-competitions-to-formats" author="benedikt">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="competition_formats"/>
+            <columnExists tableName="competitions" columnName="type"/>
+        </preConditions>
+        <comment>Migrate existing competitions with type to competition_formats entries</comment>
+        <sql>
+            INSERT INTO competition_formats (competition_id, type, start_time)
+            SELECT id, type, start_time
+            FROM competitions
+            WHERE type IS NOT NULL
+              AND id NOT IN (SELECT competition_id FROM competition_formats);
+        </sql>
+    </changeSet>
+
+    <changeSet id="104-link-registrations-to-formats" author="benedikt">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="competition_formats"/>
+            <columnExists tableName="competition_registrations" columnName="competition_format_id"/>
+        </preConditions>
+        <comment>Link existing registrations to their migrated format entries</comment>
+        <sql>
+            UPDATE competition_registrations cr
+            SET cr.competition_format_id = (
+                SELECT cf.id FROM competition_formats cf
+                WHERE cf.competition_id = cr.competition_id
+                LIMIT 1
+            )
+            WHERE cr.competition_format_id IS NULL
+              AND EXISTS (
+                SELECT 1 FROM competition_formats cf
+                WHERE cf.competition_id = cr.competition_id
+            );
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

@@ -44,10 +44,15 @@ export class TrainingPlanService {
     return this.http.get<TrainingPlan[]>(`${this.baseUrl}/templates`);
   }
 
-  assignToCompetition(planId: number, competitionId: number): Observable<TrainingPlan> {
-    return this.http.post<TrainingPlan>(`${this.baseUrl}/assign`, null, {
-      params: { planId: planId.toString(), competitionId: competitionId.toString() }
-    });
+  assignToCompetition(planId: number, competitionId: number, formatId?: number): Observable<TrainingPlan> {
+    const params: Record<string, string> = {
+      planId: planId.toString(),
+      competitionId: competitionId.toString()
+    };
+    if (formatId) {
+      params['formatId'] = formatId.toString();
+    }
+    return this.http.post<TrainingPlan>(`${this.baseUrl}/assign`, null, { params });
   }
 
   uploadTemplate(file: File): Observable<TrainingPlan> {

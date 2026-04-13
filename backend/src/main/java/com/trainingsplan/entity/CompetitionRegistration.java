@@ -39,6 +39,11 @@ public class CompetitionRegistration {
     @Column(name = "registered_with_organizer", nullable = false)
     private boolean registeredWithOrganizer = false;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "competition_format_id", nullable = true)
+    @JsonIgnore
+    private CompetitionFormat competitionFormat;
+
     @Column(name = "registered_at", nullable = false)
     private LocalDateTime registeredAt = LocalDateTime.now();
 
@@ -81,5 +86,13 @@ public class CompetitionRegistration {
     @JsonProperty("trainingPlanName")
     public String getTrainingPlanName() {
         return trainingPlan != null ? trainingPlan.getName() : null;
+    }
+
+    public CompetitionFormat getCompetitionFormat() { return competitionFormat; }
+    public void setCompetitionFormat(CompetitionFormat competitionFormat) { this.competitionFormat = competitionFormat; }
+
+    @JsonProperty("competitionFormatId")
+    public Long getCompetitionFormatId() {
+        return competitionFormat != null ? competitionFormat.getId() : null;
     }
 }

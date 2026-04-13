@@ -1,35 +1,44 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, ViewChild, inject, signal } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
-import { TranslateModule } from '@ngx-translate/core';
+import { FormBuilder, FormArray, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
-import { CompetitionService } from '../../../../services/competition.service';
+import { CompetitionService, CompetitionFormat } from '../../../../services/competition.service';
+import { GeocodingService } from '../../../../services/geocoding.service';
+import { LocationPickerDialogComponent } from '../../../location-picker-dialog/location-picker-dialog';
 
 @Component({
   selector: 'app-competition-form',
   standalone: true,
-  imports: [ReactiveFormsModule, TranslateModule],
+  imports: [ReactiveFormsModule, TranslateModule, LocationPickerDialogComponent],
   templateUrl: './competition-form.html',
   styleUrl: './competition-form.scss'
 })
 export class CompetitionForm implements OnInit {
   private fb = inject(FormBuilder);
   private service = inject(CompetitionService);
+  private geocodingService = inject(GeocodingService);
+  private translate = inject(TranslateService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
+
+  @ViewChild('locationPicker') locationPicker!: LocationPickerDialogComponent;
 
   editId = signal<number | null>(null);
   isLoading = signal(false);
   isSaving = signal(false);
   hasError = signal(false);
+  geocoding = signal(false);
+  geocodeError = signal<string | null>(null);
 
   form = this.fb.group({
     name: ['', Validators.required],
     date: ['', Validators.required],
-    startTime: [''],
-    type: [''],
     location: [''],
-    description: ['']
+    latitude: [null as number | null],
+    longitude: [null as number | null],
+    description: [''],
+    formats: this.fb.array([])
   });
 
   readonly competitionTypes = [
@@ -45,6 +54,7 @@ export class CompetitionForm implements OnInit {
   ];
 
   get isEdit(): boolean { return this.editId() !== null; }
+  get formatsArray(): FormArray { return this.form.get('formats') as FormArray; }
 
   ngOnInit(): void {
     const idParam = this.route.snapshot.paramMap.get('compId');
@@ -61,31 +71,65 @@ export class CompetitionForm implements OnInit {
     this.service.getById(id).subscribe({
       next: (c) => {
         if (!c) return;
-        const typeEntry = this.competitionTypes.find(t => t.label === c.type || t.value === c.type);
         this.form.patchValue({
           name: c.name,
           date: c.date ?? '',
-          startTime: c.startTime ?? '',
-          type: typeEntry?.value ?? '',
           location: c.location ?? '',
+          latitude: c.latitude ?? null,
+          longitude: c.longitude ?? null,
           description: c.description ?? ''
         });
+        // Load existing formats into FormArray
+        this.formatsArray.clear();
+        if (c.formats && c.formats.length > 0) {
+          for (const f of c.formats) {
+            this.formatsArray.push(this.createFormatGroup(f));
+          }
+        }
       },
       error: () => { this.hasError.set(true); this.isLoading.set(false); },
       complete: () => this.isLoading.set(false)
     });
   }
 
+  private createFormatGroup(format?: CompetitionFormat): FormGroup {
+    return this.fb.group({
+      id: [format?.id ?? null],
+      type: [format?.type ?? '', Validators.required],
+      startTime: [format?.startTime ?? ''],
+      startDate: [format?.startDate ?? ''],
+      description: [format?.description ?? '']
+    });
+  }
+
+  addFormat(): void {
+    this.formatsArray.push(this.createFormatGroup());
+  }
+
+  removeFormat(index: number): void {
+    this.formatsArray.removeAt(index);
+  }
+
   save(): void {
     if (this.form.invalid) { this.form.markAllAsTouched(); return; }
     const v = this.form.value;
-    const payload = {
+    const formats = (v.formats || [])
+      .filter((f: any) => f.type)
+      .map((f: any) => ({
+        id: f.id || undefined,
+        type: f.type,
+        startTime: f.startTime || undefined,
+        startDate: f.startDate || undefined,
+        description: f.description || undefined
+      }));
+    const payload: any = {
       name: v.name ?? undefined,
       date: v.date ?? undefined,
-      startTime: v.startTime || undefined,
-      type: v.type || undefined,
       location: v.location || undefined,
-      description: v.description || undefined
+      latitude: v.latitude || undefined,
+      longitude: v.longitude || undefined,
+      description: v.description || undefined,
+      formats: formats.length > 0 ? formats : undefined
     };
     this.isSaving.set(true);
     const op$ = this.isEdit
@@ -100,4 +144,46 @@ export class CompetitionForm implements OnInit {
   }
 
   cancel(): void { this.router.navigate(['/admin/competitions']); }
+
+  geocodeLocation(): void {
+    const query = this.form.get('location')?.value;
+    if (!query || query.trim().length < 2) return;
+
+    this.geocoding.set(true);
+    this.geocodeError.set(null);
+
+    this.geocodingService.geocode(query).subscribe({
+      next: results => {
+        this.geocoding.set(false);
+        if (results.length > 0) {
+          const first = results[0];
+          this.form.patchValue({
+            latitude: Math.round(parseFloat(first.lat) * 1000000) / 1000000,
+            longitude: Math.round(parseFloat(first.lon) * 1000000) / 1000000
+          });
+          this.geocodeError.set(null);
+        } else {
+          this.geocodeError.set(this.translate.instant('TRAINER_EVENTS.GEOCODE_NOT_FOUND'));
+        }
+      },
+      error: () => {
+        this.geocoding.set(false);
+        this.geocodeError.set(this.translate.instant('TRAINER_EVENTS.GEOCODE_NOT_FOUND'));
+      }
+    });
+  }
+
+  openLocationPicker(): void {
+    const lat = this.form.get('latitude')?.value;
+    const lng = this.form.get('longitude')?.value;
+    this.locationPicker.open(lat, lng);
+  }
+
+  onLocationPicked(coords: { lat: number; lng: number }): void {
+    this.form.patchValue({
+      latitude: coords.lat,
+      longitude: coords.lng
+    });
+    this.geocodeError.set(null);
+  }
 }

@@ -4,9 +4,20 @@ import { Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 import { DomSanitizer, SafeStyle } from '@angular/platform-browser';
-import { CompetitionService, Competition } from '../../services/competition.service';
+import { CompetitionService, Competition, CompetitionFormat } from '../../services/competition.service';
 import { TrainingPlanService, TrainingPlan } from '../../services/training-plan.service';
 
+
+interface RaceFormat {
+  id: number;
+  type: string;
+  typeLabel: string;
+  tagClass: string;
+  startTime?: string;
+  startDate?: string;
+  description?: string;
+  distance: string;
+}
 
 interface Race {
   id: number;
@@ -24,6 +35,10 @@ interface Race {
   trainingPlanName?: string;
   description?: string;
   startTime?: string;
+  latitude?: number;
+  longitude?: number;
+  formats: RaceFormat[];
+  registeredFormatId?: number;
 }
 
 interface PlanCard {
@@ -58,6 +73,7 @@ export class Competitions implements OnInit {
   activeFilter = 'All Races';
   showPastRaces = false;
   selectedRace: Race | null = null;
+  selectedFormat: RaceFormat | null = null;
   selectedPlan: PlanCard | null = null;
   highlightedPlanId: number | null = null;
   selectedTargetTime = 'Sub 3:30';
@@ -133,23 +149,56 @@ export class Competitions implements OnInit {
   }
 
   private mapToRace(c: Competition): Race {
+    const formats: RaceFormat[] = (c.formats || []).map(f => ({
+      id: f.id!,
+      type: f.type,
+      typeLabel: this.typeToLabel(f.type),
+      tagClass: this.typeToTagClass(this.typeToLabel(f.type)),
+      startTime: f.startTime,
+      startDate: f.startDate,
+      description: f.description,
+      distance: this.typeToDistance(this.typeToLabel(f.type))
+    }));
+
+    // For display: use first format's type if formats exist, otherwise fallback to competition type
+    const primaryType = formats.length > 0 ? this.typeToLabel(formats[0].type) : c.type;
+
     return {
       id: c.id,
-      tag: c.type ?? 'Race',
-      tagClass: this.typeToTagClass(c.type),
+      tag: primaryType ?? 'Race',
+      tagClass: this.typeToTagClass(primaryType),
       date: this.formatDate(c.date),
       rawDate: c.date ?? '',
       name: c.name,
-      distance: this.typeToDistance(c.type),
+      distance: formats.length > 0 ? formats.map(f => f.distance).join(' / ') : this.typeToDistance(c.type),
       location: c.location ?? '',
-      image: this.typeToImage(c.type, c.id),
+      image: this.typeToImage(primaryType, c.id),
       registered: c.registered ?? false,
       registeredWithOrganizer: c.registeredWithOrganizer ?? false,
       trainingPlanId: c.trainingPlanId,
       trainingPlanName: c.trainingPlanName,
       description: c.description,
-      startTime: c.startTime
+      startTime: c.startTime,
+      latitude: c.latitude,
+      longitude: c.longitude,
+      formats,
+      registeredFormatId: c.registeredFormatId
     };
+  }
+
+  private typeToLabel(type?: string): string {
+    const map: Record<string, string> = {
+      'FIVE_K': '5K',
+      'TEN_K': '10K',
+      'HALF_MARATHON': 'Halbmarathon',
+      'MARATHON': 'Marathon',
+      'FIFTY_K': '50K',
+      'HUNDRED_K': '100K',
+      'BACKYARD_ULTRA': 'Backyard Ultra',
+      'CATCHER_CAR': 'Catcher car',
+      'OTHER': 'Sonstige'
+    };
+    return map[type ?? ''] ?? type ?? '';
   }
 
   private syncHighlightedPlan(): void {
@@ -169,47 +218,21 @@ export class Competitions implements OnInit {
   }
 
   private typeToImage(type?: string, id: number = 0): string {
-    const w = 'w=800&q=80';
-    const u = (photoId: string) => `https://images.unsplash.com/photo-${photoId}?${w}`;
-
-    const marathonImages = [
-      u('1513593771205-cb0c1e4905da'), // Massenstart Marathon
-      u('1530137073521-c10668e264d3'), // Straßenrennen große Gruppe
-      u('1476480862126-209bfaa8edc8'), // Stadtmarathon Brücke
-      u('1571008887538-b36bb32f4571'), // Läufer Nahaufnahme Beine
-      u('1461897104016-0b3b00cc81ee'), // Marathonläufer Startnummer
-    ];
-
-    const cityRunImages = [
-      u('1541534741688-6078c6bfb5c5'), // Laufbahn Sprint
-      u('1552674605-db6ffd4facb5'),     // Nachtlauf Stadt
-      u('1502904550040-7534597429ae'), // Laufschuhe Asphalt
-      u('1546483875-ad9aa773783f'),     // Läufer Stadtpark
-      u('1594737625785-a6cbdabd333c'), // Zieleinlauf Finisher
-    ];
-
-    const ultraImages = [
-      u('1483721310020-03333e577078'), // Trailrunning Berge
-      u('1551698618-1dfe5d97d256'),     // Trail Bergpfad
-      u('1504021831741-f2cd878daa4a'), // Querfeld-/Crosslauf
-      u('1490127252417-7c393f993ee4'), // Ultra Berglandschaft
-      u('1446057032654-9d8885db76c6'), // Trailrunner Panorama
-    ];
-
-    const pick = (arr: string[]) => arr[Math.abs(id) % arr.length];
-
-    const map: Record<string, string[]> = {
-      'Marathon':       marathonImages,
-      'Halbmarathon':   marathonImages,
-      '10K':            cityRunImages,
-      '5K':             cityRunImages,
-      '50K':            ultraImages,
-      '100K':           ultraImages,
-      'Backyard Ultra': ultraImages,
-      'Catcher car':    ultraImages,
+    const count = 3;
+    const categoryMap: Record<string, string> = {
+      'Marathon': 'marathon',
+      'Halbmarathon': 'marathon',
+      '10K': 'city',
+      '5K': 'city',
+      '50K': 'ultra',
+      '100K': 'ultra',
+      'Backyard Ultra': 'ultra',
+      'Catcher car': 'ultra',
     };
 
-    return pick(map[type ?? ''] ?? cityRunImages);
+    const category = categoryMap[type ?? ''] ?? 'city';
+    const index = (Math.abs(id) % count) + 1;
+    return `assets/images/competitions/${category}-${index}.webp`;
   }
 
   getImageStyle(imageUrl: string): SafeStyle {
@@ -267,7 +290,13 @@ export class Competitions implements OnInit {
       'Ultra': ['50K', '100K', 'Backyard Ultra', 'Catcher car']
     };
     const allowed = filterMap[this.activeFilter] ?? [];
-    return races.filter(r => allowed.includes(r.tag));
+    return races.filter(r => {
+      // Check if any format matches the filter
+      if (r.formats.length > 0) {
+        return r.formats.some(f => allowed.includes(f.typeLabel));
+      }
+      return allowed.includes(r.tag);
+    });
   }
 
   get hasPastRaces(): boolean {
@@ -289,21 +318,54 @@ export class Competitions implements OnInit {
   selectRace(race: Race): void {
     this.selectedRace = race;
     this.selectedPlan = null;
+    this.selectedFormat = null;
     this.highlightedPlanId = race.trainingPlanId ?? null;
     this.selectedTargetTime = 'Sub 3:30';
+
+    // Auto-select format if only one exists
+    if (race.formats.length === 1) {
+      this.selectedFormat = race.formats[0];
+    }
+
+    // If no formats or format already selected, go to plan selection
+    if (race.formats.length <= 1) {
+      if (this.trainingPlans.length === 0) {
+        this.loadTrainingPlans();
+        return;
+      }
+      this.syncHighlightedPlan();
+      if (!race.trainingPlanId) {
+        this.highlightedPlanId = null;
+      }
+    }
+    // If multiple formats, the template will show the format picker
+  }
+
+  selectFormat(format: RaceFormat): void {
+    this.selectedFormat = format;
     if (this.trainingPlans.length === 0) {
       this.loadTrainingPlans();
       return;
     }
-
     this.syncHighlightedPlan();
-    if (!race.trainingPlanId) {
+    if (!this.selectedRace?.trainingPlanId) {
       this.highlightedPlanId = null;
     }
   }
 
+  deselectFormat(): void {
+    this.selectedFormat = null;
+    this.selectedPlan = null;
+    this.highlightedPlanId = null;
+  }
+
+  get needsFormatSelection(): boolean {
+    return !!this.selectedRace && this.selectedRace.formats.length > 1 && !this.selectedFormat;
+  }
+
   deselectRace(): void {
     this.selectedRace = null;
+    this.selectedFormat = null;
     this.selectedPlan = null;
     this.highlightedPlanId = null;
   }
@@ -367,7 +429,7 @@ export class Competitions implements OnInit {
     if (!this.selectedRace || !this.selectedPlan) return;
     this.isAssigning = true;
     this.assignError = false;
-    this.trainingPlanService.assignToCompetition(this.selectedPlan.id, this.selectedRace.id).subscribe({
+    this.trainingPlanService.assignToCompetition(this.selectedPlan.id, this.selectedRace.id, this.selectedFormat?.id).subscribe({
       next: (result) => {
         if (result) this.router.navigate(['/training-plans']);
       },

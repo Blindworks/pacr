@@ -6,6 +6,8 @@ import com.trainingsplan.entity.CompetitionType;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class CompetitionDto {
     private Long id;
@@ -14,6 +16,8 @@ public class CompetitionDto {
     private String description;
     private CompetitionType type;
     private String location;
+    private Double latitude;
+    private Double longitude;
     private LocalTime startTime;
     private String ranking;
     private String targetTime;
@@ -22,6 +26,9 @@ public class CompetitionDto {
     private Long registrationId;
     private Long trainingPlanId;
     private String trainingPlanName;
+    private List<CompetitionFormatDto> formats;
+    private Long registeredFormatId;
+    private String registeredFormatType;
 
     public CompetitionDto(Competition competition, CompetitionRegistration registration) {
         this.id = competition.getId();
@@ -30,7 +37,14 @@ public class CompetitionDto {
         this.description = competition.getDescription();
         this.type = competition.getType();
         this.location = competition.getLocation();
+        this.latitude = competition.getLatitude();
+        this.longitude = competition.getLongitude();
         this.startTime = competition.getStartTime();
+        if (competition.getFormats() != null && !competition.getFormats().isEmpty()) {
+            this.formats = competition.getFormats().stream()
+                    .map(CompetitionFormatDto::new)
+                    .collect(Collectors.toList());
+        }
         if (registration != null) {
             this.registered = true;
             this.registrationId = registration.getId();
@@ -39,6 +53,10 @@ public class CompetitionDto {
             this.registeredWithOrganizer = registration.isRegisteredWithOrganizer();
             this.trainingPlanId = registration.getTrainingPlanId();
             this.trainingPlanName = registration.getTrainingPlanName();
+            if (registration.getCompetitionFormat() != null) {
+                this.registeredFormatId = registration.getCompetitionFormat().getId();
+                this.registeredFormatType = registration.getCompetitionFormat().getType().name();
+            }
         }
     }
 
@@ -48,6 +66,8 @@ public class CompetitionDto {
     public String getDescription() { return description; }
     public CompetitionType getType() { return type; }
     public String getLocation() { return location; }
+    public Double getLatitude() { return latitude; }
+    public Double getLongitude() { return longitude; }
     public LocalTime getStartTime() { return startTime; }
     public String getRanking() { return ranking; }
     public String getTargetTime() { return targetTime; }
@@ -56,4 +76,7 @@ public class CompetitionDto {
     public Long getRegistrationId() { return registrationId; }
     public Long getTrainingPlanId() { return trainingPlanId; }
     public String getTrainingPlanName() { return trainingPlanName; }
+    public List<CompetitionFormatDto> getFormats() { return formats; }
+    public Long getRegisteredFormatId() { return registeredFormatId; }
+    public String getRegisteredFormatType() { return registeredFormatType; }
 }

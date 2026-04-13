@@ -58,24 +58,36 @@
             }
           </div>
 
-          <div class="field">
-            <label>{{ 'ADMIN.START_TIME' | translate }}</label>
-            <input formControlName="startTime" type="time" class="input" />
-          </div>
-
-          <div class="field">
-            <label>{{ 'COMMON.TYPE' | translate }}</label>
-            <select formControlName="type" class="input">
-              <option value="">{{ 'ADMIN.SELECT' | translate }}</option>
-              @for (t of competitionTypes; track t.value) {
-                <option [value]="t.value">{{ t.label }}</option>
-              }
-            </select>
-          </div>
-
           <div class="field field--full">
             <label>{{ 'ADMIN.LOCATION' | translate }}</label>
-            <input formControlName="location" type="text" [placeholder]="'ADMIN.LOCATION_PLACEHOLDER' | translate" class="input" />
+            <div class="location-input-row">
+              <input formControlName="location" type="text" [placeholder]="'ADMIN.LOCATION_PLACEHOLDER' | translate" class="input" />
+              <button type="button" class="btn-icon-action" (click)="geocodeLocation()"
+                      [disabled]="geocoding()"
+                      [title]="'TRAINER_EVENTS.GEOCODE_BTN' | translate">
+                @if (geocoding()) {
+                  <span class="material-symbols-outlined spinning">progress_activity</span>
+                } @else {
+                  <span class="material-symbols-outlined">search</span>
+                }
+              </button>
+              <button type="button" class="btn-icon-action" (click)="openLocationPicker()"
+                      [title]="'TRAINER_EVENTS.MAP_PICKER_BTN' | translate">
+                <span class="material-symbols-outlined">map</span>
+              </button>
+            </div>
+            @if (geocodeError()) {
+              <span class="geocode-error">
+                <span class="material-symbols-outlined">warning</span>
+                {{ geocodeError() }}
+              </span>
+            }
+            @if (form.get('latitude')?.value && form.get('longitude')?.value) {
+              <span class="coords-hint">
+                <span class="material-symbols-outlined">check_circle</span>
+                {{ 'TRAINER_EVENTS.COORDS_HINT' | translate }}
+              </span>
+            }
           </div>
 
           <div class="field field--full">
@@ -85,6 +97,61 @@
           </div>
         </div>
       </section>
+
+      <section class="form-card">
+        <h3 class="section-title">
+          <span class="material-symbols-outlined">directions_run</span>
+          {{ 'ADMIN.FORMATS_SECTION' | translate }}
+        </h3>
+
+        @if (formatsArray.length === 0) {
+          <p class="formats-empty-hint">{{ 'ADMIN.NO_FORMATS_HINT' | translate }}</p>
+        }
+
+        <div class="formats-list" formArrayName="formats">
+          @for (format of formatsArray.controls; track $index; let i = $index) {
+            <div class="format-row" [formGroupName]="i">
+              <div class="format-fields">
+                <div class="field">
+                  <label>{{ 'ADMIN.FORMAT_TYPE' | translate }} <span class="required">*</span></label>
+                  <select formControlName="type" class="input">
+                    <option value="">{{ 'ADMIN.SELECT' | translate }}</option>
+                    @for (t of competitionTypes; track t.value) {
+                      <option [value]="t.value">{{ t.label }}</option>
+                    }
+                  </select>
+                </div>
+                <div class="field">
+                  <label>{{ 'ADMIN.FORMAT_START_TIME' | translate }}</label>
+                  <input formControlName="startTime" type="time" class="input" />
+                </div>
+                <div class="field">
+                  <label>{{ 'ADMIN.FORMAT_START_DATE' | translate }}</label>
+                  <input formControlName="startDate" type="date" class="input" />
+                  <span class="field-hint">{{ 'ADMIN.FORMAT_DATE_HINT' | translate }}</span>
+                </div>
+                <div class="field field--full">
+                  <label>{{ 'ADMIN.FORMAT_DESCRIPTION' | translate }}</label>
+                  <input formControlName="description" type="text" class="input" />
+                </div>
+              </div>
+              <button type="button" class="btn-remove" (click)="removeFormat(i)">
+                <span class="material-symbols-outlined">close</span>
+                {{ 'ADMIN.REMOVE_FORMAT' | translate }}
+              </button>
+            </div>
+          }
+        </div>
+
+        <button type="button" class="btn-ghost btn-add-format" (click)="addFormat()">
+          <span class="material-symbols-outlined">add</span>
+          {{ 'ADMIN.ADD_FORMAT' | translate }}
+        </button>
+      </section>
     </form>
+
+    <app-location-picker-dialog #locationPicker
+      (confirmed)="onLocationPicked($event)">
+    </app-location-picker-dialog>
   }
 </div>

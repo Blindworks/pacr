@@ -136,9 +136,11 @@ public class TrainingPlanController {
      * Sets competition.trainingPlan = sourcePlan (no new plan created).
      */
     @PostMapping("/assign")
-    public ResponseEntity<?> assignPlanToCompetition(@RequestParam Long planId, @RequestParam Long competitionId) {
+    public ResponseEntity<?> assignPlanToCompetition(@RequestParam Long planId,
+                                                      @RequestParam Long competitionId,
+                                                      @RequestParam(required = false) Long formatId) {
         try {
-            TrainingPlanDto dto = trainingPlanService.assignPlanToCompetition(planId, competitionId);
+            TrainingPlanDto dto = trainingPlanService.assignPlanToCompetition(planId, competitionId, formatId);
             return ResponseEntity.status(HttpStatus.CREATED).body(dto);
         } catch (Exception e) {
             log.error("Error assigning plan {} to competition {}: {}", planId, competitionId, e.getMessage(), e);

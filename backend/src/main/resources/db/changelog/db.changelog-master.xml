@@ -105,5 +105,8 @@
     <include file="db/changelog/changes/099-community-routes-creator-nullable.xml"/>
     <include file="db/changelog/changes/100-plan-adjustments-cascade-fk.xml"/>
     <include file="db/changelog/changes/101-add-competition-start-time.xml"/>
+    <include file="db/changelog/changes/102-add-competition-lat-lng.xml"/>
+    <include file="db/changelog/changes/103-create-competition-formats.xml"/>
+    <include file="db/changelog/changes/104-migrate-existing-competitions-to-formats.xml"/>
 
 </databaseChangeLog>

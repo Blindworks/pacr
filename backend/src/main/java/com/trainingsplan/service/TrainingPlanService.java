@@ -3,12 +3,14 @@ package com.trainingsplan.service;
 import com.trainingsplan.dto.TrainingPlanDto;
 import com.trainingsplan.entity.AuditAction;
 import com.trainingsplan.entity.Competition;
+import com.trainingsplan.entity.CompetitionFormat;
 import com.trainingsplan.entity.CompetitionRegistration;
 import com.trainingsplan.entity.CompetitionType;
 import com.trainingsplan.entity.Training;
 import com.trainingsplan.entity.TrainingPlan;
 import com.trainingsplan.entity.TrainingStep;
 import com.trainingsplan.entity.User;
+import com.trainingsplan.repository.CompetitionFormatRepository;
 import com.trainingsplan.repository.CompetitionRegistrationRepository;
 import com.trainingsplan.repository.CompetitionRepository;
 import com.trainingsplan.repository.TrainingPlanRepository;
@@ -35,6 +37,7 @@ public class TrainingPlanService {
 
     private final TrainingPlanRepository trainingPlanRepository;
     private final CompetitionRepository competitionRepository;
+    private final CompetitionFormatRepository competitionFormatRepository;
     private final TrainingRepository trainingRepository;
     private final CompetitionRegistrationRepository registrationRepository;
     private final UserTrainingEntryRepository userTrainingEntryRepository;
@@ -45,6 +48,7 @@ public class TrainingPlanService {
 
     public TrainingPlanService(TrainingPlanRepository trainingPlanRepository,
                                CompetitionRepository competitionRepository,
+                               CompetitionFormatRepository competitionFormatRepository,
                                TrainingRepository trainingRepository,
                                CompetitionRegistrationRepository registrationRepository,
                                UserTrainingEntryRepository userTrainingEntryRepository,
@@ -54,6 +58,7 @@ public class TrainingPlanService {
                                ObjectMapper objectMapper) {
         this.trainingPlanRepository = trainingPlanRepository;
         this.competitionRepository = competitionRepository;
+        this.competitionFormatRepository = competitionFormatRepository;
         this.trainingRepository = trainingRepository;
         this.registrationRepository = registrationRepository;
         this.userTrainingEntryRepository = userTrainingEntryRepository;
@@ -132,7 +137,7 @@ public class TrainingPlanService {
         parseAndCreateTemplates(savedPlan, jsonContent);
 
         // Update registration and generate user schedule
-        CompetitionRegistration reg = updateRegistrationPlan(competition, savedPlan);
+        CompetitionRegistration reg = updateRegistrationPlan(competition, savedPlan, null);
         if (reg != null) {
             userTrainingScheduleService.reassignPlan(reg);
         }
@@ -185,11 +190,17 @@ public class TrainingPlanService {
      * then generates UserTrainingEntry records with computed dates.
      */
     @Transactional
-    public TrainingPlanDto assignPlanToCompetition(Long planId, Long competitionId) throws Exception {
+    public TrainingPlanDto assignPlanToCompetition(Long planId, Long competitionId, Long formatId) throws Exception {
         TrainingPlan sourcePlan = trainingPlanRepository.findById(planId)
                 .orElseThrow(() -> new RuntimeException("Training plan not found: " + planId));
         Competition competition = competitionRepository.findById(competitionId)
                 .orElseThrow(() -> new RuntimeException("Competition not found: " + competitionId));
+
+        CompetitionFormat format = null;
+        if (formatId != null) {
+            format = competitionFormatRepository.findById(formatId)
+                    .orElseThrow(() -> new RuntimeException("Competition format not found: " + formatId));
+        }
 
         // Ensure templates exist (parse from stored JSON if needed)
         List<Training> existingTemplates = trainingRepository.findByTrainingPlan_Id(planId);
@@ -198,7 +209,7 @@ public class TrainingPlanService {
         }
 
         // Update registration and generate user schedule
-        CompetitionRegistration reg = updateRegistrationPlan(competition, sourcePlan);
+        CompetitionRegistration reg = updateRegistrationPlan(competition, sourcePlan, format);
         if (reg != null) {
             userTrainingScheduleService.reassignPlan(reg);
         }
@@ -444,7 +455,7 @@ public class TrainingPlanService {
     // Utility helpers
     // -------------------------------------------------------------------------
 
-    private CompetitionRegistration updateRegistrationPlan(Competition competition, TrainingPlan plan) {
+    private CompetitionRegistration updateRegistrationPlan(Competition competition, TrainingPlan plan, CompetitionFormat format) {
         var user = securityUtils.getCurrentUser();
         if (user == null) return null;
         CompetitionRegistration reg = registrationRepository
@@ -454,6 +465,9 @@ public class TrainingPlanService {
                     return registrationRepository.save(newReg);
                 });
         reg.setTrainingPlan(plan);
+        if (format != null) {
+            reg.setCompetitionFormat(format);
+        }
         return registrationRepository.save(reg);
     }
 
