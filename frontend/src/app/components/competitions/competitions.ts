@@ -23,6 +23,7 @@ interface Race {
   trainingPlanId?: number;
   trainingPlanName?: string;
   description?: string;
+  startTime?: string;
 }
 
 interface PlanCard {
@@ -145,7 +146,8 @@ export class Competitions implements OnInit {
       registeredWithOrganizer: c.registeredWithOrganizer ?? false,
       trainingPlanId: c.trainingPlanId,
       trainingPlanName: c.trainingPlanName,
-      description: c.description
+      description: c.description,
+      startTime: c.startTime
     };
   }
 

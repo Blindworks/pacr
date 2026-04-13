@@ -26,6 +26,7 @@ export class CompetitionForm implements OnInit {
   form = this.fb.group({
     name: ['', Validators.required],
     date: ['', Validators.required],
+    startTime: [''],
     type: [''],
     location: [''],
     description: ['']
@@ -64,6 +65,7 @@ export class CompetitionForm implements OnInit {
         this.form.patchValue({
           name: c.name,
           date: c.date ?? '',
+          startTime: c.startTime ?? '',
           type: typeEntry?.value ?? '',
           location: c.location ?? '',
           description: c.description ?? ''
@@ -80,6 +82,7 @@ export class CompetitionForm implements OnInit {
     const payload = {
       name: v.name ?? undefined,
       date: v.date ?? undefined,
+      startTime: v.startTime || undefined,
       type: v.type || undefined,
       location: v.location || undefined,
       description: v.description || undefined

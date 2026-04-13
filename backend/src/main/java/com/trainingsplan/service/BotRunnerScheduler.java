@@ -30,8 +30,7 @@ public class BotRunnerScheduler {
     @Scheduled(cron = "0 * * * * *")
     public void runDueBots() {
         LocalDateTime now = LocalDateTime.now();
-        List<BotProfile> due = botProfileRepository
-                .findByEnabledTrueAndNextScheduledRunAtLessThanEqual(now);
+        List<BotProfile> due = botProfileRepository.findDueBotsWithUser(now);
         if (due.isEmpty()) return;
 
         log.info("BotRunnerScheduler: executing {} due bot(s)", due.size());

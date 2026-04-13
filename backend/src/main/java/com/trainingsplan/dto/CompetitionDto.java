@@ -5,6 +5,7 @@ import com.trainingsplan.entity.CompetitionRegistration;
 import com.trainingsplan.entity.CompetitionType;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 
 public class CompetitionDto {
     private Long id;
@@ -13,6 +14,7 @@ public class CompetitionDto {
     private String description;
     private CompetitionType type;
     private String location;
+    private LocalTime startTime;
     private String ranking;
     private String targetTime;
     private boolean registeredWithOrganizer;
@@ -28,6 +30,7 @@ public class CompetitionDto {
         this.description = competition.getDescription();
         this.type = competition.getType();
         this.location = competition.getLocation();
+        this.startTime = competition.getStartTime();
         if (registration != null) {
             this.registered = true;
             this.registrationId = registration.getId();
@@ -45,6 +48,7 @@ public class CompetitionDto {
     public String getDescription() { return description; }
     public CompetitionType getType() { return type; }
     public String getLocation() { return location; }
+    public LocalTime getStartTime() { return startTime; }
     public String getRanking() { return ranking; }
     public String getTargetTime() { return targetTime; }
     public boolean isRegisteredWithOrganizer() { return registeredWithOrganizer; }

@@ -333,7 +333,7 @@
       <div class="info-dialog__meta">
         <div class="info-meta-row">
           <span class="material-symbols-outlined">calendar_today</span>
-          <span>{{ infoRace.date }}</span>
+          <span>{{ infoRace.date }}<ng-container *ngIf="infoRace.startTime"> | {{ infoRace.startTime }}</ng-container></span>
         </div>
         <div class="info-meta-row">
           <span class="material-symbols-outlined">location_on</span>

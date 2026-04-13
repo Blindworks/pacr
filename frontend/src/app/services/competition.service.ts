@@ -10,6 +10,7 @@ export interface Competition {
   description?: string;
   type?: string;
   location?: string;
+  startTime?: string;
   registered?: boolean;
   registeredWithOrganizer?: boolean;
   trainingPlanId?: number;

@@ -59,7 +59,7 @@
           <div class="comp-meta">
             <span class="meta-item">
               <span class="material-symbols-outlined">calendar_today</span>
-              {{ formatDate(comp.date) }}
+              {{ formatDate(comp.date) }}@if (comp.startTime) { | {{ comp.startTime }}}
             </span>
             @if (comp.location) {
               <span class="meta-item">

@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 
 @Entity
 @Table(name = "competitions")
@@ -31,6 +32,9 @@ public class Competition {
 
     @Column(name = "location", length = 255)
     private String location;
+
+    @Column(name = "start_time")
+    private LocalTime startTime;
 
     @Column(name = "system_generated", nullable = false)
     private boolean systemGenerated = false;
@@ -60,6 +64,9 @@ public class Competition {
 
     public String getLocation() { return location; }
     public void setLocation(String location) { this.location = location; }
+
+    public LocalTime getStartTime() { return startTime; }
+    public void setStartTime(LocalTime startTime) { this.startTime = startTime; }
 
     public boolean isSystemGenerated() { return systemGenerated; }
     public void setSystemGenerated(boolean systemGenerated) { this.systemGenerated = systemGenerated; }
