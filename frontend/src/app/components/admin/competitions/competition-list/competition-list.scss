@@ -19,6 +19,73 @@
 
 .state-box { @include m.state-display; }
 
+.filter-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.filter-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.filter-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  min-width: 60px;
+}
+
+.filter-chips {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.filter-chip {
+  padding: 6px 14px;
+  border-radius: v.$radius-pill;
+  border: 1px solid var(--border);
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  background: transparent;
+  color: var(--text-muted);
+  transition: all v.$transition-fast;
+
+  &:hover {
+    background: var(--panel-soft);
+    color: var(--text);
+  }
+
+  &.active {
+    background: var(--pp);
+    color: var(--bg);
+    border-color: var(--pp);
+  }
+
+  &--past {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    align-self: flex-start;
+
+    .material-symbols-outlined {
+      font-size: 16px;
+    }
+  }
+}
+
+.comp-card--past {
+  opacity: 0.6;
+}
+
 .comp-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));

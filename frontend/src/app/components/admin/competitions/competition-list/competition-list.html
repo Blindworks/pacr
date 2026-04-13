@@ -3,7 +3,7 @@
     <div class="toolbar-left">
       <h2>{{ 'ADMIN.COMPETITIONS_TITLE' | translate }}</h2>
       @if (!isLoading()) {
-        <span class="count-badge">{{ competitions().length }}</span>
+        <span class="count-badge">{{ filteredCompetitions().length }}</span>
       }
     </div>
     <button class="btn-primary" (click)="navigateNew()">
@@ -11,6 +11,78 @@
       {{ 'ADMIN.NEW_COMP' | translate }}
     </button>
   </div>
+
+  @if (!isLoading() && competitions().length > 0) {
+    <div class="filter-bar">
+      <div class="filter-group">
+        <span class="filter-label">{{ 'ADMIN.FILTER_TYPE' | translate }}</span>
+        <div class="filter-chips">
+          @for (opt of typeFilterOptions; track opt.key) {
+            <button
+              class="filter-chip"
+              [class.active]="activeTypeFilter() === opt.key"
+              (click)="setTypeFilter(opt.key)">
+              {{ opt.label | translate }}
+            </button>
+          }
+        </div>
+      </div>
+
+      @if (availableYears().length > 1) {
+        <div class="filter-group">
+          <span class="filter-label">{{ 'ADMIN.FILTER_YEAR' | translate }}</span>
+          <div class="filter-chips">
+            <button
+              class="filter-chip"
+              [class.active]="activeYearFilter() === null"
+              (click)="setYearFilter(null)">
+              {{ 'COMMON.ALL' | translate }}
+            </button>
+            @for (year of availableYears(); track year) {
+              <button
+                class="filter-chip"
+                [class.active]="activeYearFilter() === year"
+                (click)="setYearFilter(year)">
+                {{ year }}
+              </button>
+            }
+          </div>
+        </div>
+      }
+
+      @if (availableMonths().length > 1) {
+        <div class="filter-group">
+          <span class="filter-label">{{ 'ADMIN.FILTER_MONTH' | translate }}</span>
+          <div class="filter-chips">
+            <button
+              class="filter-chip"
+              [class.active]="activeMonthFilter() === null"
+              (click)="setMonthFilter(null)">
+              {{ 'COMMON.ALL' | translate }}
+            </button>
+            @for (month of availableMonths(); track month) {
+              <button
+                class="filter-chip"
+                [class.active]="activeMonthFilter() === month"
+                (click)="setMonthFilter(month)">
+                {{ formatMonth(month) }}
+              </button>
+            }
+          </div>
+        </div>
+      }
+
+      @if (hasPastCompetitions()) {
+        <button
+          class="filter-chip filter-chip--past"
+          [class.active]="showPastRaces()"
+          (click)="togglePastRaces()">
+          <span class="material-symbols-outlined">history</span>
+          {{ showPastRaces() ? ('ADMIN.HIDE_PAST_COMPS' | translate) : ('ADMIN.SHOW_PAST_COMPS' | translate) }}
+        </button>
+      }
+    </div>
+  }
 
   @if (isLoading()) {
     <div class="state-box">
@@ -35,10 +107,17 @@
     </div>
   }
 
-  @if (!isLoading() && competitions().length > 0) {
+  @if (!isLoading() && !hasError() && competitions().length > 0 && filteredCompetitions().length === 0) {
+    <div class="state-box">
+      <span class="material-symbols-outlined">filter_list_off</span>
+      <span>{{ 'ADMIN.NO_COMPS_FILTERED' | translate }}</span>
+    </div>
+  }
+
+  @if (!isLoading() && filteredCompetitions().length > 0) {
     <div class="comp-grid">
-      @for (comp of competitions(); track comp.id) {
-        <div class="comp-card">
+      @for (comp of filteredCompetitions(); track comp.id) {
+        <div class="comp-card" [class.comp-card--past]="comp.date && isPast(comp.date)">
           <div class="comp-card-header">
             <div class="comp-info">
               <h3>{{ comp.name }}</h3>
