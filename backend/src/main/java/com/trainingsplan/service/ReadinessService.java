@@ -9,33 +9,43 @@ import com.trainingsplan.entity.Recommendation;
 import com.trainingsplan.entity.User;
 import com.trainingsplan.repository.ActivityMetricsRepository;
 import com.trainingsplan.repository.DailyMetricsRepository;
+import com.trainingsplan.service.readiness.ReadinessDeductionCalculator;
+import com.trainingsplan.service.readiness.ReadinessDeductionCalculator.Deduction;
+import com.trainingsplan.service.readiness.ReadinessDeductionCalculator.WeightedResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 /**
- * Computes the Readiness Proxy score (v1) from load and activity metrics.
+ * Computes the Readiness Proxy score (v2) from load and activity metrics.
  *
  * <p>No HRV or sleep data required — uses only Strava/load-derived signals.
  *
- * <h3>Heuristic v1</h3>
+ * <h3>Heuristic v2 (zeitgewichtet)</h3>
  * <pre>
- * Base score: 80
+ * Base score: 100
  *
- * Deductions (applied in order):
- *   acwrFlag == RED    → −35  (recommendation capped at EASY)
- *   acwrFlag == ORANGE → −20
- *   yesterday dailyStrain21 > 14 → −15
+ * Deductions:
+ *   acwrFlag == RED    → −30  (recommendation capped at EASY)
+ *   acwrFlag == ORANGE → −18
+ *   weighted strain21 over T-1..T-3   (0.80/0.55/0.30 weights) → −6 / −12 / −18
+ *   weighted (z4Min+z5Min) over T-1..T-3                        → −4 / −8  / −12
  *   last eligible decouplingPct > 10% → −10
- *   last eligible decouplingPct > 5%  → −5   (exclusive of >10% branch)
- *   sum(z4Min + z5Min) in last 2 days > 20 → −10
+ *   last eligible decouplingPct > 5%  → −5
  *
  * Score clamped to [0, 100].
  * </pre>
+ *
+ * <p>Die zeitgewichteten Deductions ersetzen die vorherigen Einzel-Tages-Checks, damit
+ * harte Sessions mehrere Tage nachwirken (Recovery-τ ≈ 2 Tage).
  *
  * <h3>Recommendation thresholds</h3>
  * <pre>
@@ -46,6 +56,8 @@ import java.util.List;
  * </pre>
  *
  * When acwrFlag == RED the recommendation is capped at EASY (cannot be MODERATE or HARD).
+ *
+ * @see com.trainingsplan.service.readiness.ReadinessDeductionCalculator
  */
 @Service
 public class ReadinessService {
@@ -68,8 +80,8 @@ public class ReadinessService {
      * ACWR data, so that the acwrFlag is available.
      */
     public void compute(User user, LocalDate date) {
-        int score = 80;
-        List<String> reasons = new ArrayList<>();
+        int baseScore = 100;
+        List<Deduction> deductions = new ArrayList<>();
         boolean redFlag = false;
 
         // ── 1. ACWR flag ──────────────────────────────────────────────────────
@@ -79,24 +91,22 @@ public class ReadinessService {
                 .orElse(null);
 
         if (acwrFlag == AcwrFlag.RED) {
-            score -= 35;
-            reasons.add("Hohes ACWR – Verletzungsrisiko (ROT)");
+            deductions.add(new Deduction(30, "Hohes ACWR – Verletzungsrisiko (ROT)",
+                    0.0, 1.6, "acwr_flag", null));
             redFlag = true;
         } else if (acwrFlag == AcwrFlag.ORANGE) {
-            score -= 20;
-            reasons.add("Erhöhtes ACWR – Belastung beachten (ORANGE)");
+            deductions.add(new Deduction(18, "Erhöhtes ACWR – Belastung beachten (ORANGE)",
+                    0.0, 1.3, "acwr_flag", null));
         }
 
-        // ── 2. Yesterday's strain21 ──────────────────────────────────────────
-        Double yesterdayStrain = dailyMetricsRepository
-                .findByUserIdAndDate(user.getId(), date.minusDays(1))
-                .map(DailyMetrics::getDailyStrain21)
-                .orElse(null);
+        // ── 2. Zeitgewichtete Strain-Deduction (T-1, T-2, T-3) ────────────────
+        Map<LocalDate, Double> dailyStrain = loadDailyStrainMap(user, date);
+        WeightedResult strainWeighted = ReadinessDeductionCalculator.weightedSumFromMap(dailyStrain, date);
+        Optional<Deduction> strainDed = ReadinessDeductionCalculator.strainDeduction(strainWeighted);
+        strainDed.ifPresent(deductions::add);
 
-        if (yesterdayStrain != null && yesterdayStrain > 14.0) {
-            score -= 15;
-            reasons.add("Hohe gestrige Belastung (strain21 > 14)");
-        }
+        // Für CoachCard unten weiterhin der reine yesterday-Wert
+        Double yesterdayStrain = dailyStrain.get(date.minusDays(1));
 
         // ── 3. Last eligible decoupling ───────────────────────────────────────
         List<ActivityMetrics> latestDecoupling = activityMetricsRepository
@@ -105,25 +115,32 @@ public class ReadinessService {
         if (!latestDecoupling.isEmpty()) {
             Double decPct = latestDecoupling.get(0).getDecouplingPct();
             if (decPct != null && decPct > 10.0) {
-                score -= 10;
-                reasons.add("Starkes Herzdriften zuletzt (>10%)");
+                deductions.add(new Deduction(10, "Starkes Herzdriften zuletzt (>10%)",
+                        decPct, 10.0, "decoupling_pct", null));
             } else if (decPct != null && decPct > 5.0) {
-                score -= 5;
-                reasons.add("Leichtes Herzdriften zuletzt (>5%)");
+                deductions.add(new Deduction(5, "Leichtes Herzdriften zuletzt (>5%)",
+                        decPct, 5.0, "decoupling_pct", null));
             }
         }
 
-        // ── 4. Z4+Z5 minutes in last 2 days ──────────────────────────────────
+        // ── 4. Zeitgewichtete Z4+Z5-Deduction (T-1, T-2, T-3) ─────────────────
+        Map<LocalDate, Double> z4z5PerDay = loadZ4Z5Map(user, date);
+        WeightedResult z45Weighted = ReadinessDeductionCalculator.weightedSumFromMap(z4z5PerDay, date);
+        Optional<Deduction> z45Ded = ReadinessDeductionCalculator.z45Deduction(z45Weighted);
+        z45Ded.ifPresent(deductions::add);
+
+        // Für CoachCard weiterhin die Summe der letzten 2 Tage (Coach-Narrativ kurzfristig)
         double z45Sum = activityMetricsRepository
                 .sumZ4Z5MinByUserIdAndDateRange(user.getId(), date.minusDays(1), date);
 
-        if (z45Sum > 20.0) {
-            score -= 10;
-            reasons.add("Viele Hochintensivminuten letzte 2 Tage (>20 min Z4/Z5)");
-        }
+        // ── Score clampen ─────────────────────────────────────────────────────
+        int totalDeduction = deductions.stream().mapToInt(Deduction::amount).sum();
+        int score = Math.max(0, Math.min(100, baseScore - totalDeduction));
 
-        // ── Clamp ─────────────────────────────────────────────────────────────
-        score = Math.max(0, Math.min(100, score));
+        List<String> reasons = deductions.stream()
+                .sorted(Comparator.comparingInt(Deduction::amount).reversed())
+                .map(Deduction::reason)
+                .collect(java.util.stream.Collectors.toCollection(ArrayList::new));
 
         // ── Recommendation ────────────────────────────────────────────────────
         Recommendation recommendation;
@@ -191,5 +208,47 @@ public class ReadinessService {
         for (int i = 89; i >= 0; i--) {
             compute(user, today.minusDays(i));
         }
+    }
+
+    /**
+     * Lädt {@code dailyStrain21} aus daily_metrics für das Fenster [date-3, date]
+     * und füllt fehlende Tage mit 0.0 auf, damit der Calculator eine stabile Map erhält.
+     */
+    private Map<LocalDate, Double> loadDailyStrainMap(User user, LocalDate date) {
+        LocalDate from = date.minusDays(3);
+        List<DailyMetrics> entries = dailyMetricsRepository
+                .findByUserIdAndDateBetween(user.getId(), from, date);
+
+        Map<LocalDate, Double> map = new LinkedHashMap<>();
+        for (LocalDate d = from; !d.isAfter(date); d = d.plusDays(1)) {
+            map.put(d, 0.0);
+        }
+        for (DailyMetrics dm : entries) {
+            if (dm.getDailyStrain21() != null && dm.getDate() != null) {
+                map.put(dm.getDate(), dm.getDailyStrain21());
+            }
+        }
+        return map;
+    }
+
+    /**
+     * Lädt die summierten Z4+Z5-Minuten pro Tag für das Fenster [date-3, date].
+     * Fehlende Tage werden mit 0.0 aufgefüllt.
+     */
+    private Map<LocalDate, Double> loadZ4Z5Map(User user, LocalDate date) {
+        LocalDate from = date.minusDays(3);
+        List<Object[]> rows = activityMetricsRepository
+                .sumZ4Z5MinByUserIdAndDateRangeGrouped(user.getId(), from, date);
+
+        Map<LocalDate, Double> map = new LinkedHashMap<>();
+        for (LocalDate d = from; !d.isAfter(date); d = d.plusDays(1)) {
+            map.put(d, 0.0);
+        }
+        for (Object[] row : rows) {
+            LocalDate d = (LocalDate) row[0];
+            Double v = row[1] != null ? ((Number) row[1]).doubleValue() : 0.0;
+            map.put(d, v);
+        }
+        return map;
     }
 }

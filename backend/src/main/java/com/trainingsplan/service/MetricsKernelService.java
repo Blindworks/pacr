@@ -2,6 +2,7 @@ package com.trainingsplan.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.trainingsplan.dto.ReadinessExplainDto;
 import com.trainingsplan.entity.AcwrFlag;
 import com.trainingsplan.entity.BodyMetric;
 import com.trainingsplan.entity.MetricType;
@@ -12,6 +13,9 @@ import com.trainingsplan.entity.User;
 import com.trainingsplan.repository.ActivityMetricsRepository;
 import com.trainingsplan.repository.BodyMetricRepository;
 import com.trainingsplan.repository.SleepDataRepository;
+import com.trainingsplan.service.readiness.ReadinessDeductionCalculator;
+import com.trainingsplan.service.readiness.ReadinessDeductionCalculator.Deduction;
+import com.trainingsplan.service.readiness.ReadinessDeductionCalculator.WeightedResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +25,10 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 /**
  * Zentraler Metriken-Rechenkern.
@@ -186,108 +193,222 @@ public class MetricsKernelService {
 
     // ── Phase 4: Readiness ────────────────────────────────────────────────
 
-    private record Deduction(int amount, String reason) {}
+    /**
+     * Bündelt alle Zwischenergebnisse der Readiness-Berechnung, so dass sie sowohl
+     * persistiert ({@link #computeReadiness}) als auch als Diagnose-DTO ausgeliefert
+     * werden können ({@link #explainReadiness}).
+     */
+    private record ReadinessComputation(
+            int score,
+            int baseScore,
+            String recommendation,
+            List<Deduction> deductions,
+            boolean redFlag,
+            // Rohwerte für Diagnose
+            String acwrFlag,
+            Double acwr,
+            Double acute7,
+            Double chronic28,
+            Map<LocalDate, Double> dailyStrain,
+            Map<LocalDate, Double> z4z5PerDay,
+            Double weightedStrain,
+            Double weightedZ4z5,
+            Double lastDecouplingPct,
+            LocalDate lastDecouplingDate,
+            Integer sleepScore,
+            String hrvStatus,
+            Integer bodyBattery
+    ) {}
 
     private void computeReadiness(User user, LocalDate date) {
+        ReadinessComputation comp = buildReadinessComputation(user, date);
+
+        // Body Battery als eigene BodyMetric speichern (nur im persist-Pfad)
+        if (comp.bodyBattery() != null) {
+            upsertDaily(user, MetricType.BODY_BATTERY, (double) comp.bodyBattery(), "%",
+                    date, null, null, null);
+        }
+
+        // Top-3 Gründe nach Abzugsbetrag absteigend
+        List<String> topReasons = comp.deductions().stream()
+                .sorted(Comparator.comparingInt(Deduction::amount).reversed())
+                .limit(3)
+                .map(Deduction::reason)
+                .toList();
+
+        String reasonsJson;
+        try {
+            reasonsJson = objectMapper.writeValueAsString(topReasons);
+        } catch (JsonProcessingException e) {
+            reasonsJson = "[]";
+        }
+
+        log.debug("metrics_kernel phase=4_readiness date={} userId={} score={} recommendation={} "
+                        + "weightedStrain={} weightedZ45={} acwrFlag={} deductions={}",
+                date, user.getId(), comp.score(), comp.recommendation(),
+                comp.weightedStrain(), comp.weightedZ4z5(), comp.acwrFlag(), comp.deductions().size());
+        log.info("metrics_kernel_readiness_deductions userId={} date={} score={} recommendation={} deductions=[{}]",
+                user.getId(), date, comp.score(), comp.recommendation(),
+                comp.deductions().stream()
+                        .map(d -> d.reason() + " (-" + d.amount() + ")")
+                        .reduce((a, b) -> a + "; " + b)
+                        .orElse(""));
+
+        upsertDaily(user, MetricType.READINESS_SCORE, (double) comp.score(), "score", date, null, reasonsJson, null);
+        upsertDaily(user, MetricType.RECOMMENDATION, 0.0, "", date, comp.recommendation(), null, null);
+    }
+
+    /**
+     * Read-only Diagnose-Pfad: berechnet den Readiness-Score ohne zu persistieren und
+     * liefert den vollständigen Kontext (alle Inputs + Deductions) als DTO zurück.
+     */
+    public ReadinessExplainDto explainReadiness(User user, LocalDate date) {
+        ReadinessComputation comp = buildReadinessComputation(user, date);
+
+        List<ReadinessExplainDto.DeductionDto> deductionDtos = comp.deductions().stream()
+                .sorted(Comparator.comparingInt(Deduction::amount).reversed())
+                .map(d -> new ReadinessExplainDto.DeductionDto(
+                        d.amount(), d.reason(), d.inputValue(), d.threshold(),
+                        d.source(), d.contributingDays()))
+                .toList();
+
+        ReadinessExplainDto.ReadinessInputsDto inputs = new ReadinessExplainDto.ReadinessInputsDto(
+                comp.acwrFlag(), comp.acwr(), comp.acute7(), comp.chronic28(),
+                comp.dailyStrain(), comp.z4z5PerDay(),
+                comp.weightedStrain(), comp.weightedZ4z5(),
+                comp.lastDecouplingPct(), comp.lastDecouplingDate(),
+                comp.sleepScore(), comp.hrvStatus(), comp.bodyBattery()
+        );
+
+        return new ReadinessExplainDto(date, comp.score(), comp.baseScore(),
+                comp.recommendation(), deductionDtos, inputs);
+    }
+
+    /**
+     * Zentrale Pipeline: sammelt alle Inputs und wendet alle Deductions an.
+     * Wird sowohl von {@link #computeReadiness} (persistiert) als auch von
+     * {@link #explainReadiness} (nur Diagnose) aufgerufen.
+     */
+    private ReadinessComputation buildReadinessComputation(User user, LocalDate date) {
         List<Deduction> deductions = new ArrayList<>();
         boolean redFlag = false;
+        int baseScore = 100;
 
-        // 1. ACWR flag
+        // ── 1. ACWR-Flag ──────────────────────────────────────────────────────
         String acwrFlagStr = bodyMetricRepository
                 .findByUserIdAndMetricTypeAndRecordedAtAndSourceActivityIdIsNull(
                         user.getId(), MetricType.ACWR_FLAG, date)
                 .map(BodyMetric::getStringValue)
                 .orElse(null);
 
-        if ("RED".equals(acwrFlagStr)) {
-            deductions.add(new Deduction(30, "Hohes ACWR – Verletzungsrisiko (ROT)"));
-            redFlag = true;
-        } else if ("ORANGE".equals(acwrFlagStr)) {
-            deductions.add(new Deduction(18, "Erhöhtes ACWR – Belastung beachten (ORANGE)"));
-        }
-
-        // 2. Yesterday strain
-        Double yesterdayStrain = bodyMetricRepository
+        Double acwr = bodyMetricRepository
                 .findByUserIdAndMetricTypeAndRecordedAtAndSourceActivityIdIsNull(
-                        user.getId(), MetricType.DAILY_STRAIN21, date.minusDays(1))
+                        user.getId(), MetricType.ACWR, date)
                 .map(BodyMetric::getValue)
                 .orElse(null);
 
-        if (yesterdayStrain != null && yesterdayStrain > 14.0) {
-            deductions.add(new Deduction(12, "Hohe gestrige Belastung (strain21 > 14)"));
+        Double acute7 = bodyMetricRepository
+                .findByUserIdAndMetricTypeAndRecordedAtAndSourceActivityIdIsNull(
+                        user.getId(), MetricType.ACUTE7, date)
+                .map(BodyMetric::getValue)
+                .orElse(null);
+
+        Double chronic28 = bodyMetricRepository
+                .findByUserIdAndMetricTypeAndRecordedAtAndSourceActivityIdIsNull(
+                        user.getId(), MetricType.CHRONIC28, date)
+                .map(BodyMetric::getValue)
+                .orElse(null);
+
+        if ("RED".equals(acwrFlagStr)) {
+            deductions.add(new Deduction(30, "Hohes ACWR – Verletzungsrisiko (ROT)",
+                    acwr != null ? acwr : 0.0, 1.6, "acwr_flag", null));
+            redFlag = true;
+        } else if ("ORANGE".equals(acwrFlagStr)) {
+            deductions.add(new Deduction(18, "Erhöhtes ACWR – Belastung beachten (ORANGE)",
+                    acwr != null ? acwr : 0.0, 1.3, "acwr_flag", null));
         }
 
-        // 3. Last eligible decoupling
+        // ── 2. Zeitgewichtete Strain-Deduction (T-1, T-2, T-3) ────────────────
+        Map<LocalDate, Double> dailyStrain = loadDailyStrainMap(user, date);
+        WeightedResult strainWeighted = ReadinessDeductionCalculator.weightedSumFromMap(dailyStrain, date);
+        Optional<Deduction> strainDed = ReadinessDeductionCalculator.strainDeduction(strainWeighted);
+        strainDed.ifPresent(deductions::add);
+
+        // ── 3. Letztes eligible Decoupling ────────────────────────────────────
         List<ActivityMetrics> latestDecoupling = activityMetricsRepository
                 .findEligibleDecouplingByUserId(user.getId(), PageRequest.of(0, 1));
         Double lastDecouplingPct = latestDecoupling.isEmpty() ? null
                 : latestDecoupling.get(0).getDecouplingPct();
+        LocalDate lastDecouplingDate = latestDecoupling.isEmpty() ? null
+                : latestDecoupling.get(0).getCompletedTraining().getTrainingDate();
 
         if (lastDecouplingPct != null && lastDecouplingPct > 10.0) {
-            deductions.add(new Deduction(10, "Starkes Herzdriften zuletzt (>10%)"));
+            deductions.add(new Deduction(10, "Starkes Herzdriften zuletzt (>10%)",
+                    lastDecouplingPct, 10.0, "decoupling_pct", null));
         } else if (lastDecouplingPct != null && lastDecouplingPct > 5.0) {
-            deductions.add(new Deduction(5, "Leichtes Herzdriften zuletzt (>5%)"));
+            deductions.add(new Deduction(5, "Leichtes Herzdriften zuletzt (>5%)",
+                    lastDecouplingPct, 5.0, "decoupling_pct", null));
         }
 
-        // 4. Z4+Z5 minutes (last 2 days)
-        double z45Sum = activityMetricsRepository
-                .sumZ4Z5MinByUserIdAndDateRange(user.getId(), date.minusDays(1), date);
+        // ── 4. Zeitgewichtete Z4+Z5-Deduction (T-1, T-2, T-3) ─────────────────
+        Map<LocalDate, Double> z4z5PerDay = loadZ4Z5Map(user, date);
+        WeightedResult z45Weighted = ReadinessDeductionCalculator.weightedSumFromMap(z4z5PerDay, date);
+        Optional<Deduction> z45Ded = ReadinessDeductionCalculator.z45Deduction(z45Weighted);
+        z45Ded.ifPresent(deductions::add);
 
-        if (z45Sum > 20.0) {
-            deductions.add(new Deduction(8, "Viele Hochintensivminuten (>20 min Z4/Z5)"));
-        }
-
-        // 5. Sleep/HRV (nur wenn SleepData für Vortag vorhanden)
+        // ── 5. Sleep / HRV / Body Battery (nur wenn SleepData für Vortag vorhanden) ────
         SleepData lastNight = sleepDataRepository
                 .findByUserIdAndRecordedAt(user.getId(), date.minusDays(1))
                 .orElse(null);
 
+        Integer sleepScore = null;
+        String hrvStatus = null;
+        Integer bodyBattery = null;
+
         if (lastNight != null) {
-            Integer sleepScore = lastNight.getSleepScore();
+            sleepScore = lastNight.getSleepScore();
             if (sleepScore != null) {
                 if (sleepScore < 40) {
-                    deductions.add(new Deduction(25, "Sehr schlechter Schlaf (Score < 40)"));
+                    deductions.add(new Deduction(25, "Sehr schlechter Schlaf (Score < 40)",
+                            (double) sleepScore, 40.0, "sleep_score", null));
                 } else if (sleepScore < 60) {
-                    deductions.add(new Deduction(15, "Schlechter Schlaf (Score 40–59)"));
+                    deductions.add(new Deduction(15, "Schlechter Schlaf (Score 40–59)",
+                            (double) sleepScore, 60.0, "sleep_score", null));
                 } else if (sleepScore < 75) {
-                    deductions.add(new Deduction(8, "Mäßiger Schlaf (Score 60–74)"));
+                    deductions.add(new Deduction(8, "Mäßiger Schlaf (Score 60–74)",
+                            (double) sleepScore, 75.0, "sleep_score", null));
                 }
             }
 
-            String hrvStatus = lastNight.getHrvStatus();
+            hrvStatus = lastNight.getHrvStatus();
             if (hrvStatus != null) {
                 String hrv = hrvStatus.toLowerCase();
                 if (hrv.equals("poor") || hrv.equals("unbalanced")) {
-                    deductions.add(new Deduction(20, "HRV-Status beeinträchtigt"));
+                    deductions.add(new Deduction(20, "HRV-Status beeinträchtigt",
+                            null, null, "hrv_status", null));
                 } else if (hrv.equals("low") || hrv.equals("below_normal")) {
-                    deductions.add(new Deduction(10, "HRV unter Basiswert"));
+                    deductions.add(new Deduction(10, "HRV unter Basiswert",
+                            null, null, "hrv_status", null));
                 }
             }
 
-            Integer bodyBattery = lastNight.getBodyBattery();
+            bodyBattery = lastNight.getBodyBattery();
             if (bodyBattery != null) {
                 if (bodyBattery < 25) {
-                    deductions.add(new Deduction(20, "Sehr niedrige Body Battery (< 25)"));
+                    deductions.add(new Deduction(20, "Sehr niedrige Body Battery (< 25)",
+                            (double) bodyBattery, 25.0, "body_battery", null));
                 } else if (bodyBattery < 50) {
-                    deductions.add(new Deduction(10, "Niedrige Body Battery (25–49)"));
+                    deductions.add(new Deduction(10, "Niedrige Body Battery (25–49)",
+                            (double) bodyBattery, 50.0, "body_battery", null));
                 }
-                // Body Battery als eigene BodyMetric speichern
-                upsertDaily(user, MetricType.BODY_BATTERY, (double) bodyBattery, "%", date, null, null, null);
             }
         }
 
-        // Gesamtabzug berechnen und auf [0,100] clampen
+        // ── Score clampen ─────────────────────────────────────────────────────
         int totalDeduction = deductions.stream().mapToInt(Deduction::amount).sum();
-        int score = Math.max(0, Math.min(100, 100 - totalDeduction));
+        int score = Math.max(0, Math.min(100, baseScore - totalDeduction));
 
-        // Top-3 Gründe nach Abzugsbetrag absteigend
-        List<String> topReasons = deductions.stream()
-                .sorted(Comparator.comparingInt(Deduction::amount).reversed())
-                .limit(3)
-                .map(Deduction::reason)
-                .toList();
-
-        // Recommendation
+        // ── Recommendation ────────────────────────────────────────────────────
         String recommendation;
         if (score < 30)      recommendation = Recommendation.REST.name();
         else if (score < 50) recommendation = Recommendation.EASY.name();
@@ -298,17 +419,57 @@ public class MetricsKernelService {
             recommendation = Recommendation.EASY.name();
         }
 
-        String reasonsJson;
-        try {
-            reasonsJson = objectMapper.writeValueAsString(topReasons);
-        } catch (JsonProcessingException e) {
-            reasonsJson = "[]";
-        }
+        return new ReadinessComputation(
+                score, baseScore, recommendation, deductions, redFlag,
+                acwrFlagStr, acwr, acute7, chronic28,
+                dailyStrain, z4z5PerDay,
+                strainWeighted.value(), z45Weighted.value(),
+                lastDecouplingPct, lastDecouplingDate,
+                sleepScore, hrvStatus, bodyBattery
+        );
+    }
 
-        log.debug("metrics_kernel phase=4_readiness date={} userId={} score={} recommendation={} sleepData={}",
-                date, user.getId(), score, recommendation, lastNight != null);
-        upsertDaily(user, MetricType.READINESS_SCORE, (double) score, "score", date, null, reasonsJson, null);
-        upsertDaily(user, MetricType.RECOMMENDATION,  0.0, "", date, recommendation, null, null);
+    /**
+     * Lädt {@code DAILY_STRAIN21} aus body_metrics für das Fenster [date-3, date]
+     * und füllt fehlende Tage mit 0.0 auf, damit der Calculator eine stabile Map erhält.
+     */
+    private Map<LocalDate, Double> loadDailyStrainMap(User user, LocalDate date) {
+        LocalDate from = date.minusDays(3);
+        List<BodyMetric> entries = bodyMetricRepository
+                .findByUserIdAndMetricTypeAndRecordedAtBetween(
+                        user.getId(), MetricType.DAILY_STRAIN21, from, date);
+
+        Map<LocalDate, Double> map = new LinkedHashMap<>();
+        for (LocalDate d = from; !d.isAfter(date); d = d.plusDays(1)) {
+            map.put(d, 0.0);
+        }
+        for (BodyMetric bm : entries) {
+            if (bm.getValue() != null && bm.getRecordedAt() != null) {
+                map.put(bm.getRecordedAt(), bm.getValue());
+            }
+        }
+        return map;
+    }
+
+    /**
+     * Lädt die summierten Z4+Z5-Minuten pro Tag für das Fenster [date-3, date].
+     * Fehlende Tage werden mit 0.0 aufgefüllt.
+     */
+    private Map<LocalDate, Double> loadZ4Z5Map(User user, LocalDate date) {
+        LocalDate from = date.minusDays(3);
+        List<Object[]> rows = activityMetricsRepository
+                .sumZ4Z5MinByUserIdAndDateRangeGrouped(user.getId(), from, date);
+
+        Map<LocalDate, Double> map = new LinkedHashMap<>();
+        for (LocalDate d = from; !d.isAfter(date); d = d.plusDays(1)) {
+            map.put(d, 0.0);
+        }
+        for (Object[] row : rows) {
+            LocalDate d = (LocalDate) row[0];
+            Double v = row[1] != null ? ((Number) row[1]).doubleValue() : 0.0;
+            map.put(d, v);
+        }
+        return map;
     }
 
     // ── Phase 5: Coach Card ───────────────────────────────────────────────

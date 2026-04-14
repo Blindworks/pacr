@@ -1,11 +1,13 @@
 package com.trainingsplan.controller;
 
 import com.trainingsplan.dto.ProfileCompletionDto;
+import com.trainingsplan.dto.ReadinessExplainDto;
 import com.trainingsplan.entity.DailyMetrics;
 import com.trainingsplan.entity.User;
 import com.trainingsplan.repository.DailyMetricsRepository;
 import com.trainingsplan.security.SecurityUtils;
 import com.trainingsplan.service.DailyMetricsService;
+import com.trainingsplan.service.MetricsKernelService;
 import com.trainingsplan.service.ReadinessService;
 import com.trainingsplan.service.UserProfileValidationService;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -28,17 +30,20 @@ public class DailyMetricsController {
     private final DailyMetricsService dailyMetricsService;
     private final SecurityUtils securityUtils;
     private final ReadinessService readinessService;
+    private final MetricsKernelService metricsKernelService;
     private final UserProfileValidationService userProfileValidationService;
 
     public DailyMetricsController(DailyMetricsRepository dailyMetricsRepository,
                                    DailyMetricsService dailyMetricsService,
                                    SecurityUtils securityUtils,
                                    ReadinessService readinessService,
+                                   MetricsKernelService metricsKernelService,
                                    UserProfileValidationService userProfileValidationService) {
         this.dailyMetricsRepository = dailyMetricsRepository;
         this.dailyMetricsService = dailyMetricsService;
         this.securityUtils = securityUtils;
         this.readinessService = readinessService;
+        this.metricsKernelService = metricsKernelService;
         this.userProfileValidationService = userProfileValidationService;
     }
 
@@ -108,5 +113,24 @@ public class DailyMetricsController {
         }
         dailyMetricsService.computeToday(user);
         return ResponseEntity.ok().build();
+    }
+
+    /**
+     * Liefert eine ausführliche Diagnose des Readiness-Scores für ein bestimmtes Datum:
+     * alle Input-Rohwerte, alle angewandten Deductions inklusive Schwellen und die
+     * finale Empfehlung. Ideal um nachzuvollziehen, warum der Score so ist wie er ist.
+     *
+     * <p>Read-only: persistiert nichts.
+     */
+    @GetMapping("/explain")
+    public ResponseEntity<?> explainReadiness(
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+        User user = securityUtils.getCurrentUser();
+        if (user == null) {
+            return ResponseEntity.status(401).build();
+        }
+        LocalDate target = date != null ? date : LocalDate.now();
+        ReadinessExplainDto dto = metricsKernelService.explainReadiness(user, target);
+        return ResponseEntity.ok(dto);
     }
 }
