@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import org.hibernate.annotations.SQLRestriction;
 import java.time.DayOfWeek;
 import java.util.ArrayList;
 import java.util.List;
@@ -77,7 +78,12 @@ public class Training {
 
     @OneToMany(mappedBy = "training", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("sortOrder ASC")
+    @SQLRestriction("block_id IS NULL")
     private List<TrainingStep> steps = new ArrayList<>();
+
+    @OneToMany(mappedBy = "training", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("sortOrder ASC")
+    private List<TrainingStepBlock> blocks = new ArrayList<>();
 
     @OneToMany(mappedBy = "training", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("sortOrder ASC")
@@ -164,6 +170,22 @@ public class Training {
         }
         step.setTraining(this);
         this.steps.add(step);
+    }
+
+    public List<TrainingStepBlock> getBlocks() { return blocks; }
+    public void setBlocks(List<TrainingStepBlock> blocks) {
+        this.blocks.clear();
+        if (blocks != null) {
+            blocks.forEach(this::addBlock);
+        }
+    }
+
+    public void addBlock(TrainingStepBlock block) {
+        if (block == null) {
+            return;
+        }
+        block.setTraining(this);
+        this.blocks.add(block);
     }
 
     public List<TrainingPrepTip> getPrepTips() { return prepTips; }

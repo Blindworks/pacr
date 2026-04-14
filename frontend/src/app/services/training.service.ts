@@ -6,6 +6,7 @@ import { Observable } from 'rxjs';
 export interface TrainingStep {
   id: number;
   sortOrder: number;
+  blockSortOrder?: number;
   stepType: string;
   title?: string;
   subtitle?: string;
@@ -16,6 +17,14 @@ export interface TrainingStep {
   icon?: string;
   highlight?: boolean;
   muted?: boolean;
+}
+
+export interface TrainingStepBlock {
+  id?: number;
+  sortOrder: number;
+  repeatCount: number;
+  label?: string;
+  steps: TrainingStep[];
 }
 
 export interface TrainingPrepTip {
@@ -44,6 +53,7 @@ export interface Training {
   difficulty?: string;
   heroImageUrl?: string;
   steps: TrainingStep[];
+  blocks?: TrainingStepBlock[];
   prepTips: TrainingPrepTip[];
 }
 

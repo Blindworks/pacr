@@ -16,8 +16,16 @@ public class TrainingStep {
     @JsonIgnore
     private Training training;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "block_id")
+    @JsonIgnore
+    private TrainingStepBlock block;
+
     @Column(name = "sort_order")
     private Integer sortOrder;
+
+    @Column(name = "block_sort_order")
+    private Integer blockSortOrder;
 
     @Column(name = "step_type", length = 20)
     private String stepType;
@@ -55,8 +63,14 @@ public class TrainingStep {
     public Training getTraining() { return training; }
     public void setTraining(Training training) { this.training = training; }
 
+    public TrainingStepBlock getBlock() { return block; }
+    public void setBlock(TrainingStepBlock block) { this.block = block; }
+
     public Integer getSortOrder() { return sortOrder; }
     public void setSortOrder(Integer sortOrder) { this.sortOrder = sortOrder; }
+
+    public Integer getBlockSortOrder() { return blockSortOrder; }
+    public void setBlockSortOrder(Integer blockSortOrder) { this.blockSortOrder = blockSortOrder; }
 
     public String getStepType() { return stepType; }
     public void setStepType(String stepType) { this.stepType = stepType; }

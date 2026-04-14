@@ -72,19 +72,47 @@
         <span class="td-section__sub">{{ training.estimatedDistance }} {{ 'TRAINING_DETAIL.ESTIMATED' | translate }}</span>
       </div>
       <div class="td-steps">
-        @for (step of training.steps; track $index) {
-          <div class="td-step"
-               [class.td-step--highlight]="step.highlight"
-               [class.td-step--muted]="step.muted">
-            <div class="td-step__icon">
-              <span class="material-symbols-outlined">{{ step.icon }}</span>
+        @for (item of training.items; track $index) {
+          @if (item.type === 'step' && item.step) {
+            <div class="td-step"
+                 [class.td-step--highlight]="item.step.highlight"
+                 [class.td-step--muted]="item.step.muted">
+              <div class="td-step__icon">
+                <span class="material-symbols-outlined">{{ item.step.icon }}</span>
+              </div>
+              <div class="td-step__body">
+                <p class="td-step__title">{{ item.step.title }}</p>
+                <p class="td-step__sub">{{ item.step.subtitle || item.step.measurement }}</p>
+              </div>
+              <span class="td-step__pace">{{ item.step.pace }}</span>
             </div>
-            <div class="td-step__body">
-              <p class="td-step__title">{{ step.title }}</p>
-              <p class="td-step__sub">{{ step.subtitle || step.measurement }}</p>
+          }
+          @if (item.type === 'block' && item.block) {
+            <div class="td-block">
+              <div class="td-block__head">
+                <span class="td-block__count">{{ item.block.repeatCount }}×</span>
+                @if (item.block.label) {
+                  <span class="td-block__label">{{ item.block.label }}</span>
+                }
+              </div>
+              <div class="td-block__steps">
+                @for (step of item.block.steps; track $index) {
+                  <div class="td-step td-step--in-block"
+                       [class.td-step--highlight]="step.highlight"
+                       [class.td-step--muted]="step.muted">
+                    <div class="td-step__icon">
+                      <span class="material-symbols-outlined">{{ step.icon }}</span>
+                    </div>
+                    <div class="td-step__body">
+                      <p class="td-step__title">{{ step.title }}</p>
+                      <p class="td-step__sub">{{ step.subtitle || step.measurement }}</p>
+                    </div>
+                    <span class="td-step__pace">{{ step.pace }}</span>
+                  </div>
+                }
+              </div>
             </div>
-            <span class="td-step__pace">{{ step.pace }}</span>
-          </div>
+          }
         }
       </div>
     </section>

@@ -2,7 +2,7 @@ import { Component, OnInit, ChangeDetectorRef, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TrainingService, Training } from '../../services/training.service';
+import { TrainingService, Training, TrainingStep, TrainingStepBlock } from '../../services/training.service';
 
 interface WorkoutStep {
   icon: string;
@@ -12,6 +12,18 @@ interface WorkoutStep {
   measurement: string;
   highlight: boolean;
   muted: boolean;
+}
+
+interface WorkoutBlock {
+  repeatCount: number;
+  label: string;
+  steps: WorkoutStep[];
+}
+
+interface WorkoutItem {
+  type: 'step' | 'block';
+  step?: WorkoutStep;
+  block?: WorkoutBlock;
 }
 
 interface PrepTip {
@@ -31,7 +43,7 @@ export interface TrainingDetailData {
   benefit: string;
   estimatedDistance: string;
   heroImage: string | null;
-  steps: WorkoutStep[];
+  items: WorkoutItem[];
   prepTips: PrepTip[];
 }
 
@@ -83,20 +95,49 @@ export class TrainingDetail implements OnInit {
         ? `${(t.estimatedDistanceMeters / 1000).toFixed(1)} km`
         : '—',
       heroImage: t.heroImageUrl || null,
-      steps: (t.steps || []).map(s => ({
-        icon: s.icon || this.getDefaultStepIcon(s.stepType),
-        title: s.title || this.formatStepTitle(s.stepType),
-        subtitle: s.subtitle || '',
-        pace: s.paceDisplay || '—',
-        measurement: this.formatStepMeasurement(s.durationSeconds, s.durationMinutes, s.distanceMeters),
-        highlight: s.highlight ?? false,
-        muted: s.muted ?? false
-      })),
+      items: this.mergeStepsAndBlocks(t.steps || [], t.blocks || []),
       prepTips: (t.prepTips || []).map(p => ({
         icon: p.icon || '',
         title: p.title,
         text: p.text || ''
       }))
+    };
+  }
+
+  private mergeStepsAndBlocks(steps: TrainingStep[], blocks: TrainingStepBlock[]): WorkoutItem[] {
+    type Tagged = { sortOrder: number; item: WorkoutItem };
+    const tagged: Tagged[] = [];
+
+    steps.forEach(s => tagged.push({
+      sortOrder: s.sortOrder ?? 0,
+      item: { type: 'step', step: this.mapStep(s) }
+    }));
+
+    blocks.forEach(b => tagged.push({
+      sortOrder: b.sortOrder ?? 0,
+      item: {
+        type: 'block',
+        block: {
+          repeatCount: b.repeatCount ?? 2,
+          label: b.label || '',
+          steps: (b.steps || []).map(s => this.mapStep(s))
+        }
+      }
+    }));
+
+    tagged.sort((a, b) => a.sortOrder - b.sortOrder);
+    return tagged.map(t => t.item);
+  }
+
+  private mapStep(s: TrainingStep): WorkoutStep {
+    return {
+      icon: s.icon || this.getDefaultStepIcon(s.stepType),
+      title: s.title || this.formatStepTitle(s.stepType),
+      subtitle: s.subtitle || '',
+      pace: s.paceDisplay || '—',
+      measurement: this.formatStepMeasurement(s.durationSeconds, s.durationMinutes, s.distanceMeters),
+      highlight: s.highlight ?? false,
+      muted: s.muted ?? false
     };
   }
 

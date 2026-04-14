@@ -1,6 +1,7 @@
 package com.trainingsplan.service;
 
 import com.trainingsplan.entity.Training;
+import com.trainingsplan.entity.TrainingStepBlock;
 import com.trainingsplan.repository.TrainingRepository;
 import com.trainingsplan.repository.TrainingPlanRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,8 +33,10 @@ public class TrainingService {
         }
 
         trainingRepository.findByIdWithPrepTips(id);
+        trainingRepository.findByIdWithBlocks(id);
         training.getSteps().size();
         training.getPrepTips().size();
+        training.getBlocks().forEach(block -> block.getSteps().size());
         return training;
     }
 
@@ -50,6 +53,13 @@ public class TrainingService {
         normalizeAndValidatePaceFields(training);
         training.getSteps().forEach(step -> step.setTraining(training));
         training.getPrepTips().forEach(tip -> tip.setTraining(training));
+        training.getBlocks().forEach(block -> {
+            block.setTraining(training);
+            block.getSteps().forEach(step -> {
+                step.setTraining(training);
+                step.setBlock(block);
+            });
+        });
         return trainingRepository.save(training);
     }
 
@@ -81,8 +91,24 @@ public class TrainingService {
         existing.getSteps().clear();
         incoming.getSteps().forEach(step -> {
             step.setTraining(existing);
+            step.setBlock(null);
             existing.getSteps().add(step);
         });
+
+        existing.getBlocks().clear();
+        for (TrainingStepBlock incomingBlock : incoming.getBlocks()) {
+            TrainingStepBlock block = new TrainingStepBlock();
+            block.setTraining(existing);
+            block.setSortOrder(incomingBlock.getSortOrder());
+            block.setRepeatCount(incomingBlock.getRepeatCount() != null ? incomingBlock.getRepeatCount() : 2);
+            block.setLabel(incomingBlock.getLabel());
+            incomingBlock.getSteps().forEach(step -> {
+                step.setTraining(existing);
+                step.setBlock(block);
+                block.getSteps().add(step);
+            });
+            existing.getBlocks().add(block);
+        }
 
         existing.getPrepTips().clear();
         incoming.getPrepTips().forEach(tip -> {

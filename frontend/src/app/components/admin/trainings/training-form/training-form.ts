@@ -5,8 +5,20 @@ import { FormBuilder, FormArray, FormGroup, Validators, ReactiveFormsModule } fr
 import { debounceTime } from 'rxjs';
 import { TranslateModule } from '@ngx-translate/core';
 
-import { TrainingService } from '../../../../services/training.service';
+import { TrainingService, TrainingStep, TrainingStepBlock } from '../../../../services/training.service';
 import { TrainingPlanService, TrainingPlan } from '../../../../services/training-plan.service';
+
+interface StepInit {
+  stepType?: string;
+  subtitle?: string;
+  durationMinutes?: number;
+  durationSeconds?: number;
+  distanceMeters?: number;
+  paceDisplay?: string;
+  icon?: string;
+  highlight?: boolean;
+  muted?: boolean;
+}
 
 @Component({
   selector: 'app-training-form',
@@ -47,16 +59,16 @@ export class TrainingForm implements OnInit {
     estimatedCalories: [null as number | null],
     estimatedDistanceMeters: [null as number | null],
     heroImageUrl: [''],
-    steps: this.fb.array([]),
+    items: this.fb.array([]),
     prepTips: this.fb.array([])
   });
 
-  get steps(): FormArray { return this.form.get('steps') as FormArray; }
+  get items(): FormArray { return this.form.get('items') as FormArray; }
   get prepTips(): FormArray { return this.form.get('prepTips') as FormArray; }
   get isEdit(): boolean { return this.editId() !== null; }
 
   ngOnInit(): void {
-    this.steps.valueChanges.pipe(
+    this.items.valueChanges.pipe(
       debounceTime(300),
       takeUntilDestroyed(this.destroyRef)
     ).subscribe(() => this.recalculateFromSteps());
@@ -103,9 +115,23 @@ export class TrainingForm implements OnInit {
           estimatedDistanceMeters: t.estimatedDistanceMeters ?? null,
           heroImageUrl: t.heroImageUrl ?? ''
         });
-        this.steps.clear();
+        this.items.clear();
         this.prepTips.clear();
-        (t.steps ?? []).forEach(s => this.steps.push(this.makeStepGroup(s)));
+
+        // Merge steps and blocks by sortOrder into a single ordered list
+        type Tagged = { sortOrder: number; group: FormGroup };
+        const tagged: Tagged[] = [];
+        (t.steps ?? []).forEach(s => tagged.push({
+          sortOrder: s.sortOrder ?? 0,
+          group: this.makeStepItem(s)
+        }));
+        (t.blocks ?? []).forEach(b => tagged.push({
+          sortOrder: b.sortOrder ?? 0,
+          group: this.makeBlockItem(b)
+        }));
+        tagged.sort((a, b) => a.sortOrder - b.sortOrder);
+        tagged.forEach(t => this.items.push(t.group));
+
         (t.prepTips ?? []).forEach(p => this.prepTips.push(this.makeTipGroup(p)));
       },
       error: () => { this.hasError.set(true); this.isLoading.set(false); },
@@ -113,17 +139,7 @@ export class TrainingForm implements OnInit {
     });
   }
 
-  private makeStepGroup(s?: Partial<{
-    stepType: string;
-    subtitle: string;
-    durationMinutes: number;
-    durationSeconds: number;
-    distanceMeters: number;
-    paceDisplay: string;
-    icon: string;
-    highlight: boolean;
-    muted: boolean;
-  }>): FormGroup {
+  private makeStepGroup(s?: StepInit): FormGroup {
     const durationSeconds = s?.durationSeconds ?? ((s?.durationMinutes ?? null) != null ? (s?.durationMinutes ?? 0) * 60 : null);
     return this.fb.group({
       stepType: [s?.stepType ?? '', Validators.required],
@@ -138,6 +154,25 @@ export class TrainingForm implements OnInit {
     });
   }
 
+  private makeStepItem(s?: StepInit): FormGroup {
+    return this.fb.group({
+      type: ['step'],
+      step: this.makeStepGroup(s)
+    });
+  }
+
+  private makeBlockItem(b?: Partial<TrainingStepBlock>): FormGroup {
+    const stepsArray = this.fb.array(
+      (b?.steps ?? []).map(s => this.makeStepGroup(s))
+    );
+    return this.fb.group({
+      type: ['block'],
+      repeatCount: [b?.repeatCount ?? 2, [Validators.required, Validators.min(2)]],
+      label: [b?.label ?? ''],
+      steps: stepsArray
+    });
+  }
+
   private makeTipGroup(p?: Partial<{title:string;icon:string;text:string}>): FormGroup {
     return this.fb.group({
       title: [p?.title ?? '', Validators.required],
@@ -146,30 +181,96 @@ export class TrainingForm implements OnInit {
     });
   }
 
-  addStep(): void { this.steps.push(this.makeStepGroup()); }
-  removeStep(i: number): void { this.steps.removeAt(i); }
-  moveStepUp(i: number): void { if (i === 0) return; const ctrl = this.steps.at(i); this.steps.removeAt(i); this.steps.insert(i - 1, ctrl); }
-  moveStepDown(i: number): void { if (i >= this.steps.length - 1) return; const ctrl = this.steps.at(i); this.steps.removeAt(i); this.steps.insert(i + 1, ctrl); }
-  copyStep(i: number): void {
-    const v = this.steps.at(i).value;
-    const seconds = v.measurementType === 'duration' ? this.parseDurationText(v.durationText) : null;
-    this.steps.push(this.makeStepGroup({
-      stepType: v.stepType,
-      subtitle: v.subtitle,
-      distanceMeters: v.measurementType === 'distance' ? v.distanceMeters : undefined,
-      durationSeconds: seconds ?? undefined,
-      paceDisplay: v.paceDisplay,
-      icon: v.icon,
-      highlight: v.highlight,
-      muted: v.muted
-    }));
+  // ----- Top-level item operations -----
+  addStep(): void { this.items.push(this.makeStepItem()); }
+  addBlock(): void {
+    const block = this.makeBlockItem({ repeatCount: 2, steps: [] });
+    (block.get('steps') as FormArray).push(this.makeStepGroup());
+    (block.get('steps') as FormArray).push(this.makeStepGroup());
+    this.items.push(block);
   }
 
+  removeItem(i: number): void { this.items.removeAt(i); }
+  moveItemUp(i: number): void { if (i === 0) return; const ctrl = this.items.at(i); this.items.removeAt(i); this.items.insert(i - 1, ctrl); }
+  moveItemDown(i: number): void { if (i >= this.items.length - 1) return; const ctrl = this.items.at(i); this.items.removeAt(i); this.items.insert(i + 1, ctrl); }
+
+  copyItem(i: number): void {
+    const v = this.items.at(i).value as any;
+    if (v.type === 'step') {
+      this.items.push(this.cloneStepItem(v.step));
+    } else {
+      const cloneSteps: StepInit[] = (v.steps ?? []).map((s: any) => this.stepValueToInit(s));
+      const block = this.fb.group({
+        type: ['block'],
+        repeatCount: [v.repeatCount ?? 2, [Validators.required, Validators.min(2)]],
+        label: [v.label ?? ''],
+        steps: this.fb.array(cloneSteps.map(s => this.makeStepGroup(s)))
+      });
+      this.items.push(block);
+    }
+  }
+
+  private cloneStepItem(s: any): FormGroup {
+    return this.makeStepItem(this.stepValueToInit(s));
+  }
+
+  private stepValueToInit(s: any): StepInit {
+    const seconds = s.measurementType === 'duration' ? this.parseDurationText(s.durationText) ?? undefined : undefined;
+    return {
+      stepType: s.stepType,
+      subtitle: s.subtitle,
+      distanceMeters: s.measurementType === 'distance' ? s.distanceMeters : undefined,
+      durationSeconds: seconds,
+      paceDisplay: s.paceDisplay,
+      icon: s.icon,
+      highlight: s.highlight,
+      muted: s.muted
+    };
+  }
+
+  // ----- Block-internal step operations -----
+  blockSteps(itemIndex: number): FormArray {
+    return this.items.at(itemIndex).get('steps') as FormArray;
+  }
+
+  addStepToBlock(itemIndex: number): void {
+    this.blockSteps(itemIndex).push(this.makeStepGroup());
+  }
+
+  removeStepFromBlock(itemIndex: number, stepIndex: number): void {
+    const arr = this.blockSteps(itemIndex);
+    if (arr.length <= 1) return; // keep at least one step in the block
+    arr.removeAt(stepIndex);
+  }
+
+  moveStepInBlockUp(itemIndex: number, stepIndex: number): void {
+    if (stepIndex === 0) return;
+    const arr = this.blockSteps(itemIndex);
+    const ctrl = arr.at(stepIndex);
+    arr.removeAt(stepIndex);
+    arr.insert(stepIndex - 1, ctrl);
+  }
+
+  moveStepInBlockDown(itemIndex: number, stepIndex: number): void {
+    const arr = this.blockSteps(itemIndex);
+    if (stepIndex >= arr.length - 1) return;
+    const ctrl = arr.at(stepIndex);
+    arr.removeAt(stepIndex);
+    arr.insert(stepIndex + 1, ctrl);
+  }
+
+  copyStepInBlock(itemIndex: number, stepIndex: number): void {
+    const arr = this.blockSteps(itemIndex);
+    const v = arr.at(stepIndex).value as any;
+    arr.push(this.makeStepGroup(this.stepValueToInit(v)));
+  }
+
+  // ----- Prep tips -----
   addTip(): void { this.prepTips.push(this.makeTipGroup()); }
   removeTip(i: number): void { this.prepTips.removeAt(i); }
 
   save(): void {
-    if (this.form.invalid || !this.validateSteps()) { this.form.markAllAsTouched(); return; }
+    if (this.form.invalid || !this.validateAllSteps()) { this.form.markAllAsTouched(); return; }
     const payload = this.buildPayload();
     this.isSaving.set(true);
 
@@ -190,40 +291,69 @@ export class TrainingForm implements OnInit {
 
   private buildPayload(): any {
     const v = this.form.value;
+    const steps: any[] = [];
+    const blocks: any[] = [];
+
+    (v.items ?? []).forEach((item: any, topIdx: number) => {
+      if (item.type === 'step') {
+        steps.push(this.serializeStep(item.step, topIdx));
+      } else {
+        blocks.push({
+          sortOrder: topIdx,
+          repeatCount: item.repeatCount,
+          label: (item.label ?? '').trim() || null,
+          steps: (item.steps ?? []).map((s: any, j: number) => {
+            const serialized = this.serializeStep(s, 0);
+            serialized.sortOrder = null;
+            serialized.blockSortOrder = j;
+            return serialized;
+          })
+        });
+      }
+    });
+
     return {
       ...v,
+      items: undefined,
       dayOfWeek: this.toBackendDayOfWeek(v.dayOfWeek),
-      steps: (v.steps ?? []).map((s: any, i: number) => {
-        const durationSeconds = s.measurementType === 'duration'
-          ? this.parseDurationText(s.durationText)
-          : null;
-        const distanceMeters = s.measurementType === 'distance'
-          ? this.parsePositiveInteger(s.distanceMeters)
-          : null;
-
-        return {
-          stepType: s.stepType,
-          title: this.formatStepTitle(s.stepType),
-          subtitle: s.subtitle || null,
-          durationMinutes: durationSeconds != null ? Math.max(1, Math.round(durationSeconds / 60)) : null,
-          durationSeconds,
-          distanceMeters,
-          paceDisplay: this.normalizePaceDisplay(s.paceDisplay) ?? null,
-          icon: s.icon || null,
-          highlight: !!s.highlight,
-          muted: !!s.muted,
-          sortOrder: i
-        };
-      }),
+      steps,
+      blocks,
       prepTips: (v.prepTips ?? []).map((p: any, i: number) => ({ ...p, sortOrder: i }))
     };
   }
 
-  stepGroup(i: number): FormGroup { return this.steps.at(i) as FormGroup; }
+  private serializeStep(s: any, sortOrder: number): any {
+    const durationSeconds = s.measurementType === 'duration'
+      ? this.parseDurationText(s.durationText)
+      : null;
+    const distanceMeters = s.measurementType === 'distance'
+      ? this.parsePositiveInteger(s.distanceMeters)
+      : null;
+
+    return {
+      stepType: s.stepType,
+      title: this.formatStepTitle(s.stepType),
+      subtitle: s.subtitle || null,
+      durationMinutes: durationSeconds != null ? Math.max(1, Math.round(durationSeconds / 60)) : null,
+      durationSeconds,
+      distanceMeters,
+      paceDisplay: this.normalizePaceDisplay(s.paceDisplay) ?? null,
+      icon: s.icon || null,
+      highlight: !!s.highlight,
+      muted: !!s.muted,
+      sortOrder
+    };
+  }
+
+  itemGroup(i: number): FormGroup { return this.items.at(i) as FormGroup; }
+  itemType(i: number): string { return this.itemGroup(i).get('type')?.value ?? 'step'; }
+  stepInItem(i: number): FormGroup { return this.itemGroup(i).get('step') as FormGroup; }
+  blockStepGroup(itemIndex: number, stepIndex: number): FormGroup {
+    return this.blockSteps(itemIndex).at(stepIndex) as FormGroup;
+  }
   tipGroup(i: number): FormGroup { return this.prepTips.at(i) as FormGroup; }
 
-  protected onMeasurementTypeChange(index: number): void {
-    const group = this.stepGroup(index);
+  protected onMeasurementTypeChange(group: FormGroup): void {
     const measurementType = group.get('measurementType')?.value;
     if (measurementType === 'duration') {
       group.get('distanceMeters')?.setValue(null);
@@ -234,11 +364,9 @@ export class TrainingForm implements OnInit {
     }
   }
 
-  protected onMaskedTimeInput(index: number, controlName: 'durationText' | 'paceDisplay'): void {
-    const control = this.stepGroup(index).get(controlName);
-    if (!control) {
-      return;
-    }
+  protected onMaskedTimeInput(group: FormGroup, controlName: 'durationText' | 'paceDisplay'): void {
+    const control = group.get(controlName);
+    if (!control) return;
 
     const digits = String(control.value ?? '').replace(/\D/g, '').slice(0, 4);
     control.setValue(this.formatMaskedTime(digits), { emitEvent: false });
@@ -248,11 +376,9 @@ export class TrainingForm implements OnInit {
     }
   }
 
-  protected onMaskedTimeBlur(index: number, controlName: 'durationText' | 'paceDisplay'): void {
-    const control = this.stepGroup(index).get(controlName);
-    if (!control) {
-      return;
-    }
+  protected onMaskedTimeBlur(group: FormGroup, controlName: 'durationText' | 'paceDisplay'): void {
+    const control = group.get(controlName);
+    if (!control) return;
 
     const normalized = this.normalizePaceDisplay(control.value);
     if (normalized) {
@@ -264,41 +390,51 @@ export class TrainingForm implements OnInit {
     }
   }
 
-  private validateSteps(): boolean {
-    let isValid = true;
-
-    this.steps.controls.forEach(control => {
-      const group = control as FormGroup;
-      const measurementType = group.get('measurementType')?.value;
-      const durationControl = group.get('durationText');
-      const distanceControl = group.get('distanceMeters');
-
-      durationControl?.setErrors(null);
-      distanceControl?.setErrors(null);
-
-      if (measurementType === 'duration') {
-        if (this.parseDurationText(durationControl?.value) == null) {
-          durationControl?.setErrors({ invalidDuration: true });
-          isValid = false;
-        }
-      } else if (measurementType === 'distance') {
-        if (this.parsePositiveInteger(distanceControl?.value) == null) {
-          distanceControl?.setErrors({ invalidDistance: true });
-          isValid = false;
-        }
+  private validateAllSteps(): boolean {
+    let ok = true;
+    this.items.controls.forEach(itemCtrl => {
+      const g = itemCtrl as FormGroup;
+      if (g.get('type')?.value === 'step') {
+        if (!this.validateStepGroup(g.get('step') as FormGroup)) ok = false;
       } else {
-        isValid = false;
-      }
-
-      const paceDisplayControl = group.get('paceDisplay');
-      const paceDisplay = this.normalizePaceDisplay(paceDisplayControl?.value);
-      paceDisplayControl?.setErrors(null);
-      if (paceDisplayControl && paceDisplay == null && String(paceDisplayControl.value ?? '').trim() !== '') {
-        paceDisplayControl.setErrors({ invalidPaceDisplay: true });
-        isValid = false;
+        const steps = g.get('steps') as FormArray;
+        if (steps.length === 0) ok = false;
+        steps.controls.forEach(sc => { if (!this.validateStepGroup(sc as FormGroup)) ok = false; });
       }
     });
+    return ok;
+  }
 
+  private validateStepGroup(group: FormGroup): boolean {
+    let isValid = true;
+    const measurementType = group.get('measurementType')?.value;
+    const durationControl = group.get('durationText');
+    const distanceControl = group.get('distanceMeters');
+
+    durationControl?.setErrors(null);
+    distanceControl?.setErrors(null);
+
+    if (measurementType === 'duration') {
+      if (this.parseDurationText(durationControl?.value) == null) {
+        durationControl?.setErrors({ invalidDuration: true });
+        isValid = false;
+      }
+    } else if (measurementType === 'distance') {
+      if (this.parsePositiveInteger(distanceControl?.value) == null) {
+        distanceControl?.setErrors({ invalidDistance: true });
+        isValid = false;
+      }
+    } else {
+      isValid = false;
+    }
+
+    const paceDisplayControl = group.get('paceDisplay');
+    const paceDisplay = this.normalizePaceDisplay(paceDisplayControl?.value);
+    paceDisplayControl?.setErrors(null);
+    if (paceDisplayControl && paceDisplay == null && String(paceDisplayControl.value ?? '').trim() !== '') {
+      paceDisplayControl.setErrors({ invalidPaceDisplay: true });
+      isValid = false;
+    }
     return isValid;
   }
 
@@ -314,8 +450,8 @@ export class TrainingForm implements OnInit {
   }
 
   private recalculateFromSteps(): void {
-    const stepsValue = this.steps.value as any[];
-    if (!stepsValue || stepsValue.length === 0) return;
+    const itemsValue = this.items.value as any[];
+    if (!itemsValue || itemsValue.length === 0) return;
 
     let totalDurationSeconds = 0;
     let hasDurationSteps = false;
@@ -324,31 +460,38 @@ export class TrainingForm implements OnInit {
     let totalCalories = 0;
     let hasCaloriesData = false;
 
-    for (const step of stepsValue) {
+    const accumulate = (step: any, multiplier: number) => {
       if (step.measurementType === 'duration') {
         const secs = this.parseDurationText(step.durationText);
         if (secs != null) {
-          totalDurationSeconds += secs;
+          totalDurationSeconds += secs * multiplier;
           hasDurationSteps = true;
-          totalCalories += (secs / 60) * this.kcalPerMinForStepType(step.stepType);
+          totalCalories += (secs / 60) * this.kcalPerMinForStepType(step.stepType) * multiplier;
           hasCaloriesData = true;
         }
       } else if (step.measurementType === 'distance') {
         const dist = this.parsePositiveInteger(step.distanceMeters);
         if (dist != null) {
-          totalDistanceMeters += dist;
+          totalDistanceMeters += dist * multiplier;
           hasDistanceSteps = true;
-          totalCalories += (dist / 1000) * 70;
+          totalCalories += (dist / 1000) * 70 * multiplier;
           hasCaloriesData = true;
 
-          // Derive duration from distance + pace if pace is available
           const paceSecs = this.parseDurationText(step.paceDisplay);
           if (paceSecs != null) {
-            // pace is per 1000m (min:sec per km)
-            totalDurationSeconds += (dist / 1000) * paceSecs;
+            totalDurationSeconds += (dist / 1000) * paceSecs * multiplier;
             hasDurationSteps = true;
           }
         }
+      }
+    };
+
+    for (const item of itemsValue) {
+      if (item.type === 'step') {
+        accumulate(item.step, 1);
+      } else {
+        const repeats = Math.max(2, Number(item.repeatCount) || 2);
+        (item.steps ?? []).forEach((s: any) => accumulate(s, repeats));
       }
     }
 

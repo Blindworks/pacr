@@ -226,15 +226,16 @@ public class StravaService {
             syncActivitiesToDb(activities, token.getAccessToken(), currentUser);
             removeDeletedActivitiesFromDb(activities, currentUser, start, end);
 
-            // Neuberechnung aller Metriken für den gesamten Sync-Zeitraum
+            // Neuberechnung aller Metriken für das gesamte 28-Tage ACWR-Fenster,
+            // damit auch nachträglich synchronisierte Aktivitäten korrekt in
+            // ACWR und Readiness Score einfließen.
             if (currentUser != null) {
-                log.info("strava_sync_metrics_recalc userId={} from={} to={}", currentUser.getId(), start, end);
-                metricsKernelService.computeForDateRange(currentUser, start, end);
-                // Heute separat aktualisieren, falls außerhalb des Sync-Fensters
                 LocalDate today = LocalDate.now();
-                if (today.isAfter(end)) {
-                    metricsKernelService.computeForDate(currentUser, today);
-                }
+                LocalDate acwrWindowStart = today.minusDays(27);
+                LocalDate rangeStart = acwrWindowStart.isBefore(start) ? acwrWindowStart : start;
+                LocalDate rangeEnd = today.isAfter(end) ? today : end;
+                log.info("strava_sync_metrics_recalc userId={} from={} to={}", currentUser.getId(), rangeStart, rangeEnd);
+                metricsKernelService.computeForDateRange(currentUser, rangeStart, rangeEnd);
             }
 
             return activities;

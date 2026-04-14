@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="106-1" author="benedikt">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="training_step_blocks"/>
+            </not>
+        </preConditions>
+        <comment>Create training_step_blocks table for repeating step groups</comment>
+        <createTable tableName="training_step_blocks">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="training_id" type="BIGINT">
+                <constraints nullable="false" foreignKeyName="fk_step_block_training" references="trainings(id)" deleteCascade="true"/>
+            </column>
+            <column name="sort_order" type="INT"/>
+            <column name="repeat_count" type="INT" defaultValueNumeric="2">
+                <constraints nullable="false"/>
+            </column>
+            <column name="label" type="VARCHAR(100)"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="106-2" author="benedikt">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="training_steps" columnName="block_id"/>
+            </not>
+        </preConditions>
+        <comment>Add block_id and block_sort_order to training_steps</comment>
+        <addColumn tableName="training_steps">
+            <column name="block_id" type="BIGINT">
+                <constraints nullable="true" foreignKeyName="fk_step_block" references="training_step_blocks(id)" deleteCascade="true"/>
+            </column>
+            <column name="block_sort_order" type="INT"/>
+        </addColumn>
+    </changeSet>
+
+</databaseChangeLog>

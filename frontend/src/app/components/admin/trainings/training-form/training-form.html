@@ -165,103 +165,236 @@
         </div>
       </section>
 
-      <!-- Section 3: Workout Steps -->
+      <!-- Section 3: Workout Steps & Blocks -->
       <section class="form-card">
         <div class="section-header">
           <h3 class="section-title">
             <span class="material-symbols-outlined">format_list_numbered</span>
             {{ 'ADMIN.WORKOUT_STEPS' | translate }}
-            <span class="badge">{{ steps.length }}</span>
+            <span class="badge">{{ items.length }}</span>
           </h3>
-          <button type="button" class="btn-ghost small" (click)="addStep()">
-            <span class="material-symbols-outlined">add</span>
-            {{ 'ADMIN.ADD_STEP' | translate }}
-          </button>
+          <div class="section-header-actions">
+            <button type="button" class="btn-ghost small" (click)="addStep()">
+              <span class="material-symbols-outlined">add</span>
+              {{ 'ADMIN.ADD_STEP' | translate }}
+            </button>
+            <button type="button" class="btn-ghost small" (click)="addBlock()">
+              <span class="material-symbols-outlined">repeat</span>
+              {{ 'ADMIN.ADD_BLOCK' | translate }}
+            </button>
+          </div>
         </div>
 
-        @if (steps.length === 0) {
+        @if (items.length === 0) {
           <p class="empty-hint">{{ 'ADMIN.NO_STEPS' | translate }}</p>
         }
 
-        @for (step of steps.controls; track $index) {
-          <div class="array-item" [formGroup]="stepGroup($index)">
-            <div class="array-item-header">
-              <span class="array-item-index">{{ $index + 1 }}</span>
-              <div class="array-item-actions">
-                <button type="button" class="icon-btn" [title]="'ADMIN.MOVE_UP' | translate" (click)="moveStepUp($index)" [disabled]="$index === 0">
-                  <span class="material-symbols-outlined">arrow_upward</span>
-                </button>
-                <button type="button" class="icon-btn" [title]="'ADMIN.MOVE_DOWN' | translate" (click)="moveStepDown($index)" [disabled]="$index === steps.length - 1">
-                  <span class="material-symbols-outlined">arrow_downward</span>
-                </button>
-                <button type="button" class="icon-btn" [title]="'ADMIN.COPY_STEP' | translate" (click)="copyStep($index)">
-                  <span class="material-symbols-outlined">content_copy</span>
-                </button>
-                <button type="button" class="icon-btn icon-btn--danger" [title]="'ADMIN.REMOVE' | translate" (click)="removeStep($index)">
-                  <span class="material-symbols-outlined">delete</span>
-                </button>
+        @for (item of items.controls; track $index; let itemIdx = $index) {
+          @if (itemType(itemIdx) === 'step') {
+            <div class="array-item" [formGroup]="itemGroup(itemIdx)">
+              <div class="array-item-header">
+                <span class="array-item-index">{{ itemIdx + 1 }}</span>
+                <div class="array-item-actions">
+                  <button type="button" class="icon-btn" [title]="'ADMIN.MOVE_UP' | translate" (click)="moveItemUp(itemIdx)" [disabled]="itemIdx === 0">
+                    <span class="material-symbols-outlined">arrow_upward</span>
+                  </button>
+                  <button type="button" class="icon-btn" [title]="'ADMIN.MOVE_DOWN' | translate" (click)="moveItemDown(itemIdx)" [disabled]="itemIdx === items.length - 1">
+                    <span class="material-symbols-outlined">arrow_downward</span>
+                  </button>
+                  <button type="button" class="icon-btn" [title]="'ADMIN.COPY_STEP' | translate" (click)="copyItem(itemIdx)">
+                    <span class="material-symbols-outlined">content_copy</span>
+                  </button>
+                  <button type="button" class="icon-btn icon-btn--danger" [title]="'ADMIN.REMOVE' | translate" (click)="removeItem(itemIdx)">
+                    <span class="material-symbols-outlined">delete</span>
+                  </button>
+                </div>
               </div>
-            </div>
-            <div class="field-grid field-grid--compact">
-              <div class="field">
-                <label>{{ 'COMMON.TYPE' | translate }}</label>
-                <select formControlName="stepType" class="input">
-                  <option value="">{{ 'ADMIN.SELECT' | translate }}</option>
-                  <option value="warmup">{{ 'ADMIN.STEP_WARMUP' | translate }}</option>
-                  <option value="work">{{ 'ADMIN.STEP_WORK' | translate }}</option>
-                  <option value="recovery">{{ 'ADMIN.STEP_RECOVERY' | translate }}</option>
-                  <option value="cooldown">{{ 'ADMIN.STEP_COOLDOWN' | translate }}</option>
-                  <option value="rest">{{ 'ADMIN.STEP_REST' | translate }}</option>
-                </select>
-              </div>
-              <div class="field">
-                <label>{{ 'ADMIN.SUBTITLE' | translate }}</label>
-                <input formControlName="subtitle" type="text" [placeholder]="'ADMIN.SUBTITLE_PLACEHOLDER' | translate" class="input" />
-              </div>
-              <div class="field">
-                <label>{{ 'ADMIN.MEASUREMENT' | translate }}</label>
-                <select formControlName="measurementType" class="input" (change)="onMeasurementTypeChange($index)">
-                  <option value="duration">{{ 'COMMON.DURATION' | translate }}</option>
-                  <option value="distance">{{ 'COMMON.DISTANCE' | translate }}</option>
-                </select>
-              </div>
-              <div class="field">
-                <label>{{ stepGroup($index).get('measurementType')?.value === 'distance' ? ('ADMIN.DISTANCE_M' | translate) : ('ADMIN.DURATION_MMSS' | translate) }}</label>
-                @if (stepGroup($index).get('measurementType')?.value === 'distance') {
-                  <input formControlName="distanceMeters" type="number" min="1" [placeholder]="'ADMIN.DISTANCE_PLACEHOLDER' | translate" class="input" [class.invalid]="stepGroup($index).get('distanceMeters')?.invalid && stepGroup($index).get('distanceMeters')?.touched" />
-                  @if (stepGroup($index).get('distanceMeters')?.hasError('invalidDistance') && stepGroup($index).get('distanceMeters')?.touched) {
-                    <span class="field-error">{{ 'ADMIN.DISTANCE_HINT' | translate }}</span>
+              <div class="field-grid field-grid--compact" [formGroup]="stepInItem(itemIdx)">
+                <div class="field">
+                  <label>{{ 'COMMON.TYPE' | translate }}</label>
+                  <select formControlName="stepType" class="input">
+                    <option value="">{{ 'ADMIN.SELECT' | translate }}</option>
+                    <option value="warmup">{{ 'ADMIN.STEP_WARMUP' | translate }}</option>
+                    <option value="work">{{ 'ADMIN.STEP_WORK' | translate }}</option>
+                    <option value="recovery">{{ 'ADMIN.STEP_RECOVERY' | translate }}</option>
+                    <option value="cooldown">{{ 'ADMIN.STEP_COOLDOWN' | translate }}</option>
+                    <option value="rest">{{ 'ADMIN.STEP_REST' | translate }}</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label>{{ 'ADMIN.SUBTITLE' | translate }}</label>
+                  <input formControlName="subtitle" type="text" [placeholder]="'ADMIN.SUBTITLE_PLACEHOLDER' | translate" class="input" />
+                </div>
+                <div class="field">
+                  <label>{{ 'ADMIN.MEASUREMENT' | translate }}</label>
+                  <select formControlName="measurementType" class="input" (change)="onMeasurementTypeChange(stepInItem(itemIdx))">
+                    <option value="duration">{{ 'COMMON.DURATION' | translate }}</option>
+                    <option value="distance">{{ 'COMMON.DISTANCE' | translate }}</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label>{{ stepInItem(itemIdx).get('measurementType')?.value === 'distance' ? ('ADMIN.DISTANCE_M' | translate) : ('ADMIN.DURATION_MMSS' | translate) }}</label>
+                  @if (stepInItem(itemIdx).get('measurementType')?.value === 'distance') {
+                    <input formControlName="distanceMeters" type="number" min="1" [placeholder]="'ADMIN.DISTANCE_PLACEHOLDER' | translate" class="input" [class.invalid]="stepInItem(itemIdx).get('distanceMeters')?.invalid && stepInItem(itemIdx).get('distanceMeters')?.touched" />
+                    @if (stepInItem(itemIdx).get('distanceMeters')?.hasError('invalidDistance') && stepInItem(itemIdx).get('distanceMeters')?.touched) {
+                      <span class="field-error">{{ 'ADMIN.DISTANCE_HINT' | translate }}</span>
+                    }
+                  } @else {
+                    <input formControlName="durationText" type="text" inputmode="numeric" maxlength="5" [placeholder]="'ADMIN.DURATION_PLACEHOLDER' | translate" class="input" [class.invalid]="stepInItem(itemIdx).get('durationText')?.invalid && stepInItem(itemIdx).get('durationText')?.touched" (input)="onMaskedTimeInput(stepInItem(itemIdx), 'durationText')" (blur)="onMaskedTimeBlur(stepInItem(itemIdx), 'durationText')" />
+                    @if (stepInItem(itemIdx).get('durationText')?.hasError('invalidDuration') && stepInItem(itemIdx).get('durationText')?.touched) {
+                      <span class="field-error">{{ 'ADMIN.DURATION_HINT' | translate }}</span>
+                    }
                   }
-                } @else {
-                  <input formControlName="durationText" type="text" inputmode="numeric" maxlength="5" [placeholder]="'ADMIN.DURATION_PLACEHOLDER' | translate" class="input" [class.invalid]="stepGroup($index).get('durationText')?.invalid && stepGroup($index).get('durationText')?.touched" (input)="onMaskedTimeInput($index, 'durationText')" (blur)="onMaskedTimeBlur($index, 'durationText')" />
-                  @if (stepGroup($index).get('durationText')?.hasError('invalidDuration') && stepGroup($index).get('durationText')?.touched) {
+                </div>
+                <div class="field">
+                  <label>{{ 'ADMIN.PACE_DISPLAY' | translate }}</label>
+                  <input formControlName="paceDisplay" type="text" inputmode="numeric" maxlength="5" placeholder="e.g. 04:15" class="input" [class.invalid]="stepInItem(itemIdx).get('paceDisplay')?.invalid && stepInItem(itemIdx).get('paceDisplay')?.touched" (input)="onMaskedTimeInput(stepInItem(itemIdx), 'paceDisplay')" (blur)="onMaskedTimeBlur(stepInItem(itemIdx), 'paceDisplay')" />
+                  @if (stepInItem(itemIdx).get('paceDisplay')?.hasError('invalidPaceDisplay') && stepInItem(itemIdx).get('paceDisplay')?.touched) {
                     <span class="field-error">{{ 'ADMIN.DURATION_HINT' | translate }}</span>
                   }
-                }
-              </div>
-              <div class="field">
-                <label>{{ 'ADMIN.PACE_DISPLAY' | translate }}</label>
-                <input formControlName="paceDisplay" type="text" inputmode="numeric" maxlength="5" placeholder="e.g. 04:15" class="input" [class.invalid]="stepGroup($index).get('paceDisplay')?.invalid && stepGroup($index).get('paceDisplay')?.touched" (input)="onMaskedTimeInput($index, 'paceDisplay')" (blur)="onMaskedTimeBlur($index, 'paceDisplay')" />
-                @if (stepGroup($index).get('paceDisplay')?.hasError('invalidPaceDisplay') && stepGroup($index).get('paceDisplay')?.touched) {
-                  <span class="field-error">{{ 'ADMIN.DURATION_HINT' | translate }}</span>
-                }
-              </div>
-              <div class="field">
-                <label>{{ 'ADMIN.ICON' | translate }}</label>
-                <input formControlName="icon" type="text" [placeholder]="'ADMIN.ICON_PLACEHOLDER' | translate" class="input" />
-              </div>
-              <div class="field checkboxes">
-                <label class="checkbox-label">
-                  <input formControlName="highlight" type="checkbox" />
-                  {{ 'ADMIN.HIGHLIGHT' | translate }}
-                </label>
-                <label class="checkbox-label">
-                  <input formControlName="muted" type="checkbox" />
-                  {{ 'ADMIN.MUTED' | translate }}
-                </label>
+                </div>
+                <div class="field">
+                  <label>{{ 'ADMIN.ICON' | translate }}</label>
+                  <input formControlName="icon" type="text" [placeholder]="'ADMIN.ICON_PLACEHOLDER' | translate" class="input" />
+                </div>
+                <div class="field checkboxes">
+                  <label class="checkbox-label">
+                    <input formControlName="highlight" type="checkbox" />
+                    {{ 'ADMIN.HIGHLIGHT' | translate }}
+                  </label>
+                  <label class="checkbox-label">
+                    <input formControlName="muted" type="checkbox" />
+                    {{ 'ADMIN.MUTED' | translate }}
+                  </label>
+                </div>
               </div>
             </div>
-          </div>
+          } @else {
+            <div class="block-item" [formGroup]="itemGroup(itemIdx)">
+              <div class="block-item-header">
+                <div class="block-item-header-left">
+                  <span class="block-item-badge">
+                    <input
+                      type="number"
+                      min="2"
+                      formControlName="repeatCount"
+                      class="block-item-repeat"
+                      [title]="'ADMIN.BLOCK_REPEAT_COUNT' | translate"
+                    />
+                    <span class="block-item-times">×</span>
+                  </span>
+                  <input
+                    type="text"
+                    formControlName="label"
+                    class="input block-item-label"
+                    [placeholder]="'ADMIN.BLOCK_LABEL_PLACEHOLDER' | translate"
+                  />
+                </div>
+                <div class="array-item-actions">
+                  <button type="button" class="icon-btn" [title]="'ADMIN.MOVE_UP' | translate" (click)="moveItemUp(itemIdx)" [disabled]="itemIdx === 0">
+                    <span class="material-symbols-outlined">arrow_upward</span>
+                  </button>
+                  <button type="button" class="icon-btn" [title]="'ADMIN.MOVE_DOWN' | translate" (click)="moveItemDown(itemIdx)" [disabled]="itemIdx === items.length - 1">
+                    <span class="material-symbols-outlined">arrow_downward</span>
+                  </button>
+                  <button type="button" class="icon-btn" [title]="'ADMIN.COPY_STEP' | translate" (click)="copyItem(itemIdx)">
+                    <span class="material-symbols-outlined">content_copy</span>
+                  </button>
+                  <button type="button" class="icon-btn icon-btn--danger" [title]="'ADMIN.REMOVE_BLOCK' | translate" (click)="removeItem(itemIdx)">
+                    <span class="material-symbols-outlined">delete</span>
+                  </button>
+                </div>
+              </div>
+
+              <div class="block-item-steps">
+                @for (bStep of blockSteps(itemIdx).controls; track $index; let stepIdx = $index) {
+                  <div class="array-item array-item--nested">
+                    <div class="array-item-header">
+                      <span class="array-item-index">{{ stepIdx + 1 }}</span>
+                      <div class="array-item-actions">
+                        <button type="button" class="icon-btn" [title]="'ADMIN.MOVE_UP' | translate" (click)="moveStepInBlockUp(itemIdx, stepIdx)" [disabled]="stepIdx === 0">
+                          <span class="material-symbols-outlined">arrow_upward</span>
+                        </button>
+                        <button type="button" class="icon-btn" [title]="'ADMIN.MOVE_DOWN' | translate" (click)="moveStepInBlockDown(itemIdx, stepIdx)" [disabled]="stepIdx === blockSteps(itemIdx).length - 1">
+                          <span class="material-symbols-outlined">arrow_downward</span>
+                        </button>
+                        <button type="button" class="icon-btn" [title]="'ADMIN.COPY_STEP' | translate" (click)="copyStepInBlock(itemIdx, stepIdx)">
+                          <span class="material-symbols-outlined">content_copy</span>
+                        </button>
+                        <button type="button" class="icon-btn icon-btn--danger" [title]="'ADMIN.REMOVE' | translate" (click)="removeStepFromBlock(itemIdx, stepIdx)" [disabled]="blockSteps(itemIdx).length <= 1">
+                          <span class="material-symbols-outlined">delete</span>
+                        </button>
+                      </div>
+                    </div>
+                    <div class="field-grid field-grid--compact" [formGroup]="blockStepGroup(itemIdx, stepIdx)">
+                      <div class="field">
+                        <label>{{ 'COMMON.TYPE' | translate }}</label>
+                        <select formControlName="stepType" class="input">
+                          <option value="">{{ 'ADMIN.SELECT' | translate }}</option>
+                          <option value="warmup">{{ 'ADMIN.STEP_WARMUP' | translate }}</option>
+                          <option value="work">{{ 'ADMIN.STEP_WORK' | translate }}</option>
+                          <option value="recovery">{{ 'ADMIN.STEP_RECOVERY' | translate }}</option>
+                          <option value="cooldown">{{ 'ADMIN.STEP_COOLDOWN' | translate }}</option>
+                          <option value="rest">{{ 'ADMIN.STEP_REST' | translate }}</option>
+                        </select>
+                      </div>
+                      <div class="field">
+                        <label>{{ 'ADMIN.SUBTITLE' | translate }}</label>
+                        <input formControlName="subtitle" type="text" [placeholder]="'ADMIN.SUBTITLE_PLACEHOLDER' | translate" class="input" />
+                      </div>
+                      <div class="field">
+                        <label>{{ 'ADMIN.MEASUREMENT' | translate }}</label>
+                        <select formControlName="measurementType" class="input" (change)="onMeasurementTypeChange(blockStepGroup(itemIdx, stepIdx))">
+                          <option value="duration">{{ 'COMMON.DURATION' | translate }}</option>
+                          <option value="distance">{{ 'COMMON.DISTANCE' | translate }}</option>
+                        </select>
+                      </div>
+                      <div class="field">
+                        <label>{{ blockStepGroup(itemIdx, stepIdx).get('measurementType')?.value === 'distance' ? ('ADMIN.DISTANCE_M' | translate) : ('ADMIN.DURATION_MMSS' | translate) }}</label>
+                        @if (blockStepGroup(itemIdx, stepIdx).get('measurementType')?.value === 'distance') {
+                          <input formControlName="distanceMeters" type="number" min="1" [placeholder]="'ADMIN.DISTANCE_PLACEHOLDER' | translate" class="input" [class.invalid]="blockStepGroup(itemIdx, stepIdx).get('distanceMeters')?.invalid && blockStepGroup(itemIdx, stepIdx).get('distanceMeters')?.touched" />
+                          @if (blockStepGroup(itemIdx, stepIdx).get('distanceMeters')?.hasError('invalidDistance') && blockStepGroup(itemIdx, stepIdx).get('distanceMeters')?.touched) {
+                            <span class="field-error">{{ 'ADMIN.DISTANCE_HINT' | translate }}</span>
+                          }
+                        } @else {
+                          <input formControlName="durationText" type="text" inputmode="numeric" maxlength="5" [placeholder]="'ADMIN.DURATION_PLACEHOLDER' | translate" class="input" [class.invalid]="blockStepGroup(itemIdx, stepIdx).get('durationText')?.invalid && blockStepGroup(itemIdx, stepIdx).get('durationText')?.touched" (input)="onMaskedTimeInput(blockStepGroup(itemIdx, stepIdx), 'durationText')" (blur)="onMaskedTimeBlur(blockStepGroup(itemIdx, stepIdx), 'durationText')" />
+                          @if (blockStepGroup(itemIdx, stepIdx).get('durationText')?.hasError('invalidDuration') && blockStepGroup(itemIdx, stepIdx).get('durationText')?.touched) {
+                            <span class="field-error">{{ 'ADMIN.DURATION_HINT' | translate }}</span>
+                          }
+                        }
+                      </div>
+                      <div class="field">
+                        <label>{{ 'ADMIN.PACE_DISPLAY' | translate }}</label>
+                        <input formControlName="paceDisplay" type="text" inputmode="numeric" maxlength="5" placeholder="e.g. 04:15" class="input" [class.invalid]="blockStepGroup(itemIdx, stepIdx).get('paceDisplay')?.invalid && blockStepGroup(itemIdx, stepIdx).get('paceDisplay')?.touched" (input)="onMaskedTimeInput(blockStepGroup(itemIdx, stepIdx), 'paceDisplay')" (blur)="onMaskedTimeBlur(blockStepGroup(itemIdx, stepIdx), 'paceDisplay')" />
+                        @if (blockStepGroup(itemIdx, stepIdx).get('paceDisplay')?.hasError('invalidPaceDisplay') && blockStepGroup(itemIdx, stepIdx).get('paceDisplay')?.touched) {
+                          <span class="field-error">{{ 'ADMIN.DURATION_HINT' | translate }}</span>
+                        }
+                      </div>
+                      <div class="field">
+                        <label>{{ 'ADMIN.ICON' | translate }}</label>
+                        <input formControlName="icon" type="text" [placeholder]="'ADMIN.ICON_PLACEHOLDER' | translate" class="input" />
+                      </div>
+                      <div class="field checkboxes">
+                        <label class="checkbox-label">
+                          <input formControlName="highlight" type="checkbox" />
+                          {{ 'ADMIN.HIGHLIGHT' | translate }}
+                        </label>
+                        <label class="checkbox-label">
+                          <input formControlName="muted" type="checkbox" />
+                          {{ 'ADMIN.MUTED' | translate }}
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                }
+              </div>
+
+              <button type="button" class="btn-ghost small block-item-add" (click)="addStepToBlock(itemIdx)">
+                <span class="material-symbols-outlined">add</span>
+                {{ 'ADMIN.ADD_STEP_TO_BLOCK' | translate }}
+              </button>
+            </div>
+          }
         }
       </section>
 
