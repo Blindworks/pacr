@@ -58,6 +58,12 @@ export class TrainingDetail implements OnInit {
   private readonly translate = inject(TranslateService);
   training: TrainingDetailData | null = null;
 
+  private readonly TRAINING_TYPE_IMAGE_COUNT = 3;
+  private readonly TRAINING_TYPE_CATEGORIES = [
+    'recovery', 'endurance', 'speed', 'strength', 'race',
+    'swimming', 'cycling', 'fartlek', 'general'
+  ];
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -94,7 +100,7 @@ export class TrainingDetail implements OnInit {
       estimatedDistance: t.estimatedDistanceMeters
         ? `${(t.estimatedDistanceMeters / 1000).toFixed(1)} km`
         : '—',
-      heroImage: t.heroImageUrl || null,
+      heroImage: t.heroImageUrl || this.pickHeroImage(t.trainingType, t.id),
       items: this.mergeStepsAndBlocks(t.steps || [], t.blocks || []),
       prepTips: (t.prepTips || []).map(p => ({
         icon: p.icon || '',
@@ -143,6 +149,13 @@ export class TrainingDetail implements OnInit {
 
   goBack(): void {
     this.router.navigate(['/training-plans']);
+  }
+
+  private pickHeroImage(trainingType: string | undefined, id: number): string {
+    const normalized = (trainingType ?? '').toLowerCase();
+    const category = this.TRAINING_TYPE_CATEGORIES.includes(normalized) ? normalized : 'general';
+    const index = (Math.abs(id) % this.TRAINING_TYPE_IMAGE_COUNT) + 1;
+    return `assets/images/trainings/${category}-${index}.webp`;
   }
 
   private getDefaultStepIcon(stepType?: string): string {
