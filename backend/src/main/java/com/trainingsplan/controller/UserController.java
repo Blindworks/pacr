@@ -294,6 +294,39 @@ public class UserController {
         return ResponseEntity.ok(userService.clearLocation(user.getId()));
     }
 
+    public record UpdateNewsLanguagesRequest(List<String> languages) {}
+
+    /** Languages accepted by the news-language preference endpoint. Keep in sync with frontend. */
+    private static final java.util.Set<String> SUPPORTED_NEWS_LANGUAGES = java.util.Set.of("de", "en");
+
+    @PutMapping("/me/news-languages")
+    public ResponseEntity<?> updateMyNewsLanguages(@RequestBody UpdateNewsLanguagesRequest request) {
+        User user = securityUtils.getCurrentUser();
+        if (user == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        if (request == null || request.languages() == null) {
+            return ResponseEntity.badRequest().body(Map.of("message", "languages field required"));
+        }
+        List<String> normalized = request.languages().stream()
+                .filter(s -> s != null && !s.isBlank())
+                .map(s -> s.trim().toLowerCase())
+                .distinct()
+                .toList();
+        for (String lang : normalized) {
+            if (!SUPPORTED_NEWS_LANGUAGES.contains(lang)) {
+                return ResponseEntity.badRequest().body(Map.of(
+                        "message", "Unsupported language: " + lang,
+                        "supported", SUPPORTED_NEWS_LANGUAGES));
+            }
+        }
+        String stored = normalized.isEmpty() ? null : String.join(",", normalized);
+        User updated = userService.updatePreferredNewsLanguages(user.getId(), stored);
+        return ResponseEntity.ok(Map.of(
+                "preferredNewsLanguages", updated.getPreferredNewsLanguages() == null
+                        ? List.of()
+                        : List.of(updated.getPreferredNewsLanguages().split(","))
+        ));
+    }
+
     @PutMapping("/me/complete-onboarding")
     public ResponseEntity<User> completeOnboarding() {
         User user = securityUtils.getCurrentUser();

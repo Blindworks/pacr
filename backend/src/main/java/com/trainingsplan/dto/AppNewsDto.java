@@ -17,5 +17,10 @@ public record AppNewsDto(
     long likeCount,
     long commentCount,
     boolean hasLiked,
-    boolean isTrending
+    boolean isTrending,
+    // External-source metadata (set only for news imported from RSS feeds)
+    String externalUrl,
+    String externalImageUrl,
+    String sourceName,
+    String language
 ) {}

@@ -42,6 +42,27 @@ public class AppNews {
     @Column(name = "is_published")
     private boolean isPublished = false;
 
+    /** Unique identifier from the external feed (RSS guid or link) — used for dedup. */
+    @Column(name = "external_guid", length = 500, unique = true)
+    private String externalGuid;
+
+    /** URL of the original article at the source feed provider (for "read more" links). */
+    @Column(name = "external_url", length = 1000)
+    private String externalUrl;
+
+    /** URL of the hero image at the source feed provider (referenced, not downloaded). */
+    @Column(name = "external_image_url", length = 1000)
+    private String externalImageUrl;
+
+    /** ISO 639-1 language code for this news item (e.g. "de", "en"). Null for legacy manual items. */
+    @Column(name = "language", length = 2)
+    private String language;
+
+    /** Reference to the {@link ExternalNewsSource} this news was imported from (null for manually created news). */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "external_source_id")
+    private ExternalNewsSource externalSource;
+
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     public String getTitle() { return title; }
@@ -64,4 +85,14 @@ public class AppNews {
     public void setPublishedAt(LocalDateTime publishedAt) { this.publishedAt = publishedAt; }
     public boolean isPublished() { return isPublished; }
     public void setPublished(boolean published) { isPublished = published; }
+    public String getExternalGuid() { return externalGuid; }
+    public void setExternalGuid(String externalGuid) { this.externalGuid = externalGuid; }
+    public String getExternalUrl() { return externalUrl; }
+    public void setExternalUrl(String externalUrl) { this.externalUrl = externalUrl; }
+    public String getExternalImageUrl() { return externalImageUrl; }
+    public void setExternalImageUrl(String externalImageUrl) { this.externalImageUrl = externalImageUrl; }
+    public String getLanguage() { return language; }
+    public void setLanguage(String language) { this.language = language; }
+    public ExternalNewsSource getExternalSource() { return externalSource; }
+    public void setExternalSource(ExternalNewsSource externalSource) { this.externalSource = externalSource; }
 }

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="114-1" author="benedikt">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="app_news" columnName="external_guid"/>
+            </not>
+        </preConditions>
+        <comment>Add external source tracking columns to app_news</comment>
+        <addColumn tableName="app_news">
+            <column name="external_guid" type="VARCHAR(500)"/>
+            <column name="external_url" type="VARCHAR(1000)"/>
+            <column name="external_image_url" type="VARCHAR(1000)"/>
+            <column name="language" type="VARCHAR(2)"/>
+            <column name="external_source_id" type="BIGINT"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="114-2" author="benedikt">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <indexExists indexName="uk_app_news_external_guid"/>
+            </not>
+        </preConditions>
+        <comment>Unique index on external_guid for deduplication</comment>
+        <createIndex tableName="app_news" indexName="uk_app_news_external_guid" unique="true">
+            <column name="external_guid"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="114-3" author="benedikt">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <foreignKeyConstraintExists foreignKeyName="fk_app_news_external_source"/>
+            </not>
+        </preConditions>
+        <comment>Foreign key from app_news to external_news_source</comment>
+        <addForeignKeyConstraint
+                baseTableName="app_news"
+                baseColumnNames="external_source_id"
+                referencedTableName="external_news_source"
+                referencedColumnNames="id"
+                constraintName="fk_app_news_external_source"
+                onDelete="SET NULL"/>
+    </changeSet>
+
+</databaseChangeLog>

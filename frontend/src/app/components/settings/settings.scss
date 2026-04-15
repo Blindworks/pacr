@@ -280,6 +280,32 @@
   background: var(--panel-soft);
   border-radius: 0.85rem;
   gap: 1rem;
+
+  &--block {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+}
+
+.checkbox-group {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+
+  .chk {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    cursor: pointer;
+    font-size: 0.85rem;
+    padding: 0.35rem 0.65rem;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--panel);
+
+    input[type="checkbox"] { margin: 0; }
+  }
 }
 
 .toggle-info {
