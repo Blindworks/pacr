@@ -403,3 +403,35 @@
     </div>
   </div>
 }
+
+@if (articleOpen() && articleNews(); as article) {
+  <div class="modal-backdrop" (click)="closeArticle()">
+    <div class="modal-panel modal-panel--article" (click)="$event.stopPropagation()">
+      <header class="modal-head">
+        @if (article.topicTag) {
+          <span class="chip chip--tag">#{{ article.topicTag }}</span>
+        }
+        <button class="icon-btn" (click)="closeArticle()" aria-label="Close">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </header>
+      @if (article.heroImageFilename) {
+        <img class="article-hero-img" [src]="article.heroImageFilename" [alt]="article.title" />
+      }
+      <div class="modal-body article-body">
+        <h2 class="article-title">{{ article.title }}</h2>
+        <div class="article-meta">
+          <span>{{ 'NEWS_HUB.BY_AUTHOR' | translate }}</span>
+          <span>·</span>
+          <span>{{ article.publishedAt | date:'mediumDate' }}</span>
+        </div>
+        <div class="article-content" [innerHTML]="article.content"></div>
+        <div class="counter-row">
+          <span class="counter"><span class="material-symbols-outlined">visibility</span>{{ article.viewCount }}</span>
+          <span class="counter"><span class="material-symbols-outlined">{{ article.hasLiked ? 'favorite' : 'favorite_border' }}</span>{{ article.likeCount }}</span>
+          <span class="counter"><span class="material-symbols-outlined">chat_bubble_outline</span>{{ article.commentCount }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+}

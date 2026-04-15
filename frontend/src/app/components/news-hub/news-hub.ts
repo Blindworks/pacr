@@ -62,6 +62,10 @@ export class NewsHub implements OnInit, OnDestroy {
   newsCommentsLoading = signal<Record<number, boolean>>({});
   newsCommentDrafts: Record<number, string> = {};
 
+  // Article detail modal
+  articleOpen = signal<boolean>(false);
+  articleNews = signal<PublicNews | null>(null);
+
   currentUserId = computed(() => this.userService.currentUser()?.id ?? null);
 
   feed = computed<FeedEntry[]>(() => {
@@ -245,6 +249,13 @@ export class NewsHub implements OnInit, OnDestroy {
 
   openNews(news: PublicNews): void {
     this.newsService.recordView(news.id).subscribe({ error: () => {} });
+    this.articleNews.set(news);
+    this.articleOpen.set(true);
+  }
+
+  closeArticle(): void {
+    this.articleOpen.set(false);
+    this.articleNews.set(null);
   }
 
   openTopic(topic: TrendingTopic): void {
