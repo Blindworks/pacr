@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="109-1" author="benedikt">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="activity_kudos"/>
+            </not>
+        </preConditions>
+        <comment>Create activity_kudos table (one kudo per user per completed training)</comment>
+        <createTable tableName="activity_kudos">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="completed_training_id" type="BIGINT">
+                <constraints nullable="false" foreignKeyName="fk_activity_kudos_ct" references="completed_trainings(id)" deleteCascade="true"/>
+            </column>
+            <column name="user_id" type="BIGINT">
+                <constraints nullable="false" foreignKeyName="fk_activity_kudos_user" references="users(id)" deleteCascade="true"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addUniqueConstraint tableName="activity_kudos"
+                             columnNames="completed_training_id, user_id"
+                             constraintName="uk_activity_kudos_pair"/>
+    </changeSet>
+
+</databaseChangeLog>

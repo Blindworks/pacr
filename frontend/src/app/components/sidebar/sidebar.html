@@ -28,6 +28,10 @@
 
   <!-- Scrollable Navigation -->
   <nav class="nav">
+    <a routerLink="/news-hub" routerLinkActive="active" class="nav-item" [attr.title]="collapsed() && !isMobile() ? ('NAV.NEWS_HUB' | translate) : null">
+      <span class="material-symbols-outlined">newspaper</span>
+      @if (!collapsed() || isMobile()) { <span>{{ 'NAV.NEWS_HUB' | translate }}</span> }
+    </a>
     <a routerLink="/dashboard" routerLinkActive="active" class="nav-item" [attr.title]="collapsed() && !isMobile() ? ('NAV.DASHBOARD' | translate) : null">
       <span class="material-symbols-outlined">dashboard</span>
       @if (!collapsed() || isMobile()) { <span>{{ 'NAV.DASHBOARD' | translate }}</span> }

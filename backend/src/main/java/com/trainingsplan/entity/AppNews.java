@@ -17,6 +17,18 @@ public class AppNews {
     @Column(columnDefinition = "TEXT", nullable = false)
     private String content;
 
+    @Column(length = 500)
+    private String excerpt;
+
+    @Column(name = "topic_tag", length = 64)
+    private String topicTag;
+
+    @Column(name = "hero_image_filename", length = 255)
+    private String heroImageFilename;
+
+    @Column(name = "is_featured", nullable = false)
+    private boolean isFeatured = false;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "created_by_user_id")
     private User createdBy;
@@ -36,6 +48,14 @@ public class AppNews {
     public void setTitle(String title) { this.title = title; }
     public String getContent() { return content; }
     public void setContent(String content) { this.content = content; }
+    public String getExcerpt() { return excerpt; }
+    public void setExcerpt(String excerpt) { this.excerpt = excerpt; }
+    public String getTopicTag() { return topicTag; }
+    public void setTopicTag(String topicTag) { this.topicTag = topicTag; }
+    public String getHeroImageFilename() { return heroImageFilename; }
+    public void setHeroImageFilename(String heroImageFilename) { this.heroImageFilename = heroImageFilename; }
+    public boolean isFeatured() { return isFeatured; }
+    public void setFeatured(boolean featured) { isFeatured = featured; }
     public User getCreatedBy() { return createdBy; }
     public void setCreatedBy(User createdBy) { this.createdBy = createdBy; }
     public LocalDateTime getCreatedAt() { return createdAt; }

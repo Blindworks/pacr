@@ -2,6 +2,7 @@ package com.trainingsplan.controller;
 
 import com.trainingsplan.dto.FriendActivityDto;
 import com.trainingsplan.dto.FriendshipDto;
+import com.trainingsplan.dto.LiveTrainingFriendDto;
 import com.trainingsplan.dto.UserSearchResultDto;
 import com.trainingsplan.entity.User;
 import com.trainingsplan.security.SecurityUtils;
@@ -136,5 +137,13 @@ public class FriendshipController {
         if (user == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         List<FriendActivityDto> activities = friendshipService.getFriendsActivity(user);
         return ResponseEntity.ok(activities);
+    }
+
+    @GetMapping("/live-training")
+    public ResponseEntity<?> liveTraining() {
+        User user = securityUtils.getCurrentUser();
+        if (user == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        List<LiveTrainingFriendDto> live = friendshipService.getLiveTrainingFriends(user);
+        return ResponseEntity.ok(live);
     }
 }

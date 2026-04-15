@@ -30,6 +30,12 @@ public interface FriendshipRepository extends JpaRepository<Friendship, Long> {
             "   OR (f.requester.id = :b AND f.addressee.id = :a)")
     boolean existsBetween(@Param("a") Long userA, @Param("b") Long userB);
 
+    @Query("SELECT CASE WHEN COUNT(f) > 0 THEN true ELSE false END FROM Friendship f " +
+            "WHERE f.status = com.trainingsplan.entity.FriendshipStatus.ACCEPTED " +
+            "AND ((f.requester.id = :a AND f.addressee.id = :b) " +
+            "  OR (f.requester.id = :b AND f.addressee.id = :a))")
+    boolean areAcceptedFriends(@Param("a") Long userA, @Param("b") Long userB);
+
     @Query("SELECT f FROM Friendship f WHERE " +
             "(f.requester.id = :a AND f.addressee.id = :b) " +
             "OR (f.requester.id = :b AND f.addressee.id = :a)")

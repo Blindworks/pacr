@@ -20,6 +20,10 @@ export class NewsForm implements OnInit {
   newsId = signal<number | null>(null);
   title = signal('');
   content = signal('');
+  excerpt = signal('');
+  topicTag = signal('');
+  heroImageFilename = signal('');
+  isFeatured = signal(false);
   saving = signal(false);
   error = signal('');
 
@@ -33,6 +37,10 @@ export class NewsForm implements OnInit {
           if (item) {
             this.title.set(item.title);
             this.content.set(item.content);
+            this.excerpt.set(item.excerpt ?? '');
+            this.topicTag.set(item.topicTag ?? '');
+            this.heroImageFilename.set(item.heroImageFilename ?? '');
+            this.isFeatured.set(item.isFeatured ?? false);
           }
         }
       });
@@ -48,7 +56,14 @@ export class NewsForm implements OnInit {
     this.saving.set(true);
     this.error.set('');
 
-    const data: CreateNewsRequest = { title: this.title(), content: this.content() };
+    const data: CreateNewsRequest = {
+      title: this.title(),
+      content: this.content(),
+      excerpt: this.excerpt() || null,
+      topicTag: this.topicTag() || null,
+      heroImageFilename: this.heroImageFilename() || null,
+      isFeatured: this.isFeatured()
+    };
     const id = this.newsId();
     const call = id ? this.newsService.update(id, data) : this.newsService.create(data);
 

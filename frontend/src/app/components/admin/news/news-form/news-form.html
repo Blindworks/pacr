@@ -16,6 +16,34 @@
                 name="content" rows="8" [placeholder]="'ADMIN.NEWS_CONTENT_PLACEHOLDER' | translate"></textarea>
     </div>
 
+    <div class="field">
+      <label for="excerpt">{{ 'ADMIN.NEWS_EXCERPT' | translate }}</label>
+      <textarea id="excerpt" [ngModel]="excerpt()" (ngModelChange)="excerpt.set($event)"
+                name="excerpt" rows="2" maxlength="500"
+                [placeholder]="'ADMIN.NEWS_EXCERPT_PLACEHOLDER' | translate"></textarea>
+    </div>
+
+    <div class="field">
+      <label for="topicTag">{{ 'ADMIN.NEWS_TOPIC_TAG' | translate }}</label>
+      <input id="topicTag" type="text" [ngModel]="topicTag()" (ngModelChange)="topicTag.set($event)"
+             name="topicTag" maxlength="64"
+             [placeholder]="'ADMIN.NEWS_TOPIC_TAG_PLACEHOLDER' | translate" />
+    </div>
+
+    <div class="field">
+      <label for="heroImage">{{ 'ADMIN.NEWS_HERO_IMAGE' | translate }}</label>
+      <input id="heroImage" type="text" [ngModel]="heroImageFilename()" (ngModelChange)="heroImageFilename.set($event)"
+             name="heroImage"
+             [placeholder]="'ADMIN.NEWS_HERO_IMAGE_PLACEHOLDER' | translate" />
+    </div>
+
+    <div class="field field--inline">
+      <label>
+        <input type="checkbox" [ngModel]="isFeatured()" (ngModelChange)="isFeatured.set($event)" name="isFeatured" />
+        <span>{{ 'ADMIN.NEWS_FEATURED' | translate }}</span>
+      </label>
+    </div>
+
     @if (error()) {
       <p class="form-error">{{ error() }}</p>
     }

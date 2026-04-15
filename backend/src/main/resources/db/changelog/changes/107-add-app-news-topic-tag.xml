@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="107-1" author="benedikt">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="app_news" columnName="topic_tag"/>
+            </not>
+        </preConditions>
+        <comment>Add topic_tag column to app_news for trending topics</comment>
+        <addColumn tableName="app_news">
+            <column name="topic_tag" type="VARCHAR(64)"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="107-2" author="benedikt">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="app_news" columnName="hero_image_filename"/>
+            </not>
+        </preConditions>
+        <comment>Add hero_image_filename column to app_news</comment>
+        <addColumn tableName="app_news">
+            <column name="hero_image_filename" type="VARCHAR(255)"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="107-3" author="benedikt">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="app_news" columnName="is_featured"/>
+            </not>
+        </preConditions>
+        <comment>Add is_featured flag to app_news for hero slot selection</comment>
+        <addColumn tableName="app_news">
+            <column name="is_featured" type="BOOLEAN" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="107-4" author="benedikt">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="app_news" columnName="excerpt"/>
+            </not>
+        </preConditions>
+        <comment>Add short excerpt field for editorial cards</comment>
+        <addColumn tableName="app_news">
+            <column name="excerpt" type="VARCHAR(500)"/>
+        </addColumn>
+    </changeSet>
+
+</databaseChangeLog>

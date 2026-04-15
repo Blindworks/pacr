@@ -7,6 +7,10 @@ export interface AppNews {
   id: number;
   title: string;
   content: string;
+  excerpt: string | null;
+  topicTag: string | null;
+  heroImageFilename: string | null;
+  isFeatured: boolean;
   isPublished: boolean;
   publishedAt: string | null;
   createdAt: string;
@@ -15,6 +19,10 @@ export interface AppNews {
 export interface CreateNewsRequest {
   title: string;
   content: string;
+  excerpt?: string | null;
+  topicTag?: string | null;
+  heroImageFilename?: string | null;
+  isFeatured?: boolean;
 }
 
 @Injectable({ providedIn: 'root' })

@@ -27,6 +27,7 @@ export interface Friendship {
 }
 
 export interface FriendActivity {
+  activityId: number;
   friendId: number;
   friendUsername: string;
   friendDisplayName: string;
@@ -44,6 +45,18 @@ export interface FriendActivity {
   calories: number | null;
   startLatitude: number | null;
   startLongitude: number | null;
+  previewTrack?: [number, number][] | null;
+}
+
+export interface LiveTrainingFriend {
+  friendId: number;
+  username: string;
+  displayName: string;
+  profileImageFilename: string | null;
+  trainingTitle: string | null;
+  trainingType: string | null;
+  durationMinutes: number | null;
+  workPace: string | null;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -93,5 +106,9 @@ export class FriendshipService {
 
   getActivity(): Observable<FriendActivity[]> {
     return this.http.get<FriendActivity[]>(`${BASE}/activity`);
+  }
+
+  getLiveTraining(): Observable<LiveTrainingFriend[]> {
+    return this.http.get<LiveTrainingFriend[]>(`${BASE}/live-training`);
   }
 }

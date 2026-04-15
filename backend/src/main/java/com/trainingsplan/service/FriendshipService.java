@@ -2,18 +2,27 @@ package com.trainingsplan.service;
 
 import com.trainingsplan.dto.FriendActivityDto;
 import com.trainingsplan.dto.FriendshipDto;
+import com.trainingsplan.dto.LiveTrainingFriendDto;
 import com.trainingsplan.dto.UserSearchResultDto;
 import com.trainingsplan.entity.CompletedTraining;
 import com.trainingsplan.entity.Friendship;
 import com.trainingsplan.entity.FriendshipStatus;
+import com.trainingsplan.entity.Training;
 import com.trainingsplan.entity.User;
+import com.trainingsplan.entity.UserTrainingEntry;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.trainingsplan.entity.ActivityStream;
+import com.trainingsplan.repository.ActivityStreamRepository;
 import com.trainingsplan.repository.CompletedTrainingRepository;
 import com.trainingsplan.repository.FriendshipRepository;
 import com.trainingsplan.repository.UserRepository;
+import com.trainingsplan.repository.UserTrainingEntryRepository;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -27,13 +36,20 @@ public class FriendshipService {
     private final FriendshipRepository friendshipRepository;
     private final UserRepository userRepository;
     private final CompletedTrainingRepository completedTrainingRepository;
+    private final UserTrainingEntryRepository userTrainingEntryRepository;
+    private final ActivityStreamRepository activityStreamRepository;
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     public FriendshipService(FriendshipRepository friendshipRepository,
                               UserRepository userRepository,
-                              CompletedTrainingRepository completedTrainingRepository) {
+                              CompletedTrainingRepository completedTrainingRepository,
+                              UserTrainingEntryRepository userTrainingEntryRepository,
+                              ActivityStreamRepository activityStreamRepository) {
         this.friendshipRepository = friendshipRepository;
         this.userRepository = userRepository;
         this.completedTrainingRepository = completedTrainingRepository;
+        this.userTrainingEntryRepository = userTrainingEntryRepository;
+        this.activityStreamRepository = activityStreamRepository;
     }
 
     @Transactional(readOnly = true)
@@ -166,6 +182,39 @@ public class FriendshipService {
                 .toList();
     }
 
+    /**
+     * Returns friends that have a training planned for today which is not yet marked as completed.
+     * Pragmatic "Live Training Now" MVP: without a real-time tracking subsystem, we surface
+     * today's pending planned trainings from accepted friends.
+     */
+    @Transactional(readOnly = true)
+    public List<LiveTrainingFriendDto> getLiveTrainingFriends(User user) {
+        List<Friendship> friendships = friendshipRepository.findAcceptedFriendships(user.getId());
+        LocalDate today = LocalDate.now();
+        List<LiveTrainingFriendDto> result = new ArrayList<>();
+        for (Friendship f : friendships) {
+            User friend = f.getOtherUser(user.getId());
+            List<UserTrainingEntry> entries = userTrainingEntryRepository
+                    .findEntriesForUserByDate(friend.getId(), today);
+            for (UserTrainingEntry e : entries) {
+                if (Boolean.TRUE.equals(e.getCompleted())) continue;
+                Training t = e.getTraining();
+                result.add(new LiveTrainingFriendDto(
+                        friend.getId(),
+                        friend.getUsername(),
+                        buildDisplayName(friend),
+                        friend.getProfileImageFilename(),
+                        t != null ? t.getName() : null,
+                        t != null ? t.getTrainingType() : null,
+                        t != null ? t.getDurationMinutes() : null,
+                        t != null ? t.getWorkPace() : null
+                ));
+            }
+        }
+        if (result.size() > 20) return result.subList(0, 20);
+        return result;
+    }
+
     @Transactional(readOnly = true)
     public List<FriendActivityDto> getFriendsActivity(User user) {
         List<Friendship> friendships = friendshipRepository.findAcceptedFriendships(user.getId());
@@ -221,6 +270,7 @@ public class FriendshipService {
 
     private FriendActivityDto toActivityDto(CompletedTraining ct, User friend) {
         FriendActivityDto dto = new FriendActivityDto();
+        dto.setActivityId(ct.getId());
         dto.setFriendId(friend.getId());
         dto.setFriendUsername(friend.getUsername());
         dto.setFriendDisplayName(buildDisplayName(friend));
@@ -238,7 +288,72 @@ public class FriendshipService {
         dto.setCalories(ct.getCalories());
         dto.setStartLatitude(ct.getStartLatitude());
         dto.setStartLongitude(ct.getStartLongitude());
+        dto.setPreviewTrack(loadPreviewTrack(ct.getId()));
         return dto;
+    }
+
+    /**
+     * Loads the GPS stream for a completed training and downsamples it to a handful of
+     * points so the frontend can draw a route silhouette without shipping full resolution.
+     */
+    private double[][] loadPreviewTrack(Long completedTrainingId) {
+        if (completedTrainingId == null) return null;
+        Optional<ActivityStream> stream = activityStreamRepository.findByCompletedTrainingId(completedTrainingId);
+        if (stream.isEmpty()) return null;
+        double[][] full = parseGpsTrack(stream.get().getLatlngJson());
+        if (full == null || full.length < 2) return null;
+        return downsampleTrack(full, 60);
+    }
+
+    private double[][] parseGpsTrack(String json) {
+        if (json == null || json.isBlank()) return null;
+        try {
+            JsonNode root = objectMapper.readTree(json);
+            JsonNode dataNode;
+            if (root.isArray()) {
+                dataNode = root;
+            } else if (root.isObject() && root.has("data")) {
+                dataNode = root.get("data");
+            } else {
+                return null;
+            }
+            int size = dataNode.size();
+            if (size == 0) return null;
+            double[][] result = new double[size][2];
+            int idx = 0;
+            for (JsonNode point : dataNode) {
+                if (point.isArray() && point.size() >= 2
+                        && !point.get(0).isNull() && !point.get(1).isNull()) {
+                    result[idx][0] = point.get(0).doubleValue();
+                    result[idx][1] = point.get(1).doubleValue();
+                    idx++;
+                }
+            }
+            if (idx == 0) return null;
+            if (idx < size) {
+                double[][] trimmed = new double[idx][2];
+                System.arraycopy(result, 0, trimmed, 0, idx);
+                return trimmed;
+            }
+            return result;
+        } catch (Exception ignored) {
+            return null;
+        }
+    }
+
+    private double[][] downsampleTrack(double[][] full, int maxPoints) {
+        if (full == null || full.length == 0) return null;
+        if (full.length <= maxPoints) return full;
+        int step = (int) Math.ceil((double) full.length / maxPoints);
+        List<double[]> reduced = new ArrayList<>(maxPoints + 1);
+        for (int i = 0; i < full.length; i += step) {
+            reduced.add(full[i]);
+        }
+        double[] last = full[full.length - 1];
+        if (reduced.get(reduced.size() - 1) != last) {
+            reduced.add(last);
+        }
+        return reduced.toArray(new double[0][]);
     }
 
     private String buildDisplayName(User u) {

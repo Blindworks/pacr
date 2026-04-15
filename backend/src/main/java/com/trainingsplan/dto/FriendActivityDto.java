@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 public class FriendActivityDto {
+    private Long activityId;
     private Long friendId;
     private String friendUsername;
     private String friendDisplayName;
@@ -21,9 +22,12 @@ public class FriendActivityDto {
     private Integer calories;
     private Double startLatitude;
     private Double startLongitude;
+    private double[][] previewTrack;
 
     public FriendActivityDto() {}
 
+    public Long getActivityId() { return activityId; }
+    public void setActivityId(Long activityId) { this.activityId = activityId; }
     public Long getFriendId() { return friendId; }
     public void setFriendId(Long friendId) { this.friendId = friendId; }
     public String getFriendUsername() { return friendUsername; }
@@ -58,4 +62,6 @@ public class FriendActivityDto {
     public void setStartLatitude(Double startLatitude) { this.startLatitude = startLatitude; }
     public Double getStartLongitude() { return startLongitude; }
     public void setStartLongitude(Double startLongitude) { this.startLongitude = startLongitude; }
+    public double[][] getPreviewTrack() { return previewTrack; }
+    public void setPreviewTrack(double[][] previewTrack) { this.previewTrack = previewTrack; }
 }

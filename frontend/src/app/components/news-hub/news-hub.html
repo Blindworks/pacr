@@ -1,0 +1,274 @@
+<div class="news-hub-page">
+  <header class="hub-header">
+    <h1>{{ 'NEWS_HUB.TITLE' | translate }}</h1>
+    <p class="subtitle">{{ 'NEWS_HUB.SUBTITLE' | translate }}</p>
+    <nav class="tabs">
+      <button class="tab" [class.active]="activeTab() === 'all'" (click)="setTab('all')">
+        {{ 'NEWS_HUB.TAB_ALL' | translate }}
+      </button>
+      <button class="tab" [class.active]="activeTab() === 'social'" (click)="setTab('social')">
+        {{ 'NEWS_HUB.TAB_SOCIAL' | translate }}
+      </button>
+      <button class="tab" [class.active]="activeTab() === 'news'" (click)="setTab('news')">
+        {{ 'NEWS_HUB.TAB_NEWS' | translate }}
+      </button>
+    </nav>
+  </header>
+
+  <div class="hub-layout">
+    <main class="hub-main">
+      @if (featured(); as hero) {
+        <article class="hero" (click)="openNews(hero)">
+          @if (hero.heroImageFilename) {
+            <img class="hero-img" [src]="hero.heroImageFilename" [alt]="hero.title" />
+          } @else {
+            <div class="hero-img hero-img--placeholder"></div>
+          }
+          <div class="hero-overlay">
+            @if (hero.topicTag) {
+              <span class="chip chip--brand">#{{ hero.topicTag }}</span>
+            } @else {
+              <span class="chip chip--brand">{{ 'NEWS_HUB.HERO_TAG_FEATURED' | translate }}</span>
+            }
+            <h2 class="hero-title">{{ hero.title }}</h2>
+            @if (hero.excerpt) {
+              <p class="hero-excerpt">{{ hero.excerpt }}</p>
+            }
+            <button class="hero-cta">{{ 'NEWS_HUB.READ_MORE' | translate }}</button>
+          </div>
+        </article>
+      }
+
+      <h3 class="feed-title">{{ 'NEWS_HUB.FEED_TITLE' | translate }}</h3>
+
+      @if (loading()) {
+        <div class="feed-skeleton">
+          <div class="skeleton-card"></div>
+          <div class="skeleton-card"></div>
+        </div>
+      } @else if (feed().length === 0) {
+        <div class="empty">{{ 'NEWS_HUB.EMPTY_FEED' | translate }}</div>
+      } @else {
+        <div class="feed">
+          @for (entry of feed(); track $index) {
+            @if (entry.type === 'news' && entry.news) {
+              <article class="card card--news" (click)="openNews(entry.news)">
+                @if (entry.news.heroImageFilename) {
+                  <img class="card-img" [src]="entry.news.heroImageFilename" [alt]="entry.news.title" />
+                }
+                <div class="card-body">
+                  @if (entry.news.topicTag) {
+                    <span class="chip chip--tag">#{{ entry.news.topicTag }}</span>
+                  }
+                  <h4 class="card-title">{{ entry.news.title }}</h4>
+                  @if (entry.news.excerpt) {
+                    <p class="card-excerpt">{{ entry.news.excerpt }}</p>
+                  }
+                  <div class="card-meta">
+                    <span>{{ 'NEWS_HUB.BY_AUTHOR' | translate }}</span>
+                    <span>·</span>
+                    <span>{{ entry.news.publishedAt | date:'mediumDate' }}</span>
+                  </div>
+                </div>
+              </article>
+            }
+            @if (entry.type === 'social' && entry.social) {
+              <article class="card card--social" [class.has-map]="hasTrack(entry.social) || !!getMapTileUrl(entry.social.startLatitude, entry.social.startLongitude)">
+                @if (hasTrack(entry.social)) {
+                  <div class="map-bg map-bg--route">
+                    <app-route-mini-map [track]="entry.social.previewTrack!"></app-route-mini-map>
+                  </div>
+                } @else if (getMapTileUrl(entry.social.startLatitude, entry.social.startLongitude); as mapUrl) {
+                  <div class="map-bg">
+                    <img [src]="mapUrl" alt="" loading="lazy" />
+                  </div>
+                }
+                <div class="social-head">
+                  <div class="avatar">
+                    @if (avatarUrl(entry.social.friendId)) {
+                      <img [src]="avatarUrl(entry.social.friendId)" [alt]="entry.social.friendDisplayName" />
+                    } @else {
+                      <span>{{ (entry.social.friendDisplayName || entry.social.friendUsername || '?')[0] }}</span>
+                    }
+                  </div>
+                  <div class="social-head-text">
+                    <strong>{{ entry.social.friendDisplayName || entry.social.friendUsername }}</strong>
+                    <span class="muted">{{ 'NEWS_HUB.NEW_ACTIVITY' | translate }}</span>
+                    <span class="muted small">
+                      · {{ entry.social.date | date:'mediumDate' }}@if (entry.social.startTime) { <span>, {{ formatTime(entry.social.startTime) }}</span> }
+                    </span>
+                  </div>
+                </div>
+                <div class="social-body">
+                  <h4 class="social-title">{{ entry.social.title || ('NEWS_HUB.COMPLETED_TRAINING' | translate) }}</h4>
+                  <div class="metrics">
+                    @if (entry.social.distanceKm != null) {
+                      <div class="metric">
+                        <span class="metric-value">{{ entry.social.distanceKm | number:'1.1-2' }}</span>
+                        <span class="metric-label">{{ 'COMMUNITY.FRIENDS.FEED_STAT_DISTANCE' | translate }}</span>
+                      </div>
+                    }
+                    @if (entry.social.durationSeconds != null) {
+                      <div class="metric">
+                        <span class="metric-value">{{ formatDuration(entry.social.durationSeconds) }}</span>
+                        <span class="metric-label">{{ 'COMMUNITY.FRIENDS.FEED_STAT_DURATION' | translate }}</span>
+                      </div>
+                    }
+                    @if (entry.social.averagePaceSecondsPerKm != null) {
+                      <div class="metric">
+                        <span class="metric-value">{{ formatPace(entry.social.averagePaceSecondsPerKm) }}</span>
+                        <span class="metric-label">{{ 'COMMUNITY.FRIENDS.FEED_STAT_PACE' | translate }}</span>
+                      </div>
+                    }
+                    @if (entry.social.averageHeartRate != null) {
+                      <div class="metric">
+                        <span class="metric-value">{{ entry.social.averageHeartRate }}</span>
+                        <span class="metric-label">{{ 'COMMUNITY.FRIENDS.FEED_STAT_BPM' | translate }}</span>
+                      </div>
+                    }
+                    @if (entry.social.elevationGainM != null) {
+                      <div class="metric">
+                        <span class="metric-value">{{ entry.social.elevationGainM }}</span>
+                        <span class="metric-label">{{ 'COMMUNITY.FRIENDS.FEED_STAT_ELEVATION' | translate }}</span>
+                      </div>
+                    }
+                    @if (entry.social.calories != null) {
+                      <div class="metric">
+                        <span class="metric-value">{{ entry.social.calories }}</span>
+                        <span class="metric-label">{{ 'COMMUNITY.FRIENDS.FEED_STAT_CALORIES' | translate }}</span>
+                      </div>
+                    }
+                  </div>
+                </div>
+                <div class="social-actions">
+                  <button class="action" [class.active]="hasKudos(entry.social.activityId)" (click)="toggleKudos(entry.social.activityId)">
+                    <span class="material-symbols-outlined">bolt</span>
+                    <span>{{ 'NEWS_HUB.KUDOS' | translate }} ({{ kudosCount(entry.social.activityId) }})</span>
+                  </button>
+                  <button class="action" (click)="openComments(entry.social)">
+                    <span class="material-symbols-outlined">mode_comment</span>
+                    <span>{{ 'NEWS_HUB.COMMENTS' | translate }} ({{ commentCount(entry.social.activityId) }})</span>
+                  </button>
+                </div>
+              </article>
+            }
+          }
+        </div>
+      }
+    </main>
+
+    <aside class="hub-side">
+      <section class="side-card">
+        <header class="side-card-header">
+          <span class="live-dot"></span>
+          <h3>{{ 'NEWS_HUB.LIVE_TRAINING_NOW' | translate }}</h3>
+        </header>
+        @if (liveTraining().length === 0) {
+          <p class="empty small">{{ 'NEWS_HUB.NO_LIVE_TRAINING' | translate }}</p>
+        } @else {
+          <ul class="live-list">
+            @for (l of liveTraining(); track l.friendId) {
+              <li class="live-item">
+                <div class="avatar avatar--sm">
+                  @if (avatarUrl(l.friendId)) {
+                    <img [src]="avatarUrl(l.friendId)" [alt]="l.displayName" />
+                  } @else {
+                    <span>{{ (l.displayName || l.username || '?')[0] }}</span>
+                  }
+                </div>
+                <div class="live-item-text">
+                  <strong>{{ l.displayName || l.username }}</strong>
+                  <span class="muted small">
+                    {{ 'NEWS_HUB.LIVE_IN_PROGRESS' | translate }}: {{ l.trainingTitle || l.trainingType || '—' }}
+                  </span>
+                </div>
+              </li>
+            }
+          </ul>
+        }
+      </section>
+
+      <section class="side-card">
+        <header class="side-card-header">
+          <span class="material-symbols-outlined">trending_up</span>
+          <h3>{{ 'NEWS_HUB.TRENDING_TOPICS' | translate }}</h3>
+        </header>
+        @if (trending().length === 0) {
+          <p class="empty small">—</p>
+        } @else {
+          <ul class="trending-list">
+            @for (t of trending(); track t.tag) {
+              <li class="trending-item" (click)="openTopic(t)">
+                <span class="chip chip--tag">#{{ t.tag }}</span>
+                @if (t.headline) {
+                  <strong class="trending-headline">{{ t.headline }}</strong>
+                }
+                <span class="muted small">{{ t.viewCount }} · {{ t.newsCount }}</span>
+              </li>
+            }
+          </ul>
+        }
+      </section>
+    </aside>
+  </div>
+</div>
+
+@if (commentsOpen()) {
+  <div class="modal-backdrop" (click)="closeComments()">
+    <div class="modal-panel" (click)="$event.stopPropagation()">
+      <header class="modal-head">
+        <h3>{{ 'NEWS_HUB.COMMENTS_DIALOG_TITLE' | translate }}</h3>
+        <button class="icon-btn" (click)="closeComments()" aria-label="Close">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </header>
+      @if (commentsActivityTitle()) {
+        <p class="modal-subtitle">{{ commentsActivityTitle() }}</p>
+      }
+      <div class="modal-body">
+        @if (commentsLoading()) {
+          <p class="muted">Loading…</p>
+        } @else if (commentsList().length === 0) {
+          <p class="muted">{{ 'NEWS_HUB.COMMENTS_EMPTY' | translate }}</p>
+        } @else {
+          <ul class="comments-list">
+            @for (c of commentsList(); track c.id) {
+              <li class="comment">
+                <div class="avatar avatar--sm">
+                  @if (c.userId && avatarUrl(c.userId)) {
+                    <img [src]="avatarUrl(c.userId!)" [alt]="c.displayName || c.username" />
+                  } @else {
+                    <span>{{ (c.displayName || c.username || '?')[0] }}</span>
+                  }
+                </div>
+                <div class="comment-body">
+                  <div class="comment-meta">
+                    <strong>{{ c.displayName || c.username }}</strong>
+                    <span class="muted small">{{ c.createdAt | date:'short' }}</span>
+                    @if (c.userId && c.userId === currentUserId()) {
+                      <button class="comment-delete" (click)="deleteComment(c.id)">
+                        <span class="material-symbols-outlined">delete</span>
+                      </button>
+                    }
+                  </div>
+                  <p class="comment-text">{{ c.content }}</p>
+                </div>
+              </li>
+            }
+          </ul>
+        }
+      </div>
+      <footer class="modal-foot">
+        <input
+          class="modal-input"
+          type="text"
+          [(ngModel)]="newCommentText"
+          [placeholder]="'NEWS_HUB.ADD_COMMENT' | translate"
+          (keyup.enter)="postComment()" />
+        <button class="post-btn" (click)="postComment()" [disabled]="!newCommentText.trim()">
+          {{ 'NEWS_HUB.POST_COMMENT' | translate }}
+        </button>
+      </footer>
+    </div>
+  </div>
+}

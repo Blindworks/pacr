@@ -47,6 +47,11 @@ export const routes: Routes = [
     data: { fullPage: true }
   },
   {
+    path: 'news-hub',
+    canActivate: [authGuard],
+    loadComponent: () => import('./components/news-hub/news-hub').then(m => m.NewsHub)
+  },
+  {
     path: 'dashboard',
     canActivate: [authGuard],
     loadComponent: () => import('./components/dashboard/dashboard').then(m => m.Dashboard)

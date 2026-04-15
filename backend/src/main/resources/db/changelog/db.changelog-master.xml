@@ -110,5 +110,9 @@
     <include file="db/changelog/changes/104-migrate-existing-competitions-to-formats.xml"/>
     <include file="db/changelog/changes/105-drop-training-steps-repetitions.xml"/>
     <include file="db/changelog/changes/106-add-training-step-blocks.xml"/>
+    <include file="db/changelog/changes/107-add-app-news-topic-tag.xml"/>
+    <include file="db/changelog/changes/108-add-app-news-views.xml"/>
+    <include file="db/changelog/changes/109-add-activity-kudos.xml"/>
+    <include file="db/changelog/changes/110-add-activity-comments.xml"/>
 
 </databaseChangeLog>
