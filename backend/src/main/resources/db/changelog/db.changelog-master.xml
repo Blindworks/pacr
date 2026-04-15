@@ -114,5 +114,7 @@
     <include file="db/changelog/changes/108-add-app-news-views.xml"/>
     <include file="db/changelog/changes/109-add-activity-kudos.xml"/>
     <include file="db/changelog/changes/110-add-activity-comments.xml"/>
+    <include file="db/changelog/changes/111-add-app-news-likes.xml"/>
+    <include file="db/changelog/changes/112-add-app-news-comments.xml"/>
 
 </databaseChangeLog>

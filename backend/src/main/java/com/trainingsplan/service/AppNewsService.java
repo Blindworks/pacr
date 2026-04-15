@@ -1,13 +1,19 @@
 package com.trainingsplan.service;
 
+import com.trainingsplan.dto.AppNewsCommentDto;
 import com.trainingsplan.dto.AppNewsDto;
+import com.trainingsplan.dto.AppNewsLikeDto;
 import com.trainingsplan.dto.CreateAppNewsRequest;
 import com.trainingsplan.dto.TrendingTopicDto;
 import com.trainingsplan.entity.AppNews;
+import com.trainingsplan.entity.AppNewsComment;
+import com.trainingsplan.entity.AppNewsLike;
 import com.trainingsplan.entity.AppNewsSentLog;
 import com.trainingsplan.entity.AppNewsView;
 import com.trainingsplan.entity.User;
 import com.trainingsplan.entity.UserNotificationPreferences;
+import com.trainingsplan.repository.AppNewsCommentRepository;
+import com.trainingsplan.repository.AppNewsLikeRepository;
 import com.trainingsplan.repository.AppNewsRepository;
 import com.trainingsplan.repository.AppNewsSentLogRepository;
 import com.trainingsplan.repository.AppNewsViewRepository;
@@ -28,18 +34,28 @@ public class AppNewsService {
 
     private static final Logger log = LoggerFactory.getLogger(AppNewsService.class);
 
+    private static final int TRENDING_WINDOW_DAYS = 7;
+    private static final long TRENDING_BADGE_MIN_VIEWS = 10L;
+    private static final int COMMENT_MAX_LENGTH = 2000;
+
     private final AppNewsRepository newsRepo;
     private final AppNewsSentLogRepository sentLogRepo;
     private final AppNewsViewRepository viewRepo;
+    private final AppNewsLikeRepository likeRepo;
+    private final AppNewsCommentRepository commentRepo;
     private final UserNotificationPreferencesService notifPrefsService;
     private final EmailService emailService;
 
     public AppNewsService(AppNewsRepository newsRepo, AppNewsSentLogRepository sentLogRepo,
                           AppNewsViewRepository viewRepo,
+                          AppNewsLikeRepository likeRepo,
+                          AppNewsCommentRepository commentRepo,
                           UserNotificationPreferencesService notifPrefsService, EmailService emailService) {
         this.newsRepo = newsRepo;
         this.sentLogRepo = sentLogRepo;
         this.viewRepo = viewRepo;
+        this.likeRepo = likeRepo;
+        this.commentRepo = commentRepo;
         this.notifPrefsService = notifPrefsService;
         this.emailService = emailService;
     }
@@ -127,6 +143,90 @@ public class AppNewsService {
     }
 
     /**
+     * Idempotently toggles like: if user already liked, removes it; otherwise creates it.
+     */
+    @Transactional
+    public AppNewsLikeDto toggleLike(Long newsId, User user) {
+        AppNews news = newsRepo.findById(newsId)
+                .orElseThrow(() -> new IllegalArgumentException("News not found"));
+        if (!news.isPublished()) throw new IllegalArgumentException("News not published");
+        var existing = likeRepo.findByAppNews_IdAndUser_Id(newsId, user.getId());
+        if (existing.isPresent()) {
+            likeRepo.delete(existing.get());
+        } else {
+            likeRepo.save(new AppNewsLike(news, user));
+        }
+        long count = likeRepo.countByAppNews_Id(newsId);
+        boolean has = likeRepo.existsByAppNews_IdAndUser_Id(newsId, user.getId());
+        return new AppNewsLikeDto(count, has);
+    }
+
+    @Transactional(readOnly = true)
+    public List<AppNewsCommentDto> listComments(Long newsId, User currentUser, boolean isAdmin) {
+        AppNews news = newsRepo.findById(newsId)
+                .orElseThrow(() -> new IllegalArgumentException("News not found"));
+        if (!news.isPublished()) throw new IllegalArgumentException("News not published");
+        List<AppNewsComment> comments = commentRepo.findByAppNews_IdOrderByCreatedAtAsc(newsId);
+        return comments.stream().map(c -> toCommentDto(c, currentUser, isAdmin)).toList();
+    }
+
+    @Transactional
+    public AppNewsCommentDto addComment(Long newsId, String content, User user) {
+        if (content == null || content.trim().isEmpty()) {
+            throw new IllegalArgumentException("Comment content required");
+        }
+        if (content.length() > COMMENT_MAX_LENGTH) {
+            throw new IllegalArgumentException("Comment too long");
+        }
+        AppNews news = newsRepo.findById(newsId)
+                .orElseThrow(() -> new IllegalArgumentException("News not found"));
+        if (!news.isPublished()) throw new IllegalArgumentException("News not published");
+        AppNewsComment saved = commentRepo.save(new AppNewsComment(news, user, content.trim()));
+        return toCommentDto(saved, user, false);
+    }
+
+    @Transactional
+    public void deleteComment(Long commentId, User user, boolean isAdmin) {
+        AppNewsComment c = commentRepo.findById(commentId)
+                .orElseThrow(() -> new IllegalArgumentException("Comment not found"));
+        boolean isAuthor = c.getUser() != null && c.getUser().getId().equals(user.getId());
+        if (!isAuthor && !isAdmin) {
+            throw new IllegalStateException("Not allowed to delete this comment");
+        }
+        commentRepo.delete(c);
+    }
+
+    /**
+     * Returns the top-N trending published news by a weighted score
+     * (views + likes*3 + comments*5) over the last TRENDING_WINDOW_DAYS days.
+     */
+    @Transactional(readOnly = true)
+    public List<AppNews> getTrendingNews(int limit) {
+        LocalDateTime from = LocalDateTime.now().minusDays(TRENDING_WINDOW_DAYS);
+        List<AppNews> published = newsRepo.findAllByIsPublishedTrueOrderByPublishedAtDesc();
+        return published.stream()
+                .map(n -> Map.entry(n, computeTrendingScore(n.getId(), from)))
+                .filter(e -> e.getValue() > 0L)
+                .sorted(Map.Entry.<AppNews, Long>comparingByValue().reversed())
+                .limit(Math.max(1, limit))
+                .map(Map.Entry::getKey)
+                .toList();
+    }
+
+    private long computeTrendingScore(Long newsId, LocalDateTime from) {
+        long views = viewRepo.countByAppNews_IdAndViewedAtAfter(newsId, from);
+        long likes = likeRepo.countByAppNews_IdAndCreatedAtAfter(newsId, from);
+        long comments = commentRepo.countByAppNews_IdAndCreatedAtAfter(newsId, from);
+        return views + likes * 3L + comments * 5L;
+    }
+
+    private boolean isTrending(Long newsId) {
+        LocalDateTime from = LocalDateTime.now().minusDays(TRENDING_WINDOW_DAYS);
+        long views = viewRepo.countByAppNews_IdAndViewedAtAfter(newsId, from);
+        return views >= TRENDING_BADGE_MIN_VIEWS;
+    }
+
+    /**
      * Aggregates top trending topicTags from published news of the last 30 days.
      * Returns up to 5 topics sorted by view count, with the most recent news headline per tag.
      */
@@ -176,7 +276,23 @@ public class AppNewsService {
         }
     }
 
+    /**
+     * Used by admin views — no hasLiked context.
+     */
     public AppNewsDto toDto(AppNews news) {
+        return toDto(news, null);
+    }
+
+    /**
+     * User-aware DTO — populates counts and hasLiked flag for the given user.
+     */
+    public AppNewsDto toDto(AppNews news, User currentUser) {
+        long viewCount = viewRepo.countByAppNews_Id(news.getId());
+        long likeCount = likeRepo.countByAppNews_Id(news.getId());
+        long commentCount = commentRepo.countByAppNews_Id(news.getId());
+        boolean hasLiked = currentUser != null
+                && likeRepo.existsByAppNews_IdAndUser_Id(news.getId(), currentUser.getId());
+        boolean trending = isTrending(news.getId());
         return new AppNewsDto(
             news.getId(),
             news.getTitle(),
@@ -187,7 +303,39 @@ public class AppNewsService {
             news.isFeatured(),
             news.isPublished(),
             news.getPublishedAt(),
-            news.getCreatedAt()
+            news.getCreatedAt(),
+            viewCount,
+            likeCount,
+            commentCount,
+            hasLiked,
+            trending
         );
+    }
+
+    private AppNewsCommentDto toCommentDto(AppNewsComment c, User currentUser, boolean isAdmin) {
+        User u = c.getUser();
+        boolean canDelete = (u != null && currentUser != null && u.getId().equals(currentUser.getId()))
+                || isAdmin;
+        return new AppNewsCommentDto(
+                c.getId(),
+                u != null ? u.getId() : null,
+                u != null ? u.getUsername() : null,
+                u != null ? buildDisplayName(u) : null,
+                u != null ? u.getProfileImageFilename() : null,
+                c.getContent(),
+                c.getCreatedAt(),
+                canDelete
+        );
+    }
+
+    private String buildDisplayName(User u) {
+        String first = u.getFirstName();
+        String last = u.getLastName();
+        if (first != null && !first.isBlank() && last != null && !last.isBlank()) {
+            return first + " " + last;
+        }
+        if (first != null && !first.isBlank()) return first;
+        if (last != null && !last.isBlank()) return last;
+        return u.getUsername();
     }
 }

@@ -52,7 +52,17 @@
     "PUBLISHED_AT": "Veröffentlicht",
     "FEED_TITLE": "Neueste",
     "COMMENTS_EMPTY": "Sei der Erste, der kommentiert.",
-    "COMMENTS_DIALOG_TITLE": "Kommentare"
+    "COMMENTS_DIALOG_TITLE": "Kommentare",
+    "TRENDING": "Jetzt angesagt",
+    "TRENDING_BADGE": "Trending",
+    "VIEWS": "Aufrufe",
+    "LIKES": "Likes",
+    "COMMENTS_LABEL": "Kommentare",
+    "WRITE_COMMENT": "Kommentar schreiben…",
+    "POST_COMMENT_ACTION": "Senden",
+    "NO_COMMENTS": "Noch keine Kommentare. Sei der Erste!",
+    "COMMENTS_LOADING": "Kommentare werden geladen…",
+    "LOGIN_TO_INTERACT": "Melde dich an, um zu liken und zu kommentieren."
   },
   "SIDEBAR": {
     "EXPAND": "Sidebar erweitern",

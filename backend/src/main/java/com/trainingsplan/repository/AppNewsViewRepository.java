@@ -16,6 +16,8 @@ public interface AppNewsViewRepository extends JpaRepository<AppNewsView, Long> 
 
     long countByAppNews_Id(Long newsId);
 
+    long countByAppNews_IdAndViewedAtAfter(Long newsId, LocalDateTime after);
+
     /**
      * Aggregates view counts per topicTag for published news whose publishedAt is between (from, now).
      * Returns rows: [topicTag, viewCount, newsCount].

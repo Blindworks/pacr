@@ -12,5 +12,10 @@ public record AppNewsDto(
     boolean isFeatured,
     boolean isPublished,
     LocalDateTime publishedAt,
-    LocalDateTime createdAt
+    LocalDateTime createdAt,
+    long viewCount,
+    long likeCount,
+    long commentCount,
+    boolean hasLiked,
+    boolean isTrending
 ) {}

@@ -3,7 +3,7 @@ import { CommonModule, DatePipe, DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { PublicNewsService, PublicNews, TrendingTopic } from '../../services/public-news.service';
+import { PublicNewsService, PublicNews, TrendingTopic, NewsComment } from '../../services/public-news.service';
 import { FriendshipService, FriendActivity, LiveTrainingFriend } from '../../services/friendship.service';
 import { ActivitySocialService, ActivityKudos, ActivityComment } from '../../services/activity-social.service';
 import { UserService } from '../../services/user.service';
@@ -35,6 +35,7 @@ export class NewsHub implements OnInit, OnDestroy {
 
   featured = signal<PublicNews | null>(null);
   newsList = signal<PublicNews[]>([]);
+  trendingNews = signal<PublicNews[]>([]);
   activities = signal<FriendActivity[]>([]);
   liveTraining = signal<LiveTrainingFriend[]>([]);
   trending = signal<TrendingTopic[]>([]);
@@ -47,13 +48,19 @@ export class NewsHub implements OnInit, OnDestroy {
 
   activeTab = signal<'all' | 'social' | 'news'>('all');
 
-  // Comments dialog state
+  // Comments dialog state (activities)
   commentsOpen = signal(false);
   commentsActivityId = signal<number | null>(null);
   commentsActivityTitle = signal<string>('');
   commentsList = signal<ActivityComment[]>([]);
   commentsLoading = signal(false);
   newCommentText = '';
+
+  // News comments (inline, expandable per news)
+  newsCommentsExpanded = signal<Record<number, boolean>>({});
+  newsCommentsByNews = signal<Record<number, NewsComment[]>>({});
+  newsCommentsLoading = signal<Record<number, boolean>>({});
+  newsCommentDrafts: Record<number, string> = {};
 
   currentUserId = computed(() => this.userService.currentUser()?.id ?? null);
 
@@ -99,6 +106,11 @@ export class NewsHub implements OnInit, OnDestroy {
         if (f) this.newsService.recordView(f.id).subscribe({ error: () => {} });
       },
       error: () => this.error.set('news')
+    });
+
+    this.newsService.getTrendingNews(3).subscribe({
+      next: list => this.trendingNews.set(list),
+      error: () => {}
     });
 
     this.friendshipService.getActivity().subscribe({
@@ -237,6 +249,117 @@ export class NewsHub implements OnInit, OnDestroy {
 
   openTopic(topic: TrendingTopic): void {
     this.router.navigate(['/news-hub'], { queryParams: { tag: topic.tag } });
+  }
+
+  // --- News interactions (likes + inline comments) ---
+
+  /**
+   * Optimistically toggles the like state for a news item; rolls back on error.
+   * Updates both the main feed entry and the trendingNews list if the news appears there.
+   */
+  toggleNewsLike(news: PublicNews, event?: Event): void {
+    event?.stopPropagation();
+    const previous = { hasLiked: news.hasLiked, likeCount: news.likeCount };
+    const optimistic = {
+      hasLiked: !news.hasLiked,
+      likeCount: news.likeCount + (news.hasLiked ? -1 : 1)
+    };
+    this.applyNewsUpdate(news.id, optimistic);
+
+    this.newsService.toggleLike(news.id).subscribe({
+      next: state => this.applyNewsUpdate(news.id, { hasLiked: state.hasLiked, likeCount: state.likeCount }),
+      error: () => this.applyNewsUpdate(news.id, previous)
+    });
+  }
+
+  private applyNewsUpdate(newsId: number, patch: Partial<PublicNews>): void {
+    this.newsList.update(list => list.map(n => n.id === newsId ? { ...n, ...patch } : n));
+    this.trendingNews.update(list => list.map(n => n.id === newsId ? { ...n, ...patch } : n));
+    const f = this.featured();
+    if (f && f.id === newsId) this.featured.set({ ...f, ...patch });
+  }
+
+  isNewsCommentsOpen(newsId: number): boolean {
+    return !!this.newsCommentsExpanded()[newsId];
+  }
+
+  toggleNewsComments(newsId: number, event?: Event): void {
+    event?.stopPropagation();
+    const open = this.isNewsCommentsOpen(newsId);
+    this.newsCommentsExpanded.update(m => ({ ...m, [newsId]: !open }));
+    if (!open && !this.newsCommentsByNews()[newsId]) {
+      this.loadNewsComments(newsId);
+    }
+  }
+
+  private loadNewsComments(newsId: number): void {
+    this.newsCommentsLoading.update(m => ({ ...m, [newsId]: true }));
+    this.newsService.getComments(newsId).subscribe({
+      next: list => {
+        this.newsCommentsByNews.update(m => ({ ...m, [newsId]: list }));
+        list.forEach(c => { if (c.userId != null) this.loadAvatar(c.userId); });
+        this.newsCommentsLoading.update(m => ({ ...m, [newsId]: false }));
+      },
+      error: () => this.newsCommentsLoading.update(m => ({ ...m, [newsId]: false }))
+    });
+  }
+
+  newsCommentsFor(newsId: number): NewsComment[] {
+    return this.newsCommentsByNews()[newsId] ?? [];
+  }
+
+  newsCommentsLoadingFor(newsId: number): boolean {
+    return !!this.newsCommentsLoading()[newsId];
+  }
+
+  getDraft(newsId: number): string {
+    return this.newsCommentDrafts[newsId] ?? '';
+  }
+
+  setDraft(newsId: number, value: string): void {
+    this.newsCommentDrafts[newsId] = value;
+  }
+
+  postNewsComment(newsId: number, event?: Event): void {
+    event?.stopPropagation();
+    const text = (this.newsCommentDrafts[newsId] ?? '').trim();
+    if (!text) return;
+    this.newsService.addComment(newsId, text).subscribe({
+      next: saved => {
+        this.newsCommentDrafts[newsId] = '';
+        this.newsCommentsByNews.update(m => ({
+          ...m,
+          [newsId]: [...(m[newsId] ?? []), saved]
+        }));
+        if (saved.userId != null) this.loadAvatar(saved.userId);
+        this.applyNewsUpdate(newsId, {
+          commentCount: (this.findNews(newsId)?.commentCount ?? 0) + 1
+        });
+      },
+      error: () => {}
+    });
+  }
+
+  deleteNewsComment(newsId: number, commentId: number, event?: Event): void {
+    event?.stopPropagation();
+    this.newsService.deleteComment(commentId).subscribe({
+      next: () => {
+        this.newsCommentsByNews.update(m => ({
+          ...m,
+          [newsId]: (m[newsId] ?? []).filter(c => c.id !== commentId)
+        }));
+        this.applyNewsUpdate(newsId, {
+          commentCount: Math.max(0, (this.findNews(newsId)?.commentCount ?? 0) - 1)
+        });
+      },
+      error: () => {}
+    });
+  }
+
+  private findNews(newsId: number): PublicNews | undefined {
+    return this.newsList().find(n => n.id === newsId)
+      ?? this.trendingNews().find(n => n.id === newsId)
+      ?? (this.featured()?.id === newsId ? this.featured()! : undefined);
   }
 
   formatPace(secondsPerKm: number | null): string {
