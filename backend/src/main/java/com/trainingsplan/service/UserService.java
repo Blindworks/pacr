@@ -85,6 +85,17 @@ public class UserService {
         return userRepository.save(user);
     }
 
+    /**
+     * Replaces the user's stored news-language preference.
+     *
+     * @param stored comma-separated list of ISO 639-1 codes, or null to clear the preference
+     */
+    public User updatePreferredNewsLanguages(Long userId, String stored) {
+        User user = findById(userId);
+        user.setPreferredNewsLanguages(stored);
+        return userRepository.save(user);
+    }
+
     public User updateUser(Long id, String username, String email,
                            String firstName, String lastName,
                            LocalDate dateOfBirth, Integer heightCm, Double weightKg,

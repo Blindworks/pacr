@@ -21,6 +21,11 @@ export interface PublicNews {
   commentCount: number;
   hasLiked: boolean;
   isTrending: boolean;
+  // Populated only for news imported from an external RSS feed:
+  externalUrl: string | null;
+  externalImageUrl: string | null;
+  sourceName: string | null;
+  language: string | null;
 }
 
 export interface TrendingTopic {

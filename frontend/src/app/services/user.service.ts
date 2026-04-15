@@ -42,6 +42,8 @@ export interface UserProfile {
   paceRefTimeSeconds?: number | null;
   paceRefLabel?: string | null;
   thresholdPaceSecPerKm?: number | null;
+  /** Comma-separated ISO 639-1 language codes (e.g. "de,en") used for news feed filtering. */
+  preferredNewsLanguages?: string | null;
 }
 
 export interface UpdateUserRequest {
@@ -129,6 +131,17 @@ export class UserService {
 
   updateLocation(latitude: number, longitude: number): Observable<UserProfile> {
     return this.http.put<UserProfile>(`${BASE}/me/location`, { latitude, longitude });
+  }
+
+  /**
+   * Replaces the user's news-language preference list.
+   * Backend stores them comma-separated; we send an array and receive {preferredNewsLanguages: string[]}.
+   */
+  updateNewsLanguages(languages: string[]): Observable<{ preferredNewsLanguages: string[] }> {
+    return this.http.put<{ preferredNewsLanguages: string[] }>(
+      `${BASE}/me/news-languages`,
+      { languages }
+    );
   }
 
   clearLocation(): Observable<UserProfile> {

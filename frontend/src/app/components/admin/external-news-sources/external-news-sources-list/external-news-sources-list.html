@@ -1,0 +1,61 @@
+<div class="list-page">
+  <div class="list-header">
+    <h2>{{ 'ADMIN.NEWS_SOURCES_TITLE' | translate }}</h2>
+    <button class="btn-primary" (click)="goNew()">{{ 'ADMIN.NEWS_SOURCES_NEW' | translate }}</button>
+  </div>
+
+  @if (lastFetchMessage()) {
+    <p class="fetch-message">{{ lastFetchMessage() }}</p>
+  }
+
+  @if (isLoading()) {
+    <p class="loading">{{ 'ADMIN.LOADING' | translate }}</p>
+  } @else if (sources().length === 0) {
+    <p class="empty">{{ 'ADMIN.NEWS_SOURCES_EMPTY' | translate }}</p>
+  } @else {
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>{{ 'ADMIN.NEWS_SOURCES_COL_NAME' | translate }}</th>
+          <th>{{ 'ADMIN.NEWS_SOURCES_COL_LANGUAGE' | translate }}</th>
+          <th>{{ 'ADMIN.NEWS_SOURCES_COL_ENABLED' | translate }}</th>
+          <th>{{ 'ADMIN.NEWS_SOURCES_COL_LAST_FETCHED' | translate }}</th>
+          <th>{{ 'ADMIN.NEWS_SOURCES_COL_STATUS' | translate }}</th>
+          <th>{{ 'COMMON.ACTIONS' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (item of sources(); track item.id) {
+          <tr>
+            <td>
+              <div class="source-name">{{ item.name }}</div>
+              <div class="source-url">{{ item.feedUrl }}</div>
+            </td>
+            <td><span class="lang-badge">{{ item.language | uppercase }}</span></td>
+            <td>
+              <span class="badge" [class.badge--enabled]="item.enabled">
+                {{ item.enabled ? ('ADMIN.NEWS_SOURCES_ENABLED' | translate) : ('ADMIN.NEWS_SOURCES_DISABLED' | translate) }}
+              </span>
+            </td>
+            <td>{{ item.lastFetchedAt ? (item.lastFetchedAt | date:'dd.MM.yyyy HH:mm') : '—' }}</td>
+            <td class="status-cell">{{ item.lastFetchStatus ?? '—' }}</td>
+            <td class="actions">
+              <button class="btn-icon btn-icon--fetch"
+                      (click)="fetchNow(item)"
+                      [disabled]="isFetching(item.id)"
+                      [title]="'ADMIN.NEWS_SOURCES_FETCH_NOW' | translate">
+                <span class="material-symbols-outlined">{{ isFetching(item.id) ? 'hourglass_top' : 'cloud_download' }}</span>
+              </button>
+              <button class="btn-icon" (click)="edit(item)" [title]="'COMMON.EDIT' | translate">
+                <span class="material-symbols-outlined">edit</span>
+              </button>
+              <button class="btn-icon btn-icon--danger" (click)="delete(item)" [title]="'COMMON.DELETE' | translate">
+                <span class="material-symbols-outlined">delete</span>
+              </button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+</div>

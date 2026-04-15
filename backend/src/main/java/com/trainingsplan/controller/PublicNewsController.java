@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -21,6 +22,9 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/news")
 public class PublicNewsController {
+
+    /** Fallback when a user hasn't set any language preferences yet. */
+    private static final List<String> DEFAULT_LANGUAGES = List.of("de", "en");
 
     private final AppNewsService newsService;
     private final SecurityUtils securityUtils;
@@ -34,11 +38,24 @@ public class PublicNewsController {
         return "ADMIN".equalsIgnoreCase(String.valueOf(user.getRole()));
     }
 
+    /** Parses the user's stored "de,en" preference string into a filter list. */
+    private List<String> preferredLanguages(User user) {
+        String raw = user.getPreferredNewsLanguages();
+        if (raw == null || raw.isBlank()) return DEFAULT_LANGUAGES;
+        List<String> langs = Arrays.stream(raw.split(","))
+                .map(String::trim)
+                .map(String::toLowerCase)
+                .filter(s -> !s.isEmpty())
+                .distinct()
+                .toList();
+        return langs.isEmpty() ? DEFAULT_LANGUAGES : langs;
+    }
+
     @GetMapping
     public ResponseEntity<?> listPublished() {
         User user = securityUtils.getCurrentUser();
         if (user == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        List<AppNewsDto> dtos = newsService.findAllPublished().stream()
+        List<AppNewsDto> dtos = newsService.findAllPublishedForLanguages(preferredLanguages(user)).stream()
                 .map(n -> newsService.toDto(n, user))
                 .toList();
         return ResponseEntity.ok(dtos);

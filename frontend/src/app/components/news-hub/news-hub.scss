@@ -151,6 +151,42 @@
     color: var(--pp);
     border: 1px solid var(--pp-border);
   }
+  &--source {
+    background: var(--panel-soft);
+    color: var(--text);
+    border: 1px solid var(--border);
+    opacity: 0.85;
+  }
+}
+
+.card-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+
+.card-read-more {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 10px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  background: var(--pp-container);
+  color: var(--pp);
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-decoration: none;
+  border: 1px solid var(--pp-border);
+  align-self: flex-start;
+  transition: filter 0.15s ease;
+
+  .material-symbols-outlined {
+    font-size: 1rem;
+  }
+
+  &:hover { filter: brightness(1.05); }
 }
 
 .feed-title {

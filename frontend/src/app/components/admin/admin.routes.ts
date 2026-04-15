@@ -80,6 +80,21 @@ export const adminRoutes: Routes = [
         loadComponent: () => import('./news/news-form/news-form').then(m => m.NewsForm)
       },
       {
+        path: 'news-sources',
+        loadComponent: () => import('./external-news-sources/external-news-sources-list/external-news-sources-list')
+          .then(m => m.ExternalNewsSourcesList)
+      },
+      {
+        path: 'news-sources/new',
+        loadComponent: () => import('./external-news-sources/external-news-source-form/external-news-source-form')
+          .then(m => m.ExternalNewsSourceForm)
+      },
+      {
+        path: 'news-sources/:id/edit',
+        loadComponent: () => import('./external-news-sources/external-news-source-form/external-news-source-form')
+          .then(m => m.ExternalNewsSourceForm)
+      },
+      {
         path: 'login-messages',
         loadComponent: () => import('./login-messages/login-message-list/login-message-list').then(m => m.LoginMessageList)
       },

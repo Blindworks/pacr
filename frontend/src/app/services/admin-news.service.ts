@@ -14,6 +14,11 @@ export interface AppNews {
   isPublished: boolean;
   publishedAt: string | null;
   createdAt: string;
+  // Populated only for news imported from an external RSS feed:
+  externalUrl?: string | null;
+  externalImageUrl?: string | null;
+  sourceName?: string | null;
+  language?: string | null;
 }
 
 export interface CreateNewsRequest {
