@@ -56,7 +56,8 @@
       "Bash(echo \"EXIT: $?\")",
       "Bash(mkdir -p \"C:/Users/bened/IdeaProjects/Smart_Trainingsplan/frontend/src/assets/images/competitions\")",
       "Bash(touch \"C:/Users/bened/IdeaProjects/Smart_Trainingsplan/frontend/src/assets/images/competitions/.gitkeep\")",
-      "Bash(ls version-bump*)"
+      "Bash(ls version-bump*)",
+      "Bash(./version-bump.sh patch:*)"
     ],
     "deny": [],
     "ask": []

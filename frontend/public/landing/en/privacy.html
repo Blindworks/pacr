@@ -49,8 +49,13 @@
         <span class="text-electric-lime font-semibold uppercase tracking-[0.2em] text-sm">Legal</span>
         <h1 class="text-4xl md:text-6xl font-extrabold mt-4 mb-6">Privacy Policy</h1>
         <p class="text-lg text-gray-400 leading-relaxed">
-          This privacy policy explains how personal data is processed on the PACR website.
-          It is written for a landing page that is going live now and is operated without a separate company entity.
+          This privacy policy explains how PACR processes personal data &ndash; both on the public website
+          pacr.app and inside the PACR application behind the login. It sets out which data is retrieved from
+          connected services such as Garmin Connect, Strava or COROS and how you can disconnect these
+          integrations at any time.
+        </p>
+        <p class="text-sm text-gray-500 leading-relaxed mt-4">
+          Last updated: 15 April 2026
         </p>
       </div>
 
@@ -58,65 +63,238 @@
         <section class="bg-deep-gray rounded-3xl p-8 border border-white/5">
           <h2 class="text-2xl font-bold mb-4">1. Controller</h2>
           <p class="text-gray-300 leading-relaxed">
-            The controller responsible for data processing is:
+            The controller responsible for data processing within the meaning of Art. 4(7) GDPR is:
           </p>
           <p class="text-gray-300 leading-relaxed mt-4">
             Benedikt Lind<br/>
             Preungesheimer Weg 9<br/>
             61118 Bad Vilbel<br/>
+            Germany<br/>
             E-mail: info@pacr.app
           </p>
+          <p class="text-gray-300 leading-relaxed mt-4">
+            For privacy requests, subject-access, deletion or to disconnect linked services, please contact us
+            at the e-mail address above.
+          </p>
         </section>
 
         <section class="bg-deep-gray rounded-3xl p-8 border border-white/5">
-          <h2 class="text-2xl font-bold mb-4">2. Data We Process</h2>
+          <h2 class="text-2xl font-bold mb-4">2. Scope</h2>
           <p class="text-gray-300 leading-relaxed">
-            When you visit this website, the following categories of data may be processed:
+            This privacy policy applies to:
           </p>
           <ul class="mt-4 space-y-3 text-gray-300 list-disc list-inside">
-            <li>technical access data such as IP address, browser type, operating system and access time,</li>
-            <li>contact data that you actively submit by e-mail or through contact features activated later,</li>
-            <li>usage data to the extent required for secure and stable website operation.</li>
+            <li>the public landing page at <strong>pacr.app</strong>,</li>
+            <li>the PACR web application (including the PWA) behind the login,</li>
+            <li>the backend APIs operated by PACR that process training data,</li>
+            <li>data retrieved from connected services such as Garmin Connect, Strava or COROS.</li>
           </ul>
         </section>
 
         <section class="bg-deep-gray rounded-3xl p-8 border border-white/5">
-          <h2 class="text-2xl font-bold mb-4">3. Purposes and Legal Bases</h2>
+          <h2 class="text-2xl font-bold mb-4">3. Categories of Data We Process</h2>
+          <p class="text-gray-300 leading-relaxed">
+            Depending on how you use PACR, we process the following categories of personal data:
+          </p>
+          <ul class="mt-4 space-y-3 text-gray-300 list-disc list-inside">
+            <li><strong>Account data:</strong> e-mail address, password (stored as a BCrypt hash), name, date
+              of birth, sex, maximum heart rate, weight, height, and optional profile fields such as city or
+              region.</li>
+            <li><strong>Training and activity data:</strong> uploaded FIT, TCX or GPX files and the metrics
+              derived from them or retrieved via APIs &ndash; in particular time, distance, pace, speed, heart
+              rate (average, max, min, zones), power (watts), cadence, elevation, GPS coordinates and device
+              information (manufacturer, model, serial number, software version).</li>
+            <li><strong>Activity streams:</strong> second-level time-series data for heart rate, speed,
+              elevation, distance, position, cadence and power.</li>
+            <li><strong>Computed metrics:</strong> e.g. VO2max, TRIMP, Training Load, Strain, ACWR, Readiness
+              and body-composition indicators.</li>
+            <li><strong>Community and usage data:</strong> feed posts, comments, group and trainer-event
+              participation, community routes (including GPX tracks), leaderboard entries, user feedback
+              submissions.</li>
+            <li><strong>Third-party OAuth tokens:</strong> access and refresh tokens and associated athlete
+              IDs for Garmin Connect, Strava and COROS. Tokens are stored locally in the PACR database and
+              are never shared.</li>
+            <li><strong>Location data:</strong> optional city/address entries, GPS tracks from activities,
+              geocoding requests via Nominatim (OpenStreetMap), and map rendering via Leaflet / OSM tiles.</li>
+            <li><strong>Log and access data:</strong> IP address, user agent, timestamp and requested URL
+              (for operation, security and abuse prevention).</li>
+            <li><strong>Audit log:</strong> security-relevant actions such as login, password change or FIT
+              upload (stored via the internal AuditLogService).</li>
+          </ul>
+          <p class="text-sm text-gray-500 leading-relaxed mt-4">
+            Note: PACR currently uses <strong>no payment provider</strong>. Once a subscription payment flow
+            (e.g. Stripe) is launched, this section and Section 6 will be updated accordingly beforehand.
+          </p>
+        </section>
+
+        <section class="bg-deep-gray rounded-3xl p-8 border border-white/5">
+          <h2 class="text-2xl font-bold mb-4">4. Purposes and Legal Bases</h2>
           <ul class="space-y-3 text-gray-300 list-disc list-inside">
-            <li>providing the website based on Art. 6(1)(f) GDPR,</li>
-            <li>handling enquiries based on Art. 6(1)(b) or Art. 6(1)(f) GDPR,</li>
-            <li>preventing misuse and ensuring security based on Art. 6(1)(f) GDPR.</li>
+            <li><strong>Providing the website and application</strong> &ndash; Art. 6(1)(b) GDPR (contract /
+              pre-contractual relationship) and Art. 6(1)(f) (legitimate interest in stable operation).</li>
+            <li><strong>Registration and user account</strong> including JWT-based authentication &ndash;
+              Art. 6(1)(b) GDPR.</li>
+            <li><strong>Training analysis, plan generation and progress tracking</strong> &ndash;
+              Art. 6(1)(b) GDPR.</li>
+            <li><strong>Connecting to linked services</strong> (Garmin Connect, Strava, COROS) &ndash;
+              Art. 6(1)(a) GDPR (explicit consent via OAuth authorisation).</li>
+            <li><strong>AI-assisted analysis and training recommendations</strong> via OpenAI &ndash;
+              Art. 6(1)(a) GDPR (consent given by actively using AI features).</li>
+            <li><strong>Community features</strong> (feed, groups, routes, leaderboards) &ndash;
+              Art. 6(1)(b) GDPR.</li>
+            <li><strong>Security, abuse prevention, fraud detection</strong> &ndash; Art. 6(1)(f) GDPR.</li>
+            <li><strong>Contact and support</strong> &ndash; Art. 6(1)(b) or Art. 6(1)(f) GDPR.</li>
           </ul>
         </section>
 
         <section class="bg-deep-gray rounded-3xl p-8 border border-white/5">
-          <h2 class="text-2xl font-bold mb-4">4. Retention Period</h2>
+          <h2 class="text-2xl font-bold mb-4">5. Garmin Connect Integration</h2>
           <p class="text-gray-300 leading-relaxed">
-            Personal data is stored only for as long as necessary for the stated purposes or as required by law.
-            E-mail enquiries should be deleted once the matter has been resolved, unless statutory retention obligations apply.
+            When you connect your Garmin account to PACR, we access data from the Garmin Connect Developer
+            APIs via OAuth 2.0. The connection is established only upon your explicit consent.
+          </p>
+          <ul class="mt-4 space-y-3 text-gray-300 list-disc list-inside">
+            <li><strong>Data retrieved:</strong> completed activities including metrics (time, distance, pace,
+              heart rate, power, cadence, elevation, GPS); and &ndash; where authorised &ndash; daily
+              summaries, heart-rate, sleep and HRV data.</li>
+            <li><strong>Purpose:</strong> automatic synchronisation of your training sessions into PACR,
+              training analysis, plan generation and progress tracking.</li>
+            <li><strong>Storage:</strong> retrieved activity data is stored on our server infrastructure in
+              the EU (tables <code>completed_trainings</code> and <code>activity_streams</code>). OAuth tokens
+              are stored securely in the backend.</li>
+            <li><strong>No sharing:</strong> Garmin data is <strong>not sold or shared with third parties</strong>.
+              It is used exclusively for your personal training analysis.</li>
+            <li><strong>Disconnecting:</strong> you can revoke the Garmin connection at any time within PACR
+              under <em>Profile &rarr; Integrations &rarr; Disconnect Garmin</em>. The OAuth token is then
+              deleted and further synchronisation stops.</li>
+            <li><strong>Data deletion:</strong> upon request to info@pacr.app we delete all data imported
+              from Garmin. Alternatively you can revoke the authorisation directly in your Garmin Connect
+              account.</li>
+            <li><strong>Current status:</strong> manual FIT-file processing is actively implemented.
+              Automatic OAuth synchronisation will be enabled after approval by the Garmin Connect Developer
+              Program.</li>
+          </ul>
+        </section>
+
+        <section class="bg-deep-gray rounded-3xl p-8 border border-white/5">
+          <h2 class="text-2xl font-bold mb-4">6. Other Third-Party Integrations</h2>
+          <p class="text-gray-300 leading-relaxed">
+            To operate PACR we rely on the following external service providers. Any transfers to third
+            countries are made on the basis of appropriate safeguards pursuant to Art. 44 et seq. GDPR
+            (such as EU standard contractual clauses).
+          </p>
+          <ul class="mt-4 space-y-3 text-gray-300 list-disc list-inside">
+            <li><strong>Strava</strong> (Strava Inc., USA) &ndash; OAuth 2.0, scope
+              <code>activity:read_all</code>. Activities including streams are retrieved. Disconnect under
+              <em>Profile &rarr; Integrations &rarr; Disconnect Strava</em>.</li>
+            <li><strong>COROS</strong> (Coros Wearables Inc.) &ndash; OAuth via
+              <code>open.coros.com</code>, including webhook for activity push. Disconnect under
+              <em>Profile &rarr; Integrations &rarr; Disconnect COROS</em>.</li>
+            <li><strong>OpenAI</strong> (OpenAI, L.L.C., USA) &ndash; integrated via LangChain4j for
+              AI-assisted analysis (model: <code>gpt-4o-mini</code>). For analyses, selected training data
+              or descriptions are transmitted as prompt text. Used only when AI features are actively
+              invoked.</li>
+            <li><strong>Nominatim</strong> (OpenStreetMap Foundation, UK) &ndash; geocoding for address
+              lookups in the location picker. The search query and your IP address are transmitted.</li>
+            <li><strong>Leaflet &amp; OpenStreetMap tiles</strong> &ndash; map rendering inside the
+              application; your browser loads map tiles directly from the tile server (IP is transmitted).</li>
+            <li><strong>Google Fonts</strong> (Google Ireland Ltd.) &ndash; loading of the <em>Lexend</em>
+              font from fonts.googleapis.com (IP is transmitted).</li>
+            <li><strong>Tailwind CDN</strong> (Vercel/Cloudflare) &ndash; delivery of the CSS framework on
+              the landing page (IP is transmitted).</li>
+            <li><strong>Microsoft 365 / Outlook</strong> (Microsoft Ireland Operations Ltd.) &ndash; sending
+              of transactional e-mails (registration confirmation, password reset) via SMTP.</li>
+          </ul>
+        </section>
+
+        <section class="bg-deep-gray rounded-3xl p-8 border border-white/5">
+          <h2 class="text-2xl font-bold mb-4">7. Hosting and Infrastructure</h2>
+          <p class="text-gray-300 leading-relaxed">
+            PACR is operated on server infrastructure located within the <strong>European Union</strong>.
+            Application data is stored in a MariaDB database; uploaded files are stored on the application
+            server. The connection between browser and server is always encrypted via HTTPS/TLS.
+          </p>
+          <p class="text-gray-300 leading-relaxed mt-4">
+            <!-- TODO: fill in concrete hosting provider + region + DPA before go-live -->
+            The concrete hosting provider and the data-centre location can be provided on request to
+            info@pacr.app. A data processing agreement pursuant to Art. 28 GDPR is in place with the
+            hosting provider.
           </p>
         </section>
 
         <section class="bg-deep-gray rounded-3xl p-8 border border-white/5">
-          <h2 class="text-2xl font-bold mb-4">5. Recipients and Hosting</h2>
+          <h2 class="text-2xl font-bold mb-4">8. Retention Periods</h2>
+          <ul class="space-y-3 text-gray-300 list-disc list-inside">
+            <li><strong>Account data</strong> is kept until you delete your account. Deletion is performed
+              completely and cascaded via the internal <em>UserDeletionService</em>.</li>
+            <li><strong>Training and activity data</strong> is retained until you delete it individually or
+              delete your account.</li>
+            <li><strong>OAuth tokens</strong> (Garmin, Strava, COROS) are removed as soon as you disconnect
+              the corresponding service.</li>
+            <li><strong>Log and access data</strong> is generally deleted after no more than 90 days unless
+              it is needed to investigate a specific security incident.</li>
+            <li><strong>Audit-log entries</strong> are retained longer for security reasons, but at most
+              until the associated account is deleted.</li>
+          </ul>
+        </section>
+
+        <section class="bg-deep-gray rounded-3xl p-8 border border-white/5">
+          <h2 class="text-2xl font-bold mb-4">9. International Data Transfers</h2>
           <p class="text-gray-300 leading-relaxed">
-            If external service providers are used for hosting or e-mail, this is done only within the scope of applicable
-            data protection law. If services outside the EU or EEA are used, appropriate safeguards pursuant to Art. 44 et seq. GDPR must be in place.
+            Some of the providers listed in Section 6 (in particular OpenAI, Strava, Google Fonts and
+            Tailwind CDN) are based outside the EU/EEA, primarily in the United States. Such transfers are
+            carried out on the basis of appropriate safeguards under Art. 44 et seq. GDPR &ndash; in
+            particular EU standard contractual clauses and, where applicable, the EU-US Data Privacy
+            Framework.
           </p>
         </section>
 
         <section class="bg-deep-gray rounded-3xl p-8 border border-white/5">
-          <h2 class="text-2xl font-bold mb-4">6. Your Rights</h2>
+          <h2 class="text-2xl font-bold mb-4">10. Security</h2>
           <p class="text-gray-300 leading-relaxed">
-            You have the right to access, rectification, erasure, restriction of processing, data portability and objection.
-            You may withdraw consent with effect for the future at any time. You also have the right to lodge a complaint with a supervisory authority.
+            PACR implements technical and organisational measures to protect your data, including:
           </p>
+          <ul class="mt-4 space-y-3 text-gray-300 list-disc list-inside">
+            <li>encrypted transmission via HTTPS/TLS,</li>
+            <li>passwords stored exclusively as BCrypt hashes,</li>
+            <li>authentication via short-lived JWT tokens with refresh-token rotation,</li>
+            <li>server-side ownership checks on all user-scoped API endpoints,</li>
+            <li>role-based access control (Spring Security),</li>
+            <li>a separate production environment with secrets provided only via environment variables.</li>
+          </ul>
         </section>
 
-        <section class="bg-deep-gray rounded-3xl p-8 border border-amber-400/30 bg-amber-300/5">
-          <h2 class="text-2xl font-bold mb-4">7. Final Review Note</h2>
+        <section class="bg-deep-gray rounded-3xl p-8 border border-white/5">
+          <h2 class="text-2xl font-bold mb-4">11. Your Rights</h2>
           <p class="text-gray-300 leading-relaxed">
-            Before publication, the actually used hosting or e-mail providers and any other concrete third-party services still need to be checked and documented.
+            Under the GDPR you have the following rights: access (Art. 15), rectification (Art. 16), erasure
+            (Art. 17), restriction of processing (Art. 18), data portability (Art. 20) and objection
+            (Art. 21). You may withdraw any consent given with effect for the future at any time. You also
+            have the right to lodge a complaint with a supervisory authority &ndash; in Germany this is the
+            data-protection authority responsible for your place of residence.
+          </p>
+          <p class="text-gray-300 leading-relaxed mt-4">
+            <strong>How to exercise your rights in PACR:</strong>
+          </p>
+          <ul class="mt-3 space-y-3 text-gray-300 list-disc list-inside">
+            <li><strong>Delete your account entirely:</strong> in the app under
+              <em>Profile &rarr; Delete account</em>. Your account and all associated training and activity
+              data are removed in a cascading deletion process.</li>
+            <li><strong>Disconnect Garmin, Strava or COROS:</strong> in the app under
+              <em>Profile &rarr; Integrations</em>.</li>
+            <li><strong>Request subject access or data export:</strong> by e-mail to info@pacr.app.</li>
+            <li><strong>Withdraw consent</strong> (e.g. for AI analysis): directly in the app or by e-mail
+              to info@pacr.app.</li>
+          </ul>
+        </section>
+
+        <section class="bg-deep-gray rounded-3xl p-8 border border-white/5">
+          <h2 class="text-2xl font-bold mb-4">12. Changes to This Privacy Policy</h2>
+          <p class="text-gray-300 leading-relaxed">
+            This privacy policy is updated whenever there are material changes to the scope of the service or
+            to the providers used. The current version is always available at
+            <a class="text-electric-lime hover:underline" href="/landing/en/privacy.html">pacr.app/landing/en/privacy.html</a>.
+            The date of the latest update is noted at the top of this document.
           </p>
         </section>
       </div>

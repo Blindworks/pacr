@@ -49,8 +49,13 @@
         <span class="text-electric-lime font-semibold uppercase tracking-[0.2em] text-sm">Rechtliches</span>
         <h1 class="text-4xl md:text-6xl font-extrabold mt-4 mb-6">Datenschutz</h1>
         <p class="text-lg text-gray-400 leading-relaxed">
-          Diese Datenschutzerklaerung beschreibt, wie auf der PACR-Webseite personenbezogene Daten verarbeitet werden.
-          Sie ist auf eine heute live geschaltete Landingpage ohne eigene Gesellschaft zugeschnitten.
+          Diese Datenschutzerklaerung beschreibt, wie PACR personenbezogene Daten verarbeitet &ndash;
+          sowohl auf der oeffentlichen Webseite pacr.app als auch in der PACR-Anwendung hinter dem Login.
+          Sie erlaeutert insbesondere, welche Daten aus verbundenen Diensten wie Garmin Connect, Strava oder
+          COROS abgerufen werden und wie du diese Verbindungen jederzeit trennen kannst.
+        </p>
+        <p class="text-sm text-gray-500 leading-relaxed mt-4">
+          Zuletzt aktualisiert: 15. April 2026
         </p>
       </div>
 
@@ -58,69 +63,242 @@
         <section class="bg-deep-gray rounded-3xl p-8 border border-white/5">
           <h2 class="text-2xl font-bold mb-4">1. Verantwortliche Stelle</h2>
           <p class="text-gray-300 leading-relaxed">
-            Verantwortlich fuer die Datenverarbeitung ist:
+            Verantwortlich fuer die Datenverarbeitung im Sinne von Art. 4 Nr. 7 DSGVO ist:
           </p>
           <p class="text-gray-300 leading-relaxed mt-4">
             Benedikt Lind<br/>
             Preungesheimer Weg 9<br/>
             61118 Bad Vilbel<br/>
+            Deutschland<br/>
             E-Mail: info@pacr.app
           </p>
+          <p class="text-gray-300 leading-relaxed mt-4">
+            Anfragen zum Datenschutz, zu Auskunft, Loeschung oder zur Trennung verbundener Dienste richtest du
+            bitte an die oben genannte E-Mail-Adresse.
+          </p>
         </section>
 
         <section class="bg-deep-gray rounded-3xl p-8 border border-white/5">
-          <h2 class="text-2xl font-bold mb-4">2. Welche Daten wir verarbeiten</h2>
+          <h2 class="text-2xl font-bold mb-4">2. Geltungsbereich</h2>
           <p class="text-gray-300 leading-relaxed">
-            Beim Besuch dieser Webseite koennen insbesondere folgende Daten verarbeitet werden:
+            Diese Datenschutzerklaerung gilt fuer:
           </p>
           <ul class="mt-4 space-y-3 text-gray-300 list-disc list-inside">
-            <li>technische Zugriffsdaten wie IP-Adresse, Browsertyp, Betriebssystem und Uhrzeit des Zugriffs,</li>
-            <li>Kontaktdaten, die du aktiv per E-Mail oder ueber spaeter aktivierte Kontaktfunktionen uebermittelst,</li>
-            <li>Nutzungsdaten, soweit diese fuer den sicheren und stabilen Betrieb der Webseite erforderlich sind.</li>
+            <li>die oeffentliche Landingpage unter <strong>pacr.app</strong>,</li>
+            <li>die PACR-Web-Anwendung (inklusive PWA) hinter dem Login,</li>
+            <li>die von PACR bereitgestellten Backend-APIs, die Trainingsdaten verarbeiten,</li>
+            <li>Daten, die ueber verbundene Dienste wie Garmin Connect, Strava oder COROS abgerufen werden.</li>
           </ul>
         </section>
 
         <section class="bg-deep-gray rounded-3xl p-8 border border-white/5">
-          <h2 class="text-2xl font-bold mb-4">3. Zwecke und Rechtsgrundlagen</h2>
+          <h2 class="text-2xl font-bold mb-4">3. Kategorien verarbeiteter Daten</h2>
+          <p class="text-gray-300 leading-relaxed">
+            Je nach Nutzung verarbeitet PACR folgende Kategorien personenbezogener Daten:
+          </p>
+          <ul class="mt-4 space-y-3 text-gray-300 list-disc list-inside">
+            <li><strong>Account-Daten:</strong> E-Mail-Adresse, Passwort (als BCrypt-Hash), Name, Geburtsdatum,
+              Geschlecht, maximale Herzfrequenz, Gewicht, Groesse, freiwillige Profil-Angaben wie Stadt/Region.</li>
+            <li><strong>Trainings- und Aktivitaetsdaten:</strong> hochgeladene FIT-, TCX- oder GPX-Dateien sowie
+              daraus oder ueber APIs abgeleitete Metriken &ndash; insbesondere Zeit, Distanz, Pace, Geschwindigkeit,
+              Herzfrequenz (Durchschnitt, Max, Min, Zonen), Leistung (Watt), Trittfrequenz, Hoehenmeter,
+              GPS-Koordinaten und Geraete-Informationen (Hersteller, Modell, Seriennummer, Softwareversion).</li>
+            <li><strong>Zeitreihen (Activity Streams):</strong> sekundengenaue Verlaufsdaten zu Herzfrequenz,
+              Geschwindigkeit, Hoehe, Distanz, Position, Trittfrequenz und Leistung.</li>
+            <li><strong>Berechnete Metriken:</strong> z. B. VO2max, TRIMP, Training Load, Strain, ACWR, Readiness,
+              Body-Composition-Kennzahlen.</li>
+            <li><strong>Community- und Nutzungsdaten:</strong> Feed-Posts, Kommentare, Gruppen- und Trainer-Event-
+              Teilnahmen, Community-Routen (inkl. GPX), Leaderboard-Positionen, User-Feedback-Einsendungen.</li>
+            <li><strong>Drittanbieter-OAuth-Tokens:</strong> Access- und Refresh-Tokens sowie zugehoerige
+              Athleten-IDs fuer Garmin Connect, Strava und COROS. Tokens werden nur lokal in der PACR-Datenbank
+              gespeichert und niemals weitergegeben.</li>
+            <li><strong>Standortdaten:</strong> freiwillige Stadt-/Adressangaben, GPS-Spuren aus Aktivitaeten,
+              Geocoding-Anfragen ueber Nominatim (OpenStreetMap) und Kartendarstellung via Leaflet/OSM-Tiles.</li>
+            <li><strong>Log- und Zugriffsdaten:</strong> IP-Adresse, User-Agent, Zeitstempel, angefragte URL
+              (fuer Betrieb, Sicherheit und Missbrauchsabwehr).</li>
+            <li><strong>Audit-Log:</strong> sicherheitsrelevante Aktionen wie Login, Passwortaenderung oder
+              FIT-Upload (gespeichert ueber den internen AuditLogService).</li>
+          </ul>
+          <p class="text-sm text-gray-500 leading-relaxed mt-4">
+            Hinweis: PACR verwendet derzeit <strong>keinen Zahlungsdienstleister</strong>. Sobald ein
+            Subscription-Payment-Flow (z. B. Stripe) live gestellt wird, werden dieser Abschnitt und
+            Abschnitt 6 vorab entsprechend ergaenzt.
+          </p>
+        </section>
+
+        <section class="bg-deep-gray rounded-3xl p-8 border border-white/5">
+          <h2 class="text-2xl font-bold mb-4">4. Zwecke und Rechtsgrundlagen</h2>
           <ul class="space-y-3 text-gray-300 list-disc list-inside">
-            <li>Bereitstellung der Webseite auf Grundlage von Art. 6 Abs. 1 lit. f DSGVO,</li>
-            <li>Bearbeitung von Anfragen auf Grundlage von Art. 6 Abs. 1 lit. b oder lit. f DSGVO,</li>
-            <li>Missbrauchs- und Sicherheitsabwehr auf Grundlage von Art. 6 Abs. 1 lit. f DSGVO.</li>
+            <li><strong>Bereitstellung von Webseite und Anwendung</strong> &ndash; Art. 6 Abs. 1 lit. b DSGVO
+              (Vertrag/vertragsaehnliches Verhaeltnis) und lit. f (berechtigtes Interesse am stabilen Betrieb).</li>
+            <li><strong>Registrierung und Nutzerkonto</strong> inkl. Authentifizierung per JWT &ndash;
+              Art. 6 Abs. 1 lit. b DSGVO.</li>
+            <li><strong>Trainingsanalyse, Planerstellung und Fortschritts-Tracking</strong> &ndash;
+              Art. 6 Abs. 1 lit. b DSGVO.</li>
+            <li><strong>Anbindung verbundener Dienste</strong> (Garmin Connect, Strava, COROS) &ndash;
+              Art. 6 Abs. 1 lit. a DSGVO (ausdrueckliche Einwilligung durch OAuth-Autorisierung).</li>
+            <li><strong>KI-gestuetzte Analyse und Trainingsempfehlungen</strong> via OpenAI &ndash;
+              Art. 6 Abs. 1 lit. a DSGVO (Einwilligung durch aktive Nutzung der KI-Funktion).</li>
+            <li><strong>Community-Funktionen</strong> (Feed, Gruppen, Routen, Leaderboards) &ndash;
+              Art. 6 Abs. 1 lit. b DSGVO.</li>
+            <li><strong>Sicherheit, Missbrauchsabwehr, Betrugsprvention</strong> &ndash;
+              Art. 6 Abs. 1 lit. f DSGVO.</li>
+            <li><strong>Kontaktaufnahme und Support</strong> &ndash; Art. 6 Abs. 1 lit. b oder lit. f DSGVO.</li>
           </ul>
         </section>
 
         <section class="bg-deep-gray rounded-3xl p-8 border border-white/5">
-          <h2 class="text-2xl font-bold mb-4">4. Speicherdauer</h2>
+          <h2 class="text-2xl font-bold mb-4">5. Integration von Garmin Connect</h2>
           <p class="text-gray-300 leading-relaxed">
-            Personenbezogene Daten werden nur so lange gespeichert, wie dies fuer die genannten Zwecke erforderlich ist
-            oder gesetzliche Aufbewahrungspflichten bestehen. E-Mail-Anfragen sollten geloescht werden, sobald der jeweilige
-            Vorgang abgeschlossen ist und keine gesetzlichen Aufbewahrungspflichten entgegenstehen.
+            Wenn du dein Garmin-Konto mit PACR verbindest, greifen wir per OAuth 2.0 auf Daten der Garmin Connect
+            Developer APIs zu. Die Verbindung erfolgt ausschliesslich auf deine ausdrueckliche Einwilligung hin.
+          </p>
+          <ul class="mt-4 space-y-3 text-gray-300 list-disc list-inside">
+            <li><strong>Abgerufene Datentypen:</strong> abgeschlossene Aktivitaeten (Activities) inkl.
+              Metriken (Zeit, Distanz, Pace, Herzfrequenz, Leistung, Trittfrequenz, Hoehe, GPS), sowie
+              &ndash; sofern dafuer autorisiert &ndash; Tages-Zusammenfassungen (Dailies), Herzfrequenz-,
+              Schlaf- und HRV-Daten.</li>
+            <li><strong>Zweck:</strong> automatische Synchronisation deiner Trainings in PACR,
+              Trainingsanalyse, Planerstellung und Fortschritts-Tracking.</li>
+            <li><strong>Speicherung:</strong> abgerufene Aktivitaetsdaten werden auf unseren
+              Server-Infrastruktur in der EU gespeichert (Tabellen <code>completed_trainings</code> und
+              <code>activity_streams</code>). OAuth-Tokens werden verschluesselt im Backend abgelegt.</li>
+            <li><strong>Keine Weitergabe:</strong> Garmin-Daten werden <strong>nicht an Dritte verkauft oder
+              geteilt</strong>. Sie werden ausschliesslich fuer deine persoenliche Trainingsanalyse verwendet.</li>
+            <li><strong>Verbindung trennen:</strong> du kannst die Garmin-Verbindung jederzeit in PACR unter
+              <em>Profil &rarr; Integrationen &rarr; Garmin trennen</em> widerrufen. Dabei werden der OAuth-Token
+              geloescht und zukuenftige Synchronisationen gestoppt.</li>
+            <li><strong>Datenloeschung:</strong> auf Anfrage an info@pacr.app loeschen wir alle ueber Garmin
+              importierten Daten. Alternativ kannst du die Autorisierung auch direkt in deinem Garmin-Connect-
+              Konto widerrufen.</li>
+            <li><strong>Aktueller Stand:</strong> die manuelle Verarbeitung von FIT-Dateien ist aktiv
+              implementiert. Die automatische OAuth-Synchronisation wird nach Freigabe durch das
+              Garmin Connect Developer Program aktiviert.</li>
+          </ul>
+        </section>
+
+        <section class="bg-deep-gray rounded-3xl p-8 border border-white/5">
+          <h2 class="text-2xl font-bold mb-4">6. Weitere Drittanbieter</h2>
+          <p class="text-gray-300 leading-relaxed">
+            Fuer den Betrieb von PACR setzen wir die folgenden externen Dienstleister ein.
+            Datentransfers in Drittlaender erfolgen auf Grundlage geeigneter Garantien nach Art. 44 ff. DSGVO
+            (z. B. EU-Standardvertragsklauseln).
+          </p>
+          <ul class="mt-4 space-y-3 text-gray-300 list-disc list-inside">
+            <li><strong>Strava</strong> (Strava Inc., USA) &ndash; OAuth 2.0, Scope
+              <code>activity:read_all</code>. Abgerufen werden Aktivitaeten inkl. Streams. Trennen unter
+              <em>Profil &rarr; Integrationen &rarr; Strava trennen</em>.</li>
+            <li><strong>COROS</strong> (Coros Wearables Inc.) &ndash; OAuth ueber
+              <code>open.coros.com</code>, inkl. Webhook fuer Activity-Push. Trennen unter
+              <em>Profil &rarr; Integrationen &rarr; COROS trennen</em>.</li>
+            <li><strong>OpenAI</strong> (OpenAI, L.L.C., USA) &ndash; Anbindung ueber LangChain4j fuer
+              KI-gestuetzte Analyse (Modell: <code>gpt-4o-mini</code>). Fuer Analysen werden ausgewaehlte
+              Trainingsdaten bzw. -beschreibungen als Prompt-Text uebermittelt. Erfolgt nur bei aktiver
+              Nutzung von KI-Funktionen.</li>
+            <li><strong>Nominatim</strong> (OpenStreetMap Foundation, GB) &ndash; Geocoding bei der
+              Adresseingabe im Location-Picker. Uebermittelt werden die eingegebene Suchanfrage und deine
+              IP-Adresse.</li>
+            <li><strong>Leaflet &amp; OpenStreetMap-Tiles</strong> &ndash; Kartendarstellung in der Anwendung;
+              dein Browser laedt Kartenkacheln direkt vom Tile-Server (IP-Uebertragung).</li>
+            <li><strong>Google Fonts</strong> (Google Ireland Ltd.) &ndash; Nachladen der Schriftart
+              <em>Lexend</em> von fonts.googleapis.com (IP-Uebertragung).</li>
+            <li><strong>Tailwind CDN</strong> (Vercel/Cloudflare) &ndash; Auslieferung des CSS-Frameworks auf
+              der Landingpage (IP-Uebertragung).</li>
+            <li><strong>Microsoft 365 / Outlook</strong> (Microsoft Ireland Operations Ltd.) &ndash;
+              Versand transaktionaler E-Mails (Registrierungsbestaetigung, Passwort-Reset) per SMTP.</li>
+          </ul>
+        </section>
+
+        <section class="bg-deep-gray rounded-3xl p-8 border border-white/5">
+          <h2 class="text-2xl font-bold mb-4">7. Hosting und Infrastruktur</h2>
+          <p class="text-gray-300 leading-relaxed">
+            PACR wird in einer Server-Umgebung innerhalb der <strong>Europaeischen Union</strong> betrieben.
+            Die Anwendungsdaten liegen in einer MariaDB-Datenbank; hochgeladene Dateien werden auf dem
+            Anwendungs-Server gespeichert. Die Verbindung zwischen Browser und Server erfolgt stets
+            verschluesselt ueber HTTPS/TLS.
+          </p>
+          <p class="text-gray-300 leading-relaxed mt-4">
+            <!-- TODO: konkreten Hosting-Provider + Region + AV-Vertrag vor Live-Schaltung eintragen -->
+            Der konkrete Hosting-Anbieter sowie der Standort des Rechenzentrums werden auf Anfrage unter
+            info@pacr.app mitgeteilt. Mit dem Hosting-Provider besteht ein Auftragsverarbeitungsvertrag
+            gemaess Art. 28 DSGVO.
           </p>
         </section>
 
         <section class="bg-deep-gray rounded-3xl p-8 border border-white/5">
-          <h2 class="text-2xl font-bold mb-4">5. Empfaenger und Hosting</h2>
+          <h2 class="text-2xl font-bold mb-4">8. Speicherdauer</h2>
+          <ul class="space-y-3 text-gray-300 list-disc list-inside">
+            <li><strong>Account-Daten</strong> bleiben bis zur Loeschung deines Kontos gespeichert.
+              Die Loeschung erfolgt vollstaendig und kaskadierend ueber den internen Prozess
+              (<em>UserDeletionService</em>).</li>
+            <li><strong>Trainings- und Aktivitaetsdaten</strong> bleiben bis zu ihrer individuellen
+              Loeschung oder der Loeschung deines Kontos gespeichert.</li>
+            <li><strong>OAuth-Tokens</strong> (Garmin, Strava, COROS) werden entfernt, sobald du die
+              entsprechende Verbindung trennst.</li>
+            <li><strong>Log- und Zugriffsdaten</strong> werden in der Regel nach spaetestens 90 Tagen
+              geloescht, sofern sie nicht zur Aufklaerung eines konkreten Sicherheitsvorfalls benoetigt
+              werden.</li>
+            <li><strong>Audit-Log-Eintraege</strong> werden aus Sicherheitsgruenden laenger aufbewahrt,
+              maximal jedoch bis zur Loeschung des zugehoerigen Kontos.</li>
+          </ul>
+        </section>
+
+        <section class="bg-deep-gray rounded-3xl p-8 border border-white/5">
+          <h2 class="text-2xl font-bold mb-4">9. Internationale Datenuebermittlung</h2>
           <p class="text-gray-300 leading-relaxed">
-            Sofern externe Dienstleister fuer Hosting oder E-Mail genutzt werden, erfolgt dies nur im Rahmen
-            datenschutzrechtlich zulaessiger Vereinbarungen. Werden Dienste ausserhalb der EU oder des EWR eingesetzt,
-            muessen geeignete Garantien nach Art. 44 ff. DSGVO sichergestellt werden.
+            Einzelne der unter Abschnitt 6 genannten Anbieter (insbesondere OpenAI, Strava, Google Fonts und
+            Tailwind CDN) haben ihren Sitz ausserhalb der EU/des EWR, vor allem in den USA. Datenuebermittlungen
+            erfolgen auf Grundlage geeigneter Garantien nach Art. 44 ff. DSGVO &ndash; insbesondere mittels
+            EU-Standardvertragsklauseln und, soweit anwendbar, auf Basis des EU-US Data Privacy Frameworks.
           </p>
         </section>
 
         <section class="bg-deep-gray rounded-3xl p-8 border border-white/5">
-          <h2 class="text-2xl font-bold mb-4">6. Deine Rechte</h2>
+          <h2 class="text-2xl font-bold mb-4">10. Sicherheit</h2>
           <p class="text-gray-300 leading-relaxed">
-            Du hast insbesondere das Recht auf Auskunft, Berichtigung, Loeschung, Einschraenkung der Verarbeitung,
-            Datenuebertragbarkeit sowie Widerspruch. Erteilte Einwilligungen kannst du jederzeit mit Wirkung fuer die Zukunft
-            widerrufen. Zudem besteht ein Beschwerderecht bei einer Datenschutzaufsichtsbehoerde.
+            PACR setzt technische und organisatorische Massnahmen zum Schutz deiner Daten ein, insbesondere:
           </p>
+          <ul class="mt-4 space-y-3 text-gray-300 list-disc list-inside">
+            <li>verschluesselte Uebertragung via HTTPS/TLS,</li>
+            <li>Passwoerter werden ausschliesslich als BCrypt-Hash gespeichert,</li>
+            <li>Authentifizierung ueber kurzlebige JWT-Tokens mit Refresh-Token-Rotation,</li>
+            <li>serverseitige Ownership-Checks auf allen nutzerbezogenen API-Endpunkten,</li>
+            <li>rollenbasierte Zugriffskontrolle (Spring Security),</li>
+            <li>getrennte Produktivumgebung mit Secrets ausschliesslich via Umgebungsvariablen.</li>
+          </ul>
         </section>
 
-        <section class="bg-deep-gray rounded-3xl p-8 border border-amber-400/30 bg-amber-300/5">
-          <h2 class="text-2xl font-bold mb-4">7. Hinweis zur Vervollstaendigung</h2>
+        <section class="bg-deep-gray rounded-3xl p-8 border border-white/5">
+          <h2 class="text-2xl font-bold mb-4">11. Deine Rechte</h2>
           <p class="text-gray-300 leading-relaxed">
-            Vor der Veroeffentlichung muessen die tatsaechlich genutzten Hosting- oder E-Mail-Dienstleister sowie weitere
-            konkret eingesetzte Drittanbieter noch abschliessend eingetragen und geprueft werden.
+            Nach der DSGVO stehen dir folgende Rechte zu: Auskunft (Art. 15), Berichtigung (Art. 16),
+            Loeschung (Art. 17), Einschraenkung der Verarbeitung (Art. 18), Datenuebertragbarkeit (Art. 20)
+            sowie Widerspruch (Art. 21). Erteilte Einwilligungen kannst du jederzeit mit Wirkung fuer die Zukunft
+            widerrufen. Zudem hast du ein Beschwerderecht bei einer Datenschutzaufsichtsbehoerde &ndash; in
+            Deutschland ist das die jeweils fuer deinen Wohnort zustaendige Landesbehoerde.
+          </p>
+          <p class="text-gray-300 leading-relaxed mt-4">
+            <strong>So kannst du deine Rechte in PACR ausueben:</strong>
+          </p>
+          <ul class="mt-3 space-y-3 text-gray-300 list-disc list-inside">
+            <li><strong>Konto vollstaendig loeschen:</strong> in der App unter
+              <em>Profil &rarr; Konto loeschen</em>. Dabei werden dein Account und alle verknuepften
+              Trainings- und Aktivitaetsdaten kaskadierend entfernt.</li>
+            <li><strong>Verbindung zu Garmin, Strava oder COROS trennen:</strong> in der App unter
+              <em>Profil &rarr; Integrationen</em>.</li>
+            <li><strong>Datenauskunft oder -export anfordern:</strong> per E-Mail an info@pacr.app.</li>
+            <li><strong>Einwilligungen widerrufen</strong> (z. B. fuer KI-Analyse): direkt in der App oder
+              per E-Mail an info@pacr.app.</li>
+          </ul>
+        </section>
+
+        <section class="bg-deep-gray rounded-3xl p-8 border border-white/5">
+          <h2 class="text-2xl font-bold mb-4">12. Aenderungen dieser Datenschutzerklaerung</h2>
+          <p class="text-gray-300 leading-relaxed">
+            Diese Datenschutzerklaerung wird bei wesentlichen Aenderungen am Funktionsumfang oder an den
+            eingesetzten Diensten aktualisiert. Die jeweils aktuelle Version ist unter
+            <a class="text-electric-lime hover:underline" href="/landing/datenschutz.html">pacr.app/landing/datenschutz.html</a>
+            abrufbar. Der Zeitpunkt der letzten Aktualisierung ist oben im Dokument vermerkt.
           </p>
         </section>
       </div>
