@@ -163,6 +163,13 @@ public class User implements UserDetails {
     @Column(name = "is_bot", nullable = false)
     private boolean isBot = false;
 
+    /**
+     * Comma-separated ISO 639-1 language codes for news feed filtering (e.g. "de,en").
+     * Null means no preference yet set (treated as "de,en" by defaults in the service layer).
+     */
+    @Column(name = "preferred_news_languages", length = 50)
+    private String preferredNewsLanguages;
+
     @JsonIgnore
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY, optional = true)
     private StravaToken stravaToken;
@@ -455,4 +462,7 @@ public class User implements UserDetails {
 
     public boolean isBot() { return isBot; }
     public void setBot(boolean bot) { this.isBot = bot; }
+
+    public String getPreferredNewsLanguages() { return preferredNewsLanguages; }
+    public void setPreferredNewsLanguages(String preferredNewsLanguages) { this.preferredNewsLanguages = preferredNewsLanguages; }
 }

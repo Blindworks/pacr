@@ -75,6 +75,9 @@ export class Settings implements OnInit, OnDestroy {
   protected emailReminderTime = signal('18:00');
   protected emailNewsEnabled = signal(false);
 
+  /** Selected ISO 639-1 codes for news feed filtering. */
+  protected newsLanguages = signal<string[]>(['de', 'en']);
+
   protected profileImageUrl = signal<string | null>(null);
   protected imageUploading = signal(false);
   protected imageError = signal('');
@@ -184,6 +187,11 @@ export class Settings implements OnInit, OnDestroy {
         this.userLongitude.set(user.longitude ?? null);
         this.theme.set((user.theme as ThemeChoice) ?? 'dark');
         this.themeService.initFromProfile(user.theme);
+        const prefs = (user.preferredNewsLanguages ?? '').trim();
+        const parsed = prefs
+          ? prefs.split(',').map(s => s.trim().toLowerCase()).filter(s => s === 'de' || s === 'en')
+          : ['de', 'en'];
+        this.newsLanguages.set(parsed.length > 0 ? parsed : ['de', 'en']);
         this.profileLoaded = true;
         this.loadProfileImage();
       },
@@ -289,6 +297,28 @@ export class Settings implements OnInit, OnDestroy {
     this.discoverableByOthersEnabled.set(value);
     this.userService.currentUser.update(u => u ? { ...u, discoverableByOthers: value } : null);
     this.triggerAutoSave();
+  }
+
+  protected toggleNewsLanguage(code: 'de' | 'en'): void {
+    const current = this.newsLanguages();
+    const next = current.includes(code)
+      ? current.filter(l => l !== code)
+      : [...current, code];
+    this.newsLanguages.set(next);
+    this.userService.updateNewsLanguages(next).subscribe({
+      next: resp => {
+        const stored = (resp.preferredNewsLanguages || []).join(',');
+        this.userService.currentUser.update(u => u ? { ...u, preferredNewsLanguages: stored } : null);
+      },
+      error: () => {
+        // Revert UI on failure so the checkbox stays in sync with server state.
+        this.newsLanguages.set(current);
+      }
+    });
+  }
+
+  protected isNewsLanguageSelected(code: 'de' | 'en'): boolean {
+    return this.newsLanguages().includes(code);
   }
 
   protected hasLocation(): boolean {

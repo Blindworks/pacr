@@ -258,6 +258,23 @@ export class NewsHub implements OnInit, OnDestroy {
     this.articleNews.set(null);
   }
 
+  /**
+   * For externally-imported news: records a view and opens the source article in a new tab.
+   * `rel="noopener noreferrer"` is set on the anchor itself, so this only handles the click tracking.
+   */
+  openExternalSource(news: PublicNews, event?: Event): void {
+    event?.stopPropagation();
+    this.newsService.recordView(news.id).subscribe({ error: () => {} });
+    if (news.externalUrl) {
+      window.open(news.externalUrl, '_blank', 'noopener,noreferrer');
+    }
+  }
+
+  /** Returns the best image URL available for a news item (local first, external fallback). */
+  newsImageUrl(news: PublicNews): string | null {
+    return news.heroImageFilename || news.externalImageUrl || null;
+  }
+
   openTopic(topic: TrendingTopic): void {
     this.router.navigate(['/news-hub'], { queryParams: { tag: topic.tag } });
   }

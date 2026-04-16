@@ -1,0 +1,76 @@
+@use 'mixins' as m;
+
+.form-page {
+  padding: 1.5rem;
+  max-width: 640px;
+}
+
+.form-header {
+  margin-bottom: 1.5rem;
+
+  h2 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+  }
+}
+
+.form-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+
+  label {
+    font-size: 0.8rem;
+    opacity: 0.7;
+    font-weight: 500;
+  }
+
+  input, select {
+    background: var(--panel-soft);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 0.6rem 0.75rem;
+    color: inherit;
+    font-size: 0.9rem;
+    font-family: inherit;
+
+    &:focus { outline: none; border-color: var(--pp); }
+  }
+
+  &--inline label {
+    flex-direction: row;
+    align-items: center;
+    display: flex;
+    gap: 0.5rem;
+    cursor: pointer;
+    opacity: 1;
+    font-size: 0.9rem;
+  }
+}
+
+.form-error {
+  color: #f44336;
+  font-size: 0.875rem;
+  margin: 0;
+}
+
+.form-actions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.btn-primary { @include m.btn-primary; }
+
+.btn-secondary {
+  @include m.btn-ghost;
+  padding: 0.6rem 1.5rem;
+
+  &:hover { background: var(--panel-soft); }
+}

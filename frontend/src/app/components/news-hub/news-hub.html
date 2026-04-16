@@ -19,8 +19,8 @@
     <main class="hub-main">
       @if (featured(); as hero) {
         <article class="hero" (click)="openNews(hero)">
-          @if (hero.heroImageFilename) {
-            <img class="hero-img" [src]="hero.heroImageFilename" [alt]="hero.title" />
+          @if (newsImageUrl(hero); as img) {
+            <img class="hero-img" [src]="img" [alt]="hero.title" />
           } @else {
             <div class="hero-img hero-img--placeholder"></div>
           }
@@ -29,6 +29,9 @@
               <span class="chip chip--brand">#{{ hero.topicTag }}</span>
             } @else {
               <span class="chip chip--brand">{{ 'NEWS_HUB.HERO_TAG_FEATURED' | translate }}</span>
+            }
+            @if (hero.sourceName) {
+              <span class="chip chip--source">{{ 'NEWS_HUB.SOURCE_LABEL' | translate }}: {{ hero.sourceName }}</span>
             }
             @if (hero.isTrending) {
               <span class="trending-badge trending-badge--inline">
@@ -41,7 +44,13 @@
               <p class="hero-excerpt">{{ hero.excerpt }}</p>
             }
             <div class="hero-footer">
-              <button class="hero-cta">{{ 'NEWS_HUB.READ_MORE' | translate }}</button>
+              @if (hero.externalUrl) {
+                <button class="hero-cta" (click)="openExternalSource(hero, $event)">
+                  {{ 'NEWS_HUB.READ_ON_SOURCE' | translate: { source: hero.sourceName || '' } }}
+                </button>
+              } @else {
+                <button class="hero-cta">{{ 'NEWS_HUB.READ_MORE' | translate }}</button>
+              }
               <div class="counter-row counter-row--on-dark">
                 <span class="counter"><span class="material-symbols-outlined">visibility</span>{{ hero.viewCount }}</span>
                 <button class="counter counter--btn" [class.active]="hero.hasLiked" (click)="toggleNewsLike(hero, $event)">
@@ -64,15 +73,18 @@
           </header>
           <div class="trending-rail">
             @for (t of trendingNews(); track t.id) {
-              <article class="trending-card" (click)="openNews(t)">
-                @if (t.heroImageFilename) {
-                  <img class="trending-card-img" [src]="t.heroImageFilename" [alt]="t.title" />
+              <article class="trending-card" (click)="t.externalUrl ? openExternalSource(t, $event) : openNews(t)">
+                @if (newsImageUrl(t); as img) {
+                  <img class="trending-card-img" [src]="img" [alt]="t.title" />
                 } @else {
                   <div class="trending-card-img trending-card-img--placeholder"></div>
                 }
                 <div class="trending-card-body">
                   @if (t.topicTag) {
                     <span class="chip chip--tag">#{{ t.topicTag }}</span>
+                  }
+                  @if (t.sourceName) {
+                    <span class="chip chip--source">{{ t.sourceName }}</span>
                   }
                   <h4 class="trending-card-title">{{ t.title }}</h4>
                   <div class="counter-row counter-row--compact">
@@ -107,23 +119,42 @@
                     {{ 'NEWS_HUB.TRENDING_BADGE' | translate }}
                   </span>
                 }
-                <div class="card-clickable" (click)="openNews(entry.news)">
-                  @if (entry.news.heroImageFilename) {
-                    <img class="card-img" [src]="entry.news.heroImageFilename" [alt]="entry.news.title" />
+                <div class="card-clickable" (click)="entry.news.externalUrl ? openExternalSource(entry.news, $event) : openNews(entry.news)">
+                  @if (newsImageUrl(entry.news); as img) {
+                    <img class="card-img" [src]="img" [alt]="entry.news.title" />
                   }
                   <div class="card-body">
-                    @if (entry.news.topicTag) {
-                      <span class="chip chip--tag">#{{ entry.news.topicTag }}</span>
-                    }
+                    <div class="card-chips">
+                      @if (entry.news.topicTag) {
+                        <span class="chip chip--tag">#{{ entry.news.topicTag }}</span>
+                      }
+                      @if (entry.news.sourceName) {
+                        <span class="chip chip--source">{{ entry.news.sourceName }}</span>
+                      }
+                    </div>
                     <h4 class="card-title">{{ entry.news.title }}</h4>
                     @if (entry.news.excerpt) {
                       <p class="card-excerpt">{{ entry.news.excerpt }}</p>
                     }
                     <div class="card-meta">
-                      <span>{{ 'NEWS_HUB.BY_AUTHOR' | translate }}</span>
+                      @if (entry.news.sourceName) {
+                        <span>{{ entry.news.sourceName }}</span>
+                      } @else {
+                        <span>{{ 'NEWS_HUB.BY_AUTHOR' | translate }}</span>
+                      }
                       <span>·</span>
                       <span>{{ entry.news.publishedAt | date:'mediumDate' }}</span>
                     </div>
+                    @if (entry.news.externalUrl) {
+                      <a class="card-read-more"
+                         [href]="entry.news.externalUrl"
+                         target="_blank"
+                         rel="noopener noreferrer"
+                         (click)="openExternalSource(entry.news, $event)">
+                        {{ 'NEWS_HUB.READ_ON_SOURCE' | translate: { source: entry.news.sourceName || '' } }}
+                        <span class="material-symbols-outlined">open_in_new</span>
+                      </a>
+                    }
                   </div>
                 </div>
                 <div class="counter-row news-counter-row">

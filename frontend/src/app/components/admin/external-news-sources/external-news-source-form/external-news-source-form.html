@@ -1,0 +1,47 @@
+<div class="form-page">
+  <div class="form-header">
+    <h2>{{ sourceId() ? ('ADMIN.NEWS_SOURCES_EDIT_TITLE' | translate) : ('ADMIN.NEWS_SOURCES_NEW_TITLE' | translate) }}</h2>
+  </div>
+
+  <form class="form-body" (ngSubmit)="save()">
+    <div class="field">
+      <label for="name">{{ 'ADMIN.NEWS_SOURCES_NAME' | translate }}</label>
+      <input id="name" type="text" [ngModel]="name()" (ngModelChange)="name.set($event)"
+             name="name" maxlength="255"
+             [placeholder]="'ADMIN.NEWS_SOURCES_NAME_PLACEHOLDER' | translate" />
+    </div>
+
+    <div class="field">
+      <label for="feedUrl">{{ 'ADMIN.NEWS_SOURCES_FEED_URL' | translate }}</label>
+      <input id="feedUrl" type="url" [ngModel]="feedUrl()" (ngModelChange)="feedUrl.set($event)"
+             name="feedUrl"
+             [placeholder]="'ADMIN.NEWS_SOURCES_FEED_URL_PLACEHOLDER' | translate" />
+    </div>
+
+    <div class="field">
+      <label for="language">{{ 'ADMIN.NEWS_SOURCES_LANGUAGE' | translate }}</label>
+      <select id="language" [ngModel]="language()" (ngModelChange)="language.set($event)" name="language">
+        <option value="de">{{ 'LANGUAGE.DE' | translate }}</option>
+        <option value="en">{{ 'LANGUAGE.EN' | translate }}</option>
+      </select>
+    </div>
+
+    <div class="field field--inline">
+      <label>
+        <input type="checkbox" [ngModel]="enabled()" (ngModelChange)="enabled.set($event)" name="enabled" />
+        <span>{{ 'ADMIN.NEWS_SOURCES_ENABLED_LABEL' | translate }}</span>
+      </label>
+    </div>
+
+    @if (error()) {
+      <p class="form-error">{{ error() }}</p>
+    }
+
+    <div class="form-actions">
+      <button type="submit" class="btn-primary" [disabled]="saving()">
+        {{ saving() ? ('COMMON.SAVING' | translate) : ('COMMON.SAVE' | translate) }}
+      </button>
+      <button type="button" class="btn-secondary" (click)="cancel()">{{ 'COMMON.CANCEL' | translate }}</button>
+    </div>
+  </form>
+</div>

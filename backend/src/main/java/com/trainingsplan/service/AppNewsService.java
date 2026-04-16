@@ -68,6 +68,47 @@ public class AppNewsService {
         return newsRepo.findAllByIsPublishedTrueOrderByPublishedAtDesc();
     }
 
+    /**
+     * Returns published news filtered by the given language codes.
+     * News with {@code language == null} (legacy / manually created) are always included.
+     */
+    public List<AppNews> findAllPublishedForLanguages(List<String> languages) {
+        if (languages == null || languages.isEmpty()) {
+            return newsRepo.findAllByIsPublishedTrueOrderByPublishedAtDesc();
+        }
+        return newsRepo.findPublishedForLanguages(languages);
+    }
+
+    /**
+     * Creates a news entry imported from an external RSS feed. Idempotent:
+     * if a news item with the given GUID already exists, returns {@code null}.
+     */
+    @Transactional
+    public AppNews createFromExternal(com.trainingsplan.entity.ExternalNewsSource source,
+                                      com.trainingsplan.service.ParsedFeedItem item,
+                                      User systemUser) {
+        if (item.guid() == null || item.guid().isBlank()) return null;
+        if (newsRepo.existsByExternalGuid(item.guid())) return null;
+        AppNews news = new AppNews();
+        news.setTitle(item.title());
+        // content is NOT NULL in the schema — fall back to excerpt or title.
+        String content = (item.excerpt() != null && !item.excerpt().isBlank())
+                ? item.excerpt() : item.title();
+        news.setContent(content);
+        news.setExcerpt(item.excerpt());
+        news.setTopicTag(source.getName());
+        news.setFeatured(false);
+        news.setPublished(false);
+        news.setCreatedBy(systemUser);
+        news.setCreatedAt(LocalDateTime.now());
+        news.setExternalGuid(item.guid());
+        news.setExternalUrl(item.url());
+        news.setExternalImageUrl(item.imageUrl());
+        news.setLanguage(source.getLanguage());
+        news.setExternalSource(source);
+        return newsRepo.save(news);
+    }
+
     public AppNews findById(Long id) {
         return newsRepo.findById(id).orElseThrow(() -> new RuntimeException("News not found: " + id));
     }
@@ -293,6 +334,7 @@ public class AppNewsService {
         boolean hasLiked = currentUser != null
                 && likeRepo.existsByAppNews_IdAndUser_Id(news.getId(), currentUser.getId());
         boolean trending = isTrending(news.getId());
+        String sourceName = news.getExternalSource() != null ? news.getExternalSource().getName() : null;
         return new AppNewsDto(
             news.getId(),
             news.getTitle(),
@@ -308,7 +350,11 @@ public class AppNewsService {
             likeCount,
             commentCount,
             hasLiked,
-            trending
+            trending,
+            news.getExternalUrl(),
+            news.getExternalImageUrl(),
+            sourceName,
+            news.getLanguage()
         );
     }
 

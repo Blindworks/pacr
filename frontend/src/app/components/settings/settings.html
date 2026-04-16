@@ -346,6 +346,26 @@
             <span class="track"></span>
           </label>
         </div>
+        <div class="toggle-row toggle-row--block">
+          <div class="toggle-info">
+            <span class="toggle-title">{{ 'SETTINGS.NEWS_LANGUAGES_TITLE' | translate }}</span>
+            <span class="toggle-sub">{{ 'SETTINGS.NEWS_LANGUAGES_SUB' | translate }}</span>
+          </div>
+          <div class="checkbox-group">
+            <label class="chk">
+              <input type="checkbox"
+                     [checked]="isNewsLanguageSelected('de')"
+                     (change)="toggleNewsLanguage('de')" />
+              <span>{{ 'LANGUAGE.DE' | translate }}</span>
+            </label>
+            <label class="chk">
+              <input type="checkbox"
+                     [checked]="isNewsLanguageSelected('en')"
+                     (change)="toggleNewsLanguage('en')" />
+              <span>{{ 'LANGUAGE.EN' | translate }}</span>
+            </label>
+          </div>
+        </div>
       </div>
     </article>
 
