@@ -1,7 +1,9 @@
 <div class="news-hub-page">
   <header class="hub-header">
-    <h1>{{ 'NEWS_HUB.TITLE' | translate }}</h1>
-    <p class="subtitle">{{ 'NEWS_HUB.SUBTITLE' | translate }}</p>
+    <div class="header-left">
+      <h1>{{ 'NEWS_HUB.TITLE' | translate }}<br/><span class="accent">{{ 'NEWS_HUB.TITLE_ACCENT' | translate }}</span></h1>
+      <p class="subtitle">{{ 'NEWS_HUB.SUBTITLE' | translate }}</p>
+    </div>
     <nav class="tabs">
       <button class="tab" [class.active]="activeTab() === 'all'" (click)="setTab('all')">
         {{ 'NEWS_HUB.TAB_ALL' | translate }}

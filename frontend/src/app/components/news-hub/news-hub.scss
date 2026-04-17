@@ -14,18 +14,33 @@
 .hub-header {
   margin-bottom: 24px;
 
-  h1 {
-    font-size: 2rem;
-    font-weight: 800;
-    letter-spacing: -0.02em;
-    margin: 0;
-    color: var(--text);
-  }
+  .header-left {
+    margin-bottom: 1.5rem;
 
-  .subtitle {
-    margin: 4px 0 16px;
-    color: var(--text-muted);
-    font-size: 0.95rem;
+    h1 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(2.5rem, 6vw, 4.5rem);
+      font-weight: 900;
+      font-style: italic;
+      line-height: 0.95;
+      letter-spacing: -0.04em;
+      text-transform: uppercase;
+      margin: 0 0 0.75rem;
+      color: var(--text);
+
+      .accent {
+        color: var(--pp);
+      }
+    }
+
+    .subtitle {
+      font-family: 'Lexend', sans-serif;
+      font-size: 0.6875rem;
+      text-transform: uppercase;
+      letter-spacing: 0.3em;
+      color: var(--text-muted);
+      margin: 0;
+    }
   }
 
   .tabs {

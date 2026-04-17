@@ -27,8 +27,9 @@
     "PRO": "PRO"
   },
   "NEWS_HUB": {
-    "TITLE": "News Hub",
-    "SUBTITLE": "Stories, Freunde und der Puls deiner Trainings-Community.",
+    "TITLE": "News",
+    "TITLE_ACCENT": "Hub",
+    "SUBTITLE": "Stories. Freunde. Community.",
     "TAB_ALL": "Alle",
     "TAB_SOCIAL": "Social",
     "TAB_NEWS": "News",
