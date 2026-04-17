@@ -43,7 +43,7 @@ export class AchievementForm implements OnInit {
   readonly icons = [
     'emoji_events', 'directions_run', 'local_fire_department', 'task_alt',
     'military_tech', 'star', 'bolt', 'timer', 'trending_up', 'fitness_center',
-    'hiking', 'pool', 'cycling', 'speed', 'workspace_premium'
+    'hiking', 'pool', 'directions_bike', 'speed', 'workspace_premium'
   ];
 
   ngOnInit(): void {
