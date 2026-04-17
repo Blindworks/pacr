@@ -31,15 +31,16 @@
 
     <div class="field-row">
       <div class="field">
-        <label for="category">{{ 'ADMIN.CATEGORY' | translate }}</label>
-        <select id="category" [ngModel]="category()" (ngModelChange)="category.set($event)" name="category">
-          @for (cat of categories; track cat.value) {
-            <option [value]="cat.value">{{ cat.label }}</option>
+        <label for="metric">{{ 'ADMIN.METRIC' | translate }}</label>
+        <select id="metric" [ngModel]="metric()" (ngModelChange)="metric.set($event)" name="metric">
+          @for (m of metrics; track m.value) {
+            <option [value]="m.value">{{ m.label }}</option>
           }
         </select>
+        <p class="hint">{{ 'ADMIN.METRIC_HINT' | translate }}</p>
       </div>
       <div class="field">
-        <label for="threshold">{{ 'ADMIN.THRESHOLD_VALUE' | translate }}</label>
+        <label for="threshold">{{ 'ADMIN.THRESHOLD_VALUE' | translate }} ({{ currentUnit }})</label>
         <input id="threshold" type="number" [ngModel]="threshold()" (ngModelChange)="threshold.set($event)"
                name="threshold" step="any" />
       </div>

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="116-1" author="benedikt">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="achievements" columnName="metric"/>
+            </not>
+        </preConditions>
+        <comment>Add metric column to achievements (decouples evaluation from achievement_key)</comment>
+        <addColumn tableName="achievements">
+            <column name="metric" type="VARCHAR(50)"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="116-2" author="benedikt">
+        <comment>Backfill metric based on achievement_key for existing rows</comment>
+        <sql>
+            UPDATE achievements SET metric = 'TOTAL_DISTANCE_KM'
+              WHERE metric IS NULL AND category = 'DISTANCE';
+            UPDATE achievements SET metric = 'STREAK_DAYS'
+              WHERE metric IS NULL AND category = 'STREAK';
+            UPDATE achievements SET metric = 'PR_DISTINCT_DISTANCES'
+              WHERE metric IS NULL AND achievement_key = 'pr_all_distances';
+            UPDATE achievements SET metric = 'PR_TOTAL_COUNT'
+              WHERE metric IS NULL AND category = 'PR';
+            UPDATE achievements SET metric = 'PERFECT_WEEKS_COUNT'
+              WHERE metric IS NULL AND achievement_key LIKE 'week_100_pct%';
+            UPDATE achievements SET metric = 'COMPLETED_PLANS_COUNT'
+              WHERE metric IS NULL AND category = 'PLAN_COMPLETION';
+        </sql>
+    </changeSet>
+
+    <changeSet id="116-3" author="benedikt">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM achievements WHERE metric IS NULL
+            </sqlCheck>
+        </preConditions>
+        <comment>Make metric NOT NULL once all rows backfilled</comment>
+        <addNotNullConstraint tableName="achievements" columnName="metric" columnDataType="VARCHAR(50)"/>
+    </changeSet>
+
+</databaseChangeLog>

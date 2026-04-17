@@ -27,6 +27,10 @@ public class Achievement {
     @Column(nullable = false, length = 30)
     private AchievementCategory category;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 50)
+    private AchievementMetric metric;
+
     @Column(nullable = false)
     private double threshold;
 
@@ -42,12 +46,14 @@ public class Achievement {
     public Achievement() {}
 
     public Achievement(String key, String name, String description, String icon,
-                       AchievementCategory category, double threshold, int sortOrder) {
+                       AchievementCategory category, AchievementMetric metric,
+                       double threshold, int sortOrder) {
         this.key = key;
         this.name = name;
         this.description = description;
         this.icon = icon;
         this.category = category;
+        this.metric = metric;
         this.threshold = threshold;
         this.sortOrder = sortOrder;
     }
@@ -84,6 +90,9 @@ public class Achievement {
 
     public AchievementCategory getCategory() { return category; }
     public void setCategory(AchievementCategory category) { this.category = category; }
+
+    public AchievementMetric getMetric() { return metric; }
+    public void setMetric(AchievementMetric metric) { this.metric = metric; }
 
     public double getThreshold() { return threshold; }
     public void setThreshold(double threshold) { this.threshold = threshold; }

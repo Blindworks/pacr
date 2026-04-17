@@ -82,16 +82,26 @@ public class AchievementEvaluationService {
         LocalDate from = achievement.getValidFrom();
         LocalDate until = achievement.getValidUntil();
         boolean timeBound = achievement.isTimeBound();
+        AchievementMetric metric = achievement.getMetric();
 
-        switch (achievement.getCategory()) {
-            case DISTANCE:
+        if (metric == null) {
+            log.warn("Achievement {} has no metric configured — skipping evaluation", achievement.getKey());
+            return 0.0;
+        }
+
+        switch (metric) {
+            case TOTAL_DISTANCE_KM:
                 return calculateDistance(user, from, until, timeBound);
-            case STREAK:
+            case STREAK_DAYS:
                 return calculateStreak(user, from, until, timeBound);
-            case PR:
-                return calculatePR(user, achievement);
-            case PLAN_COMPLETION:
-                return calculatePlanCompletion(user, achievement);
+            case PR_TOTAL_COUNT:
+                return personalRecordEntryRepository.countByUserId(user.getId());
+            case PR_DISTINCT_DISTANCES:
+                return personalRecordEntryRepository.countDistinctPersonalRecordsByUserId(user.getId());
+            case PERFECT_WEEKS_COUNT:
+                return countPerfectWeeks(user);
+            case COMPLETED_PLANS_COUNT:
+                return countCompletedPlans(user);
             default:
                 return 0.0;
         }
@@ -123,55 +133,45 @@ public class AchievementEvaluationService {
         return Math.max(currentStreak, longestStreak);
     }
 
-    private double calculatePR(User user, Achievement achievement) {
-        String key = achievement.getKey();
-        long totalPREntries = personalRecordEntryRepository.countByUserId(user.getId());
-        // Match by key prefix for known PR types
-        if (key.startsWith("first_pr")) {
-            return totalPREntries > 0 ? 1.0 : 0.0;
-        } else if (key.startsWith("pr_all_distances")) {
-            return personalRecordEntryRepository.countDistinctPersonalRecordsByUserId(user.getId());
-        } else if (key.startsWith("pr_10_broken")) {
-            return totalPREntries;
+    private double countPerfectWeeks(User user) {
+        try {
+            int perfect = 0;
+            for (CompetitionRegistration reg : getActiveRegistrations(user)) {
+                List<UserTrainingEntry> entries = userTrainingEntryRepository
+                        .findByCompetitionRegistrationId(reg.getId());
+                if (entries.isEmpty()) continue;
+                java.util.Map<Integer, List<UserTrainingEntry>> byWeek = new java.util.HashMap<>();
+                for (UserTrainingEntry entry : entries) {
+                    byWeek.computeIfAbsent(entry.getWeekNumber(), k -> new ArrayList<>()).add(entry);
+                }
+                for (var weekEntries : byWeek.values()) {
+                    if (!weekEntries.isEmpty() && weekEntries.stream().allMatch(e -> Boolean.TRUE.equals(e.getCompleted()))) {
+                        perfect++;
+                    }
+                }
+            }
+            return perfect;
+        } catch (Exception e) {
+            log.warn("Could not count perfect weeks: {}", e.getMessage());
+            return 0.0;
         }
-        return totalPREntries;
     }
 
-    private double calculatePlanCompletion(User user, Achievement achievement) {
+    private double countCompletedPlans(User user) {
         try {
-            List<CompetitionRegistration> registrations = getActiveRegistrations(user);
-            String key = achievement.getKey();
-
-            if (key.startsWith("week_100_pct")) {
-                for (CompetitionRegistration reg : registrations) {
-                    List<UserTrainingEntry> entries = userTrainingEntryRepository
-                            .findByCompetitionRegistrationId(reg.getId());
-                    if (entries.isEmpty()) continue;
-                    java.util.Map<Integer, List<UserTrainingEntry>> byWeek = new java.util.HashMap<>();
-                    for (UserTrainingEntry entry : entries) {
-                        byWeek.computeIfAbsent(entry.getWeekNumber(), k -> new ArrayList<>()).add(entry);
-                    }
-                    for (var weekEntries : byWeek.values()) {
-                        if (!weekEntries.isEmpty() && weekEntries.stream().allMatch(e -> Boolean.TRUE.equals(e.getCompleted()))) {
-                            return 1.0;
-                        }
-                    }
+            int completed = 0;
+            for (CompetitionRegistration reg : getActiveRegistrations(user)) {
+                List<UserTrainingEntry> entries = userTrainingEntryRepository
+                        .findByCompetitionRegistrationId(reg.getId());
+                if (!entries.isEmpty() && entries.stream().allMatch(e -> Boolean.TRUE.equals(e.getCompleted()))) {
+                    completed++;
                 }
-                return 0.0;
-            } else if (key.startsWith("plan_completed")) {
-                for (CompetitionRegistration reg : registrations) {
-                    List<UserTrainingEntry> entries = userTrainingEntryRepository
-                            .findByCompetitionRegistrationId(reg.getId());
-                    if (!entries.isEmpty() && entries.stream().allMatch(e -> Boolean.TRUE.equals(e.getCompleted()))) {
-                        return 1.0;
-                    }
-                }
-                return 0.0;
             }
+            return completed;
         } catch (Exception e) {
-            log.warn("Could not evaluate plan completion: {}", e.getMessage());
+            log.warn("Could not count completed plans: {}", e.getMessage());
+            return 0.0;
         }
-        return 0.0;
     }
 
     private List<CompetitionRegistration> getActiveRegistrations(User user) {
