@@ -107,33 +107,37 @@
 
 .autocomplete {
   position: relative;
+  // Establish a stacking context so the absolute-positioned dropdown
+  // always wins against later siblings (e.g. .form-actions buttons).
+  isolation: isolate;
+  z-index: 1;
+}
+
+.autocomplete-hint,
+.autocomplete-results {
+  position: absolute;
+  top: calc(100% + 0.25rem);
+  left: 0;
+  right: 0;
+  z-index: 100;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
 }
 
 .autocomplete-hint {
-  margin-top: 0.4rem;
   padding: 0.45rem 0.7rem;
-  background: var(--panel-soft);
-  border: 1px solid var(--border);
-  border-radius: 6px;
   font-size: 0.8rem;
   opacity: 0.7;
 }
 
 .autocomplete-results {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  right: 0;
-  margin: 0.25rem 0 0;
+  margin: 0;
   padding: 0;
   list-style: none;
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 6px;
   max-height: 240px;
   overflow-y: auto;
-  z-index: 10;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
 
   li {
     display: flex;
