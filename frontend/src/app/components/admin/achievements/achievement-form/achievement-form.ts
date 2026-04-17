@@ -25,25 +25,31 @@ export class AchievementForm implements OnInit {
   name = signal('');
   description = signal('');
   icon = signal('emoji_events');
-  category = signal('DISTANCE');
+  metric = signal('TOTAL_DISTANCE_KM');
   threshold = signal(0);
   sortOrder = signal(0);
   validFrom = signal('');
   validUntil = signal('');
 
-  get categories() {
+  get metrics() {
     return [
-      { value: 'DISTANCE', label: this.translate.instant('ADMIN.CAT_DISTANCE_FULL') },
-      { value: 'STREAK', label: this.translate.instant('ADMIN.CAT_STREAK_FULL') },
-      { value: 'PR', label: this.translate.instant('ADMIN.CAT_PR_FULL') },
-      { value: 'PLAN_COMPLETION', label: this.translate.instant('ADMIN.CAT_PLAN_FULL') }
+      { value: 'TOTAL_DISTANCE_KM', label: this.translate.instant('ADMIN.METRIC_TOTAL_DISTANCE_KM'), unit: 'km' },
+      { value: 'STREAK_DAYS', label: this.translate.instant('ADMIN.METRIC_STREAK_DAYS'), unit: this.translate.instant('ADMIN.UNIT_DAYS') },
+      { value: 'PR_TOTAL_COUNT', label: this.translate.instant('ADMIN.METRIC_PR_TOTAL_COUNT'), unit: this.translate.instant('ADMIN.UNIT_PRS') },
+      { value: 'PR_DISTINCT_DISTANCES', label: this.translate.instant('ADMIN.METRIC_PR_DISTINCT_DISTANCES'), unit: this.translate.instant('ADMIN.UNIT_DISTANCES') },
+      { value: 'PERFECT_WEEKS_COUNT', label: this.translate.instant('ADMIN.METRIC_PERFECT_WEEKS_COUNT'), unit: this.translate.instant('ADMIN.UNIT_WEEKS') },
+      { value: 'COMPLETED_PLANS_COUNT', label: this.translate.instant('ADMIN.METRIC_COMPLETED_PLANS_COUNT'), unit: this.translate.instant('ADMIN.UNIT_PLANS') }
     ];
+  }
+
+  get currentUnit(): string {
+    return this.metrics.find(m => m.value === this.metric())?.unit ?? '';
   }
 
   readonly icons = [
     'emoji_events', 'directions_run', 'local_fire_department', 'task_alt',
     'military_tech', 'star', 'bolt', 'timer', 'trending_up', 'fitness_center',
-    'hiking', 'pool', 'cycling', 'speed', 'workspace_premium'
+    'hiking', 'pool', 'directions_bike', 'speed', 'workspace_premium'
   ];
 
   ngOnInit(): void {
@@ -56,7 +62,7 @@ export class AchievementForm implements OnInit {
           this.name.set(a.name);
           this.description.set(a.description);
           this.icon.set(a.icon);
-          this.category.set(a.category);
+          this.metric.set(a.metric ?? 'TOTAL_DISTANCE_KM');
           this.threshold.set(a.threshold);
           this.sortOrder.set(a.sortOrder);
           this.validFrom.set(a.validFrom ?? '');
@@ -80,7 +86,7 @@ export class AchievementForm implements OnInit {
       name: this.name(),
       description: this.description(),
       icon: this.icon(),
-      category: this.category(),
+      metric: this.metric(),
       threshold: this.threshold(),
       sortOrder: this.sortOrder(),
       validFrom: this.validFrom() || null,

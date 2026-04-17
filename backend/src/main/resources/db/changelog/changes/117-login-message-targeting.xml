@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="117-1" author="benedikt">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="login_messages" columnName="target_type"/>
+            </not>
+        </preConditions>
+        <comment>Add target_type column to login_messages (default ALL)</comment>
+        <addColumn tableName="login_messages">
+            <column name="target_type" type="VARCHAR(20)" defaultValue="ALL">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="117-2" author="benedikt">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="login_message_target_groups"/>
+            </not>
+        </preConditions>
+        <comment>Join table for group-based targeting (PRO/FREE/TRAINER)</comment>
+        <createTable tableName="login_message_target_groups">
+            <column name="login_message_id" type="BIGINT">
+                <constraints nullable="false"
+                             foreignKeyName="fk_lm_target_groups_msg"
+                             references="login_messages(id)"
+                             deleteCascade="true"/>
+            </column>
+            <column name="target_group" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addPrimaryKey tableName="login_message_target_groups"
+                       columnNames="login_message_id, target_group"
+                       constraintName="pk_lm_target_groups"/>
+    </changeSet>
+
+    <changeSet id="117-3" author="benedikt">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="login_message_target_users"/>
+            </not>
+        </preConditions>
+        <comment>Join table for individual user targeting</comment>
+        <createTable tableName="login_message_target_users">
+            <column name="login_message_id" type="BIGINT">
+                <constraints nullable="false"
+                             foreignKeyName="fk_lm_target_users_msg"
+                             references="login_messages(id)"
+                             deleteCascade="true"/>
+            </column>
+            <column name="user_id" type="BIGINT">
+                <constraints nullable="false"
+                             foreignKeyName="fk_lm_target_users_user"
+                             references="users(id)"
+                             deleteCascade="true"/>
+            </column>
+        </createTable>
+        <addPrimaryKey tableName="login_message_target_users"
+                       columnNames="login_message_id, user_id"
+                       constraintName="pk_lm_target_users"/>
+    </changeSet>
+
+</databaseChangeLog>

@@ -3,6 +3,15 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
+export type LoginMessageTargetType = 'ALL' | 'GROUPS' | 'USERS';
+export type LoginMessageTargetGroup = 'PRO' | 'FREE' | 'TRAINER';
+
+export interface UserSummary {
+  id: number;
+  username: string;
+  email: string;
+}
+
 export interface LoginMessage {
   id: number;
   title: string;
@@ -10,11 +19,17 @@ export interface LoginMessage {
   published: boolean;
   publishedAt: string | null;
   createdAt: string;
+  targetType: LoginMessageTargetType;
+  targetGroups: LoginMessageTargetGroup[];
+  targetUsers: UserSummary[];
 }
 
 export interface CreateLoginMessageRequest {
   title: string;
   content: string;
+  targetType: LoginMessageTargetType;
+  targetGroups: LoginMessageTargetGroup[];
+  targetUserIds: number[];
 }
 
 @Injectable({ providedIn: 'root' })

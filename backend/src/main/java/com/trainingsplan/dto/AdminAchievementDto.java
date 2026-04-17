@@ -12,6 +12,7 @@ public class AdminAchievementDto {
     private String description;
     private String icon;
     private String category;
+    private String metric;
     private double threshold;
     private int sortOrder;
     private LocalDate validFrom;
@@ -42,6 +43,9 @@ public class AdminAchievementDto {
 
     public String getCategory() { return category; }
     public void setCategory(String category) { this.category = category; }
+
+    public String getMetric() { return metric; }
+    public void setMetric(String metric) { this.metric = metric; }
 
     public double getThreshold() { return threshold; }
     public void setThreshold(double threshold) { this.threshold = threshold; }

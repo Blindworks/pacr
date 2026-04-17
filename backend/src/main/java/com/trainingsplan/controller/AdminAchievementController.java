@@ -3,6 +3,7 @@ package com.trainingsplan.controller;
 import com.trainingsplan.dto.AdminAchievementDto;
 import com.trainingsplan.entity.Achievement;
 import com.trainingsplan.entity.AchievementCategory;
+import com.trainingsplan.entity.AchievementMetric;
 import com.trainingsplan.entity.UserAchievement;
 import com.trainingsplan.repository.AchievementRepository;
 import com.trainingsplan.repository.UserAchievementRepository;
@@ -99,11 +100,16 @@ public class AdminAchievementController {
     }
 
     private void applyFromRequest(Achievement a, AdminAchievementDto req) {
+        if (req.getMetric() == null || req.getMetric().isBlank()) {
+            throw new IllegalArgumentException("metric is required");
+        }
+        AchievementMetric metric = AchievementMetric.valueOf(req.getMetric());
         a.setKey(req.getKey());
         a.setName(req.getName());
         a.setDescription(req.getDescription());
         a.setIcon(req.getIcon());
-        a.setCategory(AchievementCategory.valueOf(req.getCategory()));
+        a.setMetric(metric);
+        a.setCategory(metric.getCategory());
         a.setThreshold(req.getThreshold());
         a.setSortOrder(req.getSortOrder());
         a.setValidFrom(req.getValidFrom());
@@ -118,6 +124,7 @@ public class AdminAchievementController {
         dto.setDescription(a.getDescription());
         dto.setIcon(a.getIcon());
         dto.setCategory(a.getCategory().name());
+        dto.setMetric(a.getMetric() != null ? a.getMetric().name() : null);
         dto.setThreshold(a.getThreshold());
         dto.setSortOrder(a.getSortOrder());
         dto.setValidFrom(a.getValidFrom());

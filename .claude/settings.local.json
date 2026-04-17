@@ -57,7 +57,10 @@
       "Bash(mkdir -p \"C:/Users/bened/IdeaProjects/Smart_Trainingsplan/frontend/src/assets/images/competitions\")",
       "Bash(touch \"C:/Users/bened/IdeaProjects/Smart_Trainingsplan/frontend/src/assets/images/competitions/.gitkeep\")",
       "Bash(ls version-bump*)",
-      "Bash(./version-bump.sh patch:*)"
+      "Bash(./version-bump.sh patch:*)",
+      "Bash(npx tsc *)",
+      "Bash(netstat -ano)",
+      "Bash(tasklist /FI \"PID eq 15536\")"
     ],
     "deny": [],
     "ask": []

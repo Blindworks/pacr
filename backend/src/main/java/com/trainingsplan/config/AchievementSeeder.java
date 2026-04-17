@@ -8,6 +8,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
+/**
+ * Seeds default achievements on startup. Insert-only: never overwrites
+ * achievements that already exist, so admin edits via the UI are preserved.
+ */
 @Component
 public class AchievementSeeder implements CommandLineRunner {
 
@@ -22,24 +26,15 @@ public class AchievementSeeder implements CommandLineRunner {
     @Override
     public void run(String... args) {
         for (AchievementDefinition def : AchievementDefinition.values()) {
-            achievementRepository.findByKey(def.getKey()).ifPresentOrElse(
-                    existing -> {
-                        existing.setName(def.getName());
-                        existing.setDescription(def.getDescription());
-                        existing.setIcon(def.getIcon());
-                        existing.setCategory(def.getCategory());
-                        existing.setThreshold(def.getThreshold());
-                        existing.setSortOrder(def.getSortOrder());
-                        achievementRepository.save(existing);
-                    },
-                    () -> {
-                        Achievement a = new Achievement(
-                                def.getKey(), def.getName(), def.getDescription(),
-                                def.getIcon(), def.getCategory(), def.getThreshold(), def.getSortOrder());
-                        achievementRepository.save(a);
-                        log.info("Seeded achievement: {}", def.getKey());
-                    }
-            );
+            if (achievementRepository.findByKey(def.getKey()).isPresent()) {
+                continue;
+            }
+            Achievement a = new Achievement(
+                    def.getKey(), def.getName(), def.getDescription(),
+                    def.getIcon(), def.getCategory(), def.getMetric(),
+                    def.getThreshold(), def.getSortOrder());
+            achievementRepository.save(a);
+            log.info("Seeded achievement: {}", def.getKey());
         }
     }
 }

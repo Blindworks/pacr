@@ -39,6 +39,9 @@ build/
 # VS Code
 .vscode/
 
+# Claude worktrees (never commit — VSCode may launch the backend from them)
+.claude/worktrees/
+
 # Eclipse
 .apt_generated
 .classpath

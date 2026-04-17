@@ -72,6 +72,9 @@
                 <button class="icon-btn" [title]="'ADMIN.EDIT_USER' | translate" (click)="navigateEdit(user.id)">
                   <span class="material-symbols-outlined">edit</span>
                 </button>
+                <button class="icon-btn" [title]="'ADMIN.SEND_LOGIN_MESSAGE' | translate" (click)="navigateSendMessage(user.id)">
+                  <span class="material-symbols-outlined">mail</span>
+                </button>
                 <button class="icon-btn icon-btn--danger" [title]="'ADMIN.DELETE_USER' | translate" (click)="requestDelete(user)">
                   <span class="material-symbols-outlined">delete</span>
                 </button>

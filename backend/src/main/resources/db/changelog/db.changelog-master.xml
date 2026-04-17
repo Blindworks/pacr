@@ -119,5 +119,7 @@
     <include file="db/changelog/changes/113-add-external-news-source.xml"/>
     <include file="db/changelog/changes/114-extend-app-news-external.xml"/>
     <include file="db/changelog/changes/115-add-user-news-language-prefs.xml"/>
+    <include file="db/changelog/changes/116-add-achievement-metric.xml"/>
+    <include file="db/changelog/changes/117-login-message-targeting.xml"/>
 
 </databaseChangeLog>

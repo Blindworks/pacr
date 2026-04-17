@@ -51,6 +51,14 @@ public interface UserRepository extends JpaRepository<User, Long> {
                                         @Param("excludeUserId") Long excludeUserId,
                                         Pageable pageable);
 
+    @Query("SELECT u FROM User u WHERE " +
+            "LOWER(u.username) LIKE LOWER(CONCAT('%', :query, '%')) " +
+            "OR LOWER(u.email) LIKE LOWER(CONCAT('%', :query, '%')) " +
+            "OR LOWER(COALESCE(u.firstName, '')) LIKE LOWER(CONCAT('%', :query, '%')) " +
+            "OR LOWER(COALESCE(u.lastName, '')) LIKE LOWER(CONCAT('%', :query, '%')) " +
+            "ORDER BY u.username ASC")
+    List<User> searchByUsernameOrEmail(@Param("query") String query, Pageable pageable);
+
     @Query("SELECT u FROM User u WHERE u.discoverableByOthers = true " +
             "AND u.status = com.trainingsplan.entity.UserStatus.ACTIVE " +
             "AND u.id <> :excludeUserId " +

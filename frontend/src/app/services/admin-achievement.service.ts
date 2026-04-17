@@ -10,6 +10,7 @@ export interface AdminAchievement {
   description: string;
   icon: string;
   category: string;
+  metric: string;
   threshold: number;
   sortOrder: number;
   validFrom: string | null;
