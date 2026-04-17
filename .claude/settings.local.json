@@ -60,7 +60,8 @@
       "Bash(./version-bump.sh patch:*)",
       "Bash(npx tsc *)",
       "Bash(netstat -ano)",
-      "Bash(tasklist /FI \"PID eq 15536\")"
+      "Bash(tasklist /FI \"PID eq 15536\")",
+      "Bash(bash version-bump.sh patch)"
     ],
     "deny": [],
     "ask": []
