@@ -14,6 +14,7 @@
         <tr>
           <th>{{ 'ADMIN.LOGIN_MSG_COL_TITLE' | translate }}</th>
           <th>{{ 'ADMIN.LOGIN_MSG_COL_STATUS' | translate }}</th>
+          <th>{{ 'ADMIN.LOGIN_MSG_COL_TARGET' | translate }}</th>
           <th>{{ 'ADMIN.LOGIN_MSG_COL_CREATED' | translate }}</th>
           <th>{{ 'ADMIN.LOGIN_MSG_PUBLISHED' | translate }}</th>
           <th>{{ 'COMMON.ACTIONS' | translate }}</th>
@@ -27,6 +28,9 @@
               <span class="badge" [class.badge--published]="item.published">
                 {{ item.published ? ('ADMIN.LOGIN_MSG_PUBLISHED' | translate) : ('ADMIN.LOGIN_MSG_DRAFT' | translate) }}
               </span>
+            </td>
+            <td>
+              <span class="target-badge">{{ targetLabel(item) }}</span>
             </td>
             <td>{{ item.createdAt | date:'dd.MM.yyyy HH:mm' }}</td>
             <td>{{ item.publishedAt ? (item.publishedAt | date:'dd.MM.yyyy HH:mm') : '—' }}</td>

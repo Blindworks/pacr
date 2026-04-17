@@ -45,6 +45,12 @@ export class UserList implements OnInit {
     this.router.navigate(['/admin/users', id, 'edit']);
   }
 
+  navigateSendMessage(userId: number): void {
+    this.router.navigate(['/admin/login-messages/new'], {
+      queryParams: { userId }
+    });
+  }
+
   requestDelete(user: UserProfile): void {
     this.confirmDeleteUser.set(user);
     this.confirmInput.set('');

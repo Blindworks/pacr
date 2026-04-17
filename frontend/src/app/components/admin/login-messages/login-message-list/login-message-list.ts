@@ -1,7 +1,7 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { DatePipe } from '@angular/common';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { AdminLoginMessageService, LoginMessage } from '../../../../services/admin-login-message.service';
 
 @Component({
@@ -14,6 +14,7 @@ import { AdminLoginMessageService, LoginMessage } from '../../../../services/adm
 export class LoginMessageList implements OnInit {
   private messageService = inject(AdminLoginMessageService);
   private router = inject(Router);
+  private translate = inject(TranslateService);
 
   messages = signal<LoginMessage[]>([]);
   isLoading = signal(false);
@@ -48,6 +49,20 @@ export class LoginMessageList implements OnInit {
     this.messageService.unpublish(item.id).subscribe({
       next: () => this.load()
     });
+  }
+
+  targetLabel(item: LoginMessage): string {
+    const type = item.targetType ?? 'ALL';
+    if (type === 'ALL') {
+      return this.translate.instant('ADMIN.LOGIN_MSG_TARGET_BADGE_ALL');
+    }
+    if (type === 'GROUPS') {
+      const groups = (item.targetGroups ?? [])
+        .map(g => this.translate.instant('ADMIN.LOGIN_MSG_GROUP_' + g));
+      return groups.length ? groups.join(' + ') : this.translate.instant('ADMIN.LOGIN_MSG_TARGET_BADGE_ALL');
+    }
+    const count = item.targetUsers?.length ?? 0;
+    return this.translate.instant('ADMIN.LOGIN_MSG_TARGET_BADGE_USERS_COUNT', { count });
   }
 
   delete(item: LoginMessage): void {

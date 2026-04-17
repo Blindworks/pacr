@@ -16,6 +16,79 @@
                 name="content" rows="8" [placeholder]="'ADMIN.LOGIN_MSG_CONTENT_PLACEHOLDER' | translate"></textarea>
     </div>
 
+    <div class="field">
+      <label>{{ 'ADMIN.LOGIN_MSG_TARGET_TYPE' | translate }}</label>
+      <div class="radio-group">
+        <label class="radio-option">
+          <input type="radio" name="targetType" value="ALL"
+                 [checked]="targetType() === 'ALL'" (change)="setTargetType('ALL')" />
+          <span>{{ 'ADMIN.LOGIN_MSG_TARGET_ALL' | translate }}</span>
+        </label>
+        <label class="radio-option">
+          <input type="radio" name="targetType" value="GROUPS"
+                 [checked]="targetType() === 'GROUPS'" (change)="setTargetType('GROUPS')" />
+          <span>{{ 'ADMIN.LOGIN_MSG_TARGET_GROUPS' | translate }}</span>
+        </label>
+        <label class="radio-option">
+          <input type="radio" name="targetType" value="USERS"
+                 [checked]="targetType() === 'USERS'" (change)="setTargetType('USERS')" />
+          <span>{{ 'ADMIN.LOGIN_MSG_TARGET_USERS' | translate }}</span>
+        </label>
+      </div>
+    </div>
+
+    @if (targetType() === 'GROUPS') {
+      <div class="field">
+        <label>{{ 'ADMIN.LOGIN_MSG_GROUPS_LABEL' | translate }}</label>
+        <div class="checkbox-group">
+          @for (group of availableGroups; track group) {
+            <label class="checkbox-option">
+              <input type="checkbox" [checked]="hasGroup(group)" (change)="toggleGroup(group)" />
+              <span>{{ ('ADMIN.LOGIN_MSG_GROUP_' + group) | translate }}</span>
+            </label>
+          }
+        </div>
+      </div>
+    }
+
+    @if (targetType() === 'USERS') {
+      <div class="field">
+        <label for="userSearch">{{ 'ADMIN.LOGIN_MSG_USERS_LABEL' | translate }}</label>
+
+        @if (selectedUsers().length > 0) {
+          <div class="chip-list">
+            @for (user of selectedUsers(); track user.id) {
+              <span class="chip">
+                <span class="chip-text">{{ user.username }} <span class="chip-email">({{ user.email }})</span></span>
+                <button type="button" class="chip-remove" (click)="removeUser(user)" aria-label="remove">×</button>
+              </span>
+            }
+          </div>
+        }
+
+        <div class="autocomplete">
+          <input id="userSearch" type="text" autocomplete="off"
+                 [ngModel]="userQuery()" (ngModelChange)="onUserQueryChange($event)"
+                 name="userSearch"
+                 [placeholder]="'ADMIN.LOGIN_MSG_SEARCH_USERS' | translate" />
+          @if (searching()) {
+            <div class="autocomplete-hint">…</div>
+          } @else if (searchResults().length > 0) {
+            <ul class="autocomplete-results">
+              @for (result of searchResults(); track result.id) {
+                <li (mousedown)="$event.preventDefault()" (click)="addUser(result)">
+                  <strong>{{ result.username }}</strong>
+                  <span class="result-email">{{ result.email }}</span>
+                </li>
+              }
+            </ul>
+          } @else if (userQuery().trim().length >= 2) {
+            <div class="autocomplete-hint">{{ 'ADMIN.LOGIN_MSG_NO_USERS_FOUND' | translate }}</div>
+          }
+        </div>
+      </div>
+    }
+
     @if (error()) {
       <p class="form-error">{{ error() }}</p>
     }
