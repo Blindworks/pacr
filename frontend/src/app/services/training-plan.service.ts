@@ -1,6 +1,6 @@
 import { apiUrl } from '../core/api-base';
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 export interface TrainingPlan {
@@ -53,6 +53,13 @@ export class TrainingPlanService {
       params['formatId'] = formatId.toString();
     }
     return this.http.post<TrainingPlan>(`${this.baseUrl}/assign`, null, { params });
+  }
+
+  exportPlan(planId: number): Observable<HttpResponse<Blob>> {
+    return this.http.get(apiUrl(`/admin/training-plans/${planId}/export`), {
+      responseType: 'blob',
+      observe: 'response'
+    });
   }
 
   uploadTemplate(file: File): Observable<TrainingPlan> {

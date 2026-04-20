@@ -1,6 +1,10 @@
 package com.trainingsplan.service;
 
 import com.trainingsplan.dto.TrainingPlanDto;
+import com.trainingsplan.dto.export.TrainingExportDto;
+import com.trainingsplan.dto.export.TrainingPlanBodyExportDto;
+import com.trainingsplan.dto.export.TrainingPlanExportDto;
+import com.trainingsplan.dto.export.TrainingPlanWeekExportDto;
 import com.trainingsplan.entity.AuditAction;
 import com.trainingsplan.entity.Competition;
 import com.trainingsplan.entity.CompetitionFormat;
@@ -215,6 +219,42 @@ public class TrainingPlanService {
         }
 
         return new TrainingPlanDto(sourcePlan);
+    }
+
+    // -------------------------------------------------------------------------
+    // Export plan to v2.0 JSON format (round-trippable via /upload-template)
+    // -------------------------------------------------------------------------
+
+    @Transactional(readOnly = true)
+    public String exportAsJson(Long planId) throws Exception {
+        TrainingPlan plan = trainingPlanRepository.findById(planId)
+                .orElseThrow(() -> new RuntimeException("Training plan not found: " + planId));
+
+        List<Training> trainings = trainingRepository.findByTrainingPlan_Id(planId);
+
+        Map<Integer, TrainingPlanWeekExportDto> weekMap = new java.util.TreeMap<>();
+        for (Training t : trainings) {
+            if (t.getWeekNumber() == null || t.getDayOfWeek() == null) continue;
+            TrainingPlanWeekExportDto week = weekMap.computeIfAbsent(t.getWeekNumber(), wn -> {
+                TrainingPlanWeekExportDto w = new TrainingPlanWeekExportDto();
+                w.weekNumber = wn;
+                return w;
+            });
+            week.schedule.put(t.getDayOfWeek().name().toLowerCase(), TrainingExportDto.from(t));
+        }
+
+        TrainingPlanBodyExportDto body = new TrainingPlanBodyExportDto();
+        body.name = plan.getName();
+        body.description = plan.getDescription();
+        body.targetTime = plan.getTargetTime();
+        body.prerequisites = plan.getPrerequisites();
+        body.competitionType = plan.getCompetitionType() != null ? plan.getCompetitionType().name() : null;
+        body.weeks = new ArrayList<>(weekMap.values());
+
+        TrainingPlanExportDto root = new TrainingPlanExportDto();
+        root.plan = body;
+
+        return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(root);
     }
 
     // -------------------------------------------------------------------------

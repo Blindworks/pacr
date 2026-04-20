@@ -18,10 +18,16 @@
         <span class="count-badge">{{ trainings().length }}</span>
       }
     </div>
-    <button class="btn-primary" (click)="navigateNew()">
-      <span class="material-symbols-outlined">add</span>
-      {{ 'ADMIN.NEW_TRAINING' | translate }}
-    </button>
+    <div class="toolbar-actions">
+      <button class="btn-ghost" (click)="exportPlan()" [disabled]="trainings().length === 0">
+        <span class="material-symbols-outlined">download</span>
+        {{ 'ADMIN.EXPORT_PLAN' | translate }}
+      </button>
+      <button class="btn-primary" (click)="navigateNew()">
+        <span class="material-symbols-outlined">add</span>
+        {{ 'ADMIN.NEW_TRAINING' | translate }}
+      </button>
+    </div>
   </div>
 
   @if (isLoading()) {

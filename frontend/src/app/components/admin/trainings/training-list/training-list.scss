@@ -59,6 +59,12 @@
   gap: 10px;
 }
 
+.toolbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
 .count-badge { @include m.count-badge; }
 
 /* Buttons */

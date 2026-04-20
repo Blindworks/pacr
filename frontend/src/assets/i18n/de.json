@@ -1521,6 +1521,8 @@
     "PREREQ_PLACEHOLDER": "z.B. 30 Min. am Stück laufen können",
     "TRAININGS_TITLE": "Trainings",
     "NEW_TRAINING": "Neues Training",
+    "EXPORT_PLAN": "Plan exportieren",
+    "EXPORT_PLAN_ERROR": "Fehler beim Exportieren des Plans",
     "LOADING_TRAININGS": "Trainings werden geladen…",
     "TRAININGS_LOAD_FAILED": "Trainings konnten nicht geladen werden.",
     "NO_TRAININGS": "Noch keine Trainings in diesem Plan.",

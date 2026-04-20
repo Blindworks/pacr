@@ -114,6 +114,34 @@ export class TrainingList implements OnInit {
     this.router.navigate(['/admin/plans']);
   }
 
+  exportPlan(): void {
+    const id = this.planId();
+    if (!id) return;
+    this.planService.exportPlan(id).subscribe({
+      next: (res) => {
+        const blob = res.body;
+        if (!blob) return;
+        const filename = this.extractFilename(res.headers.get('Content-Disposition'))
+          ?? `plan-${id}.json`;
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+      },
+      error: () => this.hasError.set(true)
+    });
+  }
+
+  private extractFilename(disposition: string | null): string | null {
+    if (!disposition) return null;
+    const match = /filename\*?=(?:UTF-8''|")?([^";]+)/i.exec(disposition);
+    return match ? decodeURIComponent(match[1].replace(/"$/, '')) : null;
+  }
+
   requestDelete(id: number): void {
     this.confirmDeleteId.set(id);
   }
