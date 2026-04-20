@@ -43,17 +43,70 @@ export class TrainingList implements OnInit {
     this.isLoading.set(true);
     this.hasError.set(false);
     this.trainingService.getByPlan(id).subscribe({
-      next: (data) => this.trainings.set(data),
+      next: (data) => {
+        this.trainings.set(data);
+        this.scheduleRestoreScroll();
+      },
       error: () => { this.hasError.set(true); this.isLoading.set(false); },
       complete: () => this.isLoading.set(false)
     });
   }
 
+  private scrollKey(): string {
+    return `admin-trainings-scroll-${this.planId()}`;
+  }
+
+  private scrollContainers(): HTMLElement[] {
+    const containers: HTMLElement[] = [];
+    const admin = document.querySelector('.admin-content') as HTMLElement | null;
+    if (admin) containers.push(admin);
+    containers.push(document.scrollingElement as HTMLElement || document.documentElement);
+    return containers;
+  }
+
+  private getCurrentScroll(): number {
+    for (const el of this.scrollContainers()) {
+      if (el && el.scrollTop > 0) return el.scrollTop;
+    }
+    return 0;
+  }
+
+  private saveScroll(): void {
+    sessionStorage.setItem(this.scrollKey(), String(this.getCurrentScroll()));
+  }
+
+  private scheduleRestoreScroll(): void {
+    const stored = sessionStorage.getItem(this.scrollKey());
+    if (stored == null) return;
+    const target = Number(stored) || 0;
+    if (target <= 0) return;
+
+    let attempts = 0;
+    const tryRestore = () => {
+      attempts++;
+      let applied = false;
+      for (const el of this.scrollContainers()) {
+        if (el && el.scrollHeight - el.clientHeight >= target) {
+          el.scrollTop = target;
+          if (el.scrollTop >= target - 1) applied = true;
+        }
+      }
+      if (!applied && attempts < 20) {
+        requestAnimationFrame(tryRestore);
+      } else {
+        sessionStorage.removeItem(this.scrollKey());
+      }
+    };
+    requestAnimationFrame(tryRestore);
+  }
+
   navigateNew(): void {
+    this.saveScroll();
     this.router.navigate(['/admin/plans', this.planId(), 'trainings', 'new']);
   }
 
   navigateEdit(id: number): void {
+    this.saveScroll();
     this.router.navigate(['/admin/plans', this.planId(), 'trainings', id, 'edit']);
   }
 
@@ -84,6 +137,16 @@ export class TrainingList implements OnInit {
       case 'recovery': return 'pill--recovery';
       default: return 'pill--default';
     }
+  }
+
+  distanceLabel(meters?: number): string {
+    if (meters == null || meters <= 0) return '—';
+    if (meters >= 1000) {
+      const km = meters / 1000;
+      const formatted = km % 1 === 0 ? km.toFixed(0) : km.toFixed(2).replace(/\.?0+$/, '');
+      return `${formatted} km`;
+    }
+    return `${meters} m`;
   }
 
   dayLabel(day?: number | string): string {

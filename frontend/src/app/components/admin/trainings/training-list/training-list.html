@@ -57,6 +57,7 @@
             <th>{{ 'COMMON.TYPE' | translate }}</th>
             <th>{{ 'ADMIN.INTENSITY' | translate }}</th>
             <th>{{ 'COMMON.DURATION' | translate }}</th>
+            <th>{{ 'ADMIN.TOTAL_DISTANCE' | translate }}</th>
             <th>{{ 'ADMIN.DIFFICULTY' | translate }}</th>
             <th>{{ 'ADMIN.STEPS' | translate }}</th>
             <th>{{ 'ADMIN.PREP_TIPS' | translate }}</th>
@@ -87,6 +88,7 @@
                 }
               </td>
               <td class="cell-muted">{{ t.durationMinutes != null ? t.durationMinutes + ' min' : '—' }}</td>
+              <td class="cell-muted">{{ distanceLabel(t.estimatedDistanceMeters) }}</td>
               <td class="cell-muted">{{ t.difficulty || '—' }}</td>
               <td class="cell-muted">{{ t.steps.length }}</td>
               <td class="cell-muted">{{ t.prepTips.length }}</td>

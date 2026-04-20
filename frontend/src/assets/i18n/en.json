@@ -1530,6 +1530,7 @@
     "DIFFICULTY": "Difficulty",
     "STEPS": "Steps",
     "PREP_TIPS": "Prep Tips",
+    "TOTAL_DISTANCE": "Total Distance",
     "DELETE_TRAINING_TITLE": "Delete Training?",
     "DELETE_TRAINING_MSG": "This action cannot be undone.",
     "EDIT_TRAINING_TITLE": "Edit Training",

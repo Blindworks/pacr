@@ -53,8 +53,6 @@ export class TrainingForm implements OnInit {
     description: [''],
     benefit: [''],
     durationMinutes: [null as number | null],
-    workPace: [''],
-    recoveryPace: [''],
     intensityScore: [null as number | null],
     estimatedCalories: [null as number | null],
     estimatedDistanceMeters: [null as number | null],
@@ -108,8 +106,6 @@ export class TrainingForm implements OnInit {
           description: t.description ?? '',
           benefit: t.benefit ?? '',
           durationMinutes: t.durationMinutes ?? null,
-          workPace: t.workPace ?? '',
-          recoveryPace: t.recoveryPace ?? '',
           intensityScore: t.intensityScore ?? null,
           estimatedCalories: t.estimatedCalories ?? null,
           estimatedDistanceMeters: t.estimatedDistanceMeters ?? null,
@@ -279,7 +275,15 @@ export class TrainingForm implements OnInit {
       : this.trainingService.create(payload, this.planId());
 
     op$.subscribe({
-      next: (result) => { if (result) this.router.navigate(['/admin/plans', this.planId(), 'trainings']); },
+      next: (result) => {
+        if (!result) return;
+        if (this.isEdit) {
+          this.loadTraining(this.editId()!);
+          this.form.markAsPristine();
+        } else {
+          this.router.navigate(['/admin/plans', this.planId(), 'trainings']);
+        }
+      },
       error: () => { this.hasError.set(true); this.isSaving.set(false); },
       complete: () => this.isSaving.set(false)
     });
@@ -316,6 +320,12 @@ export class TrainingForm implements OnInit {
       ...v,
       items: undefined,
       dayOfWeek: this.toBackendDayOfWeek(v.dayOfWeek),
+      workPace: null,
+      recoveryPace: null,
+      workTimeSeconds: null,
+      workDistanceMeters: null,
+      recoveryTimeSeconds: null,
+      recoveryDistanceMeters: null,
       steps,
       blocks,
       prepTips: (v.prepTips ?? []).map((p: any, i: number) => ({ ...p, sortOrder: i }))
