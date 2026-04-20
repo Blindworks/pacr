@@ -509,7 +509,12 @@
     "THIS_WEEK": "This Week",
     "RESCHEDULE": "Reschedule",
     "DROP": "Drop",
-    "INTENSITY_REDUCE": "Reduce Intensity"
+    "INTENSITY_REDUCE": "Reduce Intensity",
+    "ACTIVE_PLANS": "Active Plans",
+    "LEAVE_PLAN": "Leave Plan",
+    "LEAVE_PLAN_CONFIRM_TITLE": "Leave Training Plan?",
+    "LEAVE_PLAN_CONFIRM_BODY": "This will permanently delete all planned trainings and pending adjustments for this plan. Completed activities (FIT uploads) will be kept.",
+    "LEAVE_PLAN_CONFIRM": "Yes, leave plan"
   },
   "COMPETITIONS": {
     "TITLE": "Select",

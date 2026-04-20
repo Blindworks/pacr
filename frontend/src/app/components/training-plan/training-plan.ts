@@ -6,6 +6,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { UserTrainingEntry, UserTrainingEntryService } from '../../services/user-training-entry.service';
 import { StatisticsService, TrainingStatsDto } from '../../services/statistics.service';
 import { PlanAdjustment, PlanAdjustmentService } from '../../services/plan-adjustment.service';
+import { CompetitionService } from '../../services/competition.service';
 
 interface TrainingSession {
   id: number;
@@ -41,6 +42,12 @@ interface Insight {
   text: string;
 }
 
+export interface ActivePlan {
+  competitionId: number;
+  competitionName: string;
+  planName: string;
+}
+
 const DAY_SHORT_KEYS = [
   'COMMON.DAY_SUN', 'COMMON.DAY_MON', 'COMMON.DAY_TUE',
   'COMMON.DAY_WED', 'COMMON.DAY_THU', 'COMMON.DAY_FRI', 'COMMON.DAY_SAT'
@@ -58,6 +65,7 @@ export class TrainingPlan implements OnInit {
   private entryService = inject(UserTrainingEntryService);
   private statsService = inject(StatisticsService);
   private adjustmentService = inject(PlanAdjustmentService);
+  private competitionService = inject(CompetitionService);
   private cdr = inject(ChangeDetectorRef);
   private translate = inject(TranslateService);
 
@@ -83,6 +91,10 @@ export class TrainingPlan implements OnInit {
 
   pendingAdjustments: PlanAdjustment[] = [];
 
+  activePlans: ActivePlan[] = [];
+  planPendingLeave: ActivePlan | null = null;
+  leaveInProgress = false;
+
   ngOnInit(): void {
     this.currentWeekLabel = this.translate.instant('TRAINING_PLAN.THIS_WEEK');
     this.insights = [
@@ -97,6 +109,55 @@ export class TrainingPlan implements OnInit {
     ];
     this.loadWeek();
     this.loadPendingAdjustments();
+    this.loadActivePlans();
+  }
+
+  private loadActivePlans(): void {
+    this.competitionService.getAll().subscribe({
+      next: (competitions) => {
+        this.activePlans = competitions
+          .filter(c => c.registered && c.trainingPlanId)
+          .map(c => ({
+            competitionId: c.id,
+            competitionName: c.name,
+            planName: c.trainingPlanName || c.name
+          }));
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.activePlans = [];
+      }
+    });
+  }
+
+  requestLeavePlan(plan: ActivePlan): void {
+    this.planPendingLeave = plan;
+  }
+
+  cancelLeavePlan(): void {
+    if (this.leaveInProgress) return;
+    this.planPendingLeave = null;
+  }
+
+  confirmLeavePlan(): void {
+    const plan = this.planPendingLeave;
+    if (!plan || this.leaveInProgress) return;
+    this.leaveInProgress = true;
+    this.competitionService.unregister(plan.competitionId).subscribe({
+      next: () => {
+        this.leaveInProgress = false;
+        this.planPendingLeave = null;
+        this.loadActivePlans();
+        this.loadWeek();
+        this.loadPendingAdjustments();
+      },
+      error: (err) => {
+        console.error('Failed to leave training plan:', err);
+        this.leaveInProgress = false;
+        this.planPendingLeave = null;
+        this.cdr.detectChanges();
+      }
+    });
   }
 
   private loadPendingAdjustments(): void {

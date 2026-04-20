@@ -64,4 +64,8 @@ export class CompetitionService {
     if (formatId) body['formatId'] = formatId;
     return this.http.post(`${this.base}/${competitionId}/register`, body);
   }
+
+  unregister(competitionId: number): Observable<void> {
+    return this.http.delete<void>(`${this.base}/${competitionId}/register`);
+  }
 }

@@ -212,6 +212,26 @@
           <span class="tp-recovery__score">{{ recoveryScore }}</span>
         </div>
       </section>
+
+      @if (activePlans.length > 0) {
+        <section class="tp-active-plans">
+          <h3>{{ 'TRAINING_PLAN.ACTIVE_PLANS' | translate }}</h3>
+          <div class="tp-active-plans__list">
+            @for (plan of activePlans; track plan.competitionId) {
+              <div class="tp-active-plan">
+                <div class="tp-active-plan__info">
+                  <span class="tp-active-plan__name">{{ plan.planName }}</span>
+                  <span class="tp-active-plan__competition">{{ plan.competitionName }}</span>
+                </div>
+                <button type="button" class="tp-leave-btn" (click)="requestLeavePlan(plan)">
+                  <span class="material-symbols-outlined">logout</span>
+                  {{ 'TRAINING_PLAN.LEAVE_PLAN' | translate }}
+                </button>
+              </div>
+            }
+          </div>
+        </section>
+      }
     </aside>
   </div>
 </div>
@@ -231,3 +251,28 @@
   <p>Kein aktiver Trainingsplan gefunden.</p>
   <p style="font-size:.85rem;color:#666;margin-top:.5rem;">Wähle im Bereich <strong>Wettkämpfe</strong> einen Plan aus.</p>
 </div>
+
+@if (planPendingLeave) {
+  <div class="tp-confirm-backdrop" (click)="cancelLeavePlan()">
+    <div class="tp-confirm" role="dialog" aria-modal="true" (click)="$event.stopPropagation()">
+      <h3 class="tp-confirm__title">{{ 'TRAINING_PLAN.LEAVE_PLAN_CONFIRM_TITLE' | translate }}</h3>
+      <p class="tp-confirm__body">{{ 'TRAINING_PLAN.LEAVE_PLAN_CONFIRM_BODY' | translate }}</p>
+      <p class="tp-confirm__plan">
+        <strong>{{ planPendingLeave.planName }}</strong>
+        <span> — {{ planPendingLeave.competitionName }}</span>
+      </p>
+      <div class="tp-confirm__actions">
+        <button type="button" class="tp-confirm__btn tp-confirm__btn--secondary"
+                [disabled]="leaveInProgress"
+                (click)="cancelLeavePlan()">
+          {{ 'COMMON.CANCEL' | translate }}
+        </button>
+        <button type="button" class="tp-confirm__btn tp-confirm__btn--danger"
+                [disabled]="leaveInProgress"
+                (click)="confirmLeavePlan()">
+          {{ 'TRAINING_PLAN.LEAVE_PLAN_CONFIRM' | translate }}
+        </button>
+      </div>
+    </div>
+  </div>
+}

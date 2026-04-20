@@ -509,7 +509,12 @@
     "THIS_WEEK": "Diese Woche",
     "RESCHEDULE": "Verschieben",
     "DROP": "Entfernen",
-    "INTENSITY_REDUCE": "Intensität senken"
+    "INTENSITY_REDUCE": "Intensität senken",
+    "ACTIVE_PLANS": "Aktive Pläne",
+    "LEAVE_PLAN": "Plan verlassen",
+    "LEAVE_PLAN_CONFIRM_TITLE": "Trainingsplan verlassen?",
+    "LEAVE_PLAN_CONFIRM_BODY": "Dadurch werden alle geplanten Trainings und ausstehenden Anpassungen für diesen Plan unwiderruflich gelöscht. Abgeschlossene Aktivitäten (FIT-Uploads) bleiben erhalten.",
+    "LEAVE_PLAN_CONFIRM": "Ja, verlassen"
   },
   "COMPETITIONS": {
     "TITLE": "Wähle",

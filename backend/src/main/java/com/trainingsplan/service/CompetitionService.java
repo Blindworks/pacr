@@ -5,6 +5,7 @@ import com.trainingsplan.entity.*;
 import com.trainingsplan.repository.CompetitionFormatRepository;
 import com.trainingsplan.repository.CompetitionRegistrationRepository;
 import com.trainingsplan.repository.CompetitionRepository;
+import com.trainingsplan.repository.PlanAdjustmentRepository;
 import com.trainingsplan.security.SecurityUtils;
 import com.trainingsplan.repository.UserTrainingEntryRepository;
 import org.slf4j.Logger;
@@ -27,6 +28,7 @@ public class CompetitionService {
     private final CompetitionRegistrationRepository registrationRepository;
     private final CompetitionFormatRepository competitionFormatRepository;
     private final UserTrainingEntryRepository userTrainingEntryRepository;
+    private final PlanAdjustmentRepository planAdjustmentRepository;
     private final SecurityUtils securityUtils;
     private final AuditLogService auditLogService;
 
@@ -34,12 +36,14 @@ public class CompetitionService {
                               CompetitionRegistrationRepository registrationRepository,
                               CompetitionFormatRepository competitionFormatRepository,
                               UserTrainingEntryRepository userTrainingEntryRepository,
+                              PlanAdjustmentRepository planAdjustmentRepository,
                               SecurityUtils securityUtils,
                               AuditLogService auditLogService) {
         this.competitionRepository = competitionRepository;
         this.registrationRepository = registrationRepository;
         this.competitionFormatRepository = competitionFormatRepository;
         this.userTrainingEntryRepository = userTrainingEntryRepository;
+        this.planAdjustmentRepository = planAdjustmentRepository;
         this.securityUtils = securityUtils;
         this.auditLogService = auditLogService;
     }
@@ -213,10 +217,30 @@ public class CompetitionService {
         return registrationRepository.save(reg);
     }
 
+    @Transactional
     public void unregister(Long competitionId) {
-        Long userId = securityUtils.getCurrentUserId();
-        if (userId == null) throw new RuntimeException("Not authenticated");
-        registrationRepository.findByCompetitionIdAndUserId(competitionId, userId)
-                .ifPresent(registrationRepository::delete);
+        User currentUser = securityUtils.getCurrentUser();
+        if (currentUser == null) throw new RuntimeException("Not authenticated");
+        Optional<CompetitionRegistration> regOpt = registrationRepository
+                .findByCompetitionIdAndUserId(competitionId, currentUser.getId());
+        if (regOpt.isEmpty()) return;
+        CompetitionRegistration registration = regOpt.get();
+        Long registrationId = registration.getId();
+        String competitionName = registration.getCompetition() != null
+                ? registration.getCompetition().getName() : null;
+
+        List<Long> entryIds = userTrainingEntryRepository.findByCompetitionRegistrationId(registrationId)
+                .stream().map(UserTrainingEntry::getId).collect(Collectors.toList());
+        if (!entryIds.isEmpty()) {
+            planAdjustmentRepository.deleteByUserTrainingEntry_IdIn(entryIds);
+        }
+        userTrainingEntryRepository.deleteByCompetitionRegistrationId(registrationId);
+        registrationRepository.delete(registration);
+
+        Map<String, Object> details = new LinkedHashMap<>();
+        if (competitionName != null) details.put("competitionName", competitionName);
+        details.put("deletedEntries", entryIds.size());
+        auditLogService.log(currentUser, AuditAction.COMPETITION_UNREGISTERED,
+                "COMPETITION_REGISTRATION", String.valueOf(registrationId), details);
     }
 }
