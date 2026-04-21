@@ -166,7 +166,8 @@ export class CompetitionList implements OnInit {
   }
 
   private readonly typeLabels: Record<string, string> = {
-    FIVE_K: '5K', TEN_K: '10K', HALF_MARATHON: 'Halbmarathon', MARATHON: 'Marathon',
+    FIVE_K: '5K', TEN_K: '10K', TWENTY_K: '20K', HALF_MARATHON: 'Halbmarathon',
+    THIRTY_K: '30K', FORTY_K: '40K', MARATHON: 'Marathon',
     FIFTY_K: '50K', HUNDRED_K: '100K', BACKYARD_ULTRA: 'Backyard Ultra',
     CATCHER_CAR: 'Catcher Car', OTHER: 'Sonstige'
   };

@@ -191,7 +191,10 @@ export class Competitions implements OnInit {
     const map: Record<string, string> = {
       'FIVE_K': '5K',
       'TEN_K': '10K',
+      'TWENTY_K': '20K',
       'HALF_MARATHON': 'Halbmarathon',
+      'THIRTY_K': '30K',
+      'FORTY_K': '40K',
       'MARATHON': 'Marathon',
       'FIFTY_K': '50K',
       'HUNDRED_K': '100K',

@@ -44,7 +44,10 @@ export class CompetitionForm implements OnInit {
   readonly competitionTypes = [
     { value: 'FIVE_K', label: '5K' },
     { value: 'TEN_K', label: '10K' },
+    { value: 'TWENTY_K', label: '20K' },
     { value: 'HALF_MARATHON', label: 'Halbmarathon' },
+    { value: 'THIRTY_K', label: '30K' },
+    { value: 'FORTY_K', label: '40K' },
     { value: 'MARATHON', label: 'Marathon' },
     { value: 'FIFTY_K', label: '50K' },
     { value: 'HUNDRED_K', label: '100K' },
