@@ -1,0 +1,147 @@
+<div class="list-page">
+  <div class="toolbar">
+    <div class="toolbar-left">
+      <h2>{{ 'ADMIN.REGISTRATIONS.TITLE' | translate }}</h2>
+      @if (!isLoading()) {
+        <span class="count-badge">{{ filtered().length }}</span>
+      }
+    </div>
+    <div class="toolbar-right">
+      <div class="search-input">
+        <span class="material-symbols-outlined">search</span>
+        <input
+          type="text"
+          [ngModel]="searchTerm()"
+          (ngModelChange)="searchTerm.set($event)"
+          [placeholder]="'ADMIN.REGISTRATIONS.SEARCH_PLACEHOLDER' | translate" />
+      </div>
+    </div>
+  </div>
+
+  <p class="hint-text">{{ 'ADMIN.REGISTRATIONS.HINT' | translate }}</p>
+
+  @if (isLoading()) {
+    <div class="state-box">
+      <span class="material-symbols-outlined spin">progress_activity</span>
+      <span>{{ 'COMMON.LOADING' | translate }}</span>
+    </div>
+  }
+
+  @if (hasError() && !isLoading()) {
+    <div class="state-box state-box--error">
+      <span class="material-symbols-outlined">error</span>
+      <span>{{ 'ADMIN.REGISTRATIONS.LOAD_FAILED' | translate }}</span>
+      <button class="btn-ghost" (click)="load()">{{ 'COMMON.RETRY' | translate }}</button>
+    </div>
+  }
+
+  @if (!isLoading() && !hasError() && filtered().length === 0) {
+    <div class="state-box">
+      <span class="material-symbols-outlined">assignment_ind</span>
+      <span>{{ 'ADMIN.REGISTRATIONS.EMPTY' | translate }}</span>
+    </div>
+  }
+
+  @if (!isLoading() && filtered().length > 0) {
+    <div class="registration-table">
+      <div class="reg-row reg-row--head">
+        <div>{{ 'ADMIN.REGISTRATIONS.COL_USER' | translate }}</div>
+        <div>{{ 'ADMIN.REGISTRATIONS.COL_COMPETITION' | translate }}</div>
+        <div>{{ 'ADMIN.REGISTRATIONS.COL_PLAN' | translate }}</div>
+        <div>{{ 'ADMIN.REGISTRATIONS.COL_REGISTERED_AT' | translate }}</div>
+        <div class="col-actions">{{ 'ADMIN.REGISTRATIONS.COL_ACTIONS' | translate }}</div>
+      </div>
+
+      @for (reg of filtered(); track reg.id) {
+        <div class="reg-row">
+          <div class="cell-user">
+            <span class="user-name">{{ reg.userDisplayName || reg.userEmail }}</span>
+            <span class="user-email">{{ reg.userEmail }}</span>
+          </div>
+          <div class="cell-competition">
+            <span class="comp-name">{{ reg.competitionName }}</span>
+            <span class="comp-date">{{ formatDate(reg.competitionDate) }}</span>
+            @if (reg.competitionFormatType) {
+              <span class="format-chip">{{ reg.competitionFormatType }}</span>
+            }
+          </div>
+          <div class="cell-plan">
+            @if (reg.trainingPlanName) {
+              {{ reg.trainingPlanName }}
+            } @else {
+              <span class="muted">—</span>
+            }
+          </div>
+          <div class="cell-registered">{{ formatDateTime(reg.registeredAt) }}</div>
+          <div class="cell-actions">
+            <button
+              class="icon-btn icon-btn--danger"
+              [title]="'ADMIN.REGISTRATIONS.DELETE_REG' | translate"
+              (click)="requestDeleteRegistration(reg)">
+              <span class="material-symbols-outlined">person_remove</span>
+            </button>
+            <button
+              class="icon-btn icon-btn--danger"
+              [title]="'ADMIN.REGISTRATIONS.DELETE_COMP' | translate"
+              (click)="requestDeleteCompetition(reg)">
+              <span class="material-symbols-outlined">delete_forever</span>
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+  }
+
+  @if (confirmTarget(); as target) {
+    <div class="delete-overlay" (click)="cancelDelete()">
+      <div class="delete-dialog" (click)="$event.stopPropagation()">
+        <div class="delete-dialog__header">
+          <span class="material-symbols-outlined">warning</span>
+          <h3>
+            @if (target.kind === 'registration') {
+              {{ 'ADMIN.REGISTRATIONS.CONFIRM_DELETE_REG_TITLE' | translate }}
+            } @else {
+              {{ 'ADMIN.REGISTRATIONS.CONFIRM_DELETE_COMP_TITLE' | translate }}
+            }
+          </h3>
+        </div>
+        @if (target.kind === 'registration') {
+          <p class="delete-dialog__warning">
+            {{ 'ADMIN.REGISTRATIONS.CONFIRM_DELETE_REG_WARNING' | translate:{ user: target.registration.userDisplayName || target.registration.userEmail, competition: target.registration.competitionName } }}
+          </p>
+          <p class="delete-dialog__hint">{{ 'ADMIN.REGISTRATIONS.CONFIRM_DELETE_REG_HINT' | translate }}</p>
+        } @else {
+          <p class="delete-dialog__warning">
+            {{ 'ADMIN.REGISTRATIONS.CONFIRM_DELETE_COMP_WARNING' | translate:{ competition: target.registration.competitionName } }}
+          </p>
+          <p class="delete-dialog__hint">{{ 'ADMIN.REGISTRATIONS.CONFIRM_DELETE_COMP_HINT' | translate }}</p>
+        }
+        <label class="delete-dialog__label" for="reg-delete-confirm">
+          {{ 'ADMIN.REGISTRATIONS.TYPE_TO_CONFIRM' | translate:{ phrase: confirmPhrase() } }}
+        </label>
+        <input
+          id="reg-delete-confirm"
+          type="text"
+          class="delete-dialog__input"
+          [ngModel]="confirmInput()"
+          (ngModelChange)="confirmInput.set($event)"
+          [disabled]="deleteInProgress()"
+          autocomplete="off" />
+        @if (deleteError()) {
+          <p class="delete-dialog__error">{{ deleteError() }}</p>
+        }
+        <div class="delete-dialog__actions">
+          <button class="btn-ghost" (click)="cancelDelete()" [disabled]="deleteInProgress()">
+            {{ 'COMMON.CANCEL' | translate }}
+          </button>
+          <button class="btn-danger" (click)="confirmDelete()" [disabled]="!canConfirmDelete()">
+            @if (deleteInProgress()) {
+              <span class="material-symbols-outlined spin">progress_activity</span>
+            }
+            {{ 'COMMON.DELETE' | translate }}
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+</div>

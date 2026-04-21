@@ -224,10 +224,23 @@ public class CompetitionService {
         Optional<CompetitionRegistration> regOpt = registrationRepository
                 .findByCompetitionIdAndUserId(competitionId, currentUser.getId());
         if (regOpt.isEmpty()) return;
-        CompetitionRegistration registration = regOpt.get();
+        cascadeDeleteRegistration(regOpt.get(), currentUser);
+    }
+
+    @Transactional
+    public boolean deleteRegistrationById(Long registrationId) {
+        Optional<CompetitionRegistration> regOpt = registrationRepository.findById(registrationId);
+        if (regOpt.isEmpty()) return false;
+        User actor = securityUtils.getCurrentUser();
+        cascadeDeleteRegistration(regOpt.get(), actor);
+        return true;
+    }
+
+    private void cascadeDeleteRegistration(CompetitionRegistration registration, User actor) {
         Long registrationId = registration.getId();
         String competitionName = registration.getCompetition() != null
                 ? registration.getCompetition().getName() : null;
+        String affectedUserEmail = registration.getUser() != null ? registration.getUser().getEmail() : null;
 
         List<Long> entryIds = userTrainingEntryRepository.findByCompetitionRegistrationId(registrationId)
                 .stream().map(UserTrainingEntry::getId).collect(Collectors.toList());
@@ -239,8 +252,13 @@ public class CompetitionService {
 
         Map<String, Object> details = new LinkedHashMap<>();
         if (competitionName != null) details.put("competitionName", competitionName);
+        if (affectedUserEmail != null) details.put("userEmail", affectedUserEmail);
         details.put("deletedEntries", entryIds.size());
-        auditLogService.log(currentUser, AuditAction.COMPETITION_UNREGISTERED,
+        auditLogService.log(actor, AuditAction.COMPETITION_UNREGISTERED,
                 "COMPETITION_REGISTRATION", String.valueOf(registrationId), details);
+    }
+
+    public List<CompetitionRegistration> findAllRegistrationsForAdmin() {
+        return registrationRepository.findAllForAdmin();
     }
 }

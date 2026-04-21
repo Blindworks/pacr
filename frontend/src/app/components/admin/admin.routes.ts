@@ -48,6 +48,10 @@ export const adminRoutes: Routes = [
         loadComponent: () => import('./competitions/competition-form/competition-form').then(m => m.CompetitionForm)
       },
       {
+        path: 'registrations',
+        loadComponent: () => import('./registrations/registration-list/registration-list').then(m => m.RegistrationList)
+      },
+      {
         path: 'users',
         loadComponent: () => import('./users/user-list/user-list').then(m => m.UserList)
       },

@@ -20,4 +20,12 @@ public interface CompetitionRegistrationRepository extends JpaRepository<Competi
     @Modifying
     @Query("UPDATE CompetitionRegistration r SET r.trainingPlan = NULL WHERE r.trainingPlan.id = :planId")
     void nullifyTrainingPlan(@Param("planId") Long planId);
+
+    @Query("SELECT r FROM CompetitionRegistration r " +
+           "JOIN FETCH r.user u " +
+           "JOIN FETCH r.competition c " +
+           "LEFT JOIN FETCH r.trainingPlan p " +
+           "LEFT JOIN FETCH r.competitionFormat f " +
+           "ORDER BY r.registeredAt DESC")
+    List<CompetitionRegistration> findAllForAdmin();
 }

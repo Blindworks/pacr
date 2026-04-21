@@ -1,0 +1,181 @@
+@use 'mixins' as m;
+@use 'variables' as v;
+
+:host { display: block; }
+
+.list-page { max-width: 1200px; }
+
+.toolbar { @include m.toolbar; }
+.toolbar-left { display: flex; align-items: center; gap: 10px; }
+.toolbar-right { display: flex; align-items: center; gap: 10px; }
+
+.count-badge { @include m.count-badge; }
+
+.btn-primary { @include m.btn-primary; }
+.btn-ghost { @include m.btn-ghost; }
+.btn-danger { @include m.btn-danger; }
+
+.state-box { @include m.state-display; }
+
+.hint-text {
+  margin: 0 0 16px;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.search-input {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  border-radius: v.$radius-md;
+  border: 1px solid var(--border, rgba(255,255,255,0.1));
+  background: rgba(0,0,0,0.2);
+  min-width: 260px;
+
+  .material-symbols-outlined { font-size: 18px; color: var(--text-muted); }
+
+  input {
+    flex: 1;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: var(--text);
+    font-size: 14px;
+  }
+}
+
+.registration-table {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.reg-row {
+  display: grid;
+  grid-template-columns: 1.3fr 1.6fr 1.2fr 0.9fr auto;
+  gap: 16px;
+  align-items: center;
+  padding: 12px 16px;
+  border-radius: v.$radius-md;
+  background: var(--surface, rgba(255,255,255,0.03));
+  border: 1px solid var(--border, rgba(255,255,255,0.06));
+
+  &--head {
+    background: transparent;
+    border: none;
+    padding: 4px 16px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--text-muted);
+  }
+}
+
+.cell-user {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+
+  .user-name { font-weight: 600; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .user-email { font-size: 12px; color: var(--text-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+}
+
+.cell-competition {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+
+  .comp-name { font-weight: 500; color: var(--text); }
+  .comp-date { font-size: 12px; color: var(--text-muted); }
+  .format-chip {
+    margin-top: 4px;
+    align-self: flex-start;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 11px;
+    background: var(--pp-hover);
+    color: var(--pp);
+  }
+}
+
+.cell-plan { color: var(--text); font-size: 14px; }
+.muted { color: var(--text-muted); }
+
+.cell-registered { font-size: 13px; color: var(--text-muted); }
+
+.cell-actions, .col-actions {
+  display: flex;
+  gap: 4px;
+  justify-content: flex-end;
+}
+
+.icon-btn { @include m.btn-icon; }
+.icon-btn--danger {
+  color: #e74c3c;
+  &:hover { background: rgba(231,76,60,0.12); }
+}
+
+.delete-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.65);
+  backdrop-filter: blur(4px);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 1000; padding: 16px;
+}
+
+.delete-dialog {
+  background: var(--surface, #1a1a1a);
+  border: 1px solid var(--border, rgba(255,255,255,0.1));
+  border-radius: 12px;
+  padding: 24px;
+  max-width: 520px;
+  width: 100%;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+
+  &__header {
+    display: flex; align-items: center; gap: 12px; margin-bottom: 16px;
+    .material-symbols-outlined { font-size: 28px; color: #e74c3c; }
+    h3 { margin: 0; font-size: 18px; color: var(--text, #fff); }
+  }
+
+  &__warning { margin: 0 0 8px; color: var(--text, #fff); line-height: 1.5; }
+  &__hint { margin: 0 0 20px; color: var(--text-muted); font-size: 13px; }
+
+  &__label { display: block; margin-bottom: 8px; font-size: 13px; color: var(--text-muted); }
+  &__input {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid var(--border, rgba(255,255,255,0.15));
+    background: rgba(0,0,0,0.3);
+    color: var(--text, #fff);
+    font-size: 14px;
+    box-sizing: border-box;
+    &:focus { outline: none; border-color: #e74c3c; }
+  }
+
+  &__error {
+    margin: 12px 0 0;
+    padding: 8px 12px;
+    background: rgba(231,76,60,0.12);
+    border-radius: 6px;
+    color: #e74c3c;
+    font-size: 13px;
+  }
+
+  &__actions {
+    display: flex; justify-content: flex-end; gap: 8px; margin-top: 20px;
+  }
+}
+
+@media (max-width: 900px) {
+  .reg-row {
+    grid-template-columns: 1fr 1fr;
+    &--head { display: none; }
+  }
+  .cell-registered { grid-column: 1 / -1; }
+  .cell-actions { grid-column: 1 / -1; justify-content: flex-start; }
+}
