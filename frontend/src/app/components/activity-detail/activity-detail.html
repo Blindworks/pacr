@@ -441,95 +441,143 @@
         }
       </div>
 
-      <!-- Trainingsbelastung -->
-      @if (metrics) {
-        <div class="load-card">
-          <h3 class="chart-title">Trainingsbelastung</h3>
-          <div class="load-metrics">
+      <!-- Performance Bento (Stitch: Performance Analytics Hub) -->
+      @if (hasPerfBento) {
+        <section class="perf-bento">
 
-            @if (metrics.strain21 != null) {
-              <div class="load-metric">
-                <div class="load-metric-header">
-                  <span class="load-metric-label">Strain (21-Tage)</span>
-                  <span class="load-metric-value">{{ metrics.strain21.toFixed(1) }}</span>
-                </div>
-                <div class="strain-bar-track">
-                  <div class="strain-bar" [class]="strain21Class" [style.width.%]="strain21Pct"></div>
+          <!-- TRAINING_STRAIN -->
+          @if (metrics?.strain21 != null) {
+            <div class="bento-card bento-card--strain" [attr.data-load]="strainLoadLabel">
+              <div class="bento-head">
+                <h3 class="bento-kicker">{{ 'ACTIVITY_DETAIL.TRAINING_STRAIN' | translate }}</h3>
+                <div class="bento-value-xl">
+                  {{ metrics!.strain21!.toFixed(1) }}
+                  <span class="bento-value-suffix">REL</span>
                 </div>
               </div>
-            }
-
-            @if (metrics.rawLoad != null) {
-              <div class="load-metric load-metric-inline">
-                <span class="load-metric-label">Raw Load</span>
-                <span class="load-metric-value">{{ metrics.rawLoad.toFixed(0) }}</span>
+              <div class="bento-gauge-wrap">
+                <svg class="bento-gauge" viewBox="0 0 100 100">
+                  <circle class="bento-gauge-bg" cx="50" cy="50" r="45" fill="none" stroke-width="6"/>
+                  <circle class="bento-gauge-fill" cx="50" cy="50" r="45" fill="none" stroke-width="6"
+                          stroke-linecap="round" stroke-dasharray="283"
+                          [attr.stroke-dashoffset]="strainGaugeOffset"/>
+                </svg>
+                <div class="bento-gauge-center">
+                  <span class="bento-gauge-kicker">{{ 'ACTIVITY_DETAIL.LOAD_LABEL' | translate }}</span>
+                  <span class="bento-gauge-value">{{ ('ACTIVITY_DETAIL.LOAD_' + strainLoadLabel) | translate }}</span>
+                </div>
               </div>
-            }
+              <p class="bento-hint">{{ strainHintKey | translate }}</p>
+              <div class="bento-glow"></div>
+            </div>
+          }
 
-            @if (metrics.trimp != null) {
-              <div class="load-metric load-metric-inline">
-                <span class="load-metric-label">TRIMP</span>
-                <span class="load-metric-value">
-                  {{ metrics.trimp.toFixed(1) }}
-                  @if (metrics.trimpQuality === 'LOW') {
+          <!-- RAW_LOAD -->
+          @if (metrics?.rawLoad != null) {
+            <div class="bento-card bento-card--rawload">
+              <div class="bento-head">
+                <h3 class="bento-kicker">{{ 'ACTIVITY_DETAIL.RAW_LOAD' | translate }}</h3>
+                <div class="bento-value-xl">{{ metrics!.rawLoad!.toFixed(0) }}</div>
+              </div>
+              <div class="bento-segments" [attr.data-level]="rawLoadLevel">
+                @for (i of [0,1,2,3,4,5,6,7,8,9]; track i) {
+                  <span class="bento-segment" [class.bento-segment--on]="i < rawLoadSegments"></span>
+                }
+              </div>
+              <p class="bento-hint">{{ 'ACTIVITY_DETAIL.RAW_LOAD_HINT' | translate }}</p>
+              <div class="bento-glow"></div>
+            </div>
+          }
+
+          <!-- TRIMP -->
+          @if (metrics?.trimp != null) {
+            <div class="bento-card bento-card--trimp" [attr.data-quality]="metrics?.trimpQuality">
+              <div class="bento-head">
+                <h3 class="bento-kicker">
+                  {{ 'ACTIVITY_DETAIL.TRIMP' | translate }}
+                  @if (metrics!.trimpQuality === 'LOW') {
                     <span class="trimp-badge trimp-badge--low">LOW</span>
-                  } @else if (metrics.trimpQuality === 'OK') {
+                  } @else if (metrics!.trimpQuality === 'OK') {
                     <span class="trimp-badge">OK</span>
                   }
-                </span>
+                </h3>
+                <div class="bento-value-xl">{{ metrics!.trimp!.toFixed(1) }}</div>
               </div>
-            }
-
-            @if (metrics.efficiencyFactor != null) {
-              <div class="load-metric load-metric-inline">
-                <span class="load-metric-label">Efficiency Factor</span>
-                <span class="load-metric-value">{{ efficiencyFactorFormatted }}</span>
+              <div class="bento-segments" [attr.data-level]="trimpLevel">
+                @for (i of [0,1,2,3,4,5,6,7,8,9]; track i) {
+                  <span class="bento-segment" [class.bento-segment--on]="i < trimpSegments"></span>
+                }
               </div>
-            }
+              <p class="bento-hint">{{ 'ACTIVITY_DETAIL.TRIMP_HINT' | translate }}</p>
+              <div class="bento-glow"></div>
+            </div>
+          }
 
-          </div>
-        </div>
-      }
-
-      <!-- VO2Max -->
-      @if (vo2maxMetrics.length > 0) {
-        <div class="vo2max-card">
-          <h3 class="chart-title">VO₂max</h3>
-          <div class="vo2max-values">
-            @if (vo2maxPace) {
-              <div class="vo2max-item">
-                <span class="vo2max-label">Pace-basiert</span>
-                <span class="vo2max-value">{{ vo2maxPace.value.toFixed(1) }}</span>
-                <span class="vo2max-unit">ml/kg/min</span>
+          <!-- VO2_MAX -->
+          @if (vo2maxPrimaryValue != null) {
+            <div class="bento-card bento-card--vo2">
+              <div class="bento-head">
+                <h3 class="bento-kicker">{{ 'ACTIVITY_DETAIL.VO2_MAX' | translate }}</h3>
+                <div class="bento-value-lg">
+                  {{ vo2maxPrimaryValue!.toFixed(1) }}
+                  <span class="bento-rating">{{ vo2maxRatingKey | translate }}</span>
+                </div>
               </div>
-            }
-            @if (vo2maxHr) {
-              <div class="vo2max-item">
-                <span class="vo2max-label">HF-korrigiert</span>
-                <span class="vo2max-value vo2max-value--hr">{{ vo2maxHr.value.toFixed(1) }}</span>
-                <span class="vo2max-unit">ml/kg/min</span>
+              <div class="bento-gauge-wrap bento-gauge-wrap--sm">
+                <svg class="bento-gauge" viewBox="0 0 100 100">
+                  <circle class="bento-gauge-bg" cx="50" cy="50" r="40" fill="none" stroke-width="4"/>
+                  <circle class="bento-gauge-fill" cx="50" cy="50" r="40" fill="none" stroke-width="4"
+                          stroke-linecap="round" stroke-dasharray="251"
+                          [attr.stroke-dashoffset]="251 * (1 - vo2maxGaugePct / 100)"/>
+                </svg>
+                <span class="material-symbols-outlined bento-gauge-icon">bolt</span>
               </div>
-            }
-          </div>
-        </div>
-      }
+              @if (vo2maxHr && vo2maxPace) {
+                <div class="bento-inline-stat bento-inline-stat--solo">
+                  <span class="bento-inline-label">HF-korrigiert</span>
+                  <span class="bento-inline-value bento-inline-value--hr">{{ vo2maxHr.value.toFixed(1) }}</span>
+                </div>
+              }
+            </div>
+          }
 
-      <!-- Aerobic Decoupling -->
-      @if (metrics?.decouplingEligible === true && metrics?.decouplingPct != null) {
-        <div class="decoupling-card">
-          <h3 class="chart-title">Aerobic Decoupling</h3>
-          <div class="decoupling-body">
-            <span class="decoupling-value" [class]="decouplingClass">
-              {{ metrics!.decouplingPct!.toFixed(1) }} %
-            </span>
-            <span class="decoupling-judgement" [class]="decouplingClass">
-              {{ metrics!.decouplingPct! <= 5 ? 'Aerob entkoppelt' : 'Erhöhte Entkopplung' }}
-            </span>
-            @if (metrics!.decouplingReason) {
-              <span class="reason-badge">{{ decouplingReasonLabel(metrics!.decouplingReason) }}</span>
-            }
-          </div>
-        </div>
+          <!-- AEROBIC_DECOUPLING -->
+          @if (metrics?.decouplingEligible === true && metrics?.decouplingPct != null) {
+            <div class="bento-card bento-card--decoupling" [attr.data-state]="decouplingClass">
+              <div class="bento-head">
+                <h3 class="bento-kicker">{{ 'ACTIVITY_DETAIL.AEROBIC_DECOUPLING' | translate }}</h3>
+                <div class="bento-value-xl">
+                  {{ metrics!.decouplingPct!.toFixed(1) }}<span class="bento-value-suffix">%</span>
+                </div>
+              </div>
+              <div class="bento-progress-wrap">
+                <div class="bento-progress-track">
+                  <div class="bento-progress-bar" [style.width.%]="decouplingProgressPct"></div>
+                </div>
+                <div class="bento-progress-legend">
+                  <span>{{ 'ACTIVITY_DETAIL.DECOUPLING_OPTIMAL' | translate }}</span>
+                  <span class="bento-progress-legend--active">{{ metrics!.decouplingPct!.toFixed(1) }}%</span>
+                  <span>{{ 'ACTIVITY_DETAIL.DECOUPLING_CRITICAL' | translate }}</span>
+                </div>
+              </div>
+              @if (metrics!.decouplingReason && metrics!.decouplingReason !== 'OK') {
+                <span class="reason-badge">{{ decouplingReasonLabel(metrics!.decouplingReason) }}</span>
+              }
+            </div>
+          }
+
+          <!-- EFFICIENCY_FACTOR -->
+          @if (metrics?.efficiencyFactor != null) {
+            <div class="bento-card bento-card--efficiency">
+              <div class="bento-head">
+                <h3 class="bento-kicker">{{ 'ACTIVITY_DETAIL.EFFICIENCY_FACTOR' | translate }}</h3>
+                <div class="bento-value-xl bento-value-xl--accent">{{ efficiencyFactorFormatted }}</div>
+              </div>
+              <p class="bento-hint">{{ 'ACTIVITY_DETAIL.EFFICIENCY_HINT' | translate }}</p>
+            </div>
+          }
+
+        </section>
       }
 
       <!-- HR Zones -->

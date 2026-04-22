@@ -302,6 +302,89 @@ export class ActivityDetail implements OnInit {
     return v.toFixed(4);
   }
 
+  private readonly gaugeCircumference = 283;
+
+  get strainLoadLabel(): 'LOW' | 'MEDIUM' | 'HIGH' {
+    const v = this.metrics?.strain21;
+    if (v == null || v < 7) return 'LOW';
+    if (v < 14) return 'MEDIUM';
+    return 'HIGH';
+  }
+
+  get strainHintKey(): string {
+    return `ACTIVITY_DETAIL.STRAIN_HINT_${this.strainLoadLabel}`;
+  }
+
+  get strainGaugeOffset(): number {
+    return this.gaugeCircumference * (1 - this.strain21Pct / 100);
+  }
+
+  get vo2maxPrimaryValue(): number | null {
+    return this.vo2maxPace?.value ?? this.vo2maxHr?.value ?? null;
+  }
+
+  get vo2maxGaugePct(): number {
+    const v = this.vo2maxPrimaryValue;
+    if (v == null) return 0;
+    const clamped = Math.max(30, Math.min(70, v));
+    return ((clamped - 30) / 40) * 100;
+  }
+
+  get vo2maxGaugeOffset(): number {
+    return this.gaugeCircumference * (1 - this.vo2maxGaugePct / 100);
+  }
+
+  get vo2maxRatingKey(): string {
+    const v = this.vo2maxPrimaryValue;
+    if (v == null) return 'ACTIVITY_DETAIL.VO2_AVG';
+    if (v >= 55) return 'ACTIVITY_DETAIL.VO2_ELITE';
+    if (v >= 45) return 'ACTIVITY_DETAIL.VO2_GOOD';
+    return 'ACTIVITY_DETAIL.VO2_AVG';
+  }
+
+  get decouplingProgressPct(): number {
+    const v = this.metrics?.decouplingPct;
+    if (v == null) return 0;
+    return Math.max(0, Math.min(100, v * 10));
+  }
+
+  get hasPerfBento(): boolean {
+    return this.metrics?.strain21 != null
+      || this.metrics?.rawLoad != null
+      || this.metrics?.trimp != null
+      || this.vo2maxPrimaryValue != null
+      || (this.metrics?.decouplingEligible === true && this.metrics?.decouplingPct != null)
+      || this.metrics?.efficiencyFactor != null;
+  }
+
+  private gaugePct(value: number | null | undefined, min: number, max: number): number {
+    if (value == null) return 0;
+    const clamped = Math.max(min, Math.min(max, value));
+    return ((clamped - min) / (max - min)) * 100;
+  }
+
+  get rawLoadSegments(): number {
+    return Math.max(1, Math.round(this.gaugePct(this.metrics?.rawLoad, 0, 500) / 10));
+  }
+
+  get rawLoadLevel(): 'low' | 'mid' | 'high' {
+    const s = this.rawLoadSegments;
+    if (s <= 3) return 'low';
+    if (s <= 6) return 'mid';
+    return 'high';
+  }
+
+  get trimpSegments(): number {
+    return Math.max(1, Math.round(this.gaugePct(this.metrics?.trimp, 0, 400) / 10));
+  }
+
+  get trimpLevel(): 'low' | 'mid' | 'high' {
+    const s = this.trimpSegments;
+    if (s <= 3) return 'low';
+    if (s <= 6) return 'mid';
+    return 'high';
+  }
+
   decouplingReasonLabel(reason: string | null): string {
     const map: Record<string, string> = {
       OK: this.translate.instant('ACTIVITY_DETAIL.CALCULATED'),

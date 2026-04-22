@@ -444,6 +444,16 @@
 // ── Responsive ────────────────────────────────────────────────────
 @include m.respond-to(v.$bp-lg) {
   .metrics-grid { grid-template-columns: repeat(2, 1fr); }
+  .perf-bento {
+    grid-template-columns: repeat(2, 1fr);
+
+    .bento-card--strain { grid-column: span 2; grid-row: auto; }
+    .bento-card--vo2,
+    .bento-card--decoupling,
+    .bento-card--efficiency,
+    .bento-card--rawload,
+    .bento-card--trimp { grid-column: span 1; }
+  }
 
   .hero { height: 360px; }
   .hero-content { flex-direction: column; align-items: flex-start; }
@@ -461,6 +471,17 @@
   .hero-title { font-size: 1.5rem; }
   .hero-stat-value { font-size: 1.5rem; }
   .metrics-grid { grid-template-columns: repeat(2, 1fr); }
+  .perf-bento {
+    grid-template-columns: 1fr;
+
+    .bento-card,
+    .bento-card--strain,
+    .bento-card--vo2,
+    .bento-card--decoupling,
+    .bento-card--efficiency,
+    .bento-card--rawload,
+    .bento-card--trimp { grid-column: span 1; grid-row: auto; }
+  }
 }
 
 // ── Unified Stream Chart ────────────────────────────────────────────────────
@@ -554,70 +575,304 @@
   cursor: crosshair;
 }
 
-// ── Trainingsbelastung ─────────────────────────────────────────────
-.load-card {
+// ── Performance Bento (KINETIC "Performance Analytics Hub") ───────
+.perf-bento {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-top: 8px;
+}
+
+.bento-card {
+  position: relative;
   @include m.card(v.$radius-xl, 24px);
-
-  .chart-title { margin: 0 0 20px; }
-}
-
-.load-metrics {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 16px;
+  overflow: hidden;
+  min-height: 220px;
+
+  &--strain {
+    grid-column: span 2;
+    grid-row: span 2;
+    background: linear-gradient(135deg, var(--bg-card) 0%, color-mix(in srgb, var(--bg-card) 85%, var(--bg)) 100%);
+
+    &[data-load='HIGH']   { --bento-accent: #f85149; }
+    &[data-load='MEDIUM'] { --bento-accent: #d29922; }
+    &[data-load='LOW']    { --bento-accent: var(--pp); }
+  }
+
+  &--vo2 {
+    grid-column: span 2;
+  }
+
+  &--decoupling {
+    grid-column: span 2;
+
+    &[data-state='coupling-good'] { --bento-accent: var(--pp); }
+    &[data-state='coupling-bad']  { --bento-accent: #f85149; }
+  }
+
+  &--efficiency {
+    grid-column: span 2;
+    --bento-accent: var(--pp);
+  }
+
+  &--rawload,
+  &--trimp {
+    grid-column: span 2;
+    --bento-accent: var(--pp);
+  }
+
+  &--trimp[data-quality='LOW'] { --bento-accent: #d29922; }
 }
 
-.load-metric {
+.bento-segments {
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
+  height: 56px;
+  margin-top: 4px;
+  z-index: 1;
+
+  &[data-level='low']  { --seg-color: #3fb950; }
+  &[data-level='mid']  { --seg-color: var(--pp); }
+  &[data-level='high'] { --seg-color: #f85149; }
+}
+
+.bento-segment {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 2px;
+  transition: background 0.4s ease, height 0.4s ease, box-shadow 0.4s ease;
+
+  @for $i from 1 through 10 {
+    &:nth-child(#{$i}) { height: 20% + ($i - 1) * 8%; }
+  }
+
+  &--on {
+    background: var(--seg-color, var(--pp));
+    box-shadow: 0 0 8px color-mix(in srgb, var(--seg-color, var(--pp)) 55%, transparent);
+  }
+}
+
+.bento-head {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 4px;
+  z-index: 1;
 }
 
-.load-metric-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-}
-
-.load-metric-inline {
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: baseline;
-}
-
-.load-metric-label {
-  font-size: 11px;
-  font-weight: 700;
+.bento-kicker {
+  margin: 0;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.3em;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
   color: var(--text-muted);
 }
 
-.load-metric-value {
-  font-size: 1rem;
+.bento-value-xl {
+  font-size: 2.6rem;
+  font-weight: 900;
+  line-height: 1;
+  font-style: italic;
+  letter-spacing: -0.02em;
+  color: var(--bento-accent, var(--pp));
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+
+  &--accent { color: var(--pp); }
+}
+
+.bento-value-lg {
+  font-size: 1.9rem;
+  font-weight: 800;
+  line-height: 1;
+  color: var(--text);
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.bento-value-suffix {
+  font-size: 0.9rem;
+  font-weight: 600;
+  opacity: 0.55;
+  letter-spacing: 0.1em;
+}
+
+.bento-rating {
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.2em;
+  color: var(--pp);
+  text-transform: uppercase;
+}
+
+.bento-hint {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--text-muted);
+  z-index: 1;
+}
+
+.bento-gauge-wrap {
+  position: relative;
+  align-self: center;
+  width: 180px;
+  height: 180px;
+  z-index: 1;
+
+  &--sm {
+    width: 110px;
+    height: 110px;
+  }
+}
+
+.bento-gauge {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.bento-gauge-bg {
+  stroke: rgba(255, 255, 255, 0.06);
+}
+
+.bento-gauge-fill {
+  stroke: var(--bento-accent, var(--pp));
+  transition: stroke-dashoffset 1s ease-out;
+  filter: drop-shadow(0 0 8px color-mix(in srgb, var(--bento-accent, var(--pp)) 50%, transparent));
+}
+
+.bento-gauge-center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+}
+
+.bento-gauge-kicker {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.2em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.bento-gauge-value {
+  font-size: 1.8rem;
+  font-weight: 900;
+  font-style: italic;
+  color: var(--text);
+  letter-spacing: -0.01em;
+}
+
+.bento-gauge-icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 36px;
+  color: var(--pp);
+  font-variation-settings: 'FILL' 1;
+}
+
+.bento-inline-stats {
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+  z-index: 1;
+}
+
+.bento-inline-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  &--solo {
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+  }
+}
+
+.bento-inline-label {
+  font-size: 10px;
   font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.bento-inline-value {
+  font-size: 1.05rem;
+  font-weight: 800;
   color: var(--text);
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
+  font-variant-numeric: tabular-nums;
+
+  &--hr { color: #22d3ee; }
 }
 
-.strain-bar-track {
+.bento-progress-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 1;
+}
+
+.bento-progress-track {
+  height: 6px;
   background: rgba(255, 255, 255, 0.06);
   border-radius: v.$radius-xs;
-  height: 8px;
   overflow: hidden;
 }
 
-.strain-bar {
+.bento-progress-bar {
   height: 100%;
-  border-radius: v.$radius-xs;
-  transition: width 0.4s ease;
+  background: var(--bento-accent, var(--pp));
+  transition: width 0.6s ease;
   min-width: 2px;
+  box-shadow: 0 0 12px color-mix(in srgb, var(--bento-accent, var(--pp)) 45%, transparent);
+}
 
-  &.load-low    { background: #3fb950; }
-  &.load-medium { background: #d29922; }
-  &.load-high   { background: #f85149; }
+.bento-progress-legend {
+  display: flex;
+  justify-content: space-between;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+
+  &--active {
+    color: var(--bento-accent, var(--pp));
+  }
+
+  span.bento-progress-legend--active {
+    color: var(--bento-accent, var(--pp));
+  }
+}
+
+.bento-glow {
+  position: absolute;
+  top: -60px;
+  right: -60px;
+  width: 240px;
+  height: 240px;
+  background: radial-gradient(circle, color-mix(in srgb, var(--bento-accent, var(--pp)) 22%, transparent) 0%, transparent 65%);
+  pointer-events: none;
+  z-index: 0;
 }
 
 .trimp-badge {
@@ -637,78 +892,6 @@
     color: #d29922;
     border-color: rgba(210, 153, 34, 0.3);
   }
-}
-
-// ── VO2Max ────────────────────────────────────────────────────────
-.vo2max-card {
-  @include m.card(v.$radius-xl, 24px);
-
-  .chart-title { margin: 0 0 20px; }
-}
-
-.vo2max-values {
-  display: flex;
-  gap: 32px;
-  flex-wrap: wrap;
-}
-
-.vo2max-item {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.vo2max-label {
-  font-size: 10px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--text-muted);
-}
-
-.vo2max-value {
-  font-size: 2.4rem;
-  font-weight: 900;
-  color: var(--pp);
-  line-height: 1;
-
-  &--hr { color: #22d3ee; }
-}
-
-.vo2max-unit {
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--text-muted);
-}
-
-// ── Aerobic Decoupling ─────────────────────────────────────────────
-.decoupling-card {
-  @include m.card(v.$radius-xl, 24px);
-
-  .chart-title { margin: 0 0 16px; }
-}
-
-.decoupling-body {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  flex-wrap: wrap;
-}
-
-.decoupling-value {
-  font-size: 2rem;
-  font-weight: 900;
-
-  &.coupling-good { color: #3fb950; }
-  &.coupling-bad  { color: #f85149; }
-}
-
-.decoupling-judgement {
-  font-size: 13px;
-  font-weight: 600;
-
-  &.coupling-good { color: #3fb950; }
-  &.coupling-bad  { color: #f85149; }
 }
 
 .reason-badge {
