@@ -348,6 +348,22 @@ export class ActivityDetail implements OnInit {
     return Math.max(0, Math.min(100, v * 10));
   }
 
+  get decouplingRiseY(): number {
+    const v = this.metrics?.decouplingPct ?? 0;
+    const clamped = Math.max(-2, Math.min(15, v));
+    return 60 - clamped * 3;
+  }
+
+  get decouplingDriftPath(): string {
+    const endY = this.decouplingRiseY;
+    return `M 0 60 L 90 60 C 120 60, 150 ${endY}, 200 ${endY}`;
+  }
+
+  get decouplingDriftArea(): string {
+    const endY = this.decouplingRiseY;
+    return `M 0 60 L 90 60 C 120 60, 150 ${endY}, 200 ${endY} L 200 80 L 0 80 Z`;
+  }
+
   get hasPerfBento(): boolean {
     return this.metrics?.strain21 != null
       || this.metrics?.rawLoad != null

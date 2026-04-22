@@ -550,19 +550,38 @@
                   {{ metrics!.decouplingPct!.toFixed(1) }}<span class="bento-value-suffix">%</span>
                 </div>
               </div>
-              <div class="bento-progress-wrap">
-                <div class="bento-progress-track">
-                  <div class="bento-progress-bar" [style.width.%]="decouplingProgressPct"></div>
-                </div>
-                <div class="bento-progress-legend">
-                  <span>{{ 'ACTIVITY_DETAIL.DECOUPLING_OPTIMAL' | translate }}</span>
-                  <span class="bento-progress-legend--active">{{ metrics!.decouplingPct!.toFixed(1) }}%</span>
-                  <span>{{ 'ACTIVITY_DETAIL.DECOUPLING_CRITICAL' | translate }}</span>
+              <div class="decoupling-drift">
+                <svg class="decoupling-drift-svg" viewBox="0 0 200 80" preserveAspectRatio="none">
+                  <defs>
+                    <linearGradient id="driftGrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stop-color="var(--bento-accent, var(--pp))" stop-opacity="0.35"/>
+                      <stop offset="100%" stop-color="var(--bento-accent, var(--pp))" stop-opacity="0"/>
+                    </linearGradient>
+                  </defs>
+                  <line x1="0" y1="60" x2="200" y2="60" stroke="rgba(255,255,255,0.08)" stroke-width="1" stroke-dasharray="3 3"/>
+                  <line x1="100" y1="10" x2="100" y2="75" stroke="rgba(255,255,255,0.08)" stroke-width="1" stroke-dasharray="2 3"/>
+                  <path [attr.d]="decouplingDriftArea" fill="url(#driftGrad)"/>
+                  <path [attr.d]="decouplingDriftPath" fill="none"
+                        stroke="var(--bento-accent, var(--pp))" stroke-width="2.5"
+                        stroke-linecap="round" stroke-linejoin="round"/>
+                  <circle cx="0" cy="60" r="3" fill="var(--bento-accent, var(--pp))"/>
+                  <circle cx="200" [attr.cy]="decouplingRiseY" r="4"
+                          fill="var(--bento-accent, var(--pp))"/>
+                </svg>
+                <div class="decoupling-drift-axis">
+                  <span>{{ 'ACTIVITY_DETAIL.DECOUPLING_HALF1' | translate }}</span>
+                  <span>{{ 'ACTIVITY_DETAIL.DECOUPLING_HALF2' | translate }}</span>
                 </div>
               </div>
+              <p class="bento-hint">
+                {{ (metrics!.decouplingPct! <= 5
+                  ? 'ACTIVITY_DETAIL.DECOUPLING_HINT_GOOD'
+                  : 'ACTIVITY_DETAIL.DECOUPLING_HINT_BAD') | translate }}
+              </p>
               @if (metrics!.decouplingReason && metrics!.decouplingReason !== 'OK') {
                 <span class="reason-badge">{{ decouplingReasonLabel(metrics!.decouplingReason) }}</span>
               }
+              <div class="bento-glow"></div>
             </div>
           }
 
