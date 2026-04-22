@@ -22,6 +22,7 @@ export interface Competition {
   longitude?: number;
   startTime?: string;
   organizerUrl?: string;
+  imageIndex?: number;
   registered?: boolean;
   registeredWithOrganizer?: boolean;
   trainingPlanId?: number;

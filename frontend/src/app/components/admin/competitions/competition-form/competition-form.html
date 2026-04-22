@@ -120,7 +120,7 @@
               <div class="format-fields">
                 <div class="field">
                   <label>{{ 'ADMIN.FORMAT_TYPE' | translate }} <span class="required">*</span></label>
-                  <select formControlName="type" class="input">
+                  <select formControlName="type" class="input" (change)="onFormatTypeChanged()">
                     <option value="">{{ 'ADMIN.SELECT' | translate }}</option>
                     @for (t of competitionTypes; track t.value) {
                       <option [value]="t.value">{{ t.label }}</option>
@@ -153,6 +153,36 @@
           <span class="material-symbols-outlined">add</span>
           {{ 'ADMIN.ADD_FORMAT' | translate }}
         </button>
+      </section>
+
+      <section class="form-card">
+        <h3 class="section-title">
+          <span class="material-symbols-outlined">image</span>
+          {{ 'ADMIN.COMP_IMAGE_SECTION' | translate }}
+        </h3>
+        <div class="image-picker">
+          <button type="button" class="btn-icon-action"
+                  (click)="rotateImage(-1)"
+                  [title]="'ADMIN.COMP_IMAGE_PREV' | translate">
+            <span class="material-symbols-outlined">chevron_left</span>
+          </button>
+          <div class="image-preview"
+               [style.background-image]="'url(' + imagePreviewUrl() + ')'">
+            <span class="image-index-badge">{{ displayedImageIndex() }} / {{ imageCount() }}</span>
+          </div>
+          <button type="button" class="btn-icon-action"
+                  (click)="rotateImage(1)"
+                  [title]="'ADMIN.COMP_IMAGE_NEXT' | translate">
+            <span class="material-symbols-outlined">chevron_right</span>
+          </button>
+        </div>
+        <div class="image-picker-actions">
+          <button type="button" class="btn-ghost" (click)="resetImage()" [disabled]="imageIndex() === null">
+            <span class="material-symbols-outlined">restart_alt</span>
+            {{ 'ADMIN.COMP_IMAGE_RESET' | translate }}
+          </button>
+          <span class="image-picker-hint">{{ 'ADMIN.COMP_IMAGE_HINT' | translate }}</span>
+        </div>
       </section>
     </form>
 

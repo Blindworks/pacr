@@ -6,6 +6,13 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { CompetitionService, CompetitionFormat } from '../../../../services/competition.service';
 import { GeocodingService } from '../../../../services/geocoding.service';
 import { LocationPickerDialogComponent } from '../../../location-picker-dialog/location-picker-dialog';
+import {
+  CompetitionImageCategory,
+  COMPETITION_IMAGE_COUNTS,
+  categoryForType,
+  defaultImageIndex,
+  imagePath,
+} from '../../../competitions/competition-images';
 
 @Component({
   selector: 'app-competition-form',
@@ -30,6 +37,8 @@ export class CompetitionForm implements OnInit {
   hasError = signal(false);
   geocoding = signal(false);
   geocodeError = signal<string | null>(null);
+
+  imageIndex = signal<number | null>(null);
 
   form = this.fb.group({
     name: ['', Validators.required],
@@ -60,6 +69,54 @@ export class CompetitionForm implements OnInit {
   get isEdit(): boolean { return this.editId() !== null; }
   get formatsArray(): FormArray { return this.form.get('formats') as FormArray; }
 
+  private loadedCompetitionId: number | null = null;
+  private previousCategory: CompetitionImageCategory = 'city';
+
+  private firstFormatLabel(): string | undefined {
+    const firstType = this.formatsArray.at(0)?.get('type')?.value as string | undefined;
+    if (!firstType) return undefined;
+    return this.competitionTypes.find(t => t.value === firstType)?.label ?? firstType;
+  }
+
+  currentCategory(): CompetitionImageCategory {
+    return categoryForType(this.firstFormatLabel());
+  }
+
+  displayedImageIndex(): number {
+    const category = this.currentCategory();
+    const idx = this.imageIndex();
+    const count = COMPETITION_IMAGE_COUNTS[category];
+    if (idx != null && idx >= 1 && idx <= count) return idx;
+    return defaultImageIndex(category, this.loadedCompetitionId ?? 0);
+  }
+
+  imagePreviewUrl(): string {
+    return imagePath(this.currentCategory(), this.displayedImageIndex());
+  }
+
+  imageCount(): number {
+    return COMPETITION_IMAGE_COUNTS[this.currentCategory()];
+  }
+
+  rotateImage(direction: 1 | -1): void {
+    const count = this.imageCount();
+    const current = this.displayedImageIndex();
+    const next = ((current - 1 + direction + count) % count) + 1;
+    this.imageIndex.set(next);
+  }
+
+  resetImage(): void {
+    this.imageIndex.set(null);
+  }
+
+  onFormatTypeChanged(): void {
+    const newCategory = this.currentCategory();
+    if (newCategory !== this.previousCategory) {
+      this.imageIndex.set(null);
+      this.previousCategory = newCategory;
+    }
+  }
+
   ngOnInit(): void {
     const idParam = this.route.snapshot.paramMap.get('compId');
     if (idParam) {
@@ -84,6 +141,8 @@ export class CompetitionForm implements OnInit {
           description: c.description ?? '',
           organizerUrl: c.organizerUrl ?? ''
         });
+        this.imageIndex.set(c.imageIndex ?? null);
+        this.loadedCompetitionId = c.id ?? null;
         // Load existing formats into FormArray
         this.formatsArray.clear();
         if (c.formats && c.formats.length > 0) {
@@ -91,6 +150,7 @@ export class CompetitionForm implements OnInit {
             this.formatsArray.push(this.createFormatGroup(f));
           }
         }
+        this.previousCategory = this.currentCategory();
       },
       error: () => { this.hasError.set(true); this.isLoading.set(false); },
       complete: () => this.isLoading.set(false)
@@ -139,6 +199,7 @@ export class CompetitionForm implements OnInit {
       longitude: v.longitude || undefined,
       description: v.description || undefined,
       organizerUrl: v.organizerUrl || undefined,
+      imageIndex: this.imageIndex(),
       formats: formats.length > 0 ? formats : undefined
     };
     this.isSaving.set(true);

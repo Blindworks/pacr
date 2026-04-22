@@ -53,6 +53,9 @@ public class Competition {
     @Column(name = "organizer_url", length = 500)
     private String organizerUrl;
 
+    @Column(name = "image_index")
+    private Integer imageIndex;
+
     @OneToMany(mappedBy = "competition", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private List<CompetitionFormat> formats = new ArrayList<>();
@@ -97,6 +100,9 @@ public class Competition {
 
     public String getOrganizerUrl() { return organizerUrl; }
     public void setOrganizerUrl(String organizerUrl) { this.organizerUrl = organizerUrl; }
+
+    public Integer getImageIndex() { return imageIndex; }
+    public void setImageIndex(Integer imageIndex) { this.imageIndex = imageIndex; }
 
     public List<CompetitionFormat> getFormats() { return formats; }
     public void setFormats(List<CompetitionFormat> formats) { this.formats = formats; }

@@ -108,6 +108,7 @@ public class CompetitionService {
                 existing.setLongitude(competition.getLongitude());
                 existing.setStartTime(competition.getStartTime());
                 existing.setOrganizerUrl(competition.getOrganizerUrl());
+                existing.setImageIndex(competition.getImageIndex());
                 existing.setSystemGenerated(competition.isSystemGenerated());
 
                 // Sync formats: clear and re-add to trigger orphanRemoval

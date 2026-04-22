@@ -6,6 +6,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { DomSanitizer, SafeStyle } from '@angular/platform-browser';
 import { CompetitionService, Competition, CompetitionFormat } from '../../services/competition.service';
 import { TrainingPlanService, TrainingPlan } from '../../services/training-plan.service';
+import { resolveImage } from './competition-images';
 
 
 interface RaceFormat {
@@ -174,7 +175,7 @@ export class Competitions implements OnInit {
       name: c.name,
       distance: formats.length === 1 ? formats[0].distance : this.typeToDistance(c.type),
       location: c.location ?? '',
-      image: this.typeToImage(primaryType, c.id),
+      image: this.typeToImage(primaryType, c.id, c.imageIndex),
       registered: c.registered ?? false,
       registeredWithOrganizer: c.registeredWithOrganizer ?? false,
       trainingPlanId: c.trainingPlanId,
@@ -223,22 +224,8 @@ export class Competitions implements OnInit {
     }
   }
 
-  private typeToImage(type?: string, id: number = 0): string {
-    const count = 3;
-    const categoryMap: Record<string, string> = {
-      'Marathon': 'marathon',
-      'Halbmarathon': 'marathon',
-      '10K': 'city',
-      '5K': 'city',
-      '50K': 'ultra',
-      '100K': 'ultra',
-      'Backyard Ultra': 'ultra',
-      'Catcher car': 'ultra',
-    };
-
-    const category = categoryMap[type ?? ''] ?? 'city';
-    const index = (Math.abs(id) % count) + 1;
-    return `assets/images/competitions/${category}-${index}.webp`;
+  private typeToImage(type?: string, id: number = 0, imageIndex?: number | null): string {
+    return resolveImage(type, id, imageIndex);
   }
 
   getImageStyle(imageUrl: string): SafeStyle {
