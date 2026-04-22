@@ -121,5 +121,6 @@
     <include file="db/changelog/changes/115-add-user-news-language-prefs.xml"/>
     <include file="db/changelog/changes/116-add-achievement-metric.xml"/>
     <include file="db/changelog/changes/117-login-message-targeting.xml"/>
+    <include file="db/changelog/changes/118-competition-organizer-url.xml"/>
 
 </databaseChangeLog>

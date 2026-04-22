@@ -19,6 +19,7 @@ public class CompetitionDto {
     private Double latitude;
     private Double longitude;
     private LocalTime startTime;
+    private String organizerUrl;
     private String ranking;
     private String targetTime;
     private boolean registeredWithOrganizer;
@@ -40,6 +41,7 @@ public class CompetitionDto {
         this.latitude = competition.getLatitude();
         this.longitude = competition.getLongitude();
         this.startTime = competition.getStartTime();
+        this.organizerUrl = competition.getOrganizerUrl();
         if (competition.getFormats() != null && !competition.getFormats().isEmpty()) {
             this.formats = competition.getFormats().stream()
                     .map(CompetitionFormatDto::new)
@@ -69,6 +71,7 @@ public class CompetitionDto {
     public Double getLatitude() { return latitude; }
     public Double getLongitude() { return longitude; }
     public LocalTime getStartTime() { return startTime; }
+    public String getOrganizerUrl() { return organizerUrl; }
     public String getRanking() { return ranking; }
     public String getTargetTime() { return targetTime; }
     public boolean isRegisteredWithOrganizer() { return registeredWithOrganizer; }

@@ -38,6 +38,7 @@ export class CompetitionForm implements OnInit {
     latitude: [null as number | null],
     longitude: [null as number | null],
     description: [''],
+    organizerUrl: [''],
     formats: this.fb.array([])
   });
 
@@ -80,7 +81,8 @@ export class CompetitionForm implements OnInit {
           location: c.location ?? '',
           latitude: c.latitude ?? null,
           longitude: c.longitude ?? null,
-          description: c.description ?? ''
+          description: c.description ?? '',
+          organizerUrl: c.organizerUrl ?? ''
         });
         // Load existing formats into FormArray
         this.formatsArray.clear();
@@ -136,6 +138,7 @@ export class CompetitionForm implements OnInit {
       latitude: v.latitude || undefined,
       longitude: v.longitude || undefined,
       description: v.description || undefined,
+      organizerUrl: v.organizerUrl || undefined,
       formats: formats.length > 0 ? formats : undefined
     };
     this.isSaving.set(true);

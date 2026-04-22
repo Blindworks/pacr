@@ -50,6 +50,9 @@ public class Competition {
     @Column(name = "system_generated", nullable = false)
     private boolean systemGenerated = false;
 
+    @Column(name = "organizer_url", length = 500)
+    private String organizerUrl;
+
     @OneToMany(mappedBy = "competition", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private List<CompetitionFormat> formats = new ArrayList<>();
@@ -91,6 +94,9 @@ public class Competition {
 
     public boolean isSystemGenerated() { return systemGenerated; }
     public void setSystemGenerated(boolean systemGenerated) { this.systemGenerated = systemGenerated; }
+
+    public String getOrganizerUrl() { return organizerUrl; }
+    public void setOrganizerUrl(String organizerUrl) { this.organizerUrl = organizerUrl; }
 
     public List<CompetitionFormat> getFormats() { return formats; }
     public void setFormats(List<CompetitionFormat> formats) { this.formats = formats; }

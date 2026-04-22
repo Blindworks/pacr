@@ -95,6 +95,12 @@
             <textarea formControlName="description" rows="3"
               [placeholder]="'ADMIN.COMP_DESC_PLACEHOLDER' | translate" class="input textarea"></textarea>
           </div>
+
+          <div class="field field--full">
+            <label>{{ 'ADMIN.ORGANIZER_URL' | translate }}</label>
+            <input formControlName="organizerUrl" type="url"
+              [placeholder]="'ADMIN.ORGANIZER_URL_PLACEHOLDER' | translate" class="input" />
+          </div>
         </div>
       </section>
 

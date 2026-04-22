@@ -37,6 +37,7 @@ interface Race {
   startTime?: string;
   latitude?: number;
   longitude?: number;
+  organizerUrl?: string;
   formats: RaceFormat[];
   registeredFormatId?: number;
 }
@@ -182,6 +183,7 @@ export class Competitions implements OnInit {
       startTime: c.startTime,
       latitude: c.latitude,
       longitude: c.longitude,
+      organizerUrl: c.organizerUrl,
       formats,
       registeredFormatId: c.registeredFormatId
     };

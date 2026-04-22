@@ -423,6 +423,12 @@
           <span class="material-symbols-outlined">straighten</span>
           <span>{{ infoRace.distance }}</span>
         </div>
+        <div class="info-meta-row" *ngIf="infoRace.organizerUrl">
+          <span class="material-symbols-outlined">link</span>
+          <a [href]="infoRace.organizerUrl" target="_blank" rel="noopener" class="map-link">
+            {{ 'COMPETITIONS.ORGANIZER_WEBSITE' | translate }}
+          </a>
+        </div>
       </div>
       <div class="info-meta-row" *ngIf="infoRace.registered">
         <span class="material-symbols-outlined">

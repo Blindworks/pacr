@@ -107,6 +107,7 @@ public class CompetitionService {
                 existing.setLatitude(competition.getLatitude());
                 existing.setLongitude(competition.getLongitude());
                 existing.setStartTime(competition.getStartTime());
+                existing.setOrganizerUrl(competition.getOrganizerUrl());
                 existing.setSystemGenerated(competition.isSystemGenerated());
 
                 // Sync formats: clear and re-add to trigger orphanRemoval
