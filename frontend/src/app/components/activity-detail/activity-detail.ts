@@ -364,6 +364,29 @@ export class ActivityDetail implements OnInit {
     return `M 0 60 L 90 60 C 120 60, 150 ${endY}, 200 ${endY} L 200 80 L 0 80 Z`;
   }
 
+  private readonly efTierThresholds = [0.0170, 0.0190, 0.0210, 0.0230];
+  private readonly efTierLabels = ['UNTRAINED', 'BEGINNER', 'TRAINED', 'ADVANCED', 'ELITE'] as const;
+
+  get efficiencyTier(): typeof this.efTierLabels[number] {
+    const v = this.metrics?.efficiencyFactor;
+    if (v == null) return 'UNTRAINED';
+    for (let i = 0; i < this.efTierThresholds.length; i++) {
+      if (v < this.efTierThresholds[i]) return this.efTierLabels[i];
+    }
+    return 'ELITE';
+  }
+
+  get efficiencyTierPct(): number {
+    const v = this.metrics?.efficiencyFactor;
+    if (v == null) return 0;
+    const clamped = Math.max(0.0150, Math.min(0.0250, v));
+    return ((clamped - 0.0150) / 0.0100) * 100;
+  }
+
+  get efficiencyTierKey(): string {
+    return `ACTIVITY_DETAIL.EF_TIER_${this.efficiencyTier}`;
+  }
+
   get hasPerfBento(): boolean {
     return this.metrics?.strain21 != null
       || this.metrics?.rawLoad != null

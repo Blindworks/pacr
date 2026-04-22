@@ -587,12 +587,33 @@
 
           <!-- EFFICIENCY_FACTOR -->
           @if (metrics?.efficiencyFactor != null) {
-            <div class="bento-card bento-card--efficiency">
+            <div class="bento-card bento-card--efficiency" [attr.data-tier]="efficiencyTier">
               <div class="bento-head">
                 <h3 class="bento-kicker">{{ 'ACTIVITY_DETAIL.EFFICIENCY_FACTOR' | translate }}</h3>
-                <div class="bento-value-xl bento-value-xl--accent">{{ efficiencyFactorFormatted }}</div>
+                <div class="bento-value-xl bento-value-xl--accent">
+                  {{ efficiencyFactorFormatted }}
+                  <span class="bento-rating">{{ efficiencyTierKey | translate }}</span>
+                </div>
+              </div>
+              <div class="ef-scale">
+                <div class="ef-scale-track">
+                  <div class="ef-scale-zone ef-zone--untrained"></div>
+                  <div class="ef-scale-zone ef-zone--beginner"></div>
+                  <div class="ef-scale-zone ef-zone--trained"></div>
+                  <div class="ef-scale-zone ef-zone--advanced"></div>
+                  <div class="ef-scale-zone ef-zone--elite"></div>
+                  <div class="ef-scale-marker" [style.left.%]="efficiencyTierPct"></div>
+                </div>
+                <div class="ef-scale-labels">
+                  <span>{{ 'ACTIVITY_DETAIL.EF_TIER_UNTRAINED' | translate }}</span>
+                  <span>{{ 'ACTIVITY_DETAIL.EF_TIER_BEGINNER' | translate }}</span>
+                  <span>{{ 'ACTIVITY_DETAIL.EF_TIER_TRAINED' | translate }}</span>
+                  <span>{{ 'ACTIVITY_DETAIL.EF_TIER_ADVANCED' | translate }}</span>
+                  <span>{{ 'ACTIVITY_DETAIL.EF_TIER_ELITE' | translate }}</span>
+                </div>
               </div>
               <p class="bento-hint">{{ 'ACTIVITY_DETAIL.EFFICIENCY_HINT' | translate }}</p>
+              <div class="bento-glow"></div>
             </div>
           }
 
