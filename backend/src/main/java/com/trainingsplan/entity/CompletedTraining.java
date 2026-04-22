@@ -172,6 +172,13 @@ public class CompletedTraining {
     @Column(name = "end_longitude")
     private Double endLongitude;
 
+    // Quality indicators for VO2max aggregation (see Vo2MaxAggregationService)
+    @Column(name = "quality_ok")
+    private Boolean qualityOk;
+
+    @Column(name = "hr_coverage_percent")
+    private Double hrCoveragePercent;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     @JsonIgnore
@@ -572,5 +579,21 @@ public class CompletedTraining {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public Boolean getQualityOk() {
+        return qualityOk;
+    }
+
+    public void setQualityOk(Boolean qualityOk) {
+        this.qualityOk = qualityOk;
+    }
+
+    public Double getHrCoveragePercent() {
+        return hrCoveragePercent;
+    }
+
+    public void setHrCoveragePercent(Double hrCoveragePercent) {
+        this.hrCoveragePercent = hrCoveragePercent;
     }
 }

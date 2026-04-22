@@ -87,7 +87,7 @@
     <div class="metric-card metric-card--gauge">
       <div class="card-head">
         <h4>{{ 'DASHBOARD.VO2_MAX' | translate }}</h4>
-        <span class="card-tag" *ngIf="data.vo2max != null">{{ 'DASHBOARD.HR_CORRECTED' | translate }}</span>
+        <span class="card-tag" *ngIf="data.vo2max != null">{{ 'DASHBOARD.SMOOTHED' | translate }}</span>
       </div>
       <ng-container *ngIf="data.vo2max != null; else noVo2">
         <div class="gauge-container">
@@ -101,7 +101,7 @@
                     [attr.stroke-dashoffset]="gaugeOffset()"/>
           </svg>
           <div class="gauge-center">
-            <span class="gauge-value">{{ data.vo2max | number:'1.1-1' }}</span>
+            <span class="gauge-value">{{ data.vo2max | number:'1.0-0' }}</span>
             <span class="gauge-sublabel" [ngClass]="'gauge-sublabel--' + gaugeClass()">{{ gaugeSublabel() }}</span>
           </div>
         </div>

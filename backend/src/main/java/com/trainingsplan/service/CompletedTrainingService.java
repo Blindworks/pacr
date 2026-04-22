@@ -104,6 +104,7 @@ public class CompletedTrainingService {
 
         User currentUser = securityUtils.getCurrentUser();
         training.setUser(currentUser);
+        populateQualityIndicators(training, data.heartRates);
         CompletedTraining savedTraining = completedTrainingRepository.save(training);
 
         auditLogService.log(currentUser, AuditAction.FIT_UPLOADED, "COMPLETED_TRAINING",
@@ -141,6 +142,7 @@ public class CompletedTrainingService {
 
         User currentUser = securityUtils.getCurrentUser();
         training.setUser(currentUser);
+        populateQualityIndicators(training, data.heartRates);
         CompletedTraining savedTraining = completedTrainingRepository.save(training);
 
         auditLogService.log(currentUser, AuditAction.FIT_UPLOADED, "COMPLETED_TRAINING",
@@ -190,6 +192,7 @@ public class CompletedTrainingService {
 
         User currentUser = securityUtils.getCurrentUser();
         training.setUser(currentUser);
+        populateQualityIndicators(training, collector.getHeartRates());
         CompletedTraining savedTraining = completedTrainingRepository.save(training);
 
         auditLogService.log(currentUser, AuditAction.FIT_UPLOADED, "COMPLETED_TRAINING",
@@ -573,6 +576,34 @@ public class CompletedTrainingService {
         if (userId == null) return Optional.empty();
         return completedTrainingRepository
                 .findTopByUserIdAndSportContainingIgnoreCaseOrderByTrainingDateDescUploadDateDesc(userId, "run");
+    }
+
+    /**
+     * Populates {@code qualityOk} and {@code hrCoveragePercent} on the training
+     * based on the parsed sample stream. Used by the VO2max aggregation pipeline
+     * to decide whether this workout is eligible for the long-term estimate.
+     */
+    private void populateQualityIndicators(CompletedTraining training, List<Integer> heartRates) {
+        double coverage;
+        if (heartRates != null && !heartRates.isEmpty()) {
+            int plausible = 0;
+            for (Integer hr : heartRates) {
+                if (hr != null && hr > 30 && hr < 250) plausible++;
+            }
+            coverage = 100.0 * plausible / heartRates.size();
+        } else {
+            Integer avg = training.getAverageHeartRate();
+            coverage = (avg != null && avg > 0) ? 100.0 : 0.0;
+        }
+        training.setHrCoveragePercent(coverage);
+
+        String sport = training.getSport();
+        boolean running = sport != null && sport.toLowerCase().contains("run");
+        boolean hasDistance = training.getDistanceKm() != null && training.getDistanceKm() > 0;
+        boolean longEnough = training.getDurationSeconds() != null && training.getDurationSeconds() >= 900;
+        Integer pace = training.getAveragePaceSecondsPerKm();
+        boolean plausiblePace = pace != null && pace >= 150 && pace <= 900;
+        training.setQualityOk(running && hasDistance && longEnough && plausiblePace);
     }
 
     private Map<String, Object> buildUploadDetails(String format, CompletedTraining training) {

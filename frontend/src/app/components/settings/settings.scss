@@ -620,3 +620,57 @@
     }
   }
 }
+
+.recalc-dialog {
+  margin: auto;
+  padding: 0;
+  border: none;
+  background: transparent;
+  max-width: none;
+  max-height: none;
+
+  &::backdrop { background: var(--overlay); }
+}
+
+.recalc-inner {
+  @include m.dialog(min(440px, 92vw));
+  align-items: stretch;
+  text-align: left;
+  gap: 16px;
+}
+
+.recalc-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  h3 { color: var(--text); margin: 0; font-size: 18px; }
+
+  &--success .recalc-header-icon { color: var(--pp); }
+  &--error   .recalc-header-icon { color: #e74c3c; }
+}
+
+.recalc-header-icon {
+  font-size: 22px;
+  color: var(--pp);
+}
+
+.recalc-spin { animation: spin 1s linear infinite; }
+
+.recalc-body p {
+  color: var(--text-muted);
+  font-size: 14px;
+  line-height: 1.55;
+  margin: 0;
+}
+
+.recalc-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.recalc-btn {
+  &--primary { @include m.btn-primary; }
+  &--ghost   { @include m.btn-ghost; }
+}

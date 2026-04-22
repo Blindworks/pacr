@@ -417,6 +417,21 @@
       </div>
     </article>
 
+    <!-- Data & Maintenance -->
+    <article class="section">
+      <div class="section-head">
+        <span class="material-symbols-outlined">autorenew</span>
+        <h2>{{ 'SETTINGS.DATA_MAINTENANCE' | translate }}</h2>
+      </div>
+      <div class="toggle-row" style="cursor: pointer" (click)="openRecalcDialog()">
+        <div class="toggle-info">
+          <span class="toggle-title">{{ 'SETTINGS.RECALCULATE_METRICS' | translate }}</span>
+          <span class="toggle-sub">{{ 'SETTINGS.RECALCULATE_METRICS_HINT' | translate }}</span>
+        </div>
+        <span class="material-symbols-outlined" style="color: var(--primary)">refresh</span>
+      </div>
+    </article>
+
     <!-- Footer Actions -->
     <div class="footer-actions">
       <button class="btn-delete" type="button">Delete Account</button>
@@ -429,3 +444,74 @@
 </section>
 
 <app-location-picker-dialog></app-location-picker-dialog>
+
+<dialog #recalcDialog class="recalc-dialog" (click)="onRecalcBackdropClick($event)">
+  <div class="recalc-inner" (click)="$event.stopPropagation()">
+
+    @switch (recalcStage()) {
+      @case ('confirm') {
+        <header class="recalc-header">
+          <span class="material-symbols-outlined recalc-header-icon">autorenew</span>
+          <h3>{{ 'SETTINGS.RECALCULATE_METRICS' | translate }}</h3>
+        </header>
+        <div class="recalc-body">
+          <p>{{ 'SETTINGS.RECALCULATE_CONFIRM' | translate }}</p>
+        </div>
+        <footer class="recalc-footer">
+          <button type="button" class="recalc-btn recalc-btn--ghost" (click)="closeRecalcDialog()">
+            {{ 'COMMON.CANCEL' | translate }}
+          </button>
+          <button type="button" class="recalc-btn recalc-btn--primary" (click)="confirmRecalculate()">
+            <span class="material-symbols-outlined">play_arrow</span>
+            {{ 'SETTINGS.RECALCULATE_START' | translate }}
+          </button>
+        </footer>
+      }
+
+      @case ('running') {
+        <header class="recalc-header">
+          <span class="material-symbols-outlined recalc-header-icon recalc-spin">progress_activity</span>
+          <h3>{{ 'SETTINGS.RECALCULATE_RUNNING' | translate }}</h3>
+        </header>
+        <div class="recalc-body">
+          <p>{{ 'SETTINGS.RECALCULATE_RUNNING_HINT' | translate }}</p>
+        </div>
+      }
+
+      @case ('success') {
+        <header class="recalc-header recalc-header--success">
+          <span class="material-symbols-outlined recalc-header-icon">check_circle</span>
+          <h3>{{ 'SETTINGS.RECALCULATE_DONE' | translate }}</h3>
+        </header>
+        <div class="recalc-body">
+          <p>{{ 'SETTINGS.RECALCULATE_SUCCESS' | translate:{ count: recalcProcessedCount() } }}</p>
+        </div>
+        <footer class="recalc-footer">
+          <button type="button" class="recalc-btn recalc-btn--primary" (click)="closeRecalcDialog()">
+            {{ 'COMMON.CLOSE' | translate }}
+          </button>
+        </footer>
+      }
+
+      @case ('error') {
+        <header class="recalc-header recalc-header--error">
+          <span class="material-symbols-outlined recalc-header-icon">error</span>
+          <h3>{{ 'SETTINGS.RECALCULATE_FAILED' | translate }}</h3>
+        </header>
+        <div class="recalc-body">
+          <p>{{ 'SETTINGS.RECALCULATE_ERROR' | translate }}</p>
+        </div>
+        <footer class="recalc-footer">
+          <button type="button" class="recalc-btn recalc-btn--ghost" (click)="closeRecalcDialog()">
+            {{ 'COMMON.CLOSE' | translate }}
+          </button>
+          <button type="button" class="recalc-btn recalc-btn--primary" (click)="confirmRecalculate()">
+            <span class="material-symbols-outlined">refresh</span>
+            {{ 'SETTINGS.RECALCULATE_RETRY' | translate }}
+          </button>
+        </footer>
+      }
+    }
+
+  </div>
+</dialog>

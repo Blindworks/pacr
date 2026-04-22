@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="121-1" author="benedikt">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="user_vo2max_state"/>
+            </not>
+        </preConditions>
+        <comment>Append-only historized VO2max aggregation state per user</comment>
+        <createTable tableName="user_vo2max_state">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="user_id" type="BIGINT">
+                <constraints nullable="false" foreignKeyName="fk_vo2max_state_user" references="users(id)"/>
+            </column>
+            <column name="vo2max_internal" type="DOUBLE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="vo2max_displayed" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="eligible_workout_count" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_update_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="source_activity_id" type="BIGINT"/>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="121-2" author="benedikt">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <indexExists tableName="user_vo2max_state" indexName="idx_vo2max_state_user_created"/>
+            </not>
+        </preConditions>
+        <comment>Index for quickly fetching the latest state per user</comment>
+        <createIndex tableName="user_vo2max_state" indexName="idx_vo2max_state_user_created">
+            <column name="user_id"/>
+            <column name="created_at" descending="true"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>

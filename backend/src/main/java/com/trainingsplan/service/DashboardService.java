@@ -48,6 +48,7 @@ public class DashboardService {
     private final CompetitionRegistrationRepository competitionRegistrationRepository;
     private final UserTrainingEntryRepository userTrainingEntryRepository;
     private final BodyMetricRepository bodyMetricRepository;
+    private final Vo2MaxAggregationService vo2MaxAggregationService;
 
     public DashboardService(
             DailyMetricsRepository dailyMetricsRepository,
@@ -57,7 +58,8 @@ public class DashboardService {
             ObjectMapper objectMapper,
             CompetitionRegistrationRepository competitionRegistrationRepository,
             UserTrainingEntryRepository userTrainingEntryRepository,
-            BodyMetricRepository bodyMetricRepository
+            BodyMetricRepository bodyMetricRepository,
+            Vo2MaxAggregationService vo2MaxAggregationService
     ) {
         this.dailyMetricsRepository = dailyMetricsRepository;
         this.activityMetricsRepository = activityMetricsRepository;
@@ -67,6 +69,7 @@ public class DashboardService {
         this.competitionRegistrationRepository = competitionRegistrationRepository;
         this.userTrainingEntryRepository = userTrainingEntryRepository;
         this.bodyMetricRepository = bodyMetricRepository;
+        this.vo2MaxAggregationService = vo2MaxAggregationService;
     }
 
     public DashboardDto getDashboard(User user) {
@@ -107,13 +110,23 @@ public class DashboardService {
         Integer bodyBattery = bmBodyBattery != null && bmBodyBattery.getValue() != null
                 ? bmBodyBattery.getValue().intValue() : null;
 
-        BodyMetric bmVo2max = bodyMetricRepository
-                .findTopByUserIdAndMetricTypeAndRecordedAtLessThanEqualOrderByRecordedAtDesc(user.getId(), MetricType.VO2MAX_HR_CORRECTED, today)
-                .orElseGet(() -> bodyMetricRepository
-                        .findTopByUserIdAndMetricTypeAndRecordedAtLessThanEqualOrderByRecordedAtDesc(user.getId(), MetricType.VO2MAX, today)
-                        .orElse(null));
-        Double vo2max = bmVo2max != null ? bmVo2max.getValue() : null;
-        LocalDate vo2maxDate = bmVo2max != null ? bmVo2max.getRecordedAt() : null;
+        // Prefer the smoothed long-term VO2max state; fall back to the latest raw BodyMetric
+        // for users that haven't accumulated any eligible workouts yet.
+        Double vo2max;
+        LocalDate vo2maxDate;
+        var smoothedState = vo2MaxAggregationService.getCurrentState(user);
+        if (smoothedState.isPresent()) {
+            vo2max = smoothedState.get().getVo2maxDisplayed().doubleValue();
+            vo2maxDate = smoothedState.get().getLastUpdateAt().toLocalDate();
+        } else {
+            BodyMetric bmVo2max = bodyMetricRepository
+                    .findTopByUserIdAndMetricTypeAndRecordedAtLessThanEqualOrderByRecordedAtDesc(user.getId(), MetricType.VO2MAX_HR_CORRECTED, today)
+                    .orElseGet(() -> bodyMetricRepository
+                            .findTopByUserIdAndMetricTypeAndRecordedAtLessThanEqualOrderByRecordedAtDesc(user.getId(), MetricType.VO2MAX, today)
+                            .orElse(null));
+            vo2max = bmVo2max != null ? bmVo2max.getValue() : null;
+            vo2maxDate = bmVo2max != null ? bmVo2max.getRecordedAt() : null;
+        }
 
         DailyMetrics latestWithAcwr = dailyMetrics.stream()
                 .filter(d -> d.getAcwr() != null)

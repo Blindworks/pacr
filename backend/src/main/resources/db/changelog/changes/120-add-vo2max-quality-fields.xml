@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="120-1" author="benedikt">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="completed_trainings" columnName="quality_ok"/>
+            </not>
+        </preConditions>
+        <comment>Add quality_ok flag to completed_trainings (used by VO2max aggregation eligibility filter)</comment>
+        <addColumn tableName="completed_trainings">
+            <column name="quality_ok" type="BOOLEAN"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="120-2" author="benedikt">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="completed_trainings" columnName="hr_coverage_percent"/>
+            </not>
+        </preConditions>
+        <comment>Add hr_coverage_percent to completed_trainings (fraction of samples with plausible HR)</comment>
+        <addColumn tableName="completed_trainings">
+            <column name="hr_coverage_percent" type="DOUBLE"/>
+        </addColumn>
+    </changeSet>
+
+</databaseChangeLog>

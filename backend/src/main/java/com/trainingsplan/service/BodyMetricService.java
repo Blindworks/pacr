@@ -32,6 +32,9 @@ public class BodyMetricService {
     private Vo2MaxService vo2MaxService;
 
     @Autowired
+    private Vo2MaxAggregationService vo2MaxAggregationService;
+
+    @Autowired
     private DailyMetricsService dailyMetricsService;
 
     @Autowired
@@ -71,6 +74,9 @@ public class BodyMetricService {
                     .ifPresent(v -> upsert(user, "VO2MAX_HR_CORRECTED", v, "ml/kg/min",
                             training.getTrainingDate(), training.getId()));
         }
+
+        // Long-term smoothed aggregation (EWMA + hysteresis)
+        vo2MaxAggregationService.updateForWorkout(user, training);
     }
 
     /**
@@ -134,11 +140,27 @@ public class BodyMetricService {
 
         bodyMetricRepository.deleteByUserId(user.getId());
 
+        // Replay VO2max aggregation chronologically from scratch
+        vo2MaxAggregationService.recalculateForUser(user);
+
         List<CompletedTraining> trainings = completedTrainingRepository.findByUserId(user.getId());
 
         int total = trainings.size();
         for (CompletedTraining t : trainings) {
-            calculateAndStore(t, user);
+            // Re-run raw per-workout BodyMetric upserts; aggregation was already replayed above
+            Double distanceMeters = t.getDistanceKm() != null ? t.getDistanceKm() * 1000 : null;
+            Integer durationTime = t.getDurationSeconds() != null ? t.getDurationSeconds() : t.getMovingTimeSeconds();
+            Integer movingTime = t.getMovingTimeSeconds() != null ? t.getMovingTimeSeconds() : t.getDurationSeconds();
+            if (isRunning(t)) {
+                vo2MaxService.calculate(distanceMeters, durationTime)
+                        .ifPresent(v -> upsert(user, "VO2MAX", v, "ml/kg/min", t.getTrainingDate(), t.getId()));
+                if (user.getMaxHeartRate() != null) {
+                    vo2MaxService.calculateHRCorrected(distanceMeters, movingTime,
+                                    t.getAverageHeartRate(), user.getMaxHeartRate())
+                            .ifPresent(v -> upsert(user, "VO2MAX_HR_CORRECTED", v, "ml/kg/min",
+                                    t.getTrainingDate(), t.getId()));
+                }
+            }
         }
 
         dailyMetricsService.recomputeEfForUser(user);

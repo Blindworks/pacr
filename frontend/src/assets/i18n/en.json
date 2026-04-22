@@ -305,6 +305,7 @@
     "BODY_BATTERY": "Body Battery",
     "VO2_MAX": "VO2 Max",
     "HR_CORRECTED": "HR-corrected",
+    "SMOOTHED": "Smoothed",
     "NO_RUN_UPLOADED": "No run uploaded yet",
     "LOAD_STATUS_21": "21-Day Training Load",
     "LOAD_STATUS": "Training Load Status",
@@ -470,7 +471,19 @@
     "ONBOARDING_TOGGLE_SUB": "Run through the setup again to adjust your profile and goals",
     "DELETE_ACCOUNT": "Delete Account",
     "UPLOAD_FAILED": "Upload failed. Please try again.",
-    "SAVE_FAILED": "Failed to save. Please try again."
+    "SAVE_FAILED": "Failed to save. Please try again.",
+    "DATA_MAINTENANCE": "Data & Maintenance",
+    "RECALCULATE_METRICS": "Recalculate metrics",
+    "RECALCULATE_METRICS_HINT": "Recomputes all body metrics (VO₂max, HR zones, ACWR, readiness) from your stored activities. May take a few seconds depending on the number of workouts.",
+    "RECALCULATE_CONFIRM": "All body metrics will be deleted and recomputed from your uploaded activities. Continue?",
+    "RECALCULATE_SUCCESS": "Recalculated – {{count}} activities processed.",
+    "RECALCULATE_ERROR": "Recalculation failed. Please try again.",
+    "RECALCULATE_START": "Recalculate now",
+    "RECALCULATE_RUNNING": "Recalculating…",
+    "RECALCULATE_RUNNING_HINT": "Your activities are being reprocessed. This may take a moment.",
+    "RECALCULATE_DONE": "Done",
+    "RECALCULATE_FAILED": "Failed",
+    "RECALCULATE_RETRY": "Try again"
   },
   "TRAINING_PLAN": {
     "TITLE": "Training",

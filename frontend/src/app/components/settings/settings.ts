@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, OnDestroy, signal, inject, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, signal, inject, ViewChild, ElementRef, effect } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -9,6 +9,7 @@ import { StravaService } from '../../services/strava.service';
 import { CorosService } from '../../services/coros.service';
 import { UserService, UserProfile } from '../../services/user.service';
 import { NotificationPreferencesService } from '../../services/notification-preferences.service';
+import { StatisticsService } from '../../services/statistics.service';
 import { ThemeService, ThemeChoice } from '../../services/theme.service';
 import { LocationPickerDialogComponent } from '../location-picker-dialog/location-picker-dialog';
 
@@ -29,6 +30,7 @@ type Integration = {
 })
 export class Settings implements OnInit, OnDestroy {
   @ViewChild('fileInput') private fileInput!: ElementRef<HTMLInputElement>;
+  @ViewChild('recalcDialog') private recalcDialogRef?: ElementRef<HTMLDialogElement>;
   @ViewChild(LocationPickerDialogComponent) private locationPicker?: LocationPickerDialogComponent;
 
   protected userLatitude = signal<number | null>(null);
@@ -39,6 +41,7 @@ export class Settings implements OnInit, OnDestroy {
   private readonly corosService = inject(CorosService);
   private readonly userService = inject(UserService);
   private readonly notifPrefsService = inject(NotificationPreferencesService);
+  private readonly statisticsService = inject(StatisticsService);
   private readonly themeService = inject(ThemeService);
   private readonly translate = inject(TranslateService);
 
@@ -513,6 +516,52 @@ export class Settings implements OnInit, OnDestroy {
 
   protected restartOnboarding(): void {
     this.router.navigate(['/onboarding']);
+  }
+
+  protected recalcDialogOpen = signal(false);
+  protected recalcStage = signal<'confirm' | 'running' | 'success' | 'error'>('confirm');
+  protected recalcProcessedCount = signal(0);
+
+  private readonly recalcDialogEffect = effect(() => {
+    const open = this.recalcDialogOpen();
+    const el = this.recalcDialogRef?.nativeElement;
+    if (!el) return;
+    if (open && !el.open) el.showModal();
+    else if (!open && el.open) el.close();
+  });
+
+  protected openRecalcDialog(): void {
+    if (this.recalcStage() === 'running') return;
+    this.recalcStage.set('confirm');
+    this.recalcDialogOpen.set(true);
+  }
+
+  protected closeRecalcDialog(): void {
+    if (this.recalcStage() === 'running') return;
+    this.recalcDialogOpen.set(false);
+  }
+
+  protected onRecalcBackdropClick(event: MouseEvent): void {
+    if (!this.recalcDialogRef) return;
+    if (this.recalcStage() === 'running') return;
+    const rect = this.recalcDialogRef.nativeElement.getBoundingClientRect();
+    const outside =
+      event.clientX < rect.left || event.clientX > rect.right ||
+      event.clientY < rect.top || event.clientY > rect.bottom;
+    if (outside) this.closeRecalcDialog();
+  }
+
+  protected confirmRecalculate(): void {
+    this.recalcStage.set('running');
+    this.statisticsService.recalculateBodyMetrics().subscribe({
+      next: resp => {
+        this.recalcProcessedCount.set(resp.activitiesProcessed);
+        this.recalcStage.set('success');
+      },
+      error: () => {
+        this.recalcStage.set('error');
+      }
+    });
   }
 
   private saveNotificationPreferences(): void {

@@ -305,6 +305,7 @@
     "BODY_BATTERY": "Body Battery",
     "VO2_MAX": "VO2 Max",
     "HR_CORRECTED": "HF-korrigiert",
+    "SMOOTHED": "Geglättet",
     "NO_RUN_UPLOADED": "Noch kein Lauf hochgeladen",
     "LOAD_STATUS_21": "21-Tage Trainingsbelastung",
     "LOAD_STATUS": "Trainingsbelastungsstatus",
@@ -470,7 +471,19 @@
     "ONBOARDING_TOGGLE_SUB": "Durchlaufe die Einrichtung erneut, um dein Profil und deine Ziele anzupassen",
     "DELETE_ACCOUNT": "Konto löschen",
     "UPLOAD_FAILED": "Upload fehlgeschlagen. Bitte erneut versuchen.",
-    "SAVE_FAILED": "Speichern fehlgeschlagen. Bitte erneut versuchen."
+    "SAVE_FAILED": "Speichern fehlgeschlagen. Bitte erneut versuchen.",
+    "DATA_MAINTENANCE": "Daten & Wartung",
+    "RECALCULATE_METRICS": "Metriken neu berechnen",
+    "RECALCULATE_METRICS_HINT": "Berechnet alle Körpermetriken (VO₂max, HR-Zonen, ACWR, Readiness) aus deinen bestehenden Aktivitäten neu. Kann je nach Anzahl der Trainings einige Sekunden dauern.",
+    "RECALCULATE_CONFIRM": "Alle Körpermetriken werden gelöscht und aus allen hochgeladenen Aktivitäten neu berechnet. Fortfahren?",
+    "RECALCULATE_SUCCESS": "Neu berechnet – {{count}} Aktivitäten verarbeitet.",
+    "RECALCULATE_ERROR": "Neuberechnung fehlgeschlagen. Bitte erneut versuchen.",
+    "RECALCULATE_START": "Jetzt neu berechnen",
+    "RECALCULATE_RUNNING": "Berechnung läuft…",
+    "RECALCULATE_RUNNING_HINT": "Deine Aktivitäten werden neu verarbeitet. Das kann einen Moment dauern.",
+    "RECALCULATE_DONE": "Fertig",
+    "RECALCULATE_FAILED": "Fehlgeschlagen",
+    "RECALCULATE_RETRY": "Erneut versuchen"
   },
   "TRAINING_PLAN": {
     "TITLE": "Trainings",

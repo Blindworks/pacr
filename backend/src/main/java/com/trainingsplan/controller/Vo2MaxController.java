@@ -1,9 +1,11 @@
 package com.trainingsplan.controller;
 
 import com.trainingsplan.entity.CompletedTraining;
+import com.trainingsplan.entity.UserVo2MaxState;
 import com.trainingsplan.service.CompletedTrainingService;
 import com.trainingsplan.dto.StravaActivityDto;
 import com.trainingsplan.security.SecurityUtils;
+import com.trainingsplan.service.Vo2MaxAggregationService;
 import com.trainingsplan.service.Vo2MaxService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -23,12 +26,44 @@ public class Vo2MaxController {
     private final Vo2MaxService vo2MaxService;
     private final CompletedTrainingService completedTrainingService;
     private final SecurityUtils securityUtils;
+    private final Vo2MaxAggregationService vo2MaxAggregationService;
 
     public Vo2MaxController(Vo2MaxService vo2MaxService, CompletedTrainingService completedTrainingService,
-                            SecurityUtils securityUtils) {
+                            SecurityUtils securityUtils, Vo2MaxAggregationService vo2MaxAggregationService) {
         this.vo2MaxService = vo2MaxService;
         this.completedTrainingService = completedTrainingService;
         this.securityUtils = securityUtils;
+        this.vo2MaxAggregationService = vo2MaxAggregationService;
+    }
+
+    @GetMapping("/state/current")
+    public ResponseEntity<?> getCurrentState() {
+        com.trainingsplan.entity.User user = securityUtils.getCurrentUser();
+        if (user == null) return ResponseEntity.status(401).build();
+        return ResponseEntity.ok(vo2MaxAggregationService.getCurrentState(user)
+                .map(this::toStateResponse)
+                .orElse(Map.of()));
+    }
+
+    @GetMapping("/state/history")
+    public ResponseEntity<?> getStateHistory() {
+        com.trainingsplan.entity.User user = securityUtils.getCurrentUser();
+        if (user == null) return ResponseEntity.status(401).build();
+        List<Map<String, Object>> history = vo2MaxAggregationService.getHistory(user).stream()
+                .map(this::toStateResponse)
+                .toList();
+        return ResponseEntity.ok(history);
+    }
+
+    private Map<String, Object> toStateResponse(UserVo2MaxState s) {
+        Map<String, Object> m = new HashMap<>();
+        m.put("vo2maxInternal", s.getVo2maxInternal());
+        m.put("vo2maxDisplayed", s.getVo2maxDisplayed());
+        m.put("eligibleWorkoutCount", s.getEligibleWorkoutCount());
+        m.put("lastUpdateAt", s.getLastUpdateAt());
+        m.put("sourceActivityId", s.getSourceActivityId());
+        m.put("createdAt", s.getCreatedAt());
+        return m;
     }
 
     @PostMapping("/estimate/training")

@@ -53,4 +53,9 @@ export class StatisticsService {
   getVo2MaxHistory(): Observable<Vo2MaxPoint[]> {
     return this.http.get<Vo2MaxPoint[]>(`${BODY_METRICS_BASE}/vo2max-history`);
   }
+
+  recalculateBodyMetrics(): Observable<{ message: string; activitiesProcessed: number }> {
+    return this.http.post<{ message: string; activitiesProcessed: number }>(
+      `${BODY_METRICS_BASE}/recalculate`, {});
+  }
 }
