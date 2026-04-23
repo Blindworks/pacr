@@ -16,6 +16,7 @@ import com.trainingsplan.repository.ActivityMetricsRepository;
 import com.trainingsplan.repository.ActivityStreamRepository;
 import com.trainingsplan.repository.CompletedTrainingRepository;
 import com.trainingsplan.repository.StravaTokenRepository;
+import com.trainingsplan.repository.UserRepository;
 import com.trainingsplan.event.TrainingCompletedEvent;
 import com.trainingsplan.security.SecurityUtils;
 import org.slf4j.Logger;
@@ -37,8 +38,11 @@ import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class StravaService {
@@ -70,6 +74,16 @@ public class StravaService {
     private final AuditLogService auditLogService;
     private final ApplicationEventPublisher eventPublisher;
     private final RestClient restClient;
+    private final UserRepository userRepository;
+
+    private static final long PENDING_AUTH_TTL_MS = 10 * 60 * 1000L;
+    private final Map<String, PendingAuth> pendingAuthorizations = new ConcurrentHashMap<>();
+
+    private record PendingAuth(Long userId, long expiresAtMillis) {
+        boolean isExpired() {
+            return System.currentTimeMillis() > expiresAtMillis;
+        }
+    }
 
     public StravaService(StravaTokenRepository tokenRepository, ObjectMapper objectMapper,
                          CompletedTrainingRepository completedTrainingRepository,
@@ -81,7 +95,8 @@ public class StravaService {
                          MetricsKernelService metricsKernelService,
                          BodyMetricService bodyMetricService,
                          AuditLogService auditLogService,
-                         ApplicationEventPublisher eventPublisher) {
+                         ApplicationEventPublisher eventPublisher,
+                         UserRepository userRepository) {
         this.tokenRepository = tokenRepository;
         this.objectMapper = objectMapper;
         this.completedTrainingRepository = completedTrainingRepository;
@@ -94,6 +109,7 @@ public class StravaService {
         this.bodyMetricService = bodyMetricService;
         this.auditLogService = auditLogService;
         this.eventPublisher = eventPublisher;
+        this.userRepository = userRepository;
         SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
         factory.setConnectTimeout(java.time.Duration.ofSeconds(10));
         factory.setReadTimeout(java.time.Duration.ofSeconds(30));
@@ -101,22 +117,47 @@ public class StravaService {
     }
 
     public String getAuthorizationUrl() {
+        User currentUser = securityUtils.getCurrentUser();
+        if (currentUser == null) {
+            throw new RuntimeException("Strava connection requires an authenticated user");
+        }
+
+        pendingAuthorizations.entrySet().removeIf(e -> e.getValue().isExpired());
+
+        String state = UUID.randomUUID().toString();
+        pendingAuthorizations.put(state,
+                new PendingAuth(currentUser.getId(), System.currentTimeMillis() + PENDING_AUTH_TTL_MS));
+
         return "https://www.strava.com/oauth/authorize" +
                 "?client_id=" + clientId +
                 "&redirect_uri=" + redirectUri +
                 "&response_type=code" +
-                "&scope=activity:read_all";
+                "&scope=activity:read_all" +
+                "&state=" + state;
     }
 
     public String getFrontendCallbackRedirectUrl() {
         return frontendUrl.replaceAll("/+$", "") + "/overview?strava=connected";
     }
 
-    public void exchangeCodeForToken(String code) {
-        User currentUser = securityUtils.getCurrentUser();
-        if (currentUser == null) {
-            throw new RuntimeException("Strava connection requires an authenticated user");
+    public String getFrontendCallbackErrorUrl(String reason) {
+        String base = frontendUrl.replaceAll("/+$", "") + "/overview?strava=error";
+        return reason != null ? base + "&reason=" + reason : base;
+    }
+
+    public void exchangeCodeForToken(String code, String state) {
+        if (state == null || state.isBlank()) {
+            throw new RuntimeException("Missing OAuth state parameter");
         }
+        PendingAuth pending = pendingAuthorizations.remove(state);
+        if (pending == null) {
+            throw new RuntimeException("Unknown or already-consumed OAuth state");
+        }
+        if (pending.isExpired()) {
+            throw new RuntimeException("OAuth state expired");
+        }
+        User currentUser = userRepository.findById(pending.userId())
+                .orElseThrow(() -> new RuntimeException("User for OAuth state no longer exists"));
 
         MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
         formData.add("client_id", clientId);

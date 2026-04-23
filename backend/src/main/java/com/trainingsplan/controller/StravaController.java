@@ -30,9 +30,21 @@ public class StravaController {
     }
 
     @GetMapping("/callback")
-    public void callback(@RequestParam String code, HttpServletResponse response) throws IOException {
-        stravaService.exchangeCodeForToken(code);
-        response.sendRedirect(stravaService.getFrontendCallbackRedirectUrl());
+    public void callback(@RequestParam String code,
+                         @RequestParam(required = false) String state,
+                         HttpServletResponse response) throws IOException {
+        if (state == null || state.isBlank()) {
+            response.sendRedirect(stravaService.getFrontendCallbackErrorUrl("missing_state"));
+            return;
+        }
+        try {
+            stravaService.exchangeCodeForToken(code, state);
+            response.sendRedirect(stravaService.getFrontendCallbackRedirectUrl());
+        } catch (Exception e) {
+            org.slf4j.LoggerFactory.getLogger(StravaController.class)
+                    .error("Strava callback failed: {}", e.getMessage(), e);
+            response.sendRedirect(stravaService.getFrontendCallbackErrorUrl("exchange_failed"));
+        }
     }
 
     @GetMapping("/status")
