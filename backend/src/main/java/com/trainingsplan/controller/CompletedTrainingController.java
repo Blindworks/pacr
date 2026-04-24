@@ -1,6 +1,7 @@
 package com.trainingsplan.controller;
 
 import com.trainingsplan.dto.ActivityComparisonItemDto;
+import com.trainingsplan.dto.ActivityFeedbackDto;
 import com.trainingsplan.dto.ActivityStreamDto;
 import com.trainingsplan.dto.ProfileCompletionDto;
 import com.trainingsplan.dto.TrainingStatsDto;
@@ -26,6 +27,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import jakarta.validation.Valid;
 import org.springframework.security.core.Authentication;
 
 import java.io.IOException;
@@ -316,6 +318,27 @@ public class CompletedTrainingController {
             "Wettkampf",
                 "Pendeln"
         ));
+    }
+
+    @PutMapping("/{id}/feedback")
+    public ResponseEntity<?> updateFeedback(
+            @PathVariable Long id,
+            @Valid @RequestBody ActivityFeedbackDto body) {
+        User user = securityUtils.getCurrentUser();
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        return completedTrainingRepository.findByIdAndUserId(id, user.getId())
+                .map(ct -> {
+                    ct.setRpe(body.getRpe());
+                    ct.setFeeling(body.getFeeling());
+                    ct.setTrainingQuality(body.getTrainingQuality());
+                    String note = body.getFeedbackNote();
+                    ct.setFeedbackNote(note != null && !note.isBlank() ? note : null);
+                    completedTrainingRepository.save(ct);
+                    return ResponseEntity.ok(ct);
+                })
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @PatchMapping("/{id}/training-type")

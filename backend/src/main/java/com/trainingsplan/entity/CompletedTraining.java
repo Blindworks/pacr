@@ -179,6 +179,19 @@ public class CompletedTraining {
     @Column(name = "hr_coverage_percent")
     private Double hrCoveragePercent;
 
+    // Self-assessment (user feedback after the activity)
+    @Column(name = "rpe")
+    private Integer rpe;
+
+    @Column(name = "feeling")
+    private Integer feeling;
+
+    @Column(name = "training_quality")
+    private Integer trainingQuality;
+
+    @Column(name = "feedback_note", length = 1000)
+    private String feedbackNote;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     @JsonIgnore
@@ -595,5 +608,37 @@ public class CompletedTraining {
 
     public void setHrCoveragePercent(Double hrCoveragePercent) {
         this.hrCoveragePercent = hrCoveragePercent;
+    }
+
+    public Integer getRpe() {
+        return rpe;
+    }
+
+    public void setRpe(Integer rpe) {
+        this.rpe = rpe;
+    }
+
+    public Integer getFeeling() {
+        return feeling;
+    }
+
+    public void setFeeling(Integer feeling) {
+        this.feeling = feeling;
+    }
+
+    public Integer getTrainingQuality() {
+        return trainingQuality;
+    }
+
+    public void setTrainingQuality(Integer trainingQuality) {
+        this.trainingQuality = trainingQuality;
+    }
+
+    public String getFeedbackNote() {
+        return feedbackNote;
+    }
+
+    public void setFeedbackNote(String feedbackNote) {
+        this.feedbackNote = feedbackNote;
     }
 }

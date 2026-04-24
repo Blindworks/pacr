@@ -44,6 +44,17 @@ export interface CompletedTraining {
   timeInHrZone5Seconds: number | null;
   deviceManufacturer: string | null;
   deviceProduct: string | null;
+  rpe: number | null;
+  feeling: number | null;
+  trainingQuality: number | null;
+  feedbackNote: string | null;
+}
+
+export interface ActivityFeedbackPayload {
+  rpe: number | null;
+  feeling: number | null;
+  trainingQuality: number | null;
+  feedbackNote: string | null;
 }
 
 export interface ActivityStreamDto {
@@ -134,6 +145,10 @@ export class ActivityService {
 
   getGpsStream(id: number): Observable<GpsStreamDto> {
     return this.http.get<GpsStreamDto>(`${BASE}/${id}/gps`);
+  }
+
+  updateFeedback(id: number, payload: ActivityFeedbackPayload): Observable<CompletedTraining> {
+    return this.http.put<CompletedTraining>(`${BASE}/${id}/feedback`, payload);
   }
 
   uploadActivity(file: File, date: string): Observable<any> {

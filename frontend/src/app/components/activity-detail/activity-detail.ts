@@ -1,6 +1,7 @@
 import { Component, OnInit, inject, ChangeDetectorRef, signal, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ActivityService, ActivityStreamDto, CompletedTraining, ActivityMetrics, ActivityVo2Max, GpsStreamDto } from '../../services/activity.service';
 import { ActivityMapComponent } from '../activity-map/activity-map';
@@ -11,7 +12,7 @@ import { ProOverlay } from '../shared/pro-overlay/pro-overlay';
 @Component({
   selector: 'app-activity-detail',
   standalone: true,
-  imports: [CommonModule, ActivityMapComponent, MapDialogComponent, RouterModule, ProOverlay, TranslateModule],
+  imports: [CommonModule, FormsModule, ActivityMapComponent, MapDialogComponent, RouterModule, ProOverlay, TranslateModule],
   templateUrl: './activity-detail.html',
   styleUrl: './activity-detail.scss'
 })
@@ -38,6 +39,24 @@ export class ActivityDetail implements OnInit {
 
   gpsData: GpsStreamDto | null = null;
   mapColorMode: 'pace' | 'hr' = 'pace';
+
+  // ── Self assessment ─────────────────────────────────────────────
+  rpe: number | null = null;
+  feeling: number | null = null;
+  quality: number | null = null;
+  note = '';
+  feedbackSaving = false;
+  feedbackSaved = false;
+
+  readonly rpeScale = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+  readonly fiveScale = [1, 2, 3, 4, 5];
+  readonly feelingIcons: Record<number, string> = {
+    1: 'sentiment_very_dissatisfied',
+    2: 'sentiment_dissatisfied',
+    3: 'sentiment_neutral',
+    4: 'sentiment_satisfied',
+    5: 'sentiment_very_satisfied'
+  };
 
   private activityId = 0;
 
@@ -74,6 +93,10 @@ export class ActivityDetail implements OnInit {
     this.activityService.getById(this.activityId).subscribe({
       next: (data) => {
         this.activity = data;
+        this.rpe = data.rpe;
+        this.feeling = data.feeling;
+        this.quality = data.trainingQuality;
+        this.note = data.feedbackNote ?? '';
         this.loading = false;
         this.cdr.detectChanges();
         this.activityService.getStreams(this.activityId).subscribe({
@@ -618,4 +641,49 @@ export class ActivityDetail implements OnInit {
     return `${m}:${s.toString().padStart(2, '0')}`;
   }
 
+  setFeeling(v: number): void {
+    this.feeling = this.feeling === v ? null : v;
+    this.feedbackSaved = false;
+  }
+
+  setRpe(v: number): void {
+    this.rpe = this.rpe === v ? null : v;
+    this.feedbackSaved = false;
+  }
+
+  setQuality(v: number): void {
+    this.quality = this.quality === v ? null : v;
+    this.feedbackSaved = false;
+  }
+
+  onNoteChange(): void {
+    this.feedbackSaved = false;
+  }
+
+  saveFeedback(): void {
+    if (!this.activity || this.feedbackSaving) return;
+    this.feedbackSaving = true;
+    const trimmed = this.note.trim();
+    this.activityService.updateFeedback(this.activityId, {
+      rpe: this.rpe,
+      feeling: this.feeling,
+      trainingQuality: this.quality,
+      feedbackNote: trimmed.length ? trimmed : null
+    }).subscribe({
+      next: (updated) => {
+        this.activity = updated;
+        this.rpe = updated.rpe;
+        this.feeling = updated.feeling;
+        this.quality = updated.trainingQuality;
+        this.note = updated.feedbackNote ?? '';
+        this.feedbackSaving = false;
+        this.feedbackSaved = true;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.feedbackSaving = false;
+        this.cdr.detectChanges();
+      }
+    });
+  }
 }

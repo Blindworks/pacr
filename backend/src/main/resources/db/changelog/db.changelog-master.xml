@@ -125,5 +125,6 @@
     <include file="db/changelog/changes/119-competition-image-index.xml"/>
     <include file="db/changelog/changes/120-add-vo2max-quality-fields.xml"/>
     <include file="db/changelog/changes/121-add-user-vo2max-state.xml"/>
+    <include file="db/changelog/changes/123-add-activity-feedback.xml"/>
 
 </databaseChangeLog>

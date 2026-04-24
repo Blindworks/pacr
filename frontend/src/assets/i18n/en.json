@@ -2092,5 +2092,23 @@
     "LOCATION_PICKER_NO_SELECTION": "No location selected",
     "LOCATION_PICKER_CONFIRM": "Confirm",
     "LOCATION_PICKER_CANCEL": "Cancel"
+  },
+  "SELF_ASSESSMENT": {
+    "TITLE": "Self-Assessment",
+    "SUBTITLE": "How did it go?",
+    "FEELING": "How did you feel?",
+    "FEELING_1": "Very bad",
+    "FEELING_2": "Bad",
+    "FEELING_3": "OK",
+    "FEELING_4": "Good",
+    "FEELING_5": "Great",
+    "RPE": "Perceived exertion (RPE)",
+    "RPE_HINT_EASY": "Very easy",
+    "RPE_HINT_MAX": "Maximum",
+    "QUALITY": "Training quality",
+    "NOTE": "Notes",
+    "NOTE_PLACEHOLDER": "How did the training feel? Any details worth remembering?",
+    "SAVE": "Save feedback",
+    "SAVED": "Saved"
   }
 }

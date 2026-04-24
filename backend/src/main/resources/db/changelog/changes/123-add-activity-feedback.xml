@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="123-1" author="benedikt">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="completed_trainings" columnName="rpe"/>
+            </not>
+        </preConditions>
+        <comment>Add activity self-assessment field: RPE (Rate of Perceived Exertion, 1-10)</comment>
+        <addColumn tableName="completed_trainings">
+            <column name="rpe" type="INT"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="123-2" author="benedikt">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="completed_trainings" columnName="feeling"/>
+            </not>
+        </preConditions>
+        <comment>Add activity self-assessment field: Feeling (1-5)</comment>
+        <addColumn tableName="completed_trainings">
+            <column name="feeling" type="INT"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="123-3" author="benedikt">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="completed_trainings" columnName="training_quality"/>
+            </not>
+        </preConditions>
+        <comment>Add activity self-assessment field: Training quality (1-5)</comment>
+        <addColumn tableName="completed_trainings">
+            <column name="training_quality" type="INT"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="123-4" author="benedikt">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="completed_trainings" columnName="feedback_note"/>
+            </not>
+        </preConditions>
+        <comment>Add activity self-assessment field: Free-text feedback note</comment>
+        <addColumn tableName="completed_trainings">
+            <column name="feedback_note" type="VARCHAR(1000)"/>
+        </addColumn>
+    </changeSet>
+
+</databaseChangeLog>

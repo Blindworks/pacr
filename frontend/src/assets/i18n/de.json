@@ -2092,5 +2092,23 @@
     "LOCATION_PICKER_NO_SELECTION": "Kein Ort ausgewählt",
     "LOCATION_PICKER_CONFIRM": "Übernehmen",
     "LOCATION_PICKER_CANCEL": "Abbrechen"
+  },
+  "SELF_ASSESSMENT": {
+    "TITLE": "Selbsteinschätzung",
+    "SUBTITLE": "Wie lief das Training?",
+    "FEELING": "Wie hast du dich gefühlt?",
+    "FEELING_1": "Sehr schlecht",
+    "FEELING_2": "Schlecht",
+    "FEELING_3": "OK",
+    "FEELING_4": "Gut",
+    "FEELING_5": "Super",
+    "RPE": "Empfundene Anstrengung (RPE)",
+    "RPE_HINT_EASY": "Sehr locker",
+    "RPE_HINT_MAX": "Maximal",
+    "QUALITY": "Trainingsqualität",
+    "NOTE": "Notizen",
+    "NOTE_PLACEHOLDER": "Wie hat sich das Training angefühlt? Etwas, das du dir merken willst?",
+    "SAVE": "Feedback speichern",
+    "SAVED": "Gespeichert"
   }
 }

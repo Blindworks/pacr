@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotNull;
 public class TrainingFeedbackDto {
     @NotNull
     private Boolean completed;
-    
+
     private String completionStatus;
 
     public TrainingFeedbackDto() {}

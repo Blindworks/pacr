@@ -651,6 +651,89 @@
         </div>
       }
 
+      <!-- Self Assessment -->
+      <section class="ad-assessment">
+        <div class="ad-assessment__head">
+          <h2>{{ 'SELF_ASSESSMENT.TITLE' | translate }}</h2>
+          <span class="ad-assessment__sub">{{ 'SELF_ASSESSMENT.SUBTITLE' | translate }}</span>
+        </div>
+
+        <div class="ad-assessment__field">
+          <label class="ad-assessment__label">{{ 'SELF_ASSESSMENT.FEELING' | translate }}</label>
+          <div class="ad-assessment__feeling">
+            @for (value of fiveScale; track value) {
+              <button type="button"
+                      class="ad-feeling-btn"
+                      [class.ad-feeling-btn--active]="feeling === value"
+                      (click)="setFeeling(value)"
+                      [attr.aria-label]="'SELF_ASSESSMENT.FEELING_' + value | translate">
+                <span class="material-symbols-outlined">{{ feelingIcons[value] }}</span>
+              </button>
+            }
+          </div>
+        </div>
+
+        <div class="ad-assessment__field">
+          <div class="ad-assessment__label-row">
+            <label class="ad-assessment__label">{{ 'SELF_ASSESSMENT.RPE' | translate }}</label>
+            @if (rpe != null) {
+              <span class="ad-assessment__value">{{ rpe }}/10</span>
+            }
+          </div>
+          <div class="ad-assessment__rpe">
+            @for (value of rpeScale; track value) {
+              <button type="button"
+                      class="ad-rpe-btn"
+                      [class.ad-rpe-btn--active]="rpe === value"
+                      [class.ad-rpe-btn--filled]="rpe != null && value <= rpe"
+                      (click)="setRpe(value)">
+                {{ value }}
+              </button>
+            }
+          </div>
+          <div class="ad-assessment__rpe-hints">
+            <span>{{ 'SELF_ASSESSMENT.RPE_HINT_EASY' | translate }}</span>
+            <span>{{ 'SELF_ASSESSMENT.RPE_HINT_MAX' | translate }}</span>
+          </div>
+        </div>
+
+        <div class="ad-assessment__field">
+          <label class="ad-assessment__label">{{ 'SELF_ASSESSMENT.QUALITY' | translate }}</label>
+          <div class="ad-assessment__stars">
+            @for (value of fiveScale; track value) {
+              <button type="button"
+                      class="ad-star-btn"
+                      [class.ad-star-btn--active]="quality != null && value <= quality"
+                      (click)="setQuality(value)"
+                      [attr.aria-label]="value + ' / 5'">
+                <span class="material-symbols-outlined">star</span>
+              </button>
+            }
+          </div>
+        </div>
+
+        <div class="ad-assessment__field">
+          <label class="ad-assessment__label" for="ad-assessment-note">{{ 'SELF_ASSESSMENT.NOTE' | translate }}</label>
+          <textarea id="ad-assessment-note"
+                    class="ad-assessment__note"
+                    maxlength="1000"
+                    rows="3"
+                    [(ngModel)]="note"
+                    (ngModelChange)="onNoteChange()"
+                    [placeholder]="'SELF_ASSESSMENT.NOTE_PLACEHOLDER' | translate"></textarea>
+        </div>
+
+        <div class="ad-assessment__actions">
+          <button type="button"
+                  class="ad-assessment__save"
+                  [disabled]="feedbackSaving"
+                  (click)="saveFeedback()">
+            <span class="material-symbols-outlined">{{ feedbackSaved ? 'check' : 'save' }}</span>
+            {{ (feedbackSaved ? 'SELF_ASSESSMENT.SAVED' : 'SELF_ASSESSMENT.SAVE') | translate }}
+          </button>
+        </div>
+      </section>
+
       <!-- Source Info -->
       <div class="source-card">
         <span class="material-symbols-outlined">info</span>

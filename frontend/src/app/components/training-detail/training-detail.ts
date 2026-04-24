@@ -85,6 +85,10 @@ export class TrainingDetail implements OnInit {
     });
   }
 
+  goBack(): void {
+    this.router.navigate(['/training-plans']);
+  }
+
   private mapToDetailData(t: Training): TrainingDetailData {
     return {
       id: t.id,
@@ -145,10 +149,6 @@ export class TrainingDetail implements OnInit {
       highlight: s.highlight ?? false,
       muted: s.muted ?? false
     };
-  }
-
-  goBack(): void {
-    this.router.navigate(['/training-plans']);
   }
 
   private pickHeroImage(trainingType: string | undefined, id: number): string {
