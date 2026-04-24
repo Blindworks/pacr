@@ -111,7 +111,11 @@
                         <div class="tp-session__info">
                           <div class="tp-day__title-row">
                             <h4>{{ session.title }}</h4>
-                            <span class="tp-plan-chip">{{ session.competitionName || 'Wettkampf' }}</span>
+                            @if (!session.isUnplanned) {
+                              <span class="tp-plan-chip">{{ session.competitionName || 'Wettkampf' }}</span>
+                            } @else {
+                              <span class="tp-plan-chip tp-plan-chip--unplanned">{{ 'TRAINING_PLAN.UNPLANNED' | translate }}</span>
+                            }
                             @if (session.status === 'today') {
                               <span class="tp-today-badge">{{ 'COMMON.TODAY' | translate }}</span>
                             } @else if (session.status === 'skipped') {
@@ -120,7 +124,19 @@
                               <span class="tp-state-badge">{{ 'TRAINING_PLAN.COMPLETED' | translate }}</span>
                             }
                           </div>
-                          <p class="tp-day__sub">{{ session.subtitle }}</p>
+                          @if (session.subtitle) {
+                            <p class="tp-day__sub">{{ session.subtitle }}</p>
+                          }
+                          @if (session.completed) {
+                            <p class="tp-day__sub tp-actual">
+                              <span class="material-symbols-outlined">check_circle</span>
+                              @if (session.completed.distanceKm != null) { <span>{{ session.completed.distanceKm | number:'1.1-1' }} km</span> }
+                              @if (session.completed.durationSeconds != null) { <span>{{ formatDuration(session.completed.durationSeconds) }}</span> }
+                              @if (session.completed.pace) { <span>{{ session.completed.pace }} /km</span> }
+                              @if (session.completed.avgHeartRate != null) { <span>{{ session.completed.avgHeartRate }} bpm</span> }
+                              @if (session.completed.elevationGainM != null) { <span>{{ session.completed.elevationGainM }} m</span> }
+                            </p>
+                          }
                           @if (session.isAiMoved) {
                             <span class="ai-badge">
                               <span class="material-symbols-outlined">smart_toy</span>
@@ -130,28 +146,30 @@
                         </div>
                       </div>
 
-                      <div class="tp-day__actions" (click)="$event.stopPropagation()">
-                        <button
-                          class="tp-action-btn tp-action-btn--done"
-                          [class.is-active]="session.status === 'completed'"
-                          (click)="markSession(session, 'completed')">
-                          <span class="material-symbols-outlined">check</span>
-                          {{ 'TRAINING_PLAN.MARK_DONE' | translate }}
-                        </button>
-                        <button
-                          class="tp-action-btn tp-action-btn--skip"
-                          [class.is-active]="session.status === 'skipped'"
-                          (click)="markSession(session, 'skipped')">
-                          <span class="material-symbols-outlined">close</span>
-                          {{ 'TRAINING_PLAN.SKIP' | translate }}
-                        </button>
-                        @if (session.status === 'today') {
-                          <button class="tp-start-btn" (click)="showWorkout(session)">
-                            <span class="material-symbols-outlined">play_arrow</span>
-                            {{ 'TRAINING_PLAN.SHOW_WORKOUT' | translate }}
+                      @if (!session.isUnplanned) {
+                        <div class="tp-day__actions" (click)="$event.stopPropagation()">
+                          <button
+                            class="tp-action-btn tp-action-btn--done"
+                            [class.is-active]="session.status === 'completed'"
+                            (click)="markSession(session, 'completed')">
+                            <span class="material-symbols-outlined">check</span>
+                            {{ 'TRAINING_PLAN.MARK_DONE' | translate }}
                           </button>
-                        }
-                      </div>
+                          <button
+                            class="tp-action-btn tp-action-btn--skip"
+                            [class.is-active]="session.status === 'skipped'"
+                            (click)="markSession(session, 'skipped')">
+                            <span class="material-symbols-outlined">close</span>
+                            {{ 'TRAINING_PLAN.SKIP' | translate }}
+                          </button>
+                          @if (session.status === 'today') {
+                            <button class="tp-start-btn" (click)="showWorkout(session)">
+                              <span class="material-symbols-outlined">play_arrow</span>
+                              {{ 'TRAINING_PLAN.SHOW_WORKOUT' | translate }}
+                            </button>
+                          }
+                        </div>
+                      }
                     </div>
                     }
                   }

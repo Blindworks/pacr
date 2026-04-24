@@ -7,6 +7,16 @@ import { UserTrainingEntry, UserTrainingEntryService } from '../../services/user
 import { StatisticsService, TrainingStatsDto } from '../../services/statistics.service';
 import { PlanAdjustment, PlanAdjustmentService } from '../../services/plan-adjustment.service';
 import { CompetitionService } from '../../services/competition.service';
+import { ActivityService, CompletedTraining } from '../../services/activity.service';
+
+interface CompletedSummary {
+  id: number;
+  distanceKm?: number;
+  durationSeconds?: number;
+  pace?: string;
+  avgHeartRate?: number;
+  elevationGainM?: number;
+}
 
 interface TrainingSession {
   id: number;
@@ -20,6 +30,8 @@ interface TrainingSession {
   isAiMoved?: boolean;
   isGhost?: boolean;
   movedToDate?: string;
+  completed?: CompletedSummary;
+  isUnplanned?: boolean;
 }
 
 interface TrainingDay {
@@ -66,6 +78,7 @@ export class TrainingPlan implements OnInit {
   private statsService = inject(StatisticsService);
   private adjustmentService = inject(PlanAdjustmentService);
   private competitionService = inject(CompetitionService);
+  private activityService = inject(ActivityService);
   private cdr = inject(ChangeDetectorRef);
   private translate = inject(TranslateService);
 
@@ -236,10 +249,11 @@ export class TrainingPlan implements OnInit {
     const { monday, sunday } = this.getWeekRange(this.weekOffset);
     forkJoin({
       entries: this.entryService.getCalendar(this.toIso(monday), this.toIso(sunday)),
-      stats:   this.statsService.getStatsForDateRange(this.toIso(monday), this.toIso(sunday))
+      stats:   this.statsService.getStatsForDateRange(this.toIso(monday), this.toIso(sunday)),
+      activities: this.activityService.getByDateRange(this.toIso(monday), this.toIso(sunday))
     }).subscribe({
-      next: ({ entries, stats }) => {
-        this.buildWeek(entries, monday);
+      next: ({ entries, stats, activities }) => {
+        this.buildWeek(entries, monday, activities);
         const completed = entries.filter(e => e.completed).length;
         const skipped   = entries.filter(e => e.completionStatus === 'skipped').length;
         this.populateStats(stats, entries.length, completed, skipped);
@@ -313,7 +327,7 @@ export class TrainingPlan implements OnInit {
     ];
   }
 
-  private buildWeek(entries: UserTrainingEntry[], monday: Date): void {
+  private buildWeek(entries: UserTrainingEntry[], monday: Date, activities: CompletedTraining[] = []): void {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
@@ -323,6 +337,18 @@ export class TrainingPlan implements OnInit {
       const dayEntries = entriesByDate.get(dateKey) ?? [];
       dayEntries.push(entry);
       entriesByDate.set(dateKey, dayEntries);
+    }
+
+    const activitiesByDate = new Map<string, CompletedTraining[]>();
+    for (const activity of activities) {
+      if (!this.isRunActivity(activity)) continue;
+      const dateKey = this.toIso(new Date(activity.trainingDate));
+      const dayActivities = activitiesByDate.get(dateKey) ?? [];
+      dayActivities.push(activity);
+      activitiesByDate.set(dateKey, dayActivities);
+    }
+    for (const list of activitiesByDate.values()) {
+      list.sort((a, b) => (a.startTime ?? a.uploadDate).localeCompare(b.startTime ?? b.uploadDate));
     }
 
     this.days = [];
@@ -340,8 +366,9 @@ export class TrainingPlan implements OnInit {
       });
 
       const isToday = day.getTime() === today.getTime();
+      const dayActivities = [...(activitiesByDate.get(isoDate) ?? [])];
 
-      if (dayEntries.length === 0) {
+      if (dayEntries.length === 0 && dayActivities.length === 0) {
         this.days.push({
           dayShort: this.translate.instant(DAY_SHORT_KEYS[jsDay]),
           dayNum: day.getDate(),
@@ -353,13 +380,20 @@ export class TrainingPlan implements OnInit {
         continue;
       }
 
+      const sessions: TrainingSession[] = dayEntries.map(entry => this.mapSession(entry, day, today));
+      for (const activity of dayActivities) {
+        sessions.push(this.mapCompletedActivitySession(activity));
+      }
+
       this.days.push({
         dayShort: this.translate.instant(DAY_SHORT_KEYS[jsDay]),
         dayNum: day.getDate(),
         isoDate,
         isToday,
-        status: this.resolveDayStatus(day, today, dayEntries),
-        sessions: dayEntries.map(entry => this.mapSession(entry, day, today))
+        status: dayEntries.length > 0
+          ? this.resolveDayStatus(day, today, dayEntries)
+          : 'completed',
+        sessions
       });
     }
 
@@ -402,6 +436,52 @@ export class TrainingPlan implements OnInit {
       isAiMoved: !!entry.originalTrainingDate,
       originalDate: entry.originalTrainingDate ?? undefined
     };
+  }
+
+  private mapCompletedActivitySession(activity: CompletedTraining): TrainingSession {
+    return {
+      id: activity.id,
+      title: activity.activityName ?? this.translate.instant('TRAINING_PLAN.COMPLETED_ACTIVITY'),
+      subtitle: '',
+      status: 'completed',
+      icon: this.typeToIcon(activity.sport ?? activity.trainingType ?? undefined),
+      isUnplanned: true,
+      completed: this.toCompletedSummary(activity)
+    };
+  }
+
+  private toCompletedSummary(activity: CompletedTraining): CompletedSummary {
+    return {
+      id: activity.id,
+      distanceKm: activity.distanceKm ?? undefined,
+      durationSeconds: (activity.movingTimeSeconds ?? activity.durationSeconds) ?? undefined,
+      pace: activity.averagePaceSecondsPerKm != null ? this.formatPace(activity.averagePaceSecondsPerKm) : undefined,
+      avgHeartRate: activity.averageHeartRate != null ? Math.round(activity.averageHeartRate) : undefined,
+      elevationGainM: activity.elevationGainM != null ? Math.round(activity.elevationGainM) : undefined
+    };
+  }
+
+  formatDuration(seconds: number): string {
+    const total = Math.round(seconds);
+    const h = Math.floor(total / 3600);
+    const m = Math.floor((total % 3600) / 60);
+    const s = total % 60;
+    if (h > 0) {
+      return `${h}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+    }
+    return `${m}:${String(s).padStart(2, '0')}`;
+  }
+
+  private isRunActivity(activity: CompletedTraining): boolean {
+    const sport = (activity.sport ?? '').toLowerCase().replace(/[_\s]/g, '');
+    return sport === 'run' || sport === 'running' || sport === 'virtualrun' || sport === 'virtualrunning';
+  }
+
+  formatPace(secondsPerKm: number): string {
+    const total = Math.round(secondsPerKm);
+    const m = Math.floor(total / 60);
+    const s = total % 60;
+    return `${m}:${String(s).padStart(2, '0')}`;
   }
 
   private resolveDayStatus(day: Date, today: Date, entries: UserTrainingEntry[]): TrainingDay['status'] {
@@ -491,6 +571,10 @@ export class TrainingPlan implements OnInit {
   }
 
   viewDetail(session: TrainingSession): void {
+    if (session.isUnplanned && session.completed) {
+      this.router.navigate(['/activities', session.completed.id]);
+      return;
+    }
     this.router.navigate(['/training-plans', session.id]);
   }
 }
