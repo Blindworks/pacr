@@ -247,7 +247,11 @@ public class StravaService {
 
     @Transactional
     public List<StravaActivityDto> getActivities(LocalDate start, LocalDate end) {
-        User currentUser = securityUtils.getCurrentUser();
+        return syncActivitiesForUser(securityUtils.getCurrentUser(), start, end);
+    }
+
+    @Transactional
+    public List<StravaActivityDto> syncActivitiesForUser(User currentUser, LocalDate start, LocalDate end) {
         if (currentUser == null) {
             return List.of();
         }

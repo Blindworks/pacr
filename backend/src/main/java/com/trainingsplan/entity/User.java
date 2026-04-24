@@ -147,6 +147,9 @@ public class User implements UserDetails {
     @Column(name = "last_login_at")
     private LocalDateTime lastLoginAt;
 
+    @Column(name = "previous_login_at")
+    private LocalDateTime previousLoginAt;
+
     @Column(name = "onboarding_completed", nullable = false)
     private boolean onboardingCompleted = false;
 
@@ -447,6 +450,9 @@ public class User implements UserDetails {
 
     public LocalDateTime getLastLoginAt() { return lastLoginAt; }
     public void setLastLoginAt(LocalDateTime lastLoginAt) { this.lastLoginAt = lastLoginAt; }
+
+    public LocalDateTime getPreviousLoginAt() { return previousLoginAt; }
+    public void setPreviousLoginAt(LocalDateTime previousLoginAt) { this.previousLoginAt = previousLoginAt; }
 
     public boolean isOnboardingCompleted() { return onboardingCompleted; }
     public void setOnboardingCompleted(boolean onboardingCompleted) { this.onboardingCompleted = onboardingCompleted; }

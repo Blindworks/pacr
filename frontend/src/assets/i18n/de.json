@@ -714,6 +714,16 @@
     "INVALID_FORMAT": "Ungültiges Format. Nur .fit, .gpx und .tcx sind erlaubt.",
     "UPLOAD_ERROR": "Upload fehlgeschlagen. Bitte erneut versuchen."
   },
+  "NEW_STRAVA_DIALOG": {
+    "TITLE": "Neue Aktivität",
+    "UNNAMED_ACTIVITY": "Aktivität",
+    "DISTANCE": "Distanz",
+    "DURATION": "Bewegungszeit",
+    "AVG_HR": "Ø HF",
+    "MAX_HR": "Max. HF",
+    "VIEW_DETAILS": "Details ansehen",
+    "DISMISS": "Schliessen"
+  },
   "DIALOGS": {
     "LOGIN_MSG_TITLE": "Info",
     "LOGIN_MSG_DISMISS": "Verstanden",

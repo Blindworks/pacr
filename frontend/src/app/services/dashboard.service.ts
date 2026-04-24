@@ -67,11 +67,29 @@ export interface DashboardData {
   vo2maxDate?: string;
 }
 
+export interface NewStravaActivityDto {
+  id: number;
+  activityName: string | null;
+  sport: string | null;
+  trainingDate: string;
+  uploadDate: string;
+  distanceKm: number | null;
+  durationSeconds: number | null;
+  movingTimeSeconds: number | null;
+  averageHeartRate: number | null;
+  maxHeartRate: number | null;
+}
+
 @Injectable({ providedIn: 'root' })
 export class DashboardService {
   private readonly http = inject(HttpClient);
 
   getDashboard(): Observable<DashboardData> {
     return this.http.get<DashboardData>(BASE);
+  }
+
+  getNewStravaActivity(): Observable<NewStravaActivityDto | null> {
+    // 204 No Content -> null body
+    return this.http.get<NewStravaActivityDto | null>(`${BASE}/new-strava-activity`);
   }
 }

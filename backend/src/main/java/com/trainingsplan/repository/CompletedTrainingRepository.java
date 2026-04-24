@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -52,6 +53,9 @@ public interface CompletedTrainingRepository extends JpaRepository<CompletedTrai
     Optional<CompletedTraining> findTopByUserIdAndSportContainingIgnoreCaseOrderByTrainingDateDescUploadDateDesc(Long userId, String sport);
 
     Optional<CompletedTraining> findTopByUserIdOrderByTrainingDateDescUploadDateDesc(Long userId);
+
+    Optional<CompletedTraining> findTopByUserIdAndSourceAndUploadDateAfterOrderByUploadDateDesc(
+            Long userId, String source, LocalDateTime uploadDateAfter);
 
     Optional<CompletedTraining> findByIdAndUserId(Long id, Long userId);
 

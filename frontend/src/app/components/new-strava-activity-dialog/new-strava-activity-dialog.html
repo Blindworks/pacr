@@ -1,0 +1,64 @@
+<dialog #dialog class="nsa-dialog" (click)="onBackdropClick($event)">
+  @if (activity(); as act) {
+    <div class="nsa-inner" (click)="$event.stopPropagation()">
+
+      <header class="nsa-header">
+        <div class="nsa-header-title">
+          <span class="nsa-strava-badge">
+            <span class="material-symbols-outlined">bolt</span>
+            Strava
+          </span>
+          <span class="nsa-title">{{ 'NEW_STRAVA_DIALOG.TITLE' | translate }}</span>
+        </div>
+        <button class="nsa-close" (click)="close()">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </header>
+
+      <div class="nsa-body">
+        <div class="nsa-hero">
+          <div class="nsa-icon">
+            <span class="material-symbols-outlined">{{ sportIcon() }}</span>
+          </div>
+          <div class="nsa-hero-text">
+            <h3>{{ act.activityName || ('NEW_STRAVA_DIALOG.UNNAMED_ACTIVITY' | translate) }}</h3>
+            <p class="nsa-date">{{ formattedDate() }}</p>
+          </div>
+        </div>
+
+        <div class="nsa-stats">
+          <div class="nsa-stat">
+            <span class="nsa-stat-label">{{ 'NEW_STRAVA_DIALOG.DISTANCE' | translate }}</span>
+            <span class="nsa-stat-value">{{ distanceLabel() }}</span>
+          </div>
+          <div class="nsa-stat">
+            <span class="nsa-stat-label">{{ 'NEW_STRAVA_DIALOG.DURATION' | translate }}</span>
+            <span class="nsa-stat-value">{{ durationLabel() }}</span>
+          </div>
+          @if (act.averageHeartRate != null) {
+            <div class="nsa-stat">
+              <span class="nsa-stat-label">{{ 'NEW_STRAVA_DIALOG.AVG_HR' | translate }}</span>
+              <span class="nsa-stat-value">{{ act.averageHeartRate }} bpm</span>
+            </div>
+          }
+          @if (act.maxHeartRate != null) {
+            <div class="nsa-stat">
+              <span class="nsa-stat-label">{{ 'NEW_STRAVA_DIALOG.MAX_HR' | translate }}</span>
+              <span class="nsa-stat-value">{{ act.maxHeartRate }} bpm</span>
+            </div>
+          }
+        </div>
+
+        <div class="nsa-actions">
+          <button class="nsa-btn nsa-btn-secondary" (click)="close()">
+            {{ 'NEW_STRAVA_DIALOG.DISMISS' | translate }}
+          </button>
+          <button class="nsa-btn nsa-btn-primary" (click)="viewDetails()">
+            <span class="material-symbols-outlined">arrow_forward</span>
+            {{ 'NEW_STRAVA_DIALOG.VIEW_DETAILS' | translate }}
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+</dialog>

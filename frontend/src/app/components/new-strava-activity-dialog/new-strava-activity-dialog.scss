@@ -1,0 +1,196 @@
+@use 'mixins' as m;
+@use 'variables' as v;
+
+.nsa-dialog {
+  margin: auto;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: v.$radius-xl;
+  background: var(--bg-card);
+  color: var(--text);
+  width: min(440px, 92vw);
+  overflow: hidden;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.6);
+
+  &::backdrop {
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(4px);
+  }
+}
+
+.nsa-inner {
+  display: flex;
+  flex-direction: column;
+}
+
+.nsa-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-card);
+}
+
+.nsa-header-title {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.nsa-strava-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  background: #fc4c02; // Strava orange
+  color: #fff;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  padding: 0.2rem 0.5rem;
+  border-radius: 6px;
+
+  .material-symbols-outlined {
+    font-size: 14px;
+  }
+}
+
+.nsa-title {
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.nsa-close {
+  @include m.btn-icon;
+
+  .material-symbols-outlined {
+    font-size: 20px;
+  }
+}
+
+.nsa-body {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.nsa-hero {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.nsa-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  background: var(--pp-hover);
+  @include m.flex-center;
+
+  .material-symbols-outlined {
+    font-size: 30px;
+    color: var(--pp);
+  }
+}
+
+.nsa-hero-text {
+  flex: 1;
+  min-width: 0;
+
+  h3 {
+    margin: 0 0 0.25rem 0;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--text);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+.nsa-date {
+  margin: 0;
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+}
+
+.nsa-stats {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.75rem;
+}
+
+.nsa-stat {
+  background: var(--panel-soft);
+  border: 1px solid var(--border);
+  border-radius: v.$radius-lg;
+  padding: 0.75rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.nsa-stat-label {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.nsa-stat-value {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text);
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+}
+
+.nsa-actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 0.25rem;
+}
+
+.nsa-btn {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.375rem;
+  padding: 0.7rem 1rem;
+  border-radius: 10px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: background v.$transition-fast, color v.$transition-fast, border-color v.$transition-fast;
+
+  .material-symbols-outlined {
+    font-size: 18px;
+  }
+}
+
+.nsa-btn-secondary {
+  background: var(--panel-soft);
+  border-color: var(--border);
+  color: var(--text-muted);
+
+  &:hover {
+    background: var(--pp-hover);
+    color: var(--text);
+  }
+}
+
+.nsa-btn-primary {
+  background: var(--pp);
+  color: var(--bg-card);
+
+  &:hover {
+    background: var(--pp-strong, var(--pp));
+    filter: brightness(1.08);
+  }
+}

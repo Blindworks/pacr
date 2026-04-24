@@ -12,11 +12,13 @@ import { StrainInfoDialogService } from '../../services/strain-info-dialog.servi
 import { StrainInfoDialog } from '../strain-info-dialog/strain-info-dialog';
 import { ReadinessInfoDialogService } from '../../services/readiness-info-dialog.service';
 import { ReadinessInfoDialog } from '../readiness-info-dialog/readiness-info-dialog';
+import { NewStravaActivityDialogService } from '../../services/new-strava-activity-dialog.service';
+import { NewStravaActivityDialog } from '../new-strava-activity-dialog/new-strava-activity-dialog';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterLink, TranslateModule, AcwrInfoDialog, StrainInfoDialog, ReadinessInfoDialog],
+  imports: [CommonModule, RouterLink, TranslateModule, AcwrInfoDialog, StrainInfoDialog, ReadinessInfoDialog, NewStravaActivityDialog],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss'
 })
@@ -29,6 +31,7 @@ export class Dashboard implements OnInit {
   protected readonly acwrInfoService = inject(AcwrInfoDialogService);
   protected readonly strainInfoService = inject(StrainInfoDialogService);
   protected readonly readinessInfoService = inject(ReadinessInfoDialogService);
+  private readonly newStravaActivityDialog = inject(NewStravaActivityDialogService);
 
   data: DashboardData | null = null;
   profileError = signal<string | null>(null);
@@ -87,6 +90,15 @@ export class Dashboard implements OnInit {
         error: err => console.warn('User load failed', err)
       });
     }
+
+    this.dashboardService.getNewStravaActivity().subscribe({
+      next: activity => {
+        if (activity) {
+          this.newStravaActivityDialog.open(activity);
+        }
+      },
+      error: err => console.warn('New Strava activity check failed', err)
+    });
   }
 
   // ── Optional second-row helpers ──────────────────────────────────

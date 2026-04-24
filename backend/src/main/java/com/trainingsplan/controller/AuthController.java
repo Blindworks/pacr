@@ -49,6 +49,7 @@ public class AuthController {
     private final TokenBlacklistService tokenBlacklistService;
     private final com.trainingsplan.security.RateLimitingService rateLimitingService;
     private final com.trainingsplan.service.RefreshTokenService refreshTokenService;
+    private final com.trainingsplan.service.StravaService stravaService;
     private final SecureRandom secureRandom = new SecureRandom();
 
     public AuthController(UserRepository userRepository, PasswordEncoder passwordEncoder,
@@ -56,7 +57,8 @@ public class AuthController {
                           EmailService emailService, AuditLogService auditLogService,
                           TokenBlacklistService tokenBlacklistService,
                           com.trainingsplan.security.RateLimitingService rateLimitingService,
-                          com.trainingsplan.service.RefreshTokenService refreshTokenService) {
+                          com.trainingsplan.service.RefreshTokenService refreshTokenService,
+                          com.trainingsplan.service.StravaService stravaService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
@@ -66,6 +68,7 @@ public class AuthController {
         this.tokenBlacklistService = tokenBlacklistService;
         this.rateLimitingService = rateLimitingService;
         this.refreshTokenService = refreshTokenService;
+        this.stravaService = stravaService;
     }
 
     @PostMapping("/register")
@@ -205,10 +208,29 @@ public class AuthController {
         );
 
         User authenticatedUser = (User) authentication.getPrincipal();
+        authenticatedUser.setPreviousLoginAt(authenticatedUser.getLastLoginAt());
         authenticatedUser.setLastLoginAt(LocalDateTime.now());
         userRepository.save(authenticatedUser);
         auditLogService.log(authenticatedUser, AuditAction.LOGIN, null, null,
                 Map.of("ip", httpRequest.getRemoteAddr()));
+
+        // Trigger Strava activity sync in background so the dashboard popup can detect new uploads.
+        // Failures must not break the login flow.
+        if (authenticatedUser.getStravaToken() != null) {
+            final Long userId = authenticatedUser.getId();
+            java.util.concurrent.CompletableFuture.runAsync(() -> {
+                try {
+                    User u = userRepository.findById(userId).orElse(null);
+                    if (u != null) {
+                        java.time.LocalDate today = java.time.LocalDate.now();
+                        stravaService.syncActivitiesForUser(u, today.minusDays(7), today);
+                    }
+                } catch (Exception e) {
+                    System.err.println("Background Strava sync after login failed: " + e.getMessage());
+                }
+            });
+        }
+
         String token = jwtService.generateToken(authenticatedUser);
         String refreshToken = refreshTokenService.createRefreshToken(authenticatedUser);
 
