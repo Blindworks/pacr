@@ -61,7 +61,9 @@
       "Bash(npx tsc *)",
       "Bash(netstat -ano)",
       "Bash(tasklist /FI \"PID eq 15536\")",
-      "Bash(bash version-bump.sh patch)"
+      "Bash(bash version-bump.sh patch)",
+      "Bash(git reset *)",
+      "Bash(git -C C:/Users/bened/IdeaProjects/Smart_Trainingsplan status)"
     ],
     "deny": [],
     "ask": []

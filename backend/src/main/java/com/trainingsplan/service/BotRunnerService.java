@@ -50,6 +50,12 @@ public class BotRunnerService {
     private static final double EARTH_RADIUS_KM = 6371.0;
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
+    /** Max number of laps a bot may run on the same route in a single execution. */
+    private static final int MAX_LAPS_PER_RUN = 4;
+
+    /** Result of route picking: chosen route plus how many laps the bot will run on it. */
+    private record RouteSelection(CommunityRoute route, int laps) {}
+
     private final BotProfileRepository botProfileRepository;
     private final UserRepository userRepository;
     private final CommunityRouteRepository communityRouteRepository;
@@ -190,8 +196,8 @@ public class BotRunnerService {
     public void executeBot(BotProfile bot) {
         LocalDateTime now = LocalDateTime.now();
         try {
-            CommunityRoute route = pickRoute(bot);
-            if (route == null) {
+            RouteSelection selection = pickRoute(bot);
+            if (selection == null) {
                 bot.setLastRunAt(now);
                 bot.setLastRunStatus("NO_ROUTE");
                 bot.setLastRunMessage("No matching community route in radius / distance range");
@@ -199,15 +205,25 @@ public class BotRunnerService {
                 botProfileRepository.save(bot);
                 return;
             }
+            CommunityRoute route = selection.route();
+            int laps = selection.laps();
 
             User botUser = bot.getUser();
-            double distanceKm = route.getDistanceKm() != null ? route.getDistanceKm() : 5.0;
+            double routeKm = route.getDistanceKm() != null ? route.getDistanceKm() : 5.0;
+            double distanceKm = routeKm * laps;
             int paceSecPerKm = randomBetween(bot.getPaceMinSecPerKm(), bot.getPaceMaxSecPerKm());
             int durationSeconds = (int) Math.round(distanceKm * paceSecPerKm);
             double avgSpeedKmh = durationSeconds > 0 ? (distanceKm / (durationSeconds / 3600.0)) : 0.0;
 
-            // Parse GPS track from route (or source activity stream if available)
-            List<double[]> latlng = loadRouteLatLng(route);
+            // Parse GPS track from route (or source activity stream if available); repeat per lap.
+            List<double[]> singleLapLatLng = loadRouteLatLng(route);
+            List<double[]> latlng;
+            if (laps > 1 && !singleLapLatLng.isEmpty()) {
+                latlng = new ArrayList<>(singleLapLatLng.size() * laps);
+                for (int i = 0; i < laps; i++) latlng.addAll(singleLapLatLng);
+            } else {
+                latlng = singleLapLatLng;
+            }
             int points = latlng.size();
 
             // Build CompletedTraining
@@ -222,11 +238,18 @@ public class BotRunnerService {
             ct.setAveragePaceSecondsPerKm(paceSecPerKm);
             ct.setAverageSpeedKmh(round3(avgSpeedKmh));
             ct.setMaxSpeedKmh(round3(avgSpeedKmh * (1.10 + random.nextDouble() * 0.10)));
-            ct.setElevationGainM(route.getElevationGainM());
+            ct.setElevationGainM(route.getElevationGainM() != null
+                    ? route.getElevationGainM() * laps
+                    : null);
             ct.setSport("running");
             ct.setSource("BOT");
-            ct.setActivityName(route.getName());
+            ct.setActivityName(laps > 1
+                    ? route.getName() + " (" + laps + " Runden)"
+                    : route.getName());
             ct.setTotalGpsPoints(points);
+            if (laps > 1) {
+                ct.setTotalLaps(laps);
+            }
             if (points > 0) {
                 ct.setStartLatitude(latlng.get(0)[0]);
                 ct.setStartLongitude(latlng.get(0)[1]);
@@ -260,7 +283,9 @@ public class BotRunnerService {
 
             // If leaderboard enabled, open a PENDING attempt before saving the activity
             // so RouteAttemptService.onTrainingCompleted can match it via the published event.
-            if (bot.isIncludeInLeaderboard()) {
+            // Multi-lap runs do not match the route's nominal distance, so they would
+            // distort the route leaderboard — skip the attempt in that case.
+            if (bot.isIncludeInLeaderboard() && laps == 1) {
                 try {
                     routeAttemptService.selectRoute(botUser, route.getId());
                 } catch (Exception e) {
@@ -298,7 +323,9 @@ public class BotRunnerService {
 
             bot.setLastRunAt(now);
             bot.setLastRunStatus("SUCCESS");
-            bot.setLastRunMessage("Ran " + route.getName() + " in " + durationSeconds + "s");
+            bot.setLastRunMessage("Ran " + route.getName()
+                    + (laps > 1 ? " x" + laps + " laps" : "")
+                    + " in " + durationSeconds + "s");
             bot.setNextScheduledRunAt(computeNextScheduledRun(bot, now));
             botProfileRepository.save(bot);
 
@@ -312,8 +339,13 @@ public class BotRunnerService {
         }
     }
 
-    /** Picks a random community route in the bot's radius and distance range, or null. */
-    private CommunityRoute pickRoute(BotProfile bot) {
+    /**
+     * Picks a random community route in the bot's radius. Routes shorter than the bot's
+     * preferred distance range may be chosen for multiple laps (capped at
+     * {@link #MAX_LAPS_PER_RUN}) so that total distance falls into [distanceMin, distanceMax].
+     * Returns null when no candidate route fits.
+     */
+    private RouteSelection pickRoute(BotProfile bot) {
         double radiusKm = bot.getSearchRadiusKm() != null ? bot.getSearchRadiusKm() : 10.0;
         double latDelta = radiusKm / 110.574;
         double lonDelta = radiusKm / (111.320 * Math.cos(Math.toRadians(bot.getHomeLatitude())));
@@ -325,16 +357,27 @@ public class BotRunnerService {
                 bot.getHomeLongitude() + lonDelta
         );
 
-        List<CommunityRoute> matching = routes.stream()
-                .filter(r -> r.getDistanceKm() != null)
-                .filter(r -> r.getDistanceKm() >= bot.getDistanceMinKm()
-                          && r.getDistanceKm() <= bot.getDistanceMaxKm())
-                .filter(r -> haversineKm(bot.getHomeLatitude(), bot.getHomeLongitude(),
-                                         r.getStartLatitude(), r.getStartLongitude()) <= radiusKm)
-                .collect(Collectors.toList());
+        double minKm = bot.getDistanceMinKm();
+        double maxKm = bot.getDistanceMaxKm();
 
-        if (matching.isEmpty()) return null;
-        return matching.get(random.nextInt(matching.size()));
+        List<RouteSelection> candidates = new ArrayList<>();
+        for (CommunityRoute r : routes) {
+            if (r.getDistanceKm() == null || r.getDistanceKm() <= 0) continue;
+            if (haversineKm(bot.getHomeLatitude(), bot.getHomeLongitude(),
+                            r.getStartLatitude(), r.getStartLongitude()) > radiusKm) continue;
+
+            double routeKm = r.getDistanceKm();
+            int minLaps = Math.max(1, (int) Math.ceil(minKm / routeKm));
+            int maxLaps = (int) Math.floor(maxKm / routeKm);
+            maxLaps = Math.min(maxLaps, MAX_LAPS_PER_RUN);
+            if (minLaps > maxLaps) continue;
+
+            int laps = minLaps + random.nextInt(maxLaps - minLaps + 1);
+            candidates.add(new RouteSelection(r, laps));
+        }
+
+        if (candidates.isEmpty()) return null;
+        return candidates.get(random.nextInt(candidates.size()));
     }
 
     /** Loads lat/lng from the route's gpsTrackJson (or its source activity stream as fallback). */
