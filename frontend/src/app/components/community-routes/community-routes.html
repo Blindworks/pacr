@@ -13,7 +13,7 @@
       </a>
       <div class="near-you-toggle">
         <span class="toggle-label">{{ 'COMMUNITY.NEAR_YOU' | translate }}</span>
-        <button class="toggle-track active" type="button">
+        <button class="toggle-track" type="button" [class.active]="nearYouEnabled()" (click)="toggleNearYou()" [attr.aria-pressed]="nearYouEnabled()">
           <span class="toggle-thumb"></span>
         </button>
       </div>

@@ -21,6 +21,13 @@
   align-items: flex-end;
   margin-bottom: 3rem;
   gap: 2rem;
+
+  @include m.respond-to(v.$bp-md) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
 }
 
 .header-left {
@@ -68,6 +75,7 @@
   .toggle-track {
     width: 3rem;
     height: 1.5rem;
+    flex-shrink: 0;
     background: var(--border);
     border-radius: 1rem;
     position: relative;
@@ -75,6 +83,8 @@
     transition: background v.$transition-normal;
     border: none;
     padding: 0;
+    box-sizing: border-box;
+    display: inline-block;
 
     &.active {
       background: var(--pp);
@@ -89,6 +99,8 @@
       background: var(--btn-active-text);
       border-radius: 50%;
       transition: transform v.$transition-normal;
+      box-sizing: border-box;
+      display: block;
     }
 
     &.active .toggle-thumb {
@@ -100,13 +112,13 @@
 // === FILTER BAR ===
 .filter-bar {
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: 2fr 1fr 1fr;
   gap: 1rem;
   margin-bottom: 3rem;
   align-items: center;
 
   @include m.respond-to(v.$bp-md) {
-    grid-template-columns: 2fr 1fr 1fr;
+    grid-template-columns: 1fr;
   }
 }
 
@@ -186,11 +198,11 @@
 // === ROUTE CARDS GRID ===
 .route-grid {
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: repeat(2, 1fr);
   gap: 2rem;
 
   @include m.respond-to(v.$bp-md) {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: 1fr;
   }
 }
 
@@ -510,6 +522,8 @@
 // === MY ROUTES LINK (Header) ===
 .header-actions {
   display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
   gap: 0.75rem;
 }
 
@@ -529,6 +543,15 @@
   text-decoration: none;
   cursor: pointer;
   transition: all v.$transition-normal;
+  min-width: 0;
+  white-space: normal;
+  word-break: break-word;
+  line-height: 1.2;
+
+  @include m.respond-to(v.$bp-md) {
+    padding: 0.5rem 0.75rem;
+    letter-spacing: 0.12em;
+  }
 
   .material-symbols-outlined {
     font-size: 1rem;

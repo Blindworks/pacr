@@ -26,6 +26,7 @@ export class CommunityRoutes implements OnInit {
   error = signal<string | null>(null);
   radiusKm = signal(10);
   sortBy = signal<'distance' | 'popularity'>('distance');
+  nearYouEnabled = signal(true);
   userLat = signal<number | null>(null);
   userLon = signal<number | null>(null);
 
@@ -66,7 +67,8 @@ export class CommunityRoutes implements OnInit {
 
     this.loading.set(true);
     this.error.set(null);
-    this.routeService.getNearbyRoutes(lat, lon, this.radiusKm(), this.sortBy()).subscribe({
+    const effectiveRadius = this.nearYouEnabled() ? this.radiusKm() : 20000;
+    this.routeService.getNearbyRoutes(lat, lon, effectiveRadius, this.sortBy()).subscribe({
       next: routes => {
         this.routes.set(routes);
         this.loading.set(false);
@@ -85,6 +87,11 @@ export class CommunityRoutes implements OnInit {
 
   onSortChange(sort: 'distance' | 'popularity'): void {
     this.sortBy.set(sort);
+    this.loadRoutes();
+  }
+
+  toggleNearYou(): void {
+    this.nearYouEnabled.update(v => !v);
     this.loadRoutes();
   }
 

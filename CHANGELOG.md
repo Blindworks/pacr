@@ -12,6 +12,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- **Community Routes: mobile layout fixed.** On `/community-routes` the route grid was rendering two cramped columns on phones because the `respond-to($bp)` mixin (`max-width` query) had been applied inversely — desktop was getting one column and mobile two. The defaults are now desktop-first (2 columns for the route grid, 3 columns for the filter bar, row layout for the page header) and the mobile breakpoint collapses each to a single column / vertical stack. The page header padding was tightened on mobile so the "My Routes" button no longer overflows. (`community-routes.scss`)
+- **"In deiner Nähe" toggle is now actually functional.** The switch in the `/community-routes` header was hardcoded `active` and had no click handler. It now toggles a `nearYouEnabled` signal: when off, the request bypasses the radius dropdown by sending a 20 000 km radius so all routes load. The track gets `flex-shrink: 0`, `box-sizing: border-box` and an explicit `display` to stop mobile UA styles from deforming the thumb. `.header-actions` is `flex-wrap: nowrap` so the "Meine Routen" button and the toggle stay on the same row; the button is allowed to wrap its label and uses tighter padding/letter-spacing on mobile. (`community-routes.ts`, `community-routes.html`, `community-routes.scss`)
+
 ### Removed
 - **Signup page: "Or sync with" section and "Already have an account?" header text removed.** The non-functional Garmin/Strava/Google sync buttons (with the "Or sync with" / "Oder synchronisieren mit" divider) below the registration form were stripped, since the integrations are not implemented. The redundant "Already have an account?" / "Bereits ein Konto?" label next to the header `Log in` button was also removed to reduce header crowding. Unused `.divider`, `.social-grid`, `.social-btn`, `.already-text` styles and the i18n keys `SIGNUP.OR_SYNC` and `SIGNUP.ALREADY_ACCOUNT` were cleaned up in EN and DE.
 
