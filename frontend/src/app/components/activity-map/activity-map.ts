@@ -39,6 +39,8 @@ export class ActivityMapComponent implements AfterViewInit, OnDestroy, OnChanges
   private clickLayer: L.Polyline | null = null;
   private markerGroup: L.LayerGroup | null = null;
   private currentTheme: 'light' | 'dark' = 'dark';
+  private resizeObserver: ResizeObserver | null = null;
+  private resizeRaf: number | null = null;
 
   constructor() {
     effect(() => {
@@ -63,6 +65,14 @@ export class ActivityMapComponent implements AfterViewInit, OnDestroy, OnChanges
   }
 
   ngOnDestroy(): void {
+    if (this.resizeObserver) {
+      this.resizeObserver.disconnect();
+      this.resizeObserver = null;
+    }
+    if (this.resizeRaf !== null) {
+      cancelAnimationFrame(this.resizeRaf);
+      this.resizeRaf = null;
+    }
     if (this.map) {
       this.map.remove();
       this.map = null;
@@ -97,6 +107,17 @@ export class ActivityMapComponent implements AfterViewInit, OnDestroy, OnChanges
     this.drawRoute();
     if (!this.preview) {
       this.addKmMarkers();
+    }
+
+    if (typeof ResizeObserver !== 'undefined') {
+      this.resizeObserver = new ResizeObserver(() => {
+        if (this.resizeRaf !== null) return;
+        this.resizeRaf = requestAnimationFrame(() => {
+          this.resizeRaf = null;
+          this.map?.invalidateSize();
+        });
+      });
+      this.resizeObserver.observe(container);
     }
   }
 
@@ -184,6 +205,14 @@ export class ActivityMapComponent implements AfterViewInit, OnDestroy, OnChanges
     if (bounds.isValid()) {
       this.map!.fitBounds(bounds, { padding: [30, 30], animate: false });
     }
+
+    setTimeout(() => {
+      if (!this.map) return;
+      this.map.invalidateSize();
+      if (bounds.isValid()) {
+        this.map.fitBounds(bounds, { padding: [30, 30], animate: false });
+      }
+    }, 0);
 
     // Add start/end markers
     if (latlngs.length > 1) {

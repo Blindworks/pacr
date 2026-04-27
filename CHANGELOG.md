@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Fixed
+- **Featured activity map no longer leaves a blank strip on mobile.** On `/activities` the featured ("LATEST") card switches from a 33%-wide map (desktop) to a full-width map below `$bp-lg` (900px). Leaflet had cached the original container width and rendered tiles only for that area, leaving an empty strip on the right of the card on phones. `ActivityMapComponent` now attaches a `ResizeObserver` to its map container and calls `map.invalidateSize()` (rAF-debounced) on every size change, plus a one-shot `invalidateSize()`/`fitBounds()` after the initial route is drawn to handle layouts that stabilise after the map mounts. (`activity-map.ts`)
 - **Competitions list cards no longer overflow on mobile.** On `/competitions` the race grid used `minmax(400px, 1fr)`, which exceeded the viewport on phones (~375px) and clipped the cards horizontally. Below `$bp-sm` (640px) the grid now collapses to a single column, page padding shrinks to `1.5rem 1rem`, the page header stacks vertically, and the race-card inner padding is reduced to `1rem`. Desktop layout unchanged. (`competitions.scss`)
 
 ### Added
