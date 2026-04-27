@@ -276,11 +276,6 @@ export class Dashboard implements OnInit {
     return total > 0 ? Math.round(completed / total * 100) : 0;
   }
 
-  // ── Last Run ─────────────────────────────────────────────────────
-  hasLastRun(): boolean {
-    return this.data?.lastRun != null && (this.data.lastRun.strain21 > 0 || (this.data.lastRun.coachBullets?.length ?? 0) > 0);
-  }
-
   formatDate(dateStr: string | null | undefined): string {
     if (!dateStr) return '—';
     return new Date(dateStr).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' });

@@ -12,6 +12,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- **Dashboard readiness hero is more compact and the decorative GO button is gone.** The readiness score card at the top of `/dashboard` previously dominated the viewport with an oversized score and a non-interactive "GO" pill on the right. Padding shrunk from `40px 48px` to `20px 24px`, the score font size from `clamp(4rem, 9vw, 5.5rem)` to `clamp(2.8rem, 6vw, 3.6rem)`, and surrounding gaps/margins were tightened so the recommendation, reasons and color-coded background stay readable but take roughly half the vertical space. (`dashboard.html`, `dashboard.scss`)
+
+### Removed
+- **"Last Run" card removed from dashboard.** The standalone `last-run-card` block (Strain21, drift %, Z4/Z5 minutes, coach bullets) was redundant with the activity feed and strain trend chart. The card markup, the `hasLastRun()` helper, all `.last-run-card`/`.run-metric`/`.coach-bullets` styles, and the orphaned i18n keys `DASHBOARD.LAST_RUN` and `DASHBOARD.DRIFT` were removed. (`dashboard.html`, `dashboard.ts`, `dashboard.scss`, `en.json`, `de.json`)
+
 ### Fixed
 - **Featured activity map no longer leaves a blank strip on mobile.** On `/activities` the featured ("LATEST") card switches from a 33%-wide map (desktop) to a full-width map below `$bp-lg` (900px). Leaflet had cached the original container width and rendered tiles only for that area, leaving an empty strip on the right of the card on phones. `ActivityMapComponent` now attaches a `ResizeObserver` to its map container and calls `map.invalidateSize()` (rAF-debounced) on every size change, plus a one-shot `invalidateSize()`/`fitBounds()` after the initial route is drawn to handle layouts that stabilise after the map mounts. (`activity-map.ts`)
 - **Competitions list cards no longer overflow on mobile.** On `/competitions` the race grid used `minmax(400px, 1fr)`, which exceeded the viewport on phones (~375px) and clipped the cards horizontally. Below `$bp-sm` (640px) the grid now collapses to a single column, page padding shrinks to `1.5rem 1rem`, the page header stacks vertically, and the race-card inner padding is reduced to `1rem`. Desktop layout unchanged. (`competitions.scss`)
