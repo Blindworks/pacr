@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.trainingsplan</groupId>
     <artifactId>smart-trainingsplan-backend</artifactId>
-    <version>0.38.4</version>
+    <version>0.38.5</version>
     <name>smart-trainingsplan-backend</name>
     <description>Smart Trainingsplan Backend</description>
 

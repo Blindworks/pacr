@@ -12,6 +12,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Removed
+- **Signup page: "Or sync with" section and "Already have an account?" header text removed.** The non-functional Garmin/Strava/Google sync buttons (with the "Or sync with" / "Oder synchronisieren mit" divider) below the registration form were stripped, since the integrations are not implemented. The redundant "Already have an account?" / "Bereits ein Konto?" label next to the header `Log in` button was also removed to reduce header crowding. Unused `.divider`, `.social-grid`, `.social-btn`, `.already-text` styles and the i18n keys `SIGNUP.OR_SYNC` and `SIGNUP.ALREADY_ACCOUNT` were cleaned up in EN and DE.
+
 ### Changed
 - **Dashboard readiness hero is more compact and the decorative GO button is gone.** The readiness score card at the top of `/dashboard` previously dominated the viewport with an oversized score and a non-interactive "GO" pill on the right. Padding shrunk from `40px 48px` to `20px 24px`, the score font size from `clamp(4rem, 9vw, 5.5rem)` to `clamp(2.8rem, 6vw, 3.6rem)`, and surrounding gaps/margins were tightened so the recommendation, reasons and color-coded background stay readable but take roughly half the vertical space. (`dashboard.html`, `dashboard.scss`)
 
