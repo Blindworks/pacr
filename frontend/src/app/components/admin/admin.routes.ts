@@ -99,6 +99,18 @@ export const adminRoutes: Routes = [
           .then(m => m.ExternalNewsSourceForm)
       },
       {
+        path: 'ladv',
+        loadComponent: () => import('./ladv/ladv-import-page/ladv-import-page').then(m => m.LadvImportPage)
+      },
+      {
+        path: 'ladv/sources/new',
+        loadComponent: () => import('./ladv/ladv-source-form/ladv-source-form').then(m => m.LadvSourceForm)
+      },
+      {
+        path: 'ladv/sources/:id/edit',
+        loadComponent: () => import('./ladv/ladv-source-form/ladv-source-form').then(m => m.LadvSourceForm)
+      },
+      {
         path: 'login-messages',
         loadComponent: () => import('./login-messages/login-message-list/login-message-list').then(m => m.LoginMessageList)
       },

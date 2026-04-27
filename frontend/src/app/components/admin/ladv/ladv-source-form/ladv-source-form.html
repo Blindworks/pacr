@@ -1,0 +1,52 @@
+<div class="form-page">
+  <div class="form-header">
+    <h2>{{ sourceId() ? ('ADMIN.LADV_SOURCE_EDIT_TITLE' | translate) : ('ADMIN.LADV_SOURCE_NEW_TITLE' | translate) }}</h2>
+  </div>
+
+  <form class="form-body" (ngSubmit)="save()">
+    <div class="field">
+      <label for="name">{{ 'ADMIN.LADV_SOURCE_NAME' | translate }}</label>
+      <input id="name" type="text" [ngModel]="name()" (ngModelChange)="name.set($event)"
+             name="name" maxlength="150"
+             [placeholder]="'ADMIN.LADV_SOURCE_NAME_PLACEHOLDER' | translate" />
+    </div>
+
+    <div class="field">
+      <label for="lv">{{ 'ADMIN.LADV_SOURCE_LV' | translate }}</label>
+      <select id="lv" [ngModel]="lv()" (ngModelChange)="lv.set($event)" name="lv">
+        <option value="" disabled>{{ 'ADMIN.LADV_SOURCE_LV_PLACEHOLDER' | translate }}</option>
+        @for (opt of lvOptions(); track opt.code) {
+          <option [value]="opt.code">{{ opt.code }} — {{ opt.name }}</option>
+        }
+      </select>
+    </div>
+
+    <div class="field field--inline">
+      <label>
+        <input type="checkbox"
+               [ngModel]="bestenlistenfaehigOnly()"
+               (ngModelChange)="bestenlistenfaehigOnly.set($event)"
+               name="bestenlistenfaehigOnly" />
+        <span>{{ 'ADMIN.LADV_SOURCE_BESTENLISTE_ONLY' | translate }}</span>
+      </label>
+    </div>
+
+    <div class="field field--inline">
+      <label>
+        <input type="checkbox" [ngModel]="enabled()" (ngModelChange)="enabled.set($event)" name="enabled" />
+        <span>{{ 'ADMIN.LADV_SOURCE_ENABLED_LABEL' | translate }}</span>
+      </label>
+    </div>
+
+    @if (error()) {
+      <p class="form-error">{{ error() }}</p>
+    }
+
+    <div class="form-actions">
+      <button type="submit" class="btn-primary" [disabled]="saving()">
+        {{ saving() ? ('COMMON.SAVING' | translate) : ('COMMON.SAVE' | translate) }}
+      </button>
+      <button type="button" class="btn-secondary" (click)="cancel()">{{ 'COMMON.CANCEL' | translate }}</button>
+    </div>
+  </form>
+</div>

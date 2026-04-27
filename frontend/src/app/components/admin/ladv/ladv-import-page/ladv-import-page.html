@@ -1,0 +1,215 @@
+<div class="ladv-page">
+
+  <!-- ===== Sources ===== -->
+  <section class="card">
+    <div class="card-header">
+      <h2>{{ 'ADMIN.LADV_SOURCES' | translate }}</h2>
+      <button class="btn-primary" (click)="goNewSource()">
+        <span class="material-symbols-outlined">add</span>
+        <span>{{ 'ADMIN.LADV_NEW_SOURCE' | translate }}</span>
+      </button>
+    </div>
+
+    @if (lastFetchMessage()) {
+      <p class="info-msg">{{ lastFetchMessage() }}</p>
+    }
+    @if (errorMessage()) {
+      <p class="error-msg">{{ errorMessage() }}</p>
+    }
+
+    @if (sourcesLoading()) {
+      <p class="loading">{{ 'ADMIN.LOADING' | translate }}</p>
+    } @else if (sources().length === 0) {
+      <p class="empty">{{ 'ADMIN.LADV_SOURCES_EMPTY' | translate }}</p>
+    } @else {
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>{{ 'ADMIN.LADV_COL_NAME' | translate }}</th>
+            <th>{{ 'ADMIN.LADV_COL_LV' | translate }}</th>
+            <th>{{ 'ADMIN.LADV_COL_ENABLED' | translate }}</th>
+            <th>{{ 'ADMIN.LADV_COL_LAST_FETCHED' | translate }}</th>
+            <th>{{ 'ADMIN.LADV_COL_STATUS' | translate }}</th>
+            <th>{{ 'COMMON.ACTIONS' | translate }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (item of sources(); track item.id) {
+            <tr>
+              <td>
+                <div class="src-name">{{ item.name }}</div>
+                @if (item.bestenlistenfaehigOnly) {
+                  <div class="src-tag">{{ 'ADMIN.LADV_SOURCE_BESTENLISTE_ONLY' | translate }}</div>
+                }
+              </td>
+              <td><span class="lv-badge">{{ item.lv }}</span></td>
+              <td>
+                <span class="badge" [class.badge--enabled]="item.enabled">
+                  {{ item.enabled ? ('ADMIN.LADV_ENABLED' | translate) : ('ADMIN.LADV_DISABLED' | translate) }}
+                </span>
+              </td>
+              <td>{{ item.lastFetchedAt ? (item.lastFetchedAt | date:'dd.MM.yyyy HH:mm') : '—' }}</td>
+              <td class="status-cell">{{ item.lastFetchStatus ?? '—' }}</td>
+              <td class="actions">
+                <button class="btn-icon btn-icon--fetch"
+                        (click)="fetchNow(item)"
+                        [disabled]="isFetching(item.id) || !item.enabled"
+                        [title]="'ADMIN.LADV_FETCH' | translate">
+                  <span class="material-symbols-outlined">{{ isFetching(item.id) ? 'hourglass_top' : 'cloud_download' }}</span>
+                </button>
+                <button class="btn-icon" (click)="editSource(item)" [title]="'COMMON.EDIT' | translate">
+                  <span class="material-symbols-outlined">edit</span>
+                </button>
+                <button class="btn-icon btn-icon--danger" (click)="deleteSource(item)" [title]="'COMMON.DELETE' | translate">
+                  <span class="material-symbols-outlined">delete</span>
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  </section>
+
+  <!-- ===== Staged events ===== -->
+  <section class="card">
+    <div class="card-header">
+      <h2>{{ 'ADMIN.LADV_EVENTS' | translate }}</h2>
+      <span class="muted">{{ totalElements() }} {{ 'ADMIN.LADV_EVENTS_TOTAL' | translate }}</span>
+    </div>
+
+    <div class="filter-bar">
+      <label>
+        <span>{{ 'ADMIN.LADV_FILTER_SOURCE' | translate }}</span>
+        <select [value]="filterSourceId() ?? ''" (change)="onFilterSourceChange(($any($event.target)).value)">
+          <option value="">{{ 'ADMIN.LADV_FILTER_ALL' | translate }}</option>
+          @for (s of sources(); track s.id) {
+            <option [value]="s.id">{{ s.name }}</option>
+          }
+        </select>
+      </label>
+
+      <label>
+        <span>{{ 'ADMIN.LADV_FILTER_STATUS' | translate }}</span>
+        <select [value]="filterStatus()" (change)="onFilterStatusChange(($any($event.target)).value)">
+          <option value="">{{ 'ADMIN.LADV_FILTER_ALL' | translate }}</option>
+          <option value="NEW">{{ 'ADMIN.LADV_STATUS_NEW' | translate }}</option>
+          <option value="IMPORTED">{{ 'ADMIN.LADV_STATUS_IMPORTED' | translate }}</option>
+          <option value="IGNORED">{{ 'ADMIN.LADV_STATUS_IGNORED' | translate }}</option>
+        </select>
+      </label>
+
+      <label class="search-field">
+        <span>{{ 'ADMIN.LADV_FILTER_SEARCH' | translate }}</span>
+        <input type="text" [ngModel]="filterQuery()" (ngModelChange)="filterQuery.set($event)"
+               (keyup.enter)="applyFilters()"
+               [placeholder]="'ADMIN.LADV_FILTER_SEARCH_PLACEHOLDER' | translate" />
+      </label>
+
+      <button class="btn-secondary" (click)="applyFilters()">
+        {{ 'ADMIN.LADV_FILTER_APPLY' | translate }}
+      </button>
+    </div>
+
+    @if (eventsLoading()) {
+      <p class="loading">{{ 'ADMIN.LOADING' | translate }}</p>
+    } @else if (events().length === 0) {
+      <p class="empty">{{ 'ADMIN.LADV_EVENTS_EMPTY' | translate }}</p>
+    } @else {
+      <table class="data-table data-table--events">
+        <thead>
+          <tr>
+            <th>{{ 'ADMIN.LADV_COL_DATE' | translate }}</th>
+            <th>{{ 'ADMIN.LADV_COL_EVENT' | translate }}</th>
+            <th>{{ 'ADMIN.LADV_COL_LOCATION' | translate }}</th>
+            <th>{{ 'ADMIN.LADV_COL_DISTANCES' | translate }}</th>
+            <th>{{ 'ADMIN.LADV_COL_KATEGORIE' | translate }}</th>
+            <th>{{ 'ADMIN.LADV_COL_STATUS' | translate }}</th>
+            <th>{{ 'COMMON.ACTIONS' | translate }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (e of events(); track e.id) {
+            <tr [class.row--cancelled]="e.abgesagt">
+              <td>
+                <div>{{ e.startDate | date:'dd.MM.yyyy' }}</div>
+                @if (e.endDate && e.endDate !== e.startDate) {
+                  <div class="muted">{{ 'ADMIN.LADV_UNTIL' | translate }} {{ e.endDate | date:'dd.MM.yyyy' }}</div>
+                }
+                @if (e.startTime) {
+                  <div class="muted">{{ e.startTime }}</div>
+                }
+              </td>
+              <td>
+                <div class="ev-name">{{ e.name }}</div>
+                @if (e.veranstalter) {
+                  <div class="muted">{{ e.veranstalter }}</div>
+                }
+                @if (e.homepage) {
+                  <a class="muted" [href]="e.homepage" target="_blank" rel="noopener">{{ e.homepage }}</a>
+                }
+              </td>
+              <td>
+                @if (e.ort) { {{ (e.plz ? e.plz + ' ' : '') + e.ort }} } @else { — }
+                @if (e.latitude != null && e.longitude != null) {
+                  <span class="material-symbols-outlined geo-icon" [title]="'ADMIN.LADV_GEO_OK' | translate">place</span>
+                }
+              </td>
+              <td>{{ formatDistances(e) }}</td>
+              <td>{{ e.kategorie ?? '—' }}</td>
+              <td>
+                <span class="status status--{{ e.status.toLowerCase() }}">
+                  {{ ('ADMIN.LADV_STATUS_' + e.status) | translate }}
+                </span>
+                @if (e.abgesagt) {
+                  <span class="status status--cancelled">{{ 'ADMIN.LADV_CANCELLED' | translate }}</span>
+                }
+              </td>
+              <td class="actions">
+                @if (e.status === 'NEW') {
+                  <button class="btn-icon btn-icon--primary"
+                          [disabled]="isBusy(e.id)"
+                          (click)="adopt(e)"
+                          [title]="'ADMIN.LADV_ADOPT' | translate">
+                    <span class="material-symbols-outlined">check_circle</span>
+                  </button>
+                  <button class="btn-icon btn-icon--danger"
+                          [disabled]="isBusy(e.id)"
+                          (click)="ignore(e)"
+                          [title]="'ADMIN.LADV_IGNORE' | translate">
+                    <span class="material-symbols-outlined">block</span>
+                  </button>
+                }
+                @if (e.status === 'IMPORTED' && e.importedCompetitionId) {
+                  <button class="btn-icon"
+                          (click)="openCompetition(e)"
+                          [title]="'ADMIN.LADV_OPEN_COMPETITION' | translate">
+                    <span class="material-symbols-outlined">open_in_new</span>
+                  </button>
+                }
+                @if (e.status === 'IGNORED') {
+                  <button class="btn-icon"
+                          [disabled]="isBusy(e.id)"
+                          (click)="reactivate(e)"
+                          [title]="'ADMIN.LADV_REACTIVATE' | translate">
+                    <span class="material-symbols-outlined">undo</span>
+                  </button>
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+
+      <div class="pagination">
+        <button class="btn-secondary" (click)="prevPage()" [disabled]="page() === 0">
+          {{ 'COMMON.PREVIOUS' | translate }}
+        </button>
+        <span class="page-info">{{ 'ADMIN.LADV_PAGE_INFO' | translate:{ page: page() + 1, total: totalElements() } }}</span>
+        <button class="btn-secondary" (click)="nextPage()" [disabled]="!hasMorePages()">
+          {{ 'COMMON.NEXT' | translate }}
+        </button>
+      </div>
+    }
+  </section>
+</div>

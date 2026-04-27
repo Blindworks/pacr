@@ -1,0 +1,76 @@
+@use 'mixins' as m;
+@use 'variables' as v;
+
+.form-page {
+  @include m.page-layout(640px);
+  padding-top: 24px;
+  padding-bottom: 24px;
+}
+
+.form-header {
+  @include m.toolbar;
+
+  h2 {
+    margin: 0;
+    color: var(--text);
+  }
+}
+
+.form-body {
+  @include m.card();
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.field {
+  @include m.form-field;
+
+  input[type='text'],
+  input[type='url'],
+  select { @include m.input; }
+}
+
+.field--inline {
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+
+  label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    color: var(--text);
+    font-size: 14px;
+    font-weight: 500;
+    text-transform: none;
+    letter-spacing: 0;
+  }
+
+  input[type='checkbox'] {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--pp);
+    cursor: pointer;
+  }
+}
+
+.form-error {
+  margin: 0;
+  padding: 10px 14px;
+  border-radius: v.$radius-md;
+  font-size: 13px;
+  background: rgba(231, 76, 60, 0.12);
+  color: #e74c3c;
+  border: 1px solid rgba(231, 76, 60, 0.3);
+}
+
+.form-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.btn-primary { @include m.btn-primary; }
+.btn-secondary { @include m.btn-ghost; }

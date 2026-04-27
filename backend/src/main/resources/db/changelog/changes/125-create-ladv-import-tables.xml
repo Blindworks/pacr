@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="125-1" author="benedikt">
+        <preConditions onFail="MARK_RAN">
+            <not><tableExists tableName="ladv_import_source"/></not>
+        </preConditions>
+        <comment>LADV import source configuration (one entry per Landesverband to be polled).</comment>
+        <createTable tableName="ladv_import_source">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(150)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="lv" type="VARCHAR(3)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="bestenlistenfaehig_only" type="BOOLEAN" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+            <column name="enabled" type="BOOLEAN" defaultValueBoolean="true">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_fetched_at" type="DATETIME"/>
+            <column name="last_fetch_status" type="VARCHAR(500)"/>
+            <column name="created_at" type="DATETIME" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="125-2" author="benedikt">
+        <preConditions onFail="MARK_RAN">
+            <not><tableExists tableName="ladv_staged_event"/></not>
+        </preConditions>
+        <comment>Staging area for LADV events fetched from the API; admins decide per-event whether to adopt them as PACR competitions.</comment>
+        <createTable tableName="ladv_staged_event">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="source_id" type="BIGINT">
+                <constraints nullable="false"
+                             foreignKeyName="fk_ladv_staged_event_source"
+                             references="ladv_import_source(id)"
+                             deleteCascade="true"/>
+            </column>
+            <column name="ladv_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="veranstaltungsnummer" type="VARCHAR(40)"/>
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="start_date" type="DATE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="end_date" type="DATE"/>
+            <column name="start_time" type="TIME"/>
+            <column name="kategorie" type="VARCHAR(255)"/>
+            <column name="veranstalter" type="VARCHAR(255)"/>
+            <column name="homepage" type="VARCHAR(500)"/>
+            <column name="ort" type="VARCHAR(255)"/>
+            <column name="plz" type="VARCHAR(15)"/>
+            <column name="latitude" type="DOUBLE"/>
+            <column name="longitude" type="DOUBLE"/>
+            <column name="abgesagt" type="BOOLEAN" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+            <column name="raw_json" type="LONGTEXT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="VARCHAR(15)" defaultValue="NEW">
+                <constraints nullable="false"/>
+            </column>
+            <column name="imported_competition_id" type="BIGINT">
+                <constraints foreignKeyName="fk_ladv_staged_event_competition"
+                             references="competitions(id)"
+                             deleteCascade="false"/>
+            </column>
+            <column name="imported_at" type="DATETIME"/>
+            <column name="imported_by" type="BIGINT">
+                <constraints foreignKeyName="fk_ladv_staged_event_user"
+                             references="users(id)"
+                             deleteCascade="false"/>
+            </column>
+            <column name="fetched_at" type="DATETIME" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addUniqueConstraint tableName="ladv_staged_event"
+                             columnNames="source_id, ladv_id"
+                             constraintName="uk_ladv_staged_event_source_ladv"/>
+        <createIndex tableName="ladv_staged_event" indexName="idx_ladv_staged_event_status">
+            <column name="status"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>
