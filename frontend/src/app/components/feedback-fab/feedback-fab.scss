@@ -28,3 +28,9 @@
 
   &:active { transform: scale(0.97); }
 }
+
+@media (max-width: 767px) {
+  .fab {
+    bottom: calc(64px + env(safe-area-inset-bottom) + 1rem);
+  }
+}

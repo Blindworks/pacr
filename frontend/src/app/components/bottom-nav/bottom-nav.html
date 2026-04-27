@@ -1,0 +1,26 @@
+<nav class="bottom-nav" role="navigation">
+  <a class="bottom-nav__item" routerLink="/dashboard" routerLinkActive="bottom-nav__item--active">
+    <span class="material-symbols-outlined">dashboard</span>
+    <span class="bottom-nav__label">{{ 'NAV.DASHBOARD' | translate }}</span>
+  </a>
+
+  <a class="bottom-nav__item" routerLink="/activities" routerLinkActive="bottom-nav__item--active">
+    <span class="material-symbols-outlined">directions_run</span>
+    <span class="bottom-nav__label">{{ 'NAV.ACTIVITIES' | translate }}</span>
+  </a>
+
+  <a class="bottom-nav__item" routerLink="/training-plans" routerLinkActive="bottom-nav__item--active">
+    <span class="material-symbols-outlined">calendar_today</span>
+    <span class="bottom-nav__label">{{ 'NAV.TRAINING_PLANS' | translate }}</span>
+  </a>
+
+  <a class="bottom-nav__item" routerLink="/news-hub" routerLinkActive="bottom-nav__item--active">
+    <span class="material-symbols-outlined">newspaper</span>
+    <span class="bottom-nav__label">{{ 'NAV.NEWS_HUB' | translate }}</span>
+  </a>
+
+  <button type="button" class="bottom-nav__item" (click)="onMore()">
+    <span class="material-symbols-outlined">menu</span>
+    <span class="bottom-nav__label">{{ 'NAV.MORE' | translate }}</span>
+  </button>
+</nav>

@@ -3,14 +3,13 @@
     <app-sidebar (collapsedChange)="onSidebarCollapsed($event)" />
   }
   <main [class]="showSidebar() ? 'app-main' : ''" [ngClass]="{ 'app-main--collapsed': sidebarCollapsed(), 'app-main--mobile': isMobile() }">
-    @if (showSidebar() && isMobile()) {
-      <button class="mobile-hamburger" (click)="openMobileSidebar()">
-        <span class="material-symbols-outlined">menu</span>
-      </button>
-    }
     <router-outlet />
   </main>
 </div>
+
+@if (showSidebar() && isMobile()) {
+  <app-bottom-nav (moreClicked)="openMobileSidebar()" />
+}
 
 <app-pace-calculator-dialog />
 <app-about-dialog />

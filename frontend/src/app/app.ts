@@ -2,6 +2,7 @@ import { Component, signal, inject, effect, ViewChild } from '@angular/core';
 import { Router, RouterOutlet, NavigationEnd } from '@angular/router';
 import { NgClass } from '@angular/common';
 import { Sidebar } from './components/sidebar/sidebar';
+import { BottomNav } from './components/bottom-nav/bottom-nav';
 import { PaceCalculatorDialog } from './components/pace-calculator/pace-calculator-dialog';
 import { AboutDialog } from './components/about-dialog/about-dialog';
 import { Toast } from './components/toast/toast';
@@ -19,7 +20,7 @@ import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, NgClass, Sidebar, PaceCalculatorDialog, AboutDialog, Toast, FeedbackFab, FeedbackDialog, LoginMessageDialog, PendingFriendRequestsDialog],
+  imports: [RouterOutlet, NgClass, Sidebar, BottomNav, PaceCalculatorDialog, AboutDialog, Toast, FeedbackFab, FeedbackDialog, LoginMessageDialog, PendingFriendRequestsDialog],
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })

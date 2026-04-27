@@ -1,0 +1,72 @@
+@use 'variables' as v;
+
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  display: none;
+  align-items: stretch;
+  justify-content: space-around;
+  background: var(--bg-card);
+  border-top: 1px solid var(--pp-border);
+  padding-bottom: env(safe-area-inset-bottom);
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.06);
+}
+
+@media (max-width: 767px) {
+  .bottom-nav {
+    display: flex;
+  }
+}
+
+.bottom-nav__item {
+  flex: 1 1 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  height: 64px;
+  padding: 6px 4px;
+  background: transparent;
+  border: none;
+  color: var(--text-muted, var(--text));
+  text-decoration: none;
+  cursor: pointer;
+  transition: color v.$transition-fast;
+  -webkit-tap-highlight-color: transparent;
+
+  .material-symbols-outlined {
+    font-size: 26px;
+    line-height: 1;
+  }
+
+  &:hover,
+  &:active {
+    color: var(--pp);
+  }
+
+  &--active {
+    color: var(--pp);
+
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 1;
+    }
+  }
+}
+
+.bottom-nav__label {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+:host-context(body.mobile-nav-open) .bottom-nav {
+  display: none;
+}
