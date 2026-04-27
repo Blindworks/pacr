@@ -30,9 +30,6 @@
         </li>
       </ul>
     </div>
-    <div class="hero-right">
-      <div class="go-btn">GO</div>
-    </div>
   </section>
 
   <!-- ── Main 3-column Grid ── -->
@@ -231,39 +228,6 @@
     </div>
   </div>
 
-  <!-- ── Last Run ── -->
-  <div class="last-run-card" *ngIf="hasLastRun()">
-    <div class="last-run-card__header">
-      <h4>{{ 'DASHBOARD.LAST_RUN' | translate }}</h4>
-      <span class="last-run-date">{{ formatDate(data.lastRun?.date) }}</span>
-    </div>
-
-    <div class="last-run-metrics">
-      <div class="run-metric">
-        <span class="run-metric__label">{{ 'DASHBOARD.STRAIN_21' | translate }}</span>
-        <span class="run-metric__value">{{ data.lastRun?.strain21 | number:'1.1-1' }}</span>
-      </div>
-      <div class="run-metric" *ngIf="(data.lastRun?.driftPct ?? 0) > 0">
-        <span class="run-metric__label">{{ 'DASHBOARD.DRIFT' | translate }}</span>
-        <span class="run-metric__value">{{ data.lastRun?.driftPct | number:'1.1-1' }}%</span>
-      </div>
-      <div class="run-metric zone-pill zone-pill--z4" *ngIf="(data.lastRun?.z4Min ?? 0) > 0">
-        <span class="run-metric__label">Z4</span>
-        <span class="run-metric__value">{{ data.lastRun?.z4Min | number:'1.0-0' }} {{ 'COMMON.MIN' | translate }}</span>
-      </div>
-      <div class="run-metric zone-pill zone-pill--z5" *ngIf="(data.lastRun?.z5Min ?? 0) > 0">
-        <span class="run-metric__label">Z5</span>
-        <span class="run-metric__value">{{ data.lastRun?.z5Min | number:'1.0-0' }} {{ 'COMMON.MIN' | translate }}</span>
-      </div>
-    </div>
-
-    <ul class="coach-bullets" *ngIf="(data.lastRun?.coachBullets?.length ?? 0) > 0">
-      <li *ngFor="let bullet of data.lastRun?.coachBullets" class="coach-bullet">
-        <span class="coach-bullet__dot"></span>
-        {{ bullet }}
-      </li>
-    </ul>
-  </div>
 
 </div>
 
