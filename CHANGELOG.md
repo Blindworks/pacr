@@ -12,6 +12,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- **Competitions list cards no longer overflow on mobile.** On `/competitions` the race grid used `minmax(400px, 1fr)`, which exceeded the viewport on phones (~375px) and clipped the cards horizontally. Below `$bp-sm` (640px) the grid now collapses to a single column, page padding shrinks to `1.5rem 1rem`, the page header stacks vertically, and the race-card inner padding is reduced to `1rem`. Desktop layout unchanged. (`competitions.scss`)
+
 ### Added
 - **Mobile bottom navigation bar.** On viewports below 768px (mobile browsers and the iOS Capacitor app), primary navigation is now exposed via a fixed bottom tab bar with five tabs (Dashboard, Activities, Training Plans, News Hub, More). The "More" tab opens the full sidebar as an overlay drawer for everything secondary. The previous mobile hamburger button was removed. The bar respects the iOS home-indicator safe area (`env(safe-area-inset-bottom)`) and the active tab is highlighted in the brand green. Desktop and tablet layouts are unchanged. New i18n key `NAV.MORE` in EN and DE. New standalone component `frontend/src/app/components/bottom-nav/`.
 - **Training-plans view shows completed runs below planned trainings per day.** On `/training-plan` each uploaded `Run` or `VirtualRun` activity now renders as its own card directly under the planned training of the same day. The card shows the activity name, an "Absolviert" chip and the actual metrics (distance, moving time, pace, avg HR, elevation gain) in a green accent line and links to the activity detail on click. Walks and other sports are filtered out. `loadWeek()` extends its `forkJoin` with `ActivityService.getByDateRange()`. New i18n keys `TRAINING_PLAN.UNPLANNED`, `UNPLANNED_ACTIVITY`, `COMPLETED_ACTIVITY` in EN and DE.
