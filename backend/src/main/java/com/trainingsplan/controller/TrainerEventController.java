@@ -5,9 +5,11 @@ import com.trainingsplan.entity.User;
 import com.trainingsplan.security.SecurityUtils;
 import com.trainingsplan.service.GroupEventService;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -133,6 +135,37 @@ public class TrainerEventController {
             return ResponseEntity.ok(occurrences);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.notFound().build();
+        }
+    }
+
+    @PostMapping(path = "/{id}/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> uploadEventImage(@PathVariable Long id,
+                                              @RequestParam("file") MultipartFile file) {
+        User trainer = securityUtils.getCurrentUser();
+        if (trainer == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+
+        try {
+            groupEventService.uploadEventImage(trainer, id, file);
+            return ResponseEntity.ok().build();
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.notFound().build();
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/{id}/image")
+    public ResponseEntity<?> deleteEventImage(@PathVariable Long id) {
+        User trainer = securityUtils.getCurrentUser();
+        if (trainer == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+
+        try {
+            groupEventService.deleteEventImage(trainer, id);
+            return ResponseEntity.noContent().build();
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.notFound().build();
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
         }
     }
 

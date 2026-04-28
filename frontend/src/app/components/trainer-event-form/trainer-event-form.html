@@ -67,6 +67,42 @@
         </div>
       </div>
 
+      <!-- Image Section -->
+      <div class="form-section">
+        <h2 class="section-title">
+          <span class="material-symbols-outlined">image</span>
+          {{ 'TRAINER_EVENTS.SECTION_IMAGE' | translate }}
+        </h2>
+
+        <div class="form-field">
+          <div class="image-upload">
+            @if (hasImage()) {
+              <div class="image-preview">
+                <img [src]="imagePreviewUrl()" alt="Event image" />
+                <button type="button" class="btn-icon-action btn-remove-image"
+                        (click)="removeImage()"
+                        [title]="'TRAINER_EVENTS.IMAGE_REMOVE' | translate">
+                  <span class="material-symbols-outlined">delete</span>
+                </button>
+              </div>
+            } @else {
+              <label class="image-dropzone" for="eventImageInput">
+                <span class="material-symbols-outlined">add_photo_alternate</span>
+                <span class="dropzone-text">{{ 'TRAINER_EVENTS.IMAGE_UPLOAD' | translate }}</span>
+              </label>
+            }
+            <input id="eventImageInput" type="file"
+                   accept="image/png,image/jpeg,image/webp"
+                   (change)="onImageSelected($event)"
+                   hidden />
+            <span class="field-hint">{{ 'TRAINER_EVENTS.IMAGE_HINT' | translate }}</span>
+            @if (imageError()) {
+              <span class="field-error">{{ imageError() }}</span>
+            }
+          </div>
+        </div>
+      </div>
+
       <!-- Date & Time Section -->
       <div class="form-section">
         <h2 class="section-title">

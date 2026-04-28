@@ -38,6 +38,11 @@
     <div class="events-list">
       @for (event of events(); track event.id) {
         <a [routerLink]="['/trainer/events', event.id]" class="event-row">
+          <!-- Image Column -->
+          <div class="event-image-col">
+            <app-event-image [eventId]="event.id" [filename]="event.eventImageFilename"></app-event-image>
+          </div>
+
           <!-- Date Column -->
           <div class="event-date-col">
             <span class="date-day">{{ event.eventDate | date:'dd' }}</span>

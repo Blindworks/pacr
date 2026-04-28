@@ -30,5 +30,6 @@ public record GroupEventDto(
         String rrule,
         LocalDate recurrenceEndDate,
         LocalDate occurrenceDate,
-        boolean isRecurring
+        boolean isRecurring,
+        String eventImageFilename
 ) {}

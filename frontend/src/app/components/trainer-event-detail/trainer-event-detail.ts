@@ -4,11 +4,12 @@ import { RouterModule, ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TrainerEventService, GroupEventRegistrationDto } from '../../services/trainer-event.service';
 import { GroupEventDto } from '../../services/group-event.service';
+import { EventImageComponent } from '../event-image/event-image';
 
 @Component({
   selector: 'app-trainer-event-detail',
   standalone: true,
-  imports: [CommonModule, RouterModule, TranslateModule],
+  imports: [CommonModule, RouterModule, TranslateModule, EventImageComponent],
   templateUrl: './trainer-event-detail.html',
   styleUrl: './trainer-event-detail.scss'
 })

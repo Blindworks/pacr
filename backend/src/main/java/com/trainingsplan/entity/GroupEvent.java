@@ -84,6 +84,9 @@ public class GroupEvent {
     @Column(name = "recurrence_end_date")
     private LocalDate recurrenceEndDate;
 
+    @Column(name = "event_image_filename", length = 255)
+    private String eventImageFilename;
+
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private List<GroupEventRegistration> registrations = new ArrayList<>();
@@ -169,4 +172,7 @@ public class GroupEvent {
 
     public List<GroupEventException> getExceptions() { return exceptions; }
     public void setExceptions(List<GroupEventException> exceptions) { this.exceptions = exceptions; }
+
+    public String getEventImageFilename() { return eventImageFilename; }
+    public void setEventImageFilename(String eventImageFilename) { this.eventImageFilename = eventImageFilename; }
 }

@@ -4,7 +4,7 @@ import { RouterModule, ActivatedRoute, Router } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TrainerEventService, CreateGroupEventRequest, UpdateGroupEventRequest } from '../../services/trainer-event.service';
-import { GroupEventDto } from '../../services/group-event.service';
+import { GroupEventDto, GroupEventService } from '../../services/group-event.service';
 import { GeocodingService } from '../../services/geocoding.service';
 import { LocationPickerDialogComponent } from '../location-picker-dialog/location-picker-dialog';
 
@@ -20,6 +20,7 @@ export class TrainerEventForm implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly trainerService = inject(TrainerEventService);
+  private readonly groupEventService = inject(GroupEventService);
   private readonly geocodingService = inject(GeocodingService);
   readonly translate = inject(TranslateService);
 
@@ -33,6 +34,15 @@ export class TrainerEventForm implements OnInit {
   error = signal<string | null>(null);
   geocoding = signal(false);
   geocodeError = signal<string | null>(null);
+
+  selectedImageFile = signal<File | null>(null);
+  imagePreviewUrl = signal<string | null>(null);
+  existingImageFilename = signal<string | null>(null);
+  imageMarkedForDeletion = signal(false);
+  imageError = signal<string | null>(null);
+  private imageObjectUrl: string | null = null;
+  private readonly allowedImageTypes = ['image/png', 'image/jpeg', 'image/webp'];
+  private readonly maxImageSizeBytes = 5 * 1024 * 1024;
 
   readonly difficulties = ['BEGINNER', 'INTERMEDIATE', 'ADVANCED'];
   readonly currencies = ['EUR', 'USD', 'GBP', 'CHF'];
@@ -135,6 +145,69 @@ export class TrainerEventForm implements OnInit {
         recurrenceEndDate: event.recurrenceEndDate
       });
     }
+
+    if (event.eventImageFilename) {
+      this.existingImageFilename.set(event.eventImageFilename);
+      this.groupEventService.getEventImage(event.id).subscribe({
+        next: blob => {
+          if (!blob) return;
+          this.revokeImageObjectUrl();
+          this.imageObjectUrl = URL.createObjectURL(blob);
+          this.imagePreviewUrl.set(this.imageObjectUrl);
+        },
+        error: () => {}
+      });
+    }
+  }
+
+  onImageSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) return;
+
+    if (!this.allowedImageTypes.includes(file.type)) {
+      this.imageError.set(this.translate.instant('TRAINER_EVENTS.IMAGE_INVALID_TYPE'));
+      input.value = '';
+      return;
+    }
+    if (file.size > this.maxImageSizeBytes) {
+      this.imageError.set(this.translate.instant('TRAINER_EVENTS.IMAGE_TOO_LARGE'));
+      input.value = '';
+      return;
+    }
+
+    this.imageError.set(null);
+    this.imageMarkedForDeletion.set(false);
+    this.selectedImageFile.set(file);
+
+    this.revokeImageObjectUrl();
+    this.imageObjectUrl = URL.createObjectURL(file);
+    this.imagePreviewUrl.set(this.imageObjectUrl);
+  }
+
+  removeImage(): void {
+    this.selectedImageFile.set(null);
+    this.imageError.set(null);
+    this.revokeImageObjectUrl();
+    this.imagePreviewUrl.set(null);
+    if (this.existingImageFilename()) {
+      this.imageMarkedForDeletion.set(true);
+    }
+  }
+
+  hasImage(): boolean {
+    return !!this.imagePreviewUrl();
+  }
+
+  private revokeImageObjectUrl(): void {
+    if (this.imageObjectUrl) {
+      URL.revokeObjectURL(this.imageObjectUrl);
+      this.imageObjectUrl = null;
+    }
+  }
+
+  ngOnDestroy(): void {
+    this.revokeImageObjectUrl();
   }
 
   saveAsDraft(): void {
@@ -181,15 +254,16 @@ export class TrainerEventForm implements OnInit {
     if (this.isEditMode() && this.eventId()) {
       this.trainerService.updateEvent(this.eventId()!, request as UpdateGroupEventRequest).subscribe({
         next: updated => {
-          if (publish && updated.status === 'DRAFT') {
-            this.trainerService.publishEvent(updated.id).subscribe({
-              next: () => { this.saving.set(false); this.router.navigate(['/trainer/events']); },
-              error: () => { this.saving.set(false); this.router.navigate(['/trainer/events']); }
-            });
-          } else {
-            this.saving.set(false);
-            this.router.navigate(['/trainer/events']);
-          }
+          this.applyImageChanges(updated.id, () => {
+            if (publish && updated.status === 'DRAFT') {
+              this.trainerService.publishEvent(updated.id).subscribe({
+                next: () => this.finishSave(),
+                error: () => this.finishSave()
+              });
+            } else {
+              this.finishSave();
+            }
+          });
         },
         error: () => {
           this.error.set(this.translate.instant('TRAINER_EVENTS.SAVE_ERROR'));
@@ -199,15 +273,16 @@ export class TrainerEventForm implements OnInit {
     } else {
       this.trainerService.createEvent(request).subscribe({
         next: created => {
-          if (publish) {
-            this.trainerService.publishEvent(created.id).subscribe({
-              next: () => { this.saving.set(false); this.router.navigate(['/trainer/events']); },
-              error: () => { this.saving.set(false); this.router.navigate(['/trainer/events']); }
-            });
-          } else {
-            this.saving.set(false);
-            this.router.navigate(['/trainer/events']);
-          }
+          this.applyImageChanges(created.id, () => {
+            if (publish) {
+              this.trainerService.publishEvent(created.id).subscribe({
+                next: () => this.finishSave(),
+                error: () => this.finishSave()
+              });
+            } else {
+              this.finishSave();
+            }
+          });
         },
         error: () => {
           this.error.set(this.translate.instant('TRAINER_EVENTS.SAVE_ERROR'));
@@ -215,6 +290,33 @@ export class TrainerEventForm implements OnInit {
         }
       });
     }
+  }
+
+  private applyImageChanges(eventId: number, done: () => void): void {
+    const file = this.selectedImageFile();
+    if (file) {
+      this.trainerService.uploadEventImage(eventId, file).subscribe({
+        next: () => done(),
+        error: () => {
+          this.imageError.set(this.translate.instant('TRAINER_EVENTS.IMAGE_UPLOAD_ERROR'));
+          done();
+        }
+      });
+      return;
+    }
+    if (this.imageMarkedForDeletion() && this.existingImageFilename()) {
+      this.trainerService.deleteEventImage(eventId).subscribe({
+        next: () => done(),
+        error: () => done()
+      });
+      return;
+    }
+    done();
+  }
+
+  private finishSave(): void {
+    this.saving.set(false);
+    this.router.navigate(['/trainer/events']);
   }
 
   geocodeLocation(): void {

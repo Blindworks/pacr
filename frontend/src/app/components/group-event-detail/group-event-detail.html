@@ -21,6 +21,11 @@
     <div class="detail-layout">
       <!-- Main Content -->
       <div class="detail-main">
+        @if (ev.eventImageFilename) {
+          <div class="detail-hero-image">
+            <app-event-image [eventId]="ev.id" [filename]="ev.eventImageFilename" [showFallback]="false"></app-event-image>
+          </div>
+        }
         <div class="detail-header">
           <h1>{{ ev.title }}</h1>
           @if (ev.difficulty) {

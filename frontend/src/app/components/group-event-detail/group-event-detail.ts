@@ -5,12 +5,13 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { GroupEventService, GroupEventDto } from '../../services/group-event.service';
 import { ThemeService } from '../../services/theme.service';
 import { ProOverlay } from '../shared/pro-overlay/pro-overlay';
+import { EventImageComponent } from '../event-image/event-image';
 import * as L from 'leaflet';
 
 @Component({
   selector: 'app-group-event-detail',
   standalone: true,
-  imports: [CommonModule, RouterModule, TranslateModule, ProOverlay],
+  imports: [CommonModule, RouterModule, TranslateModule, ProOverlay, EventImageComponent],
   templateUrl: './group-event-detail.html',
   styleUrl: './group-event-detail.scss'
 })

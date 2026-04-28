@@ -6,7 +6,9 @@ import com.trainingsplan.entity.SubscriptionPlan;
 import com.trainingsplan.entity.User;
 import com.trainingsplan.security.SecurityUtils;
 import com.trainingsplan.service.GroupEventService;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -93,6 +95,27 @@ public class GroupEventController {
         } catch (IllegalArgumentException e) {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    @GetMapping("/{id}/image")
+    public ResponseEntity<Resource> getEventImage(@PathVariable Long id) {
+        User user = securityUtils.getCurrentUser();
+        if (user == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        if (!user.isGroupEventsEnabled()) return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+
+        GroupEventService.EventImageData image = groupEventService.loadEventImage(id);
+        if (image == null) {
+            return ResponseEntity.noContent().build();
+        }
+        MediaType mediaType;
+        try {
+            mediaType = MediaType.parseMediaType(image.contentType());
+        } catch (IllegalArgumentException e) {
+            mediaType = MediaType.APPLICATION_OCTET_STREAM;
+        }
+        return ResponseEntity.ok()
+                .contentType(mediaType)
+                .body(image.resource());
     }
 
     @GetMapping("/my-registrations")

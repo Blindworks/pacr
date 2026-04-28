@@ -17,6 +17,11 @@
       <p>{{ error() }}</p>
     </div>
   } @else if (event(); as ev) {
+    @if (ev.eventImageFilename) {
+      <div class="detail-hero-image">
+        <app-event-image [eventId]="ev.id" [filename]="ev.eventImageFilename" [showFallback]="false"></app-event-image>
+      </div>
+    }
     <!-- Header with actions -->
     <div class="detail-header">
       <div class="header-title">

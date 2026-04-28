@@ -2,12 +2,19 @@ package com.trainingsplan.service;
 
 import com.trainingsplan.dto.*;
 import com.trainingsplan.entity.*;
+import com.trainingsplan.port.ImageStoragePort;
 import com.trainingsplan.repository.GroupEventExceptionRepository;
 import com.trainingsplan.repository.GroupEventRegistrationRepository;
 import com.trainingsplan.repository.GroupEventRepository;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -24,15 +31,18 @@ public class GroupEventService {
     private final GroupEventRegistrationRepository registrationRepository;
     private final GroupEventExceptionRepository exceptionRepository;
     private final RecurrenceService recurrenceService;
+    private final ImageStoragePort imageStoragePort;
 
     public GroupEventService(GroupEventRepository eventRepository,
                              GroupEventRegistrationRepository registrationRepository,
                              GroupEventExceptionRepository exceptionRepository,
-                             RecurrenceService recurrenceService) {
+                             RecurrenceService recurrenceService,
+                             ImageStoragePort imageStoragePort) {
         this.eventRepository = eventRepository;
         this.registrationRepository = registrationRepository;
         this.exceptionRepository = exceptionRepository;
         this.recurrenceService = recurrenceService;
+        this.imageStoragePort = imageStoragePort;
     }
 
     public GroupEventDto createEvent(User trainer, CreateGroupEventRequest request) {
@@ -433,9 +443,56 @@ public class GroupEventService {
                 event.getRrule(),
                 event.getRecurrenceEndDate(),
                 occurrenceDate,
-                event.isRecurring()
+                event.isRecurring(),
+                event.getEventImageFilename()
         );
     }
+
+    public void uploadEventImage(User trainer, Long eventId, MultipartFile file) {
+        GroupEvent event = getOwnEvent(trainer, eventId);
+        String oldFilename = event.getEventImageFilename();
+        String newFilename = imageStoragePort.store(file);
+        event.setEventImageFilename(newFilename);
+        event.setUpdatedAt(LocalDateTime.now());
+        eventRepository.save(event);
+        if (oldFilename != null && !oldFilename.isBlank() && !oldFilename.equals(newFilename)) {
+            imageStoragePort.delete(oldFilename);
+        }
+    }
+
+    public void deleteEventImage(User trainer, Long eventId) {
+        GroupEvent event = getOwnEvent(trainer, eventId);
+        String oldFilename = event.getEventImageFilename();
+        if (oldFilename == null || oldFilename.isBlank()) {
+            return;
+        }
+        event.setEventImageFilename(null);
+        event.setUpdatedAt(LocalDateTime.now());
+        eventRepository.save(event);
+        imageStoragePort.delete(oldFilename);
+    }
+
+    @Transactional(readOnly = true)
+    public EventImageData loadEventImage(Long eventId) {
+        GroupEvent event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Event not found"));
+        String filename = event.getEventImageFilename();
+        if (filename == null || filename.isBlank()) {
+            return null;
+        }
+        Resource resource = imageStoragePort.load(filename);
+        String contentType = "application/octet-stream";
+        try {
+            String detectedType = Files.probeContentType(resource.getFile().toPath());
+            if (detectedType != null && !detectedType.isBlank()) {
+                contentType = detectedType;
+            }
+        } catch (IOException ignored) {
+        }
+        return new EventImageData(resource, contentType);
+    }
+
+    public record EventImageData(Resource resource, String contentType) {}
 
     private double haversineDistance(double lat1, double lon1, double lat2, double lon2) {
         double dLat = Math.toRadians(lat2 - lat1);

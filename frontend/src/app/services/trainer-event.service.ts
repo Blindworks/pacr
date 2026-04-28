@@ -100,4 +100,14 @@ export class TrainerEventService {
     const params = new HttpParams().set('from', from).set('to', to);
     return this.http.get<GroupEventDto[]>(`${BASE}/${eventId}/occurrences`, { params });
   }
+
+  uploadEventImage(eventId: number, file: File): Observable<void> {
+    const formData = new FormData();
+    formData.append('file', file);
+    return this.http.post<void>(`${BASE}/${eventId}/image`, formData);
+  }
+
+  deleteEventImage(eventId: number): Observable<void> {
+    return this.http.delete<void>(`${BASE}/${eventId}/image`);
+  }
 }

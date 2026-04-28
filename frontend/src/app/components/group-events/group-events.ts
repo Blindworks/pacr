@@ -6,11 +6,12 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { GroupEventService, GroupEventDto } from '../../services/group-event.service';
 import { UserService } from '../../services/user.service';
 import { ProOverlay } from '../shared/pro-overlay/pro-overlay';
+import { EventImageComponent } from '../event-image/event-image';
 
 @Component({
   selector: 'app-group-events',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule, TranslateModule, ProOverlay],
+  imports: [CommonModule, RouterModule, FormsModule, TranslateModule, ProOverlay, EventImageComponent],
   templateUrl: './group-events.html',
   styleUrl: './group-events.scss'
 })

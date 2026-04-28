@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { apiUrl } from '../core/api-base';
 
 const BASE = apiUrl('/group-events');
@@ -32,6 +33,7 @@ export interface GroupEventDto {
   recurrenceEndDate: string | null;
   occurrenceDate: string | null;
   isRecurring: boolean;
+  eventImageFilename: string | null;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -72,6 +74,11 @@ export class GroupEventService {
 
   getMyRegistrations(): Observable<GroupEventDto[]> {
     return this.http.get<GroupEventDto[]>(`${BASE}/my-registrations`);
+  }
+
+  getEventImage(eventId: number): Observable<Blob | null> {
+    return this.http.get(`${BASE}/${eventId}/image`, { responseType: 'blob' })
+      .pipe(map(blob => blob && blob.size > 0 ? blob : null));
   }
 
   getNearbyForFeed(lat: number, lon: number, radiusKm = 25, days = 30): Observable<GroupEventDto[]> {

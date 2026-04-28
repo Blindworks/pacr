@@ -81,6 +81,11 @@
     <div class="event-grid">
       @for (event of filteredEvents(); track trackEvent($index, event)) {
         <a [routerLink]="['/community/groups', event.id]" class="event-card" [class.today-event]="isToday(event)">
+          @if (event.eventImageFilename) {
+            <div class="card-image">
+              <app-event-image [eventId]="event.id" [filename]="event.eventImageFilename" [showFallback]="false"></app-event-image>
+            </div>
+          }
           <!-- Card Header -->
           <div class="card-header">
             <div class="event-date-badge" [class.today-badge]="isToday(event)">

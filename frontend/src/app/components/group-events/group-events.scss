@@ -482,3 +482,18 @@
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
+
+.event-card .card-image {
+  width: 100%;
+  height: 140px;
+  overflow: hidden;
+  background: var(--bg-secondary, rgba(255, 255, 255, 0.04));
+  margin-bottom: 0.75rem;
+  border-radius: 0.5rem;
+
+  app-event-image {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+}
