@@ -73,4 +73,13 @@ export class GroupEventService {
   getMyRegistrations(): Observable<GroupEventDto[]> {
     return this.http.get<GroupEventDto[]>(`${BASE}/my-registrations`);
   }
+
+  getNearbyForFeed(lat: number, lon: number, radiusKm = 25, days = 30): Observable<GroupEventDto[]> {
+    const params = new HttpParams()
+      .set('lat', lat.toString())
+      .set('lon', lon.toString())
+      .set('radiusKm', radiusKm.toString())
+      .set('days', days.toString());
+    return this.http.get<GroupEventDto[]>(apiUrl('/news-feed/trainer-events'), { params });
+  }
 }

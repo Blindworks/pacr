@@ -66,7 +66,15 @@
     "COMMENTS_LOADING": "Kommentare werden geladen…",
     "LOGIN_TO_INTERACT": "Melde dich an, um zu liken und zu kommentieren.",
     "SOURCE_LABEL": "Quelle",
-    "READ_ON_SOURCE": "Weiterlesen auf {{source}}"
+    "READ_ON_SOURCE": "Weiterlesen auf {{source}}",
+    "TRAINER_EVENT": {
+      "BADGE": "Trainer-Event in deiner Nähe",
+      "BY": "von",
+      "VIEW_DETAILS": "Details ansehen",
+      "SIDE_TITLE": "Trainer-Events in der Nähe",
+      "EMPTY": "Keine Trainer-Events im Umkreis von 25 km heute oder morgen.",
+      "RECURRING": "Wiederkehrendes Event"
+    }
   },
   "LANGUAGE": {
     "DE": "Deutsch",

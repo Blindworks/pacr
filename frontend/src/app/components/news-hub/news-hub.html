@@ -354,6 +354,47 @@
 
       <section class="side-card">
         <header class="side-card-header">
+          <span class="material-symbols-outlined">groups</span>
+          <h3>{{ 'NEWS_HUB.TRAINER_EVENT.SIDE_TITLE' | translate }}</h3>
+        </header>
+        @if (upcomingTrainerEvents().length === 0) {
+          <p class="empty small">{{ 'NEWS_HUB.TRAINER_EVENT.EMPTY' | translate }}</p>
+        } @else {
+          <ul class="trainer-events-list">
+            @for (ev of upcomingTrainerEvents(); track ev.id + ':' + (ev.occurrenceDate || ev.eventDate)) {
+              <li class="trainer-event-item" (click)="openTrainerEvent(ev)">
+                <div class="trainer-event-item-head">
+                  <strong class="trainer-event-item-title">{{ ev.title }}</strong>
+                  @if (ev.isRecurring) {
+                    <span class="material-symbols-outlined trainer-event-recurring" [title]="'NEWS_HUB.TRAINER_EVENT.RECURRING' | translate">repeat</span>
+                  }
+                </div>
+                <div class="trainer-event-item-meta">
+                  <span class="material-symbols-outlined">event</span>
+                  <span>{{ formatEventDate(ev) }}@if (ev.startTime) { <span>, {{ formatTime(ev.startTime) }}</span> }</span>
+                </div>
+                @if (ev.locationName) {
+                  <div class="trainer-event-item-meta muted">
+                    <span class="material-symbols-outlined">location_on</span>
+                    <span>{{ ev.locationName }}</span>
+                  </div>
+                }
+                <div class="trainer-event-item-chips">
+                  @if (ev.distanceKm != null) {
+                    <span class="chip chip--tag">{{ ev.distanceKm | number:'1.0-1' }} km</span>
+                  }
+                  @if (formatPaceRange(ev); as pace) {
+                    <span class="chip chip--tag">{{ pace }}</span>
+                  }
+                </div>
+              </li>
+            }
+          </ul>
+        }
+      </section>
+
+      <section class="side-card">
+        <header class="side-card-header">
           <span class="material-symbols-outlined">trending_up</span>
           <h3>{{ 'NEWS_HUB.TRENDING_TOPICS' | translate }}</h3>
         </header>

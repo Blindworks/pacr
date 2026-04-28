@@ -7,6 +7,7 @@ import { PublicNewsService, PublicNews, TrendingTopic, NewsComment } from '../..
 import { FriendshipService, FriendActivity, LiveTrainingFriend } from '../../services/friendship.service';
 import { ActivitySocialService, ActivityKudos, ActivityComment } from '../../services/activity-social.service';
 import { UserService } from '../../services/user.service';
+import { GroupEventService, GroupEventDto } from '../../services/group-event.service';
 import { RouteMiniMapComponent } from '../shared/route-mini-map/route-mini-map';
 
 interface FeedEntry {
@@ -28,6 +29,7 @@ export class NewsHub implements OnInit, OnDestroy {
   private readonly friendshipService = inject(FriendshipService);
   private readonly socialService = inject(ActivitySocialService);
   private readonly userService = inject(UserService);
+  private readonly groupEventService = inject(GroupEventService);
   private readonly router = inject(Router);
 
   loading = signal(true);
@@ -39,6 +41,7 @@ export class NewsHub implements OnInit, OnDestroy {
   activities = signal<FriendActivity[]>([]);
   liveTraining = signal<LiveTrainingFriend[]>([]);
   trending = signal<TrendingTopic[]>([]);
+  trainerEvents = signal<GroupEventDto[]>([]);
 
   kudosState = signal<Record<number, ActivityKudos>>({});
   commentsCount = signal<Record<number, number>>({});
@@ -88,8 +91,55 @@ export class NewsHub implements OnInit, OnDestroy {
     return entries.sort((x, y) => y.sortTime - x.sortTime);
   });
 
+  private eventDateTime(ev: GroupEventDto): number {
+    if (!ev.eventDate) return 0;
+    const time = ev.startTime ? ev.startTime.substring(0, 5) : '00:00';
+    return new Date(`${ev.eventDate}T${time}`).getTime();
+  }
+
+  /** Trainer events sorted ascending by date for the side rail (next ones first). */
+  upcomingTrainerEvents = computed(() => {
+    return [...this.trainerEvents()].sort((a, b) => this.eventDateTime(a) - this.eventDateTime(b));
+  });
+
   ngOnInit(): void {
     this.loadAll();
+    this.loadNearbyTrainerEvents();
+  }
+
+  private loadNearbyTrainerEvents(): void {
+    const fallback = () => this.fetchTrainerEvents(48.137154, 11.576124);
+    if ('geolocation' in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        pos => this.fetchTrainerEvents(pos.coords.latitude, pos.coords.longitude),
+        () => fallback(),
+        { timeout: 4000, maximumAge: 5 * 60 * 1000 }
+      );
+    } else {
+      fallback();
+    }
+  }
+
+  private fetchTrainerEvents(lat: number, lon: number): void {
+    this.groupEventService.getNearbyForFeed(lat, lon, 25, 1).subscribe({
+      next: list => this.trainerEvents.set(list),
+      error: () => {}
+    });
+  }
+
+  openTrainerEvent(ev: GroupEventDto): void {
+    this.router.navigate(['/community/groups', ev.id]);
+  }
+
+  formatEventDate(ev: GroupEventDto): string {
+    if (!ev.eventDate) return '';
+    const d = new Date(ev.eventDate);
+    return d.toLocaleDateString(undefined, { weekday: 'short', day: 'numeric', month: 'short' });
+  }
+
+  formatPaceRange(ev: GroupEventDto): string | null {
+    if (!ev.paceMinSecondsPerKm || !ev.paceMaxSecondsPerKm) return null;
+    return `${this.formatPace(ev.paceMinSecondsPerKm)} – ${this.formatPace(ev.paceMaxSecondsPerKm)}`;
   }
 
   ngOnDestroy(): void {

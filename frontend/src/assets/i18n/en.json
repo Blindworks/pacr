@@ -66,7 +66,15 @@
     "COMMENTS_LOADING": "Loading comments…",
     "LOGIN_TO_INTERACT": "Sign in to like and comment.",
     "SOURCE_LABEL": "Source",
-    "READ_ON_SOURCE": "Read on {{source}}"
+    "READ_ON_SOURCE": "Read on {{source}}",
+    "TRAINER_EVENT": {
+      "BADGE": "Trainer Event nearby",
+      "BY": "by",
+      "VIEW_DETAILS": "View details",
+      "SIDE_TITLE": "Trainer Events nearby",
+      "EMPTY": "No trainer events within 25 km today or tomorrow.",
+      "RECURRING": "Recurring event"
+    }
   },
   "LANGUAGE": {
     "DE": "Deutsch",
