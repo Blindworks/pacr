@@ -536,10 +536,21 @@ public class MetricsKernelService {
     private void upsertDaily(User user, String metricType, Double value, String unit,
                              LocalDate recordedAt, String stringValue,
                              String reasonsJson, String auxiliaryText) {
-        BodyMetric metric = bodyMetricRepository
-                .findByUserIdAndMetricTypeAndRecordedAtAndSourceActivityIdIsNull(
-                        user.getId(), metricType, recordedAt)
-                .orElse(new BodyMetric());
+        List<BodyMetric> existing = bodyMetricRepository
+                .findByUserIdAndMetricTypeAndRecordedAtAndSourceActivityIdIsNullOrderByIdDesc(
+                        user.getId(), metricType, recordedAt);
+
+        BodyMetric metric;
+        if (existing.isEmpty()) {
+            metric = new BodyMetric();
+        } else {
+            metric = existing.get(0);
+            if (existing.size() > 1) {
+                log.warn("upsertDaily: {} duplicate body_metrics for userId={} type={} date={} – pruning {} older row(s)",
+                        existing.size(), user.getId(), metricType, recordedAt, existing.size() - 1);
+                bodyMetricRepository.deleteAll(existing.subList(1, existing.size()));
+            }
+        }
 
         metric.setUser(user);
         metric.setMetricType(metricType);

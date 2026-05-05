@@ -41,8 +41,19 @@ public interface BodyMetricRepository extends JpaRepository<BodyMetric, Long> {
      * Tagesbasierter Upsert-Lookup: findet einen Eintrag ohne sourceActivityId
      * (d.h. tagesbezogen berechnet, nicht einer Activity zugeordnet).
      */
-    Optional<BodyMetric> findByUserIdAndMetricTypeAndRecordedAtAndSourceActivityIdIsNull(
+    List<BodyMetric> findByUserIdAndMetricTypeAndRecordedAtAndSourceActivityIdIsNullOrderByIdDesc(
             Long userId, String metricType, LocalDate recordedAt);
+
+    /**
+     * Convenience-Wrapper um {@link #findByUserIdAndMetricTypeAndRecordedAtAndSourceActivityIdIsNullOrderByIdDesc}:
+     * liefert den juengsten Eintrag (groesste id) als Optional. Verhindert NonUniqueResultException
+     * bei (selten verbliebenen) Duplikaten.
+     */
+    default Optional<BodyMetric> findByUserIdAndMetricTypeAndRecordedAtAndSourceActivityIdIsNull(
+            Long userId, String metricType, LocalDate recordedAt) {
+        return findByUserIdAndMetricTypeAndRecordedAtAndSourceActivityIdIsNullOrderByIdDesc(
+                userId, metricType, recordedAt).stream().findFirst();
+    }
 
     /**
      * Letzter bekannter Wert eines Typs bis einschließlich {@code date}

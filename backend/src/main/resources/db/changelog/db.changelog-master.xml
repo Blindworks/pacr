@@ -129,5 +129,6 @@
     <include file="db/changelog/changes/124-add-user-previous-login-at.xml"/>
     <include file="db/changelog/changes/125-create-ladv-import-tables.xml"/>
     <include file="db/changelog/changes/126-add-group-event-image.xml"/>
+    <include file="db/changelog/changes/127-cleanup-body-metrics-duplicates.xml"/>
 
 </databaseChangeLog>

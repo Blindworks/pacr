@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="127-1" author="benedikt">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="body_metrics"/>
+        </preConditions>
+        <comment>Remove duplicate daily body_metrics rows (source_activity_id IS NULL); keep newest id per (user_id, metric_type, recorded_at)</comment>
+        <sql>
+            DELETE bm FROM body_metrics bm
+            INNER JOIN (
+                SELECT user_id, metric_type, recorded_at, MAX(id) AS keep_id
+                FROM body_metrics
+                WHERE source_activity_id IS NULL
+                GROUP BY user_id, metric_type, recorded_at
+                HAVING COUNT(*) > 1
+            ) dup
+              ON bm.user_id = dup.user_id
+             AND bm.metric_type = dup.metric_type
+             AND bm.recorded_at = dup.recorded_at
+             AND bm.source_activity_id IS NULL
+             AND bm.id &lt;&gt; dup.keep_id;
+        </sql>
+    </changeSet>
+
+    <changeSet id="127-2" author="benedikt">
+        <preConditions onFail="MARK_RAN">
+            <and>
+                <tableExists tableName="body_metrics"/>
+                <not>
+                    <columnExists tableName="body_metrics" columnName="source_activity_id_norm"/>
+                </not>
+            </and>
+        </preConditions>
+        <comment>Add stored generated column source_activity_id_norm = COALESCE(source_activity_id, 0) to enable a NULL-safe unique index</comment>
+        <sql>
+            ALTER TABLE body_metrics
+              ADD COLUMN source_activity_id_norm BIGINT
+              AS (COALESCE(source_activity_id, 0)) STORED;
+        </sql>
+    </changeSet>
+
+    <changeSet id="127-3" author="benedikt">
+        <preConditions onFail="MARK_RAN">
+            <and>
+                <columnExists tableName="body_metrics" columnName="source_activity_id_norm"/>
+                <not>
+                    <indexExists indexName="ux_body_metrics_daily"/>
+                </not>
+            </and>
+        </preConditions>
+        <comment>Unique index over (user_id, metric_type, recorded_at, source_activity_id_norm) – prevents duplicate daily body_metrics even when source_activity_id is NULL</comment>
+        <createIndex tableName="body_metrics" indexName="ux_body_metrics_daily" unique="true">
+            <column name="user_id"/>
+            <column name="metric_type"/>
+            <column name="recorded_at"/>
+            <column name="source_activity_id_norm"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>
