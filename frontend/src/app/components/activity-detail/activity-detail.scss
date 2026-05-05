@@ -441,49 +441,6 @@
   p { margin: 0; font-size: 15px; }
 }
 
-// ── Responsive ────────────────────────────────────────────────────
-@include m.respond-to(v.$bp-lg) {
-  .metrics-grid { grid-template-columns: repeat(2, 1fr); }
-  .perf-bento {
-    grid-template-columns: repeat(2, 1fr);
-
-    .bento-card--strain { grid-column: span 2; grid-row: auto; }
-    .bento-card--vo2,
-    .bento-card--decoupling,
-    .bento-card--efficiency,
-    .bento-card--rawload,
-    .bento-card--trimp { grid-column: span 1; }
-  }
-
-  .hero { height: 360px; }
-  .hero-content { flex-direction: column; align-items: flex-start; }
-  .hero-stats { gap: 20px; }
-  .hero-stat { text-align: left; }
-
-  .insights-card { flex-direction: column; }
-  .insights-cta { width: 100%; justify-content: center; }
-}
-
-@media (max-width: 600px) {
-  .page-header { padding: 14px 16px; }
-  .content { padding: 20px 16px 40px; }
-  .hero-content { padding: 20px 16px 20px; }
-  .hero-title { font-size: 1.5rem; }
-  .hero-stat-value { font-size: 1.5rem; }
-  .metrics-grid { grid-template-columns: repeat(2, 1fr); }
-  .perf-bento {
-    grid-template-columns: 1fr;
-
-    .bento-card,
-    .bento-card--strain,
-    .bento-card--vo2,
-    .bento-card--decoupling,
-    .bento-card--efficiency,
-    .bento-card--rawload,
-    .bento-card--trimp { grid-column: span 1; grid-row: auto; }
-  }
-}
-
 // ── Unified Stream Chart ────────────────────────────────────────────────────
 
 .perf-chart-section {
@@ -1310,4 +1267,47 @@
   &:hover { color: var(--text); }
 
   &--active { color: var(--accent, #8ffc2e); }
+}
+
+// ── Responsive ────────────────────────────────────────────────────
+@include m.respond-to(v.$bp-lg) {
+  .metrics-grid { grid-template-columns: repeat(2, 1fr); }
+  .perf-bento {
+    grid-template-columns: repeat(2, 1fr);
+
+    .bento-card--strain { grid-column: span 2; grid-row: auto; }
+    .bento-card--vo2,
+    .bento-card--decoupling,
+    .bento-card--efficiency,
+    .bento-card--rawload,
+    .bento-card--trimp { grid-column: span 1; }
+  }
+
+  .hero { height: 360px; }
+  .hero-content { flex-direction: column; align-items: flex-start; }
+  .hero-stats { gap: 20px; }
+  .hero-stat { text-align: left; }
+
+  .insights-card { flex-direction: column; }
+  .insights-cta { width: 100%; justify-content: center; }
+}
+
+@media (max-width: 600px) {
+  .page-header { padding: 14px 16px; }
+  .content { padding: 20px 16px 40px; }
+  .hero-content { padding: 20px 16px 20px; }
+  .hero-title { font-size: 1.5rem; }
+  .hero-stat-value { font-size: 1.5rem; }
+  .metrics-grid { grid-template-columns: repeat(2, 1fr); }
+  .perf-bento {
+    grid-template-columns: 1fr;
+
+    .bento-card,
+    .bento-card--strain,
+    .bento-card--vo2,
+    .bento-card--decoupling,
+    .bento-card--efficiency,
+    .bento-card--rawload,
+    .bento-card--trimp { grid-column: span 1; grid-row: auto; }
+  }
 }
