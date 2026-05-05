@@ -7,6 +7,8 @@ import com.trainingsplan.repository.GroupEventExceptionRepository;
 import com.trainingsplan.repository.GroupEventRegistrationRepository;
 import com.trainingsplan.repository.GroupEventRepository;
 import org.springframework.core.io.Resource;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -261,6 +263,10 @@ public class GroupEventService {
             throw new IllegalStateException("Can only register for published events");
         }
 
+        if (event.isRecurring() && occurrenceDate == null) {
+            throw new IllegalStateException("Occurrence date is required when registering for a recurring event");
+        }
+
         // Determine the effective date for this registration
         LocalDate effectiveDate = event.isRecurring() ? occurrenceDate : event.getEventDate();
         if (effectiveDate != null && effectiveDate.isBefore(LocalDate.now())) {
@@ -397,13 +403,19 @@ public class GroupEventService {
         return event;
     }
 
+    private static final int PARTICIPANT_PREVIEW_LIMIT = 5;
+
     private GroupEventDto toDto(GroupEvent event, User currentUser, LocalDate occurrenceDate) {
         int participants;
         boolean registered = false;
+        List<GroupEventRegistration> previewRegistrations;
+        PageRequest previewPage = PageRequest.of(0, PARTICIPANT_PREVIEW_LIMIT, Sort.by(Sort.Direction.ASC, "registeredAt"));
 
         if (event.isRecurring() && occurrenceDate != null) {
             participants = registrationRepository.countByEventIdAndOccurrenceDateAndStatus(
                     event.getId(), occurrenceDate, RegistrationStatus.REGISTERED);
+            previewRegistrations = registrationRepository.findByEventIdAndOccurrenceDateAndStatus(
+                    event.getId(), occurrenceDate, RegistrationStatus.REGISTERED, previewPage);
             if (currentUser != null) {
                 var reg = registrationRepository.findByEventIdAndUserIdAndOccurrenceDate(
                         event.getId(), currentUser.getId(), occurrenceDate);
@@ -411,11 +423,20 @@ public class GroupEventService {
             }
         } else {
             participants = registrationRepository.countByEventIdAndStatus(event.getId(), RegistrationStatus.REGISTERED);
+            previewRegistrations = registrationRepository.findByEventIdAndStatus(
+                    event.getId(), RegistrationStatus.REGISTERED, previewPage);
             if (currentUser != null) {
                 var reg = registrationRepository.findByEventIdAndUserId(event.getId(), currentUser.getId());
                 registered = reg.isPresent() && reg.get().getStatus() == RegistrationStatus.REGISTERED;
             }
         }
+
+        List<GroupEventParticipantPreviewDto> participantPreview = previewRegistrations.stream()
+                .map(reg -> new GroupEventParticipantPreviewDto(
+                        reg.getUser().getId(),
+                        reg.getUser().getUsername(),
+                        reg.getUser().getProfileImageFilename()))
+                .toList();
 
         return new GroupEventDto(
                 event.getId(),
@@ -444,7 +465,8 @@ public class GroupEventService {
                 event.getRecurrenceEndDate(),
                 occurrenceDate,
                 event.isRecurring(),
-                event.getEventImageFilename()
+                event.getEventImageFilename(),
+                participantPreview
         );
     }
 

@@ -80,7 +80,9 @@
     <!-- Event Cards Grid -->
     <div class="event-grid">
       @for (event of filteredEvents(); track trackEvent($index, event)) {
-        <a [routerLink]="['/community/groups', event.id]" class="event-card" [class.today-event]="isToday(event)">
+        <a [routerLink]="['/community/groups', event.id]"
+           [queryParams]="event.isRecurring && event.occurrenceDate ? { occurrenceDate: event.occurrenceDate } : null"
+           class="event-card" [class.today-event]="isToday(event)">
           @if (event.eventImageFilename) {
             <div class="card-image">
               <app-event-image [eventId]="event.id" [filename]="event.eventImageFilename" [showFallback]="false"></app-event-image>
@@ -136,6 +138,22 @@
 
           <!-- Card Footer -->
           <div class="card-footer">
+            @if (event.participantPreview && event.participantPreview.length > 0) {
+              <div class="participant-avatars">
+                @for (p of event.participantPreview; track p.userId) {
+                  <div class="avatar" [title]="p.username">
+                    @if (getAvatarUrl(p.userId); as url) {
+                      <img [src]="url" [alt]="p.username" />
+                    } @else {
+                      <span class="avatar-initials">{{ getInitials(p.username) }}</span>
+                    }
+                  </div>
+                }
+                @if (getOverflowCount(event) > 0) {
+                  <div class="avatar avatar-overflow">+{{ getOverflowCount(event) }}</div>
+                }
+              </div>
+            }
             <div class="participants-info">
               <span class="material-symbols-outlined">group</span>
               <span>{{ event.currentParticipants }}@if (event.maxParticipants) { / {{ event.maxParticipants }}}</span>

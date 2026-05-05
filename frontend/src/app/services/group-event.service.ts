@@ -6,6 +6,12 @@ import { apiUrl } from '../core/api-base';
 
 const BASE = apiUrl('/group-events');
 
+export interface GroupEventParticipantPreview {
+  userId: number;
+  username: string;
+  profileImageFilename: string | null;
+}
+
 export interface GroupEventDto {
   id: number;
   title: string;
@@ -34,6 +40,7 @@ export interface GroupEventDto {
   occurrenceDate: string | null;
   isRecurring: boolean;
   eventImageFilename: string | null;
+  participantPreview: GroupEventParticipantPreview[];
 }
 
 @Injectable({ providedIn: 'root' })
@@ -52,8 +59,12 @@ export class GroupEventService {
     return this.http.get<GroupEventDto[]>(`${BASE}/upcoming`);
   }
 
-  getEventDetail(id: number): Observable<GroupEventDto> {
-    return this.http.get<GroupEventDto>(`${BASE}/${id}`);
+  getEventDetail(id: number, occurrenceDate?: string): Observable<GroupEventDto> {
+    let params = new HttpParams();
+    if (occurrenceDate) {
+      params = params.set('occurrenceDate', occurrenceDate);
+    }
+    return this.http.get<GroupEventDto>(`${BASE}/${id}`, { params });
   }
 
   registerForEvent(eventId: number, occurrenceDate?: string): Observable<void> {

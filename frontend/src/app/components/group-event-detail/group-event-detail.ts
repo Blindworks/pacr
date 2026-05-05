@@ -45,18 +45,21 @@ export class GroupEventDetail implements OnInit, OnDestroy {
     });
   }
 
+  private occurrenceDate: string | null = null;
+
   ngOnInit(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));
     if (!id) {
       this.router.navigate(['/community/groups']);
       return;
     }
+    this.occurrenceDate = this.route.snapshot.queryParamMap.get('occurrenceDate');
     this.loadEvent(id);
   }
 
   private loadEvent(id: number): void {
     this.loading.set(true);
-    this.eventService.getEventDetail(id).subscribe({
+    this.eventService.getEventDetail(id, this.occurrenceDate ?? undefined).subscribe({
       next: event => {
         this.event.set(event);
         this.loading.set(false);
@@ -70,7 +73,8 @@ export class GroupEventDetail implements OnInit, OnDestroy {
     const ev = this.event();
     if (!ev) return;
     this.actionLoading.set(true);
-    this.eventService.registerForEvent(ev.id).subscribe({
+    const occ = ev.isRecurring ? (this.occurrenceDate ?? ev.occurrenceDate ?? undefined) : undefined;
+    this.eventService.registerForEvent(ev.id, occ ?? undefined).subscribe({
       next: () => {
         this.event.set({ ...ev, isRegistered: true, currentParticipants: ev.currentParticipants + 1 });
         this.actionLoading.set(false);
@@ -83,7 +87,8 @@ export class GroupEventDetail implements OnInit, OnDestroy {
     const ev = this.event();
     if (!ev) return;
     this.actionLoading.set(true);
-    this.eventService.cancelRegistration(ev.id).subscribe({
+    const occ = ev.isRecurring ? (this.occurrenceDate ?? ev.occurrenceDate ?? undefined) : undefined;
+    this.eventService.cancelRegistration(ev.id, occ ?? undefined).subscribe({
       next: () => {
         this.event.set({ ...ev, isRegistered: false, currentParticipants: ev.currentParticipants - 1 });
         this.actionLoading.set(false);

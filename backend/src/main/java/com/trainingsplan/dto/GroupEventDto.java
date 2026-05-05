@@ -3,6 +3,7 @@ package com.trainingsplan.dto;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.List;
 
 public record GroupEventDto(
         Long id,
@@ -31,5 +32,6 @@ public record GroupEventDto(
         LocalDate recurrenceEndDate,
         LocalDate occurrenceDate,
         boolean isRecurring,
-        String eventImageFilename
+        String eventImageFilename,
+        List<GroupEventParticipantPreviewDto> participantPreview
 ) {}

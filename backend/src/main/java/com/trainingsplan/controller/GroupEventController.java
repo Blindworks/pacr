@@ -51,13 +51,16 @@ public class GroupEventController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getEventDetail(@PathVariable Long id) {
+    public ResponseEntity<?> getEventDetail(@PathVariable Long id,
+                                            @RequestParam(required = false) LocalDate occurrenceDate) {
         User user = securityUtils.getCurrentUser();
         if (user == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         if (!user.isGroupEventsEnabled()) return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Group events not enabled");
 
         try {
-            GroupEventDto dto = groupEventService.getEventDetail(id, user);
+            GroupEventDto dto = occurrenceDate != null
+                    ? groupEventService.getEventOccurrenceDetail(id, occurrenceDate, user)
+                    : groupEventService.getEventDetail(id, user);
             return ResponseEntity.ok(dto);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.notFound().build();
@@ -66,14 +69,13 @@ public class GroupEventController {
 
     @PostMapping("/{id}/register")
     public ResponseEntity<?> registerForEvent(@PathVariable Long id,
-                                               @RequestParam(required = false) String occurrenceDate) {
+                                               @RequestParam(required = false) LocalDate occurrenceDate) {
         User user = securityUtils.getCurrentUser();
         if (user == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         if (!user.isGroupEventsEnabled()) return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Group events not enabled");
 
         try {
-            LocalDate occDate = occurrenceDate != null ? LocalDate.parse(occurrenceDate) : null;
-            groupEventService.registerForEvent(user, id, occDate);
+            groupEventService.registerForEvent(user, id, occurrenceDate);
             return ResponseEntity.ok().build();
         } catch (IllegalStateException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
@@ -84,13 +86,12 @@ public class GroupEventController {
 
     @DeleteMapping("/{id}/register")
     public ResponseEntity<?> cancelRegistration(@PathVariable Long id,
-                                                 @RequestParam(required = false) String occurrenceDate) {
+                                                 @RequestParam(required = false) LocalDate occurrenceDate) {
         User user = securityUtils.getCurrentUser();
         if (user == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
         try {
-            LocalDate occDate = occurrenceDate != null ? LocalDate.parse(occurrenceDate) : null;
-            groupEventService.cancelRegistration(user, id, occDate);
+            groupEventService.cancelRegistration(user, id, occurrenceDate);
             return ResponseEntity.ok().build();
         } catch (IllegalArgumentException e) {
             return ResponseEntity.notFound().build();

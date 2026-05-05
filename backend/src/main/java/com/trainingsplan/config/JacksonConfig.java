@@ -9,6 +9,10 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.convert.converter.Converter;
+import org.springframework.format.FormatterRegistry;
+import org.springframework.lang.NonNull;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.io.IOException;
 import java.time.Instant;
@@ -16,7 +20,7 @@ import java.time.LocalDate;
 import java.time.ZoneOffset;
 
 @Configuration
-public class JacksonConfig {
+public class JacksonConfig implements WebMvcConfigurer {
 
     @Bean
     public Jackson2ObjectMapperBuilderCustomizer localDateAsNoonUtc() {
@@ -30,13 +34,29 @@ public class JacksonConfig {
             builder.deserializerByType(LocalDate.class, new JsonDeserializer<LocalDate>() {
                 @Override
                 public LocalDate deserialize(JsonParser p, DeserializationContext ctx) throws IOException {
-                    String text = p.getText();
-                    if (text.contains("T")) {
-                        return Instant.parse(text).atOffset(ZoneOffset.UTC).toLocalDate();
-                    }
-                    return LocalDate.parse(text);
+                    return parseLocalDate(p.getText());
                 }
             });
         };
+    }
+
+    @Override
+    public void addFormatters(@NonNull FormatterRegistry registry) {
+        registry.addConverter(new Converter<String, LocalDate>() {
+            @Override
+            public LocalDate convert(@NonNull String source) {
+                return parseLocalDate(source);
+            }
+        });
+    }
+
+    private static LocalDate parseLocalDate(String text) {
+        if (text == null || text.isBlank()) {
+            return null;
+        }
+        if (text.contains("T")) {
+            return Instant.parse(text).atOffset(ZoneOffset.UTC).toLocalDate();
+        }
+        return LocalDate.parse(text);
     }
 }

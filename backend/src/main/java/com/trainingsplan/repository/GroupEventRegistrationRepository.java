@@ -2,6 +2,7 @@ package com.trainingsplan.repository;
 
 import com.trainingsplan.entity.GroupEventRegistration;
 import com.trainingsplan.entity.RegistrationStatus;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.time.LocalDate;
@@ -22,5 +23,9 @@ public interface GroupEventRegistrationRepository extends JpaRepository<GroupEve
 
     List<GroupEventRegistration> findByEventIdAndStatus(Long eventId, RegistrationStatus status);
 
+    List<GroupEventRegistration> findByEventIdAndStatus(Long eventId, RegistrationStatus status, Pageable pageable);
+
     List<GroupEventRegistration> findByEventIdAndOccurrenceDateAndStatus(Long eventId, LocalDate occurrenceDate, RegistrationStatus status);
+
+    List<GroupEventRegistration> findByEventIdAndOccurrenceDateAndStatus(Long eventId, LocalDate occurrenceDate, RegistrationStatus status, Pageable pageable);
 }

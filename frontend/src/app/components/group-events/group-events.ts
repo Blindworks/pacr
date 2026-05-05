@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal, computed } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -15,10 +15,13 @@ import { EventImageComponent } from '../event-image/event-image';
   templateUrl: './group-events.html',
   styleUrl: './group-events.scss'
 })
-export class GroupEvents implements OnInit {
+export class GroupEvents implements OnInit, OnDestroy {
   private readonly eventService = inject(GroupEventService);
   private readonly userService = inject(UserService);
   readonly translate = inject(TranslateService);
+
+  avatarUrls = signal<Record<number, string>>({});
+  private readonly avatarLoading = new Set<number>();
 
   events = signal<GroupEventDto[]>([]);
   loading = signal(true);
@@ -68,26 +71,72 @@ export class GroupEvents implements OnInit {
     this.error.set(null);
 
     const tab = this.activeTab();
+    const handle = (events: GroupEventDto[]) => {
+      this.events.set(events);
+      this.loadParticipantAvatars(events);
+      this.loading.set(false);
+    };
+    const fail = () => { this.error.set(this.translate.instant('GROUP_EVENTS.LOAD_ERROR')); this.loading.set(false); };
 
     if (tab === 'near') {
       const lat = this.userLat();
       const lon = this.userLon();
       if (lat === null || lon === null) return;
-      this.eventService.getNearbyEvents(lat, lon, this.radiusKm()).subscribe({
-        next: events => { this.events.set(events); this.loading.set(false); },
-        error: () => { this.error.set(this.translate.instant('GROUP_EVENTS.LOAD_ERROR')); this.loading.set(false); }
-      });
+      this.eventService.getNearbyEvents(lat, lon, this.radiusKm()).subscribe({ next: handle, error: fail });
     } else if (tab === 'upcoming') {
-      this.eventService.getUpcomingEvents().subscribe({
-        next: events => { this.events.set(events); this.loading.set(false); },
-        error: () => { this.error.set(this.translate.instant('GROUP_EVENTS.LOAD_ERROR')); this.loading.set(false); }
-      });
+      this.eventService.getUpcomingEvents().subscribe({ next: handle, error: fail });
     } else {
-      this.eventService.getMyRegistrations().subscribe({
-        next: events => { this.events.set(events); this.loading.set(false); },
-        error: () => { this.error.set(this.translate.instant('GROUP_EVENTS.LOAD_ERROR')); this.loading.set(false); }
-      });
+      this.eventService.getMyRegistrations().subscribe({ next: handle, error: fail });
     }
+  }
+
+  private loadParticipantAvatars(events: GroupEventDto[]): void {
+    for (const event of events) {
+      for (const p of event.participantPreview ?? []) {
+        if (p.profileImageFilename) {
+          this.loadAvatar(p.userId);
+        }
+      }
+    }
+  }
+
+  private loadAvatar(userId: number): void {
+    if (this.avatarUrls()[userId] || this.avatarLoading.has(userId)) return;
+    this.avatarLoading.add(userId);
+    this.userService.getProfileImage(userId).subscribe({
+      next: blob => {
+        if (!blob) {
+          this.avatarLoading.delete(userId);
+          return;
+        }
+        const url = URL.createObjectURL(blob);
+        this.avatarUrls.update(map => ({ ...map, [userId]: url }));
+        this.avatarLoading.delete(userId);
+      },
+      error: () => { this.avatarLoading.delete(userId); }
+    });
+  }
+
+  getAvatarUrl(userId: number): string | null {
+    return this.avatarUrls()[userId] ?? null;
+  }
+
+  getInitials(username: string): string {
+    if (!username) return '?';
+    const parts = username.trim().split(/\s+/);
+    if (parts.length >= 2) {
+      return (parts[0][0] + parts[1][0]).toUpperCase();
+    }
+    return username.substring(0, 2).toUpperCase();
+  }
+
+  getOverflowCount(event: GroupEventDto): number {
+    const previewLen = event.participantPreview?.length ?? 0;
+    return Math.max(0, event.currentParticipants - previewLen);
+  }
+
+  ngOnDestroy(): void {
+    Object.values(this.avatarUrls()).forEach(url => URL.revokeObjectURL(url));
   }
 
   onTabChange(tab: 'near' | 'upcoming' | 'mine'): void {
